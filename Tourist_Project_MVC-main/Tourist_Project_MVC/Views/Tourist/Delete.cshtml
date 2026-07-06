@@ -1,0 +1,31 @@
+﻿@model Tourist_Project_MVC.Models.Tourist
+
+@{
+    ViewData["Title"] = "Delete Tourist";
+}
+@if (User.Identity.IsAuthenticated)
+{
+<div class="container mt-4">
+    <h2 class="text-danger">🗑️ Delete Tourist</h2>
+    <hr />
+    <p class="lead">Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+
+    <dl class="row">
+        <dt class="col-sm-3">Nationality</dt>
+        <dd class="col-sm-9">@Model.Nationality</dd>
+
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+
+        <dt class="col-sm-3">Point Balance</dt>
+        <dd class="col-sm-9">@Model.point_Balance pts</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+}

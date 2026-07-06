@@ -1,0 +1,69 @@
+﻿@model Tourist_Project_MVC.Models.Destination
+
+@{
+    ViewData["Title"] = "Edit Destination";
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container mt-4">
+        <h2>✏️ Edit Destination</h2>
+        <hr />
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Category" class="form-label"></label>
+                <input asp-for="Category" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+
+            </div>
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-select">
+                    <option value="Active">Active</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Visits" class="form-label">Visits</label>
+                <input asp-for="Visits" class="form-control" type="number" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="TicketPrice" class="form-label"></label>
+                <input asp-for="TicketPrice" class="form-control" type="number" step="0.01" />
+            </div>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <label asp-for="Lat" class="form-label">Latitude</label>
+                    <input asp-for="Lat" class="form-control" />
+                </div>
+                <div class="col mb-3">
+                    <label asp-for="Long" class="form-label">Longitude</label>
+                    <input asp-for="Long" class="form-control" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-warning">Update</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+}

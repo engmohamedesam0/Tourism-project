@@ -1,0 +1,123 @@
+@model Tourist_Project_MVC.Models.Mission
+
+@{
+    ViewData["Title"] = "Mission Details";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container mt-4" style="max-width: 800px;">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+
+            <div class="card-header py-3"
+                 style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="text-white mb-0">
+                        <i class="bi bi-trophy-fill me-2"></i> @Model.Title
+                    </h4>
+                    <span class="badge bg-warning text-dark fs-6">
+                        @Model.MissionType
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+
+                <div class="row text-center mb-4">
+                    <div class="col-3">
+                        <div class="stat-mini-card">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <div class="stat-mini-number">@Model.PointsReward</div>
+                            <div class="stat-mini-label">Points</div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stat-mini-card">
+                            <i class="bi bi-geo-alt-fill text-danger"></i>
+                            <div class="stat-mini-number">@Model.Destination?.Name</div>
+                            <div class="stat-mini-label">Destination</div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stat-mini-card">
+                            <i class="bi bi-hourglass-split text-primary"></i>
+                            <div class="stat-mini-number">
+                                @(Model.UserMissions?.Count(um => um.Status == "In Progress") ?? 0)
+                            </div>
+                            <div class="stat-mini-label">In Progress</div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stat-mini-card">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <div class="stat-mini-number">
+                                @(Model.UserMissions?.Count(um => um.Status == "Completed") ?? 0)
+                            </div>
+                            <div class="stat-mini-label">Completed</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <dl class="row">
+                    <dt class="col-sm-3 text-muted">Type</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge-category">@Model.MissionType</span>
+                    </dd>
+
+                    <dt class="col-sm-3 text-muted">Description</dt>
+                    <dd class="col-sm-9">@Model.Description</dd>
+                </dl>
+            </div>
+
+            <div class="card-footer bg-white d-flex gap-2 justify-content-end">
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                    <i class="bi bi-pencil-fill me-1"></i> Edit
+                </a>
+                }
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Back
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <style>
+        .stat-mini-card {
+            background: #FDF6EC;
+            border: 1px solid #E8A045;
+            border-radius: 12px;
+            padding: 15px 10px;
+        }
+
+        .stat-mini-number {
+            font-family: 'Cinzel',sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2C1A0E;
+            margin: 6px 0 2px;
+        }
+
+        .stat-mini-label {
+            font-size: 0.75rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge-category {
+            background-color: #FDF6EC;
+            color: var(--egy-primary);
+            border: 1px solid var(--egy-accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+    </style>
+}

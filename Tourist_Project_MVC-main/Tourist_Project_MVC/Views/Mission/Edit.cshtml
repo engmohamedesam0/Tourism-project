@@ -1,0 +1,74 @@
+@model Tourist_Project_MVC.View_Model.MissionWithDeptListVM
+
+@{
+    ViewData["Title"] = "Edit Mission";
+    SelectList destList = new SelectList(Model.destinations, "Id", "Name");
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container mt-4" style="max-width: 700px;">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+
+            <div class="card-header py-3"
+                 style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+                <h4 class="text-white mb-0">
+                    <i class="bi bi-pencil-fill me-2"></i> Edit Mission
+                </h4>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="MissionType" class="form-label fw-bold"></label>
+                        <input asp-for="MissionType" class="form-control" />
+                        <span asp-validation-for="MissionType" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-bold"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-bold"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PointsReward" class="form-label fw-bold"></label>
+                        <input asp-for="PointsReward" class="form-control" type="number" />
+                        <span asp-validation-for="PointsReward" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DestinationId" class="form-label fw-bold"></label>
+                        <select asp-for="DestinationId" asp-items="destList" class="form-select">
+                            <option value="">-- Select Destination --</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-warning px-4">
+                            <i class="bi bi-check-lg me-1"></i> Update
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-x-lg me-1"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,176 @@
+﻿@model IEnumerable<Tourist_Project_MVC.Models.Reward>
+
+@{
+    ViewData["Title"] = "Rewards";
+}
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title mb-0">🎁 Rewards</h2>
+
+            @if (User.Identity.IsAuthenticated)
+        {
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Create" class="btn btn-success px-4">
+                    <i class="bi bi-plus-lg me-1"></i> + Add
+                </a>
+                }
+            }
+        
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar mb-3">
+        <div class="row g-2 align-items-center">
+
+            <div class="col-md-5">
+                <form method="get" asp-action="Index" id="filterForm">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" name="search"
+                               class="form-control border-start-0"
+                               placeholder="Search rewards..."
+                               value="@ViewBag.Search" />
+                        <input type="hidden" name="rewardType" value="@ViewBag.RewardType" />
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-4">
+                <select class="form-select" onchange="window.location.href=this.value">
+                    <option value="@Url.Action("Index", new { search = ViewBag.Search })">
+                        All Types
+                    </option>
+                    @foreach (var type in ViewBag.RewardTypes as List<string> ?? new List<string>())
+                    {
+                        var url = Url.Action("Index", new { search = ViewBag.Search, rewardType = type });
+                        if (ViewBag.RewardType == type)
+                        {
+                            <option value="@url" selected>@type</option>
+                        }
+                        else
+                        {
+                            <option value="@url">@type</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3 text-muted small">
+                Total: <strong>@ViewBag.AllCount</strong> rewards
+            </div>
+
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle destinations-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Points Required</th>
+                    <th>Quantity</th>
+                    <th>Expiration</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold text-muted">@i.ToString("D2")</td>
+                        <td><div class="fw-bold">@item.Title</div></td>
+                        <td><span class="badge-category">@item.RewardType</span></td>
+                        <td><small class="text-muted">@item.Description</small></td>
+                        <td>
+                            <span class="fw-bold" style="color: var(--egy-primary);">
+                                @item.PointsRequired pts
+                            </span>
+                        </td>
+                        <td>@item.QuantityAvailable</td>
+                        <td>@item.ExpirationDate.ToShortDateString()</td>
+                        <td>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-info" title="Details">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.Id"
+                                        class="btn btn-sm btn-outline-warning" title="Edit">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id"
+                                        class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Guests only view</span>
+                            }
+                        </td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-gift" style="font-size:3rem; color:var(--egy-primary);"></i>
+            <p class="text-muted mt-2">No rewards found.</p>
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <style>
+        .filter-bar {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .destinations-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .badge-category {
+            background-color: #FDF6EC;
+            color: var(--egy-primary);
+            border: 1px solid var(--egy-accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+    </style>
+    <script>
+        document.querySelector('input[name="search"]').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') document.getElementById('filterForm').submit();
+        });
+    </script>
+}

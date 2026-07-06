@@ -1,0 +1,30 @@
+﻿@model sponsorViewModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+<div class="container mt-4">
+    <h2 class="text-danger">🗑️ Delete Reward</h2>
+    <hr />
+    <p class="lead">Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+
+    <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.Name</dd>
+
+        <dt class="col-sm-3">Type</dt>
+        <dd class="col-sm-9">@Model.Type</dd>
+
+
+        <dt class="col-sm-3">Address</dt>
+        <dd class="col-sm-9">@Model.City</dd>
+    </dl>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+

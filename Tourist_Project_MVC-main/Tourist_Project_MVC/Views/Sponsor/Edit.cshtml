@@ -1,0 +1,64 @@
+@model Tourist_Project_MVC.View_Model.sponsorViewModel
+
+@{
+    ViewData["Title"] = "Edit Sponsor";
+}
+
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+
+        <!-- Card Header -->
+        <div class="card-header py-3"
+             style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+            <h4 class="text-white mb-0">
+                <i class="bi bi-pencil-fill me-2"></i> Edit Sponsor
+            </h4>
+        </div>
+
+        <div class="card-body p-4">
+            <form asp-action="Edit" asp-controller="Sponsor">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Type" class="form-label fw-bold"></label>
+                    <input asp-for="Type" class="form-control" />
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="City" class="form-label fw-bold"></label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ContactInfo" class="form-label fw-bold"></label>
+                    <input asp-for="ContactInfo" class="form-control" type="number" />
+                    <span asp-validation-for="ContactInfo" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-warning px-4">
+                        <i class="bi bi-check-lg me-1"></i> Update
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

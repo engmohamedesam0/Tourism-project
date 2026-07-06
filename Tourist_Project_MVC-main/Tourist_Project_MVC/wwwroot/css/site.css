@@ -1,0 +1,291 @@
+/* Custom Global Variables matching an Elegant Egyptian Palette */
+:root {
+    --egy-primary: #C8832A; /* Rich Ochre / Antique Gold */
+    --egy-dark: #1E120A; /* Dark Pharaoh Brown */
+    --egy-light: #FDF9F3; /* Soft Papyrus Alabaster */
+    --egy-accent: #E8A045; /* Radiant Sun Amber */
+    --egy-muted-gold: #b37424;
+}
+
+/* Global Font Schemes */
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--egy-light);
+    color: #333333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6,
+.page-title, .table thead th {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Structure Formatting */
+.inner-page-wrapper {
+    padding-top: 120px;
+    padding-bottom: 60px;
+    flex: 1 0 auto;
+}
+
+/* Navbar Restyling */
+#mainNav {
+    background-color: rgba(30, 18, 10, 0.95);
+    border-bottom: 2px solid var(--egy-primary);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease-in-out;
+}
+
+/* If transparent on home page before scrolling */
+@media (min-width: 992px) {
+    body:has(.inner-page-wrapper) #mainNav {
+        background-color: var(--egy-dark);
+    }
+}
+
+#mainNav .navbar-brand {
+    font-family: 'Cinzel Decorative', serif;
+    color: #FFFFFF;
+    font-weight: 900;
+    letter-spacing: 2px;
+    font-size: 1.3rem;
+}
+
+    #mainNav .navbar-brand .brand-gold {
+        color: var(--egy-accent);
+    }
+
+    #mainNav .navbar-brand .brand-icon {
+        font-size: 1.4rem;
+    }
+
+#mainNav .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 16px !important;
+    transition: all 0.2s ease;
+}
+
+    #mainNav .nav-link:hover,
+    #mainNav .nav-link:focus,
+    #mainNav .dropdown:hover .nav-link {
+        color: var(--egy-accent) !important;
+    }
+
+/* Responsive Authentication Buttons */
+#mainNav .nav-auth-btn {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-align: center;
+}
+
+    #mainNav .nav-auth-btn.auth-register {
+        background-color: var(--egy-primary);
+        color: #FFFFFF !important;
+        border-color: var(--egy-primary);
+    }
+
+        #mainNav .nav-auth-btn.auth-register:hover {
+            background-color: var(--egy-accent) !important;
+            border-color: var(--egy-accent);
+            color: var(--egy-dark) !important;
+        }
+
+#mainNav .nav-spacer {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1.2rem;
+}
+
+/* Mobile Toggler Navigation Formatting */
+.navbar-toggler {
+    border: 1px solid var(--egy-primary);
+    color: #FFFFFF;
+    padding: 0.4rem 0.8rem;
+}
+
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 0.25rem rgba(200, 131, 42, 0.25);
+    }
+
+/* Dropdown Custom Styles */
+.dropdown-menu-dark {
+    background-color: var(--egy-dark);
+    border: 1px solid var(--egy-primary);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+    .dropdown-menu-dark .dropdown-item {
+        font-family: 'Cinzel', serif;
+        font-size: 0.8rem;
+        padding: 10px 20px;
+        color: #F5E6D3;
+    }
+
+        .dropdown-menu-dark .dropdown-item:hover {
+            background-color: var(--egy-primary);
+            color: #FFFFFF;
+        }
+
+/* Typography Elements */
+.page-title {
+    color: var(--egy-dark);
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--egy-primary);
+    padding-bottom: 12px;
+    margin-bottom: 30px;
+    display: inline-block;
+}
+
+/* Tables Layout Overrides */
+.table {
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+    .table thead {
+        background-color: var(--egy-dark);
+        color: #FFFFFF;
+    }
+
+        .table thead th {
+            border-bottom: 2px solid var(--egy-primary);
+            padding: 14px;
+        }
+
+/* Custom UI Form Control Focusing Rules */
+.form-control:focus, .form-select:focus {
+    border-color: var(--egy-primary);
+    box-shadow: 0 0 0 0.25rem rgba(200, 131, 42, 0.2);
+}
+
+/* =============================================
+   + ADD Button (btn-success)
+   ============================================= */
+.btn-success {
+    background-color: #2E7D32 !important;
+    border-color: #2E7D32 !important;
+    color: white !important;
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+    .btn-success:hover,
+    .btn-success:focus {
+        background-color: #1B5E20 !important;
+        border-color: #1B5E20 !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.35);
+        transform: translateY(-1px);
+    }
+
+/* =============================================
+   EXPLORE NOW - Override btn-primary in Hero
+   ============================================= */
+.masthead .btn-primary {
+    background-color: var(--egy-primary) !important;
+    border-color: var(--egy-primary) !important;
+    color: white !important;
+}
+
+    .masthead .btn-primary:hover,
+    .masthead .btn-primary:focus {
+        background-color: var(--egy-accent) !important;
+        border-color: var(--egy-accent) !important;
+        color: var(--egy-dark) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(200, 131, 42, 0.4);
+    }
+/* =============================================
+   EXPLORE NOW Button (btn-primary في الـ Hero)
+   ============================================= */
+.masthead .btn-primary {
+    background-color: var(--egy-primary);
+    border-color: var(--egy-primary);
+    color: white;
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 14px 40px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+    .masthead .btn-primary:hover,
+    .masthead .btn-primary:focus {
+        background-color: #E8A045;
+        border-color: #E8A045;
+        color: #2C1A0E;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(200, 131, 42, 0.4);
+    }
+/* Filter Bar - Active Status Button */
+.btn-group .btn-primary {
+    background-color: var(--egy-primary);
+    border-color: var(--egy-primary);
+    color: white;
+}
+
+    .btn-group .btn-primary:hover,
+    .btn-group .btn-primary:focus {
+        background-color: var(--egy-accent);
+        border-color: var(--egy-accent);
+        color: var(--egy-dark);
+    }
+
+/* Filter Outline Buttons */
+.btn-group .btn-outline-secondary {
+    color: #555;
+    border-color: #ddd;
+}
+
+    .btn-group .btn-outline-secondary:hover {
+        background-color: var(--egy-light);
+        border-color: var(--egy-primary);
+        color: var(--egy-primary);
+    }
+/* App Footer Layout */
+.main-footer {
+    background-color: var(--egy-dark);
+    border-top: 3px solid var(--egy-primary);
+    padding: 25px 0;
+    color: #FFFFFF;
+    margin-top: auto;
+}
+
+    .main-footer .footer-logo {
+        font-family: 'Cinzel Decorative', serif;
+        color: var(--egy-accent);
+        font-weight: 700;
+    }
+#mainNav,
+#mainNav.navbar-shrink,
+#mainNav.navbar-scrolled {
+    background-color: var(--egy-dark) !important;
+    border-bottom: 2px solid var(--egy-primary) !important;
+}
+
+    #mainNav.navbar-shrink .nav-link,
+    #mainNav.navbar-scrolled .nav-link {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    #mainNav.navbar-shrink .navbar-brand,
+    #mainNav.navbar-scrolled .navbar-brand {
+        color: #FFFFFF !important;
+    }
+.btn-sm {
+    padding: 6px 12px; /* Adjust these values: top/bottom left/right */
+    margin:5px;
+}

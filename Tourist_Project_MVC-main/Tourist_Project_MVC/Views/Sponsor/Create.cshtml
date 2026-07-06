@@ -1,0 +1,64 @@
+﻿@using Tourist_Project_MVC.View_Model
+@model sponsorViewModel
+
+@{
+    ViewData["Title"] = "Add Sponsor";
+}
+
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+
+        <!-- Card Header -->
+        <div class="card-header py-3"
+             style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+            <h4 class="text-white mb-0">
+                <i class="bi bi-plus-circle-fill me-2"></i> Add New Sponsor
+            </h4>
+        </div>
+
+        <div class="card-body p-4">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Type" class="form-label fw-bold"></label>
+                    <input asp-for="Type" class="form-control" />
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="City" class="form-label fw-bold"></label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ContactInfo" class="form-label fw-bold"></label>
+                    <input asp-for="ContactInfo" class="form-control" type="number" />
+                    <span asp-validation-for="ContactInfo" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="bi bi-check-lg me-1"></i> Save
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-x-lg me-1"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

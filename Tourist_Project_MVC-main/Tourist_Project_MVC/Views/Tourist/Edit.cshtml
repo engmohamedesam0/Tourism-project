@@ -1,0 +1,97 @@
+﻿@model Tourist_Project_MVC.Models.Tourist
+
+@{
+    ViewData["Title"] = "Edit Tourist";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container mt-4" style="max-width: 700px;">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+
+            <div class="card-header py-3"
+                 style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+                <h4 class="text-white mb-0">
+                    <i class="bi bi-pencil-fill me-2"></i> Edit Tourist
+                </h4>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="RegisterDate" />
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-bold"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Nationality" class="form-label fw-bold"></label>
+                        <input asp-for="Nationality" class="form-control" />
+                        <span asp-validation-for="Nationality" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-bold"></label>
+                        <input asp-for="Email" class="form-control" type="email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label fw-bold"></label>
+                        <input asp-for="Password" class="form-control" type="password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="IdNumber" class="form-label fw-bold">ID Number</label>
+                        <input asp-for="IdNumber" class="form-control" />
+                        <span asp-validation-for="IdNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Passport" class="form-label fw-bold"></label>
+                        <input asp-for="Passport" class="form-control" />
+                        <span asp-validation-for="Passport" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="point_Balance" class="form-label fw-bold">
+                            Point Balance
+                        </label>
+                        <input asp-for="point_Balance" class="form-control" type="number" />
+                        <span asp-validation-for="point_Balance" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Status" class="form-label fw-bold">Tourist Status</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="Active">🟢 Active</option>
+                            <option value="Inactive">🔴 Inactive</option>
+                            <option value="Suspended">🟡 Suspended</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-warning px-4">
+                            <i class="bi bi-check-lg me-1"></i> Update
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-x-lg me-1"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

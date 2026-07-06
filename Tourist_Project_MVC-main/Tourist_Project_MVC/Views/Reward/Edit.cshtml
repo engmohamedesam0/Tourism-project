@@ -1,0 +1,71 @@
+﻿@model AddNewRewardVM
+
+@{
+    ViewData["Title"] = "Edit";
+    SelectList SponsorOptions = new SelectList(Model.Sponsors, "Id", "Name");
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container mt-4">
+        <h2>✏️ Edit Mission</h2>
+        <hr />
+
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="RewardType" class="form-label"></label>
+                <input asp-for="RewardType" class="form-control" />
+                <span asp-validation-for="RewardType" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PointsRequired" class="form-label"></label>
+                <input asp-for="PointsRequired" class="form-control" type="number" />
+                <span asp-validation-for="PointsRequired" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="QuantityAvailable" class="form-label"></label>
+                <input asp-for="QuantityAvailable" class="form-control" type="number" />
+                <span asp-validation-for="QuantityAvailable" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ExpirationDate" class="form-label"></label>
+                <input asp-for="ExpirationDate" class="form-control" type="date" />
+                <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+            </div>
+
+            <label asp-for="Sponsors" class="control-label"></label>
+            <select asp-for="SponsorId" asp-items="SponsorOptions" class="form form-control">
+                <option value="">--Select Sponsor--</option>
+            </select>
+            <span asp-validation-for="SponsorId" class="text-danger"></span>
+
+
+            <div class="mb-3">
+                <input type="submit" value="Update" class="btn btn-warning" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,33 @@
+﻿@model Reward
+
+@{
+    ViewData["Title"] = "Delete";
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container mt-4">
+        <h2 class="text-danger">🗑️ Delete Reward</h2>
+        <hr />
+        <p class="lead">Are you sure you want to delete <strong>@Model.Title</strong>?</p>
+
+        <dl class="row">
+            <dt class="col-sm-3">Title</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
+
+            <dt class="col-sm-3">Type</dt>
+            <dd class="col-sm-9">@Model.Description</dd>
+
+
+            <dt class="col-sm-3">Points</dt>
+            <dd class="col-sm-9">@Model.QuantityAvailable</dd>
+        </dl>
+
+        <form asp-action="DeleteConfirmed" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+
+}

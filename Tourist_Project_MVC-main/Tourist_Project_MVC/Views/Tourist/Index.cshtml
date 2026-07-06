@@ -1,0 +1,214 @@
+﻿@model IEnumerable<Tourist_Project_MVC.Models.Tourist>
+@{
+    ViewData["Title"] = "Tourists";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title mb-0">🧳 Tourists</h2>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-success px-4">
+                <i class="bi bi-plus-lg me-1"></i> + Add
+            </a>
+        }
+
+
+    </div>
+
+    <div class="filter-bar mb-3">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <form method="get" asp-action="Index" id="filterForm">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" name="search"
+                               class="form-control border-start-0"
+                               placeholder="Search tourists..."
+                               value="@ViewBag.Search" />
+                        <input type="hidden" name="nationality" value="@ViewBag.Nationality" />
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" onchange="window.location.href=this.value">
+                    <option value="@Url.Action("Index", new { search = ViewBag.Search })">
+                        All Nationalities
+                    </option>
+                    @foreach (var nat in ViewBag.Nationalities as List<string> ?? new List<string>())
+                    {
+                        var url = Url.Action("Index", new { search = ViewBag.Search, nationality = nat });
+                        if (ViewBag.Nationality == nat)
+                        {
+                            <option value="@url" selected>@nat</option>
+                        }
+                        else
+                        {
+                            <option value="@url">@nat</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 text-muted small">
+                Total: <strong>@ViewBag.AllCount</strong> tourists
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle destinations-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Nationality</th>
+                    <th>Points</th>
+                    <th>Missions</th>
+                    <th>Trips</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    var missionCount = item.UserMissions?.Count ?? 0;
+                    var completedMissions = item.UserMissions?.Count(m => m.Status == "Completed") ?? 0;
+                    var tripCount = item.TripPlans?.Count ?? 0;
+                    var activeTrips = item.TripPlans?.Count(t => t.Status == "Active") ?? 0;
+
+                    var statusClass = item.Status switch
+                    {
+                        "Active" => "badge-status-active",
+                        "Inactive" => "badge-status-inactive",
+                        "Suspended" => "badge-status-pending",
+                        _ => "badge-status-active"
+                    };
+
+                    <tr>
+                        <td class="fw-bold text-muted">@i.ToString("D2")</td>
+                        <td>
+                            <div class="fw-bold">@item.Name</div>
+                            <small class="text-muted">@item.Email</small>
+                        </td>
+                        <td><span class="badge-category">@item.Nationality</span></td>
+                        <td>
+                            <span class="fw-bold" style="color: var(--egy-primary);">
+                                @item.point_Balance pts
+                            </span>
+                        </td>
+                        <td>
+                            <i class="bi bi-trophy-fill text-warning me-1"></i>
+                            <strong>@missionCount</strong>
+                            <small class="text-muted">(@completedMissions done)</small>
+                        </td>
+                        <td>
+                            <i class="bi bi-map-fill text-info me-1"></i>
+                            <strong>@tripCount</strong>
+                            <small class="text-muted">(@activeTrips active)</small>
+                        </td>
+                        <td>
+                            <span class="badge-status @statusClass">@item.Status</span>
+                        </td>
+                        <td>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-info" title="Details">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-warning" title="Edit">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Guests only view</span>
+                            }
+                        </td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-people" style="font-size:3rem; color:var(--egy-primary);"></i>
+            <p class="text-muted mt-2">No tourists found.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <style>
+        .filter-bar {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .destinations-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .badge-category {
+            background-color: #FDF6EC;
+            color: var(--egy-primary);
+            border: 1px solid var(--egy-accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .badge-status {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .badge-status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .badge-status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+    </style>
+    <script>
+        document.querySelector('input[name="search"]').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') document.getElementById('filterForm').submit();
+        });
+    </script>
+}
