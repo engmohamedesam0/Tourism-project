@@ -253,7 +253,7 @@ namespace Tourist_Project_MVC.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EGYXPLORE.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEOM7OCjj2Qn35RIy2ZkWbwA5OiG6BP0kf501wx6tAaZeWYV8w4SiIUX35viVhiAmgw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKAL8njrbJvg9ETwynEH//f1WRUeqjGkQwDjyymt3nZ80AjWGoDryl5K+MtnAPrRuw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "STATIC-STAMP-12345",
                             TwoFactorEnabled = false,

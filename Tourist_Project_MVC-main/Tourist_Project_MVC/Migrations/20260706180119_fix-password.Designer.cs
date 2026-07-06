@@ -12,8 +12,8 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    [Migration("20260704164259_InitialCreate1")]
-    partial class InitialCreate1
+    [Migration("20260706180119_fix-password")]
+    partial class fixpassword
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -256,7 +256,7 @@ namespace Tourist_Project_MVC.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EGYXPLORE.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEOM7OCjj2Qn35RIy2ZkWbwA5OiG6BP0kf501wx6tAaZeWYV8w4SiIUX35viVhiAmgw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKAL8njrbJvg9ETwynEH//f1WRUeqjGkQwDjyymt3nZ80AjWGoDryl5K+MtnAPrRuw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "STATIC-STAMP-12345",
                             TwoFactorEnabled = false,
@@ -863,6 +863,9 @@ namespace Tourist_Project_MVC.Migrations
                     b.Property<DateTime>("RegisterDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("point_Balance")
                         .HasColumnType("int");
 
@@ -880,6 +883,7 @@ namespace Tourist_Project_MVC.Migrations
                             Nationality = "Egyptian",
                             Password = "HashedPass123",
                             RegisterDate = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Active",
                             point_Balance = 350
                         },
                         new
@@ -891,6 +895,7 @@ namespace Tourist_Project_MVC.Migrations
                             Passport = "US987654321",
                             Password = "HashedPass456",
                             RegisterDate = new DateTime(2026, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Active",
                             point_Balance = 120
                         },
                         new
@@ -902,6 +907,7 @@ namespace Tourist_Project_MVC.Migrations
                             Passport = "DE456789123",
                             Password = "HashedPass789",
                             RegisterDate = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Active",
                             point_Balance = 200
                         },
                         new
@@ -913,6 +919,7 @@ namespace Tourist_Project_MVC.Migrations
                             Passport = "JP321654987",
                             Password = "HashedPassABC",
                             RegisterDate = new DateTime(2026, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Active",
                             point_Balance = 80
                         },
                         new
@@ -924,6 +931,7 @@ namespace Tourist_Project_MVC.Migrations
                             Nationality = "Egyptian",
                             Password = "HashedPassXYZ",
                             RegisterDate = new DateTime(2026, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Active",
                             point_Balance = 500
                         });
                 });
@@ -1066,6 +1074,10 @@ namespace Tourist_Project_MVC.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1085,6 +1097,7 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 1,
                             EndDate = new DateTime(2026, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2026, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Active",
                             Title = "Classic Egypt Tour",
                             TouristId = 2
                         },
@@ -1093,6 +1106,7 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 2,
                             EndDate = new DateTime(2026, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2026, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Active",
                             Title = "Hidden Wonders of Egypt",
                             TouristId = 3
                         },
@@ -1101,6 +1115,7 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 3,
                             EndDate = new DateTime(2026, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Active",
                             Title = "Nile Valley Explorer",
                             TouristId = 1
                         });
