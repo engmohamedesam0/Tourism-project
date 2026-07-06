@@ -12,8 +12,8 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    [Migration("20260706180119_fix-password")]
-    partial class fixpassword
+    [Migration("20260706205009_TouristApplicationUserFk")]
+    partial class TouristApplicationUserFk
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -295,8 +295,14 @@ namespace Tourist_Project_MVC.Migrations
                     b.Property<DateTime?>("OpeningHours")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal?>("Rating")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<string>("Status")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tags")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("TicketPrice")
@@ -319,7 +325,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 29.9792f,
                             Long = 31.1342f,
                             Name = "The Great Pyramids of Giza",
+                            Rating = 4.8m,
                             Status = "Active",
+                            Tags = "UNESCO, Wonder, Pyramid",
                             TicketPrice = 200.00m,
                             Visits = 18200
                         },
@@ -332,7 +340,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 29.9753f,
                             Long = 31.1376f,
                             Name = "The Great Sphinx",
+                            Rating = 4.7m,
                             Status = "Active",
+                            Tags = "Monument, Statue, Free Entry",
                             TicketPrice = 0.00m,
                             Visits = 15600
                         },
@@ -345,7 +355,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 25.7188f,
                             Long = 32.6573f,
                             Name = "Karnak Temple Complex",
+                            Rating = 4.6m,
                             Status = "Active",
+                            Tags = "Temple, Religious, Columns",
                             TicketPrice = 150.00m,
                             Visits = 12450
                         },
@@ -358,7 +370,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 25.7402f,
                             Long = 32.6014f,
                             Name = "Valley of the Kings",
+                            Rating = 4.7m,
                             Status = "Active",
+                            Tags = "Tomb, Archaeological, Royal",
                             TicketPrice = 180.00m,
                             Visits = 10300
                         },
@@ -371,7 +385,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 22.3372f,
                             Long = 31.6258f,
                             Name = "Abu Simbel Temples",
+                            Rating = 4.9m,
                             Status = "Active",
+                            Tags = "Temple, Ramses, UNESCO",
                             TicketPrice = 220.00m,
                             Visits = 8900
                         },
@@ -384,7 +400,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 31.2141f,
                             Long = 29.8858f,
                             Name = "Qaitbay Citadel",
+                            Rating = 4.3m,
                             Status = "Active",
+                            Tags = "Fortress, Historical, Sea View",
                             TicketPrice = 40.00m,
                             Visits = 7200
                         },
@@ -397,7 +415,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 30.0478f,
                             Long = 31.2336f,
                             Name = "Egyptian Museum",
+                            Rating = 4.5m,
                             Status = "Active",
+                            Tags = "Museum, Artifacts, Mummies",
                             TicketPrice = 100.00m,
                             Visits = 22100
                         },
@@ -410,7 +430,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 28.5569f,
                             Long = 33.9758f,
                             Name = "Saint Catherine's Monastery",
+                            Rating = 4.4m,
                             Status = "Active",
+                            Tags = "Monastery, Religious, Mountain",
                             TicketPrice = 50.00m,
                             Visits = 4500
                         },
@@ -423,7 +445,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 29.2031f,
                             Long = 25.5195f,
                             Name = "Siwa Oasis",
+                            Rating = 4.6m,
                             Status = "Active",
+                            Tags = "Oasis, Nature, Spring",
                             TicketPrice = 30.00m,
                             Visits = 3200
                         },
@@ -436,7 +460,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 29.2711f,
                             Long = 30.0389f,
                             Name = "Wadi El Hitan (Whale Valley)",
+                            Rating = 4.2m,
                             Status = "Pending",
+                            Tags = "Fossils, Nature, Desert",
                             TicketPrice = 25.00m,
                             Visits = 1800
                         },
@@ -449,7 +475,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 26.1415f,
                             Long = 32.6697f,
                             Name = "Dendera Temple",
+                            Rating = 4.5m,
                             Status = "Active",
+                            Tags = "Temple, Hathor, Ceiling",
                             TicketPrice = 80.00m,
                             Visits = 5600
                         },
@@ -462,7 +490,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 30.9769f,
                             Long = 31.8731f,
                             Name = "Tanis (Ancient City)",
+                            Rating = 4.0m,
                             Status = "Pending",
+                            Tags = "Ruins, Archaeological, Hidden",
                             TicketPrice = 20.00m,
                             Visits = 900
                         },
@@ -475,7 +505,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 29.8086f,
                             Long = 31.2214f,
                             Name = "Dahshur Pyramids",
+                            Rating = 4.3m,
                             Status = "Active",
+                            Tags = "Pyramid, Archaeological, Quiet",
                             TicketPrice = 60.00m,
                             Visits = 4100
                         },
@@ -488,7 +520,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 29.9884f,
                             Long = 31.1188f,
                             Name = "The Grand Egyptian Museum",
+                            Rating = 4.9m,
                             Status = "Active",
+                            Tags = "Museum, Modern, Tutankhamun",
                             TicketPrice = 250.00m,
                             Visits = 9800
                         },
@@ -501,7 +535,9 @@ namespace Tourist_Project_MVC.Migrations
                             Lat = 30.0287f,
                             Long = 31.2599f,
                             Name = "Saladin Citadel",
+                            Rating = 4.2m,
                             Status = "Inactive",
+                            Tags = "Fortress, Historical, Mosque",
                             TicketPrice = 60.00m,
                             Visits = 6700
                         });
@@ -838,6 +874,10 @@ namespace Tourist_Project_MVC.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -870,6 +910,8 @@ namespace Tourist_Project_MVC.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Tourists");
 
@@ -1282,6 +1324,14 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired();
 
                     b.Navigation("Sponsor");
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.Tourist", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.TripDestination", b =>

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tourist_Project_MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class fixpassword : Migration
+    public partial class Kilo_Edits : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -66,6 +66,8 @@ namespace Tourist_Project_MVC.Migrations
                     Long = table.Column<float>(type: "real", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TicketPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    Rating = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Visits = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -392,24 +394,24 @@ namespace Tourist_Project_MVC.Migrations
 
             migrationBuilder.InsertData(
                 table: "Destinations",
-                columns: new[] { "Id", "Category", "City", "Description", "Lat", "Long", "Name", "OpeningHours", "Status", "TicketPrice", "Visits" },
+                columns: new[] { "Id", "Category", "City", "Description", "Lat", "Long", "Name", "OpeningHours", "Rating", "Status", "Tags", "TicketPrice", "Visits" },
                 values: new object[,]
                 {
-                    { 1, "Archaeological", "Giza", "One of the Seven Wonders of the Ancient World.", 29.9792f, 31.1342f, "The Great Pyramids of Giza", null, "Active", 200.00m, 18200 },
-                    { 2, "Archaeological", "Giza", "The iconic limestone statue on the Giza Plateau.", 29.9753f, 31.1376f, "The Great Sphinx", null, "Active", 0.00m, 15600 },
-                    { 3, "Temple", "Luxor", "The largest ancient religious site in the world.", 25.7188f, 32.6573f, "Karnak Temple Complex", null, "Active", 150.00m, 12450 },
-                    { 4, "Archaeological", "Luxor", "Royal burial ground of pharaohs from the New Kingdom era.", 25.7402f, 32.6014f, "Valley of the Kings", null, "Active", 180.00m, 10300 },
-                    { 5, "Temple", "Aswan", "Rock-cut temples of Ramesses II on the shores of Lake Nasser.", 22.3372f, 31.6258f, "Abu Simbel Temples", null, "Active", 220.00m, 8900 },
-                    { 6, "Historical", "Alexandria", "A 15th-century defensive fortress in Alexandria.", 31.2141f, 29.8858f, "Qaitbay Citadel", null, "Active", 40.00m, 7200 },
-                    { 7, "Museum", "Cairo", "Home to the world's largest collection of ancient Egyptian artifacts.", 30.0478f, 31.2336f, "Egyptian Museum", null, "Active", 100.00m, 22100 },
-                    { 8, "Religious", "South Sinai", "One of the oldest Christian monasteries in the world.", 28.5569f, 33.9758f, "Saint Catherine's Monastery", null, "Active", 50.00m, 4500 },
-                    { 9, "Natural", "Matrouh", "A remote oasis home to the Oracle Temple of Amun.", 29.2031f, 25.5195f, "Siwa Oasis", null, "Active", 30.00m, 3200 },
-                    { 10, "Natural", "Fayoum", "UNESCO World Heritage Site with fossils of ancient whales.", 29.2711f, 30.0389f, "Wadi El Hitan (Whale Valley)", null, "Pending", 25.00m, 1800 },
-                    { 11, "Temple", "Qena", "One of Egypt's best-preserved temples dedicated to Hathor.", 26.1415f, 32.6697f, "Dendera Temple", null, "Active", 80.00m, 5600 },
-                    { 12, "Archaeological", "Sharqia", "The forgotten pharaonic capital hiding undiscovered royal treasures.", 30.9769f, 31.8731f, "Tanis (Ancient City)", null, "Pending", 20.00m, 900 },
-                    { 13, "Archaeological", "Giza", "Home to the Bent Pyramid and Red Pyramid built by Pharaoh Sneferu.", 29.8086f, 31.2214f, "Dahshur Pyramids", null, "Active", 60.00m, 4100 },
-                    { 14, "Museum", "Giza", "The world's largest archaeological museum with over 100,000 artifacts.", 29.9884f, 31.1188f, "The Grand Egyptian Museum", null, "Active", 250.00m, 9800 },
-                    { 15, "Historical", "Cairo", "A medieval Islamic fortification built by Saladin in the 12th century.", 30.0287f, 31.2599f, "Saladin Citadel", null, "Inactive", 60.00m, 6700 }
+                    { 1, "Archaeological", "Giza", "One of the Seven Wonders of the Ancient World.", 29.9792f, 31.1342f, "The Great Pyramids of Giza", null, 4.8m, "Active", "UNESCO, Wonder, Pyramid", 200.00m, 18200 },
+                    { 2, "Archaeological", "Giza", "The iconic limestone statue on the Giza Plateau.", 29.9753f, 31.1376f, "The Great Sphinx", null, 4.7m, "Active", "Monument, Statue, Free Entry", 0.00m, 15600 },
+                    { 3, "Temple", "Luxor", "The largest ancient religious site in the world.", 25.7188f, 32.6573f, "Karnak Temple Complex", null, 4.6m, "Active", "Temple, Religious, Columns", 150.00m, 12450 },
+                    { 4, "Archaeological", "Luxor", "Royal burial ground of pharaohs from the New Kingdom era.", 25.7402f, 32.6014f, "Valley of the Kings", null, 4.7m, "Active", "Tomb, Archaeological, Royal", 180.00m, 10300 },
+                    { 5, "Temple", "Aswan", "Rock-cut temples of Ramesses II on the shores of Lake Nasser.", 22.3372f, 31.6258f, "Abu Simbel Temples", null, 4.9m, "Active", "Temple, Ramses, UNESCO", 220.00m, 8900 },
+                    { 6, "Historical", "Alexandria", "A 15th-century defensive fortress in Alexandria.", 31.2141f, 29.8858f, "Qaitbay Citadel", null, 4.3m, "Active", "Fortress, Historical, Sea View", 40.00m, 7200 },
+                    { 7, "Museum", "Cairo", "Home to the world's largest collection of ancient Egyptian artifacts.", 30.0478f, 31.2336f, "Egyptian Museum", null, 4.5m, "Active", "Museum, Artifacts, Mummies", 100.00m, 22100 },
+                    { 8, "Religious", "South Sinai", "One of the oldest Christian monasteries in the world.", 28.5569f, 33.9758f, "Saint Catherine's Monastery", null, 4.4m, "Active", "Monastery, Religious, Mountain", 50.00m, 4500 },
+                    { 9, "Natural", "Matrouh", "A remote oasis home to the Oracle Temple of Amun.", 29.2031f, 25.5195f, "Siwa Oasis", null, 4.6m, "Active", "Oasis, Nature, Spring", 30.00m, 3200 },
+                    { 10, "Natural", "Fayoum", "UNESCO World Heritage Site with fossils of ancient whales.", 29.2711f, 30.0389f, "Wadi El Hitan (Whale Valley)", null, 4.2m, "Pending", "Fossils, Nature, Desert", 25.00m, 1800 },
+                    { 11, "Temple", "Qena", "One of Egypt's best-preserved temples dedicated to Hathor.", 26.1415f, 32.6697f, "Dendera Temple", null, 4.5m, "Active", "Temple, Hathor, Ceiling", 80.00m, 5600 },
+                    { 12, "Archaeological", "Sharqia", "The forgotten pharaonic capital hiding undiscovered royal treasures.", 30.9769f, 31.8731f, "Tanis (Ancient City)", null, 4.0m, "Pending", "Ruins, Archaeological, Hidden", 20.00m, 900 },
+                    { 13, "Archaeological", "Giza", "Home to the Bent Pyramid and Red Pyramid built by Pharaoh Sneferu.", 29.8086f, 31.2214f, "Dahshur Pyramids", null, 4.3m, "Active", "Pyramid, Archaeological, Quiet", 60.00m, 4100 },
+                    { 14, "Museum", "Giza", "The world's largest archaeological museum with over 100,000 artifacts.", 29.9884f, 31.1188f, "The Grand Egyptian Museum", null, 4.9m, "Active", "Museum, Modern, Tutankhamun", 250.00m, 9800 },
+                    { 15, "Historical", "Cairo", "A medieval Islamic fortification built by Saladin in the 12th century.", 30.0287f, 31.2599f, "Saladin Citadel", null, 4.2m, "Inactive", "Fortress, Historical, Mosque", 60.00m, 6700 }
                 });
 
             migrationBuilder.InsertData(

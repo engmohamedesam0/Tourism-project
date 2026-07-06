@@ -13,6 +13,10 @@
         public DateTime RegisterDate { get; set; }
         public string? Status { get; set; } = "Active";
 
+        // FK to the Identity login record (nullable: Tourists created by an Admin
+        // via TouristController may not have a login account).
+        public string? ApplicationUserId { get; set; }
+
         public List<TripPlan>? TripPlans { get; set; }
         public List<UserMission>? UserMissions { get; set; }
         public List<Redemption>? Redemptions { get; set; }

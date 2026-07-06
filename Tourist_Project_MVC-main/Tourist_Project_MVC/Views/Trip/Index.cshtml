@@ -1,0 +1,296 @@
+@model Tourist_Project_MVC.View_Model.TripBuilderVM
+
+@{
+    ViewData["Title"] = "My Trip";
+    var tourist = ViewBag.Tourist as Tourist_Project_MVC.Models.Tourist;
+    var myTrips = (ViewBag.MyTrips as IEnumerable<Tourist_Project_MVC.Models.TripPlan>) ?? new List<Tourist_Project_MVC.Models.TripPlan>();
+}
+
+<div class="container mt-4" style="max-width: 1200px;">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <h2 class="page-title mb-0">🗺️ Plan Your Trip</h2>
+        @if (tourist != null)
+        {
+            <span class="text-muted small">Planning as <strong>@tourist.Name</strong></span>
+        }
+    </div>
+
+    <!-- EXISTING TRIPS TIMELINE -->
+    @if (myTrips.Any())
+    {
+        <h4 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">My Trips</h4>
+        <div class="trip-timeline mb-5">
+            @foreach (var trip in myTrips)
+            {
+                var statusBadge = trip.Status switch
+                {
+                    "Active" => "badge-status-active",
+                    "Completed" => "badge-status-pending",
+                    "Cancelled" => "badge-status-inactive",
+                    _ => "badge-status-active"
+                };
+                <div class="trip-timeline-item">
+                    <div class="trip-timeline-dot"></div>
+                    <div class="card trip-card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="mb-1" style="font-family:'Cinzel',serif; color:var(--egy-dark);">@trip.Title</h5>
+                                <span class="badge-status @statusBadge">@trip.Status</span>
+                            </div>
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                @trip.StartDate.ToString("MMM dd, yyyy") &ndash; @trip.EndDate.ToString("MMM dd, yyyy")
+                            </div>
+                            <div class="trip-stops">
+                                @foreach (var td in trip.TripDestinations.OrderBy(x => x.Visit_Order))
+                                {
+                                    <span class="trip-stop-pill">
+                                        <i class="bi bi-geo-alt-fill me-1"></i>@td.Destination?.Name
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- BUILDER -->
+    <div class="row g-4">
+            <!-- Picker -->
+            <div class="col-lg-5">
+                <h4 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">1. Pick Destinations</h4>
+                <form asp-action="Create" method="post" id="tripForm">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Trip Title</label>
+                        <input asp-for="Title" class="form-control" placeholder="e.g. Cairo & Luxor Escape" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label fw-semibold">Start</label>
+                            <input asp-for="StartDate" class="form-control" type="date" />
+                        </div>
+                        <div class="col">
+                            <label class="form-label fw-semibold">End</label>
+                            <input asp-for="EndDate" class="form-control" type="date" />
+                        </div>
+                    </div>
+
+                    <div class="destination-picker">
+                        @for (int i = 0; i < Model.Stops.Count; i++)
+                        {
+                            <div class="picker-row">
+                                <div class="form-check">
+                                    <input type="hidden" asp-for="Stops[i].DestinationId" />
+                                    <input type="hidden" asp-for="Stops[i].DestinationName" />
+                                    <input type="hidden" asp-for="Stops[i].City" />
+                                    <input class="form-check-input stop-select"
+                                           type="checkbox"
+                                           asp-for="Stops[i].Selected"
+                                           id="stop_@i" />
+                                    <label class="form-check-label" for="stop_@i">
+                                        <strong>@Model.Stops[i].DestinationName</strong>
+                                        <small class="text-muted d-block">@Model.Stops[i].City</small>
+                                    </label>
+                                </div>
+                                <div class="picker-dates d-none">
+                                    <input asp-for="Stops[i].ArrivalDate" class="form-control form-control-sm" type="date" />
+                                    <input asp-for="Stops[i].DepartureDate" class="form-control form-control-sm" type="date" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Live itinerary preview -->
+                    <div class="mt-3">
+                        <h6 class="text-muted">Itinerary preview</h6>
+                        <ol class="itinerary-preview mb-3" id="itineraryPreview"></ol>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-save me-1"></i> Save Trip
+                    </button>
+                </form>
+            </div>
+
+            <!-- Running itinerary -->
+            <div class="col-lg-7">
+                <h4 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">2. Your Itinerary</h4>
+                <div class="itinerary-board" id="itineraryBoard">
+                    <p class="text-muted" id="emptyHint">
+                        <i class="bi bi-arrow-left-circle me-1"></i>
+                        Select destinations on the left to build your day-by-day plan.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+<style>
+    .trip-timeline {
+        border-left: 2px solid var(--egy-primary);
+        padding-left: 22px;
+        margin-left: 8px;
+    }
+
+    .trip-timeline-item {
+        position: relative;
+        margin-bottom: 18px;
+    }
+
+    .trip-timeline-dot {
+        position: absolute;
+        left: -30px;
+        top: 18px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--egy-primary);
+        border: 3px solid #fff;
+        box-shadow: 0 0 0 2px var(--egy-primary);
+    }
+
+    .trip-card {
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        border-radius: 14px;
+    }
+
+    .trip-stop-pill {
+        display: inline-block;
+        background: var(--egy-light);
+        border: 1px solid rgba(200, 131, 42, 0.35);
+        color: var(--egy-muted-gold);
+        border-radius: 14px;
+        padding: 3px 10px;
+        font-size: 0.78rem;
+        margin: 2px 4px 2px 0;
+    }
+
+    .destination-picker {
+        max-height: 360px;
+        overflow-y: auto;
+        border: 1px solid rgba(200, 131, 42, 0.2);
+        border-radius: 12px;
+        padding: 6px;
+        background: #fff;
+    }
+
+    .picker-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-bottom: 1px solid #f0e7d8;
+    }
+
+        .picker-row:last-child {
+            border-bottom: none;
+        }
+
+    .picker-dates {
+        display: flex;
+        gap: 6px;
+    }
+
+        .picker-dates .form-control {
+            width: 130px;
+        }
+
+    .itinerary-board {
+        background: #fff;
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        border-radius: 14px;
+        padding: 18px;
+        min-height: 320px;
+    }
+
+    .itinerary-stop {
+        display: flex;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px dashed #e7dcc8;
+    }
+
+        .itinerary-stop:last-child {
+            border-bottom: none;
+        }
+
+    .itinerary-order {
+        flex: 0 0 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--egy-primary);
+        color: #fff;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Cinzel', serif;
+    }
+
+    .itinerary-preview li {
+        color: var(--egy-muted-gold);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script>
+    (function () {
+        var $checks = $('.stop-select');
+        var $board = $('#itineraryBoard');
+        var $empty = $('#emptyHint');
+        var $preview = $('#itineraryPreview');
+
+        function refresh() {
+            var selected = $checks.filter(':checked');
+            $preview.empty();
+
+            if (selected.length === 0) {
+                $empty.show();
+                $board.find('.itinerary-stop').remove();
+                return;
+            }
+
+            $empty.hide();
+            $board.find('.itinerary-stop').remove();
+
+            selected.each(function (idx) {
+                var $row = $(this).closest('.picker-row');
+                var name = $row.find('label strong').text();
+                var arr = $row.find('input[type=date]').eq(0).val();
+                var dep = $row.find('input[type=date]').eq(1).val();
+
+                // board
+                var $stop = $('<div class="itinerary-stop"></div>');
+                $stop.append('<div class="itinerary-order">' + (idx + 1) + '</div>');
+                $stop.append('<div><strong>' + name + '</strong>' +
+                    '<div class="text-muted small">' +
+                    (arr ? 'Arrive ' + arr : '') +
+                    (dep ? ' &middot; Depart ' + dep : '') + '</div></div>');
+                $board.append($stop);
+
+                // preview list
+                $preview.append('<li>' + name + '</li>');
+            });
+        }
+
+        $checks.on('change', function () {
+            $(this).closest('.picker-row').find('.picker-dates').toggleClass('d-none', !this.checked);
+            refresh();
+        });
+
+        refresh();
+    })();
+</script>
+}

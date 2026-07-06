@@ -29,6 +29,22 @@ namespace Tourist_Project_MVC.Data
                 .Property(d => d.TicketPrice)
                 .HasColumnType("decimal(10, 2)");
 
+            modelBuilder.Entity<Destination>()
+                .Property(d => d.Rating)
+                .HasColumnType("decimal(18, 2)");
+
+            // Link Tourist -> ApplicationUser (Identity login). Nullable FK:
+            // Tourists created directly by an Admin may not have a login account.
+            modelBuilder.Entity<Tourist>()
+                .Property(t => t.ApplicationUserId)
+                .HasMaxLength(450);
+
+            modelBuilder.Entity<Tourist>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(t => t.ApplicationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             // 1. Seed Destinations
             modelBuilder.Entity<Destination>().HasData(
                  new
@@ -39,11 +55,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Archaeological",
                      Lat = 29.9792f,
                      Long = 31.1342f,
-                     Description = "One of the Seven Wonders of the Ancient World.",
-                     TicketPrice = 200.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 18200
+                      Description = "One of the Seven Wonders of the Ancient World.",
+                      TicketPrice = 200.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.8m,
+                      Tags = "UNESCO, Wonder, Pyramid",
+                      Visits = 18200
                  },
                  new
                  {
@@ -53,11 +71,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Archaeological",
                      Lat = 29.9753f,
                      Long = 31.1376f,
-                     Description = "The iconic limestone statue on the Giza Plateau.",
-                     TicketPrice = 0.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 15600
+                      Description = "The iconic limestone statue on the Giza Plateau.",
+                      TicketPrice = 0.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.7m,
+                      Tags = "Monument, Statue, Free Entry",
+                      Visits = 15600
                  },
                  new
                  {
@@ -67,11 +87,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Temple",
                      Lat = 25.7188f,
                      Long = 32.6573f,
-                     Description = "The largest ancient religious site in the world.",
-                     TicketPrice = 150.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 12450
+                      Description = "The largest ancient religious site in the world.",
+                      TicketPrice = 150.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.6m,
+                      Tags = "Temple, Religious, Columns",
+                      Visits = 12450
                  },
                  new
                  {
@@ -81,11 +103,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Archaeological",
                      Lat = 25.7402f,
                      Long = 32.6014f,
-                     Description = "Royal burial ground of pharaohs from the New Kingdom era.",
-                     TicketPrice = 180.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 10300
+                      Description = "Royal burial ground of pharaohs from the New Kingdom era.",
+                      TicketPrice = 180.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.7m,
+                      Tags = "Tomb, Archaeological, Royal",
+                      Visits = 10300
                  },
                  new
                  {
@@ -95,11 +119,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Temple",
                      Lat = 22.3372f,
                      Long = 31.6258f,
-                     Description = "Rock-cut temples of Ramesses II on the shores of Lake Nasser.",
-                     TicketPrice = 220.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 8900
+                      Description = "Rock-cut temples of Ramesses II on the shores of Lake Nasser.",
+                      TicketPrice = 220.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.9m,
+                      Tags = "Temple, Ramses, UNESCO",
+                      Visits = 8900
                  },
                  new
                  {
@@ -109,11 +135,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Historical",
                      Lat = 31.2141f,
                      Long = 29.8858f,
-                     Description = "A 15th-century defensive fortress in Alexandria.",
-                     TicketPrice = 40.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 7200
+                      Description = "A 15th-century defensive fortress in Alexandria.",
+                      TicketPrice = 40.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.3m,
+                      Tags = "Fortress, Historical, Sea View",
+                      Visits = 7200
                  },
                  new
                  {
@@ -123,11 +151,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Museum",
                      Lat = 30.0478f,
                      Long = 31.2336f,
-                     Description = "Home to the world's largest collection of ancient Egyptian artifacts.",
-                     TicketPrice = 100.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 22100
+                      Description = "Home to the world's largest collection of ancient Egyptian artifacts.",
+                      TicketPrice = 100.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.5m,
+                      Tags = "Museum, Artifacts, Mummies",
+                      Visits = 22100
                  },
                  new
                  {
@@ -137,11 +167,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Religious",
                      Lat = 28.5569f,
                      Long = 33.9758f,
-                     Description = "One of the oldest Christian monasteries in the world.",
-                     TicketPrice = 50.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 4500
+                      Description = "One of the oldest Christian monasteries in the world.",
+                      TicketPrice = 50.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.4m,
+                      Tags = "Monastery, Religious, Mountain",
+                      Visits = 4500
                  },
                  new
                  {
@@ -151,11 +183,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Natural",
                      Lat = 29.2031f,
                      Long = 25.5195f,
-                     Description = "A remote oasis home to the Oracle Temple of Amun.",
-                     TicketPrice = 30.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 3200
+                      Description = "A remote oasis home to the Oracle Temple of Amun.",
+                      TicketPrice = 30.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.6m,
+                      Tags = "Oasis, Nature, Spring",
+                      Visits = 3200
                  },
                  new
                  {
@@ -165,11 +199,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Natural",
                      Lat = 29.2711f,
                      Long = 30.0389f,
-                     Description = "UNESCO World Heritage Site with fossils of ancient whales.",
-                     TicketPrice = 25.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Pending",
-                     Visits = 1800
+                      Description = "UNESCO World Heritage Site with fossils of ancient whales.",
+                      TicketPrice = 25.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Pending",
+                      Rating = 4.2m,
+                      Tags = "Fossils, Nature, Desert",
+                      Visits = 1800
                  },
                  new
                  {
@@ -179,11 +215,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Temple",
                      Lat = 26.1415f,
                      Long = 32.6697f,
-                     Description = "One of Egypt's best-preserved temples dedicated to Hathor.",
-                     TicketPrice = 80.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 5600
+                      Description = "One of Egypt's best-preserved temples dedicated to Hathor.",
+                      TicketPrice = 80.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.5m,
+                      Tags = "Temple, Hathor, Ceiling",
+                      Visits = 5600
                  },
                  new
                  {
@@ -193,11 +231,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Archaeological",
                      Lat = 30.9769f,
                      Long = 31.8731f,
-                     Description = "The forgotten pharaonic capital hiding undiscovered royal treasures.",
-                     TicketPrice = 20.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Pending",
-                     Visits = 900
+                      Description = "The forgotten pharaonic capital hiding undiscovered royal treasures.",
+                      TicketPrice = 20.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Pending",
+                      Rating = 4.0m,
+                      Tags = "Ruins, Archaeological, Hidden",
+                      Visits = 900
                  },
                  new
                  {
@@ -207,11 +247,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Archaeological",
                      Lat = 29.8086f,
                      Long = 31.2214f,
-                     Description = "Home to the Bent Pyramid and Red Pyramid built by Pharaoh Sneferu.",
-                     TicketPrice = 60.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 4100
+                      Description = "Home to the Bent Pyramid and Red Pyramid built by Pharaoh Sneferu.",
+                      TicketPrice = 60.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.3m,
+                      Tags = "Pyramid, Archaeological, Quiet",
+                      Visits = 4100
                  },
                  new
                  {
@@ -221,11 +263,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Museum",
                      Lat = 29.9884f,
                      Long = 31.1188f,
-                     Description = "The world's largest archaeological museum with over 100,000 artifacts.",
-                     TicketPrice = 250.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Active",
-                     Visits = 9800
+                      Description = "The world's largest archaeological museum with over 100,000 artifacts.",
+                      TicketPrice = 250.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Active",
+                      Rating = 4.9m,
+                      Tags = "Museum, Modern, Tutankhamun",
+                      Visits = 9800
                  },
                  new
                  {
@@ -235,11 +279,13 @@ namespace Tourist_Project_MVC.Data
                      Category = "Historical",
                      Lat = 30.0287f,
                      Long = 31.2599f,
-                     Description = "A medieval Islamic fortification built by Saladin in the 12th century.",
-                     TicketPrice = 60.00m,
-                     OpeningHours = (DateTime?)null,
-                     Status = "Inactive",
-                     Visits = 6700
+                      Description = "A medieval Islamic fortification built by Saladin in the 12th century.",
+                      TicketPrice = 60.00m,
+                      OpeningHours = (DateTime?)null,
+                      Status = "Inactive",
+                      Rating = 4.2m,
+                      Tags = "Fortress, Historical, Mosque",
+                      Visits = 6700
                  }
              );
 

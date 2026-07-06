@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Tourist_Project_MVC.Models;
+using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -9,10 +10,12 @@ namespace Tourist_Project_MVC.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        private readonly ITouristRepository _touristRepo;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ITouristRepository touristRepo)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this._touristRepo = touristRepo;
         }
         [HttpGet]
         public IActionResult Register()
@@ -34,11 +37,17 @@ namespace Tourist_Project_MVC.Controllers
                 };
                 var identityResult = await userManager.CreateAsync(applicationUser, userFromRequest.Password);
                 
-                if (identityResult.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(applicationUser, "User");
-                    return RedirectToAction("Login");
-                }
+                 if (identityResult.Succeeded)
+                 {
+                     await userManager.AddToRoleAsync(applicationUser, "User");
+
+                     // Link to (or auto-create) the Tourist record for this account so the
+                     // Trip planner works immediately after registration.
+                     var createdUser = await userManager.FindByNameAsync(applicationUser.UserName);
+                     _touristRepo.GetOrCreateByApplicationUser(createdUser);
+
+                     return RedirectToAction("Login");
+                 }
                 foreach (var errorItem in identityResult.Errors)
                 {
                     ModelState.AddModelError("", errorItem.Description);
@@ -63,7 +72,13 @@ namespace Tourist_Project_MVC.Controllers
                     if(passed)
                     {
                         await signInManager.SignInAsync(user, loginUser.RememberMe);
-                        return RedirectToAction("Index", "Tourist");
+
+                        // Role-based landing: Admins stay in the back office,
+                        // Tourists land on the new Explore discovery page.
+                        if (await userManager.IsInRoleAsync(user, "Admin"))
+                            return RedirectToAction("Index", "Tourist");
+
+                        return RedirectToAction("Index", "Explore");
                     }
                 }
                 ModelState.AddModelError("", "Invalid Account");

@@ -14,6 +14,11 @@ namespace Tourist_Project_MVC.Models
         public string? Description { get; set; }
         public decimal? TicketPrice { get; set; }
 
+        // Added for the tourist-facing Explore page (Step 1).
+        // Nullable so existing rows/seeds remain valid until populated.
+        public decimal? Rating { get; set; }
+        public string? Tags { get; set; }
+
         public int Visits { get; set; } = 0;
         public string Status { get; set; } = "Active";
 

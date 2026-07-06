@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tourist_Project_MVC.Data;
 
@@ -11,9 +12,11 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    partial class TouristContextModelSnapshot : ModelSnapshot
+    [Migration("20260706194925_Kilo_Edits")]
+    partial class Kilo_Edits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -293,7 +296,7 @@ namespace Tourist_Project_MVC.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("Rating")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -871,10 +874,6 @@ namespace Tourist_Project_MVC.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -907,8 +906,6 @@ namespace Tourist_Project_MVC.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Tourists");
 
@@ -1321,14 +1318,6 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired();
 
                     b.Navigation("Sponsor");
-                });
-
-            modelBuilder.Entity("Tourist_Project_MVC.Models.Tourist", b =>
-                {
-                    b.HasOne("Tourist_Project_MVC.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.TripDestination", b =>

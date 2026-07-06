@@ -1,0 +1,95 @@
+@{
+    ViewData["Title"] = "About";
+}
+
+<div class="inner-page-wrapper">
+    <div class="container" style="max-width: 1000px;">
+
+        <h2 class="page-title mb-4">About EGYXPLORE</h2>
+
+        <!-- Intro -->
+        <section class="about-block mb-5">
+            <p class="lead" style="color: var(--egy-dark);">
+                [Organization intro goes here — e.g. who we are and our mission to make Egypt's
+                heritage accessible to every traveler.]
+            </p>
+        </section>
+
+        <!-- Mission / Story -->
+        <section class="about-block mb-5">
+            <h3 class="about-subtitle">Our Story</h3>
+            <p class="text-muted">
+                [Organization story goes here — founding, what inspired the platform, and the
+                problem it solves for tourists and local sites.]
+            </p>
+        </section>
+
+        <!-- Values -->
+        <section class="about-block mb-5">
+            <h3 class="about-subtitle">What We Value</h3>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="value-card stat-card">
+                        <i class="bi bi-compass stat-icon"></i>
+                        <h5 style="font-family:'Cinzel',serif;">Discovery</h5>
+                        <p class="small text-muted mb-0">[Value description goes here]</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="value-card stat-card">
+                        <i class="bi bi-robot stat-icon"></i>
+                        <h5 style="font-family:'Cinzel',serif;">Innovation</h5>
+                        <p class="small text-muted mb-0">[Value description goes here]</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="value-card stat-card">
+                        <i class="bi bi-people-fill stat-icon"></i>
+                        <h5 style="font-family:'Cinzel',serif;">Community</h5>
+                        <p class="small text-muted mb-0">[Value description goes here]</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team (placeholder) -->
+        <section class="about-block">
+            <h3 class="about-subtitle">The Team</h3>
+            <p class="text-muted">
+                [Team section goes here — founders, contributors, or partners. Replace with real copy later.]
+            </p>
+        </section>
+
+    </div>
+</div>
+
+@section Scripts {
+<style>
+    .about-block {
+        background: #fff;
+        border: 1px solid rgba(200, 131, 42, 0.2);
+        border-radius: 16px;
+        padding: 24px 28px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .about-subtitle {
+        font-family: 'Cinzel', serif;
+        color: var(--egy-primary);
+        border-bottom: 2px solid rgba(200, 131, 42, 0.3);
+        padding-bottom: 8px;
+        margin-bottom: 16px;
+        display: inline-block;
+    }
+
+    .value-card {
+        background: #fff !important;
+        text-align: center;
+        padding: 28px 18px !important;
+    }
+
+        .value-card:hover {
+            background: #fff !important;
+        }
+</style>
+}
