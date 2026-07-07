@@ -3,6 +3,8 @@ using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
 namespace Tourist_Project_MVC
 {
     public class Program
@@ -13,6 +15,15 @@ namespace Tourist_Project_MVC
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+            builder.Services.Configure<RequestLocalizationOptions>(o =>
+            {
+                o.SetDefaultCulture("en");
+                o.AddSupportedCultures("en", "ar", "es", "de", "zh");
+                o.AddSupportedUICultures("en", "ar", "es", "de", "zh");
+                o.RequestCultureProviders = new[] { new CookieRequestCultureProvider() };
+            });
 
             builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
             builder.Services.AddScoped<ITouristRepository, TouristRepository>();
@@ -36,6 +47,8 @@ namespace Tourist_Project_MVC
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseRouting();
+
+            app.UseRequestLocalization();
 
             app.UseAuthorization();
 

@@ -1,0 +1,276 @@
+@model Tourist_Project_MVC.Models.TripPlan
+
+@{
+    ViewData["Title"] = "Trip Details";
+    var tourist = ViewBag.Tourist as Tourist_Project_MVC.Models.Tourist;
+}
+
+<div class="container mt-4" style="max-width: 1100px;">
+
+    @Html.AntiForgeryToken()
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h2 class="page-title mb-0">🧳 @Model.Title</h2>
+        <a asp-action="Index" class="btn-back">
+            <i class="bi bi-arrow-left me-1"></i> Back to Trip
+        </a>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+        <span class="text-muted">
+            <i class="bi bi-calendar-event me-1"></i>
+            @Model.StartDate.ToString("MMM dd, yyyy") &ndash; @Model.EndDate.ToString("MMM dd, yyyy")
+        </span>
+        @{
+            var statusBadge = Model.Status switch
+            {
+                "Active" => "badge-status-active",
+                "Completed" => "badge-status-pending",
+                "Cancelled" => "badge-status-inactive",
+                "Draft" => "badge-status-draft",
+                _ => "badge-status-active"
+            };
+        }
+        <span class="badge-status @statusBadge">@Model.Status</span>
+
+        @if (Model.Budget.HasValue)
+        {
+            <span class="text-muted"><i class="bi bi-cash-coin me-1"></i> Budget: @Model.Budget.Value.ToString("C")</span>
+        }
+        @if (Model.Companions.HasValue)
+        {
+            <span class="text-muted"><i class="bi bi-people-fill me-1"></i> Companions: @Model.Companions</span>
+        }
+    </div>
+
+    <div class="row g-4">
+        <!-- LEFT: map placeholder -->
+        <div class="col-lg-5">
+            <div id="tripDetailsMap" class="trip-details-map">
+                <div class="map-watermark">
+                    <i class="bi bi-map" style="font-size: 3rem;"></i>
+                    <p class="mb-0 mt-2">Map will render here</p>
+                    <small class="text-muted">Each stop carries data-lat / data-lng / data-id for future markers</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: sortable stop list -->
+        <div class="col-lg-7">
+            <h4 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">Itinerary Stops</h4>
+
+            <div id="reorderNotice" class="alert alert-warning d-none small py-2 mb-3">
+                <i class="bi bi-info-circle-fill me-1"></i>
+                You reordered the stops — please review and adjust each stop's dates if needed.
+            </div>
+
+            <ul id="stopList" class="list-unstyled">
+                @foreach (var td in Model.TripDestinations.OrderBy(x => x.Visit_Order))
+                {
+                    <li class="trip-stop-card"
+                        data-stop-id="@td.Id"
+                        data-lat="@td.Destination?.Lat"
+                        data-lng="@td.Destination?.Long"
+                        data-id="@td.DestinationId">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="stop-handle" title="Drag to reorder"><i class="bi bi-grip-vertical"></i></span>
+                            <div class="stop-order-badge">@td.Visit_Order</div>
+                            <div class="flex-grow-1">
+                                <strong>@td.Destination?.Name</strong>
+                                <small class="text-muted d-block">@td.Destination?.City</small>
+                            </div>
+                            <div class="stop-dates text-muted small text-end">
+                                <div>Arrive: @td.ArrivalDate.ToString("MMM dd, yyyy")</div>
+                                <div>Depart: @td.DepartureDate.ToString("MMM dd, yyyy")</div>
+                            </div>
+                        </div>
+
+                        <!-- Inline date editor (toggled) -->
+                        <div class="stop-date-editor d-none mt-2">
+                            <div class="row g-2 align-items-end">
+                                <div class="col">
+                                    <label class="form-label small mb-1">Arrival</label>
+                                    <input type="date" class="form-control form-control-sm edit-arrival"
+                                           value="@td.ArrivalDate.ToString("yyyy-MM-dd")" />
+                                </div>
+                                <div class="col">
+                                    <label class="form-label small mb-1">Departure</label>
+                                    <input type="date" class="form-control form-control-sm edit-departure"
+                                           value="@td.DepartureDate.ToString("yyyy-MM-dd")" />
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-sm btn-primary btn-save-dates"
+                                            data-stop-id="@td.Id">
+                                        <i class="bi bi-check-lg"></i> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stop-actions mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-edit-dates">
+                                <i class="bi bi-pencil-fill me-1"></i> Edit dates
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-stop"
+                                    data-stop-id="@td.Id">
+                                <i class="bi bi-trash-fill me-1"></i> Remove
+                            </button>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+            @if (!Model.TripDestinations.Any())
+            {
+                <p class="text-muted">No stops yet.</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<style>
+    .trip-details-map {
+        height: 360px;
+        border-radius: 14px;
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        background:
+            repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: sticky;
+        top: 100px;
+    }
+
+    .badge-status-draft {
+        background: rgba(200, 131, 42, 0.15);
+        color: var(--egy-muted-gold);
+        border: 1px solid var(--egy-accent);
+    }
+
+    .trip-stop-card {
+        background: #fff;
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+        .trip-stop-card:hover {
+            box-shadow: 0 10px 24px rgba(200, 131, 42, 0.14);
+        }
+
+    .stop-handle {
+        cursor: grab;
+        color: #bba;
+        font-size: 1.1rem;
+    }
+
+    .stop-order-badge {
+        flex: 0 0 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--egy-primary);
+        color: #fff;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Cinzel', serif;
+    }
+
+    .sortable-ghost {
+        opacity: 0.5;
+        border-style: dashed;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js"></script>
+<script>
+    (function () {
+        var token = $('input[name=__RequestVerificationToken]').val();
+
+        function getStopIds() {
+            return $('#stopList li').map(function () {
+                return parseInt($(this).data('stop-id'), 10);
+            }).get();
+        }
+
+        // Reorder
+        var list = document.getElementById('stopList');
+        if (list) {
+            new Sortable(list, {
+                handle: '.stop-handle',
+                ghostClass: 'sortable-ghost',
+                animation: 150,
+                onEnd: function () {
+                    var orderedIds = getStopIds();
+                    $('#reorderNotice').removeClass('d-none');
+
+                    $.ajax({
+                        url: '@Url.Action("ReorderStops", "Trip", new { id = Model.Id })',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        headers: { 'RequestVerificationToken': token },
+                        data: JSON.stringify(orderedIds),
+                        success: function () {
+                            // Refresh visible order badges
+                            $('#stopList li').each(function (idx) {
+                                $(this).find('.stop-order-badge').text(idx + 1);
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // Toggle inline date editor
+        $('#stopList').on('click', '.btn-edit-dates', function () {
+            $(this).closest('.trip-stop-card').find('.stop-date-editor').toggleClass('d-none');
+        });
+
+        // Save dates
+        $('#stopList').on('click', '.btn-save-dates', function () {
+            var $card = $(this).closest('.trip-stop-card');
+            var stopId = $(this).data('stop-id');
+            var arrival = $card.find('.edit-arrival').val();
+            var departure = $card.find('.edit-departure').val();
+
+            $.ajax({
+                url: '@Url.Action("UpdateStopDates", "Trip")',
+                type: 'POST',
+                data: { stopId: stopId, arrival: arrival, departure: departure },
+                headers: { 'RequestVerificationToken': token },
+                success: function () {
+                    $card.find('.stop-dates').html(
+                        '<div>Arrive: ' + arrival + '</div><div>Depart: ' + departure + '</div>');
+                    $card.find('.stop-date-editor').addClass('d-none');
+                }
+            });
+        });
+
+        // Remove stop
+        $('#stopList').on('click', '.btn-remove-stop', function () {
+            if (!confirm('Remove this stop from your trip?')) return;
+            var $card = $(this).closest('.trip-stop-card');
+            var stopId = $(this).data('stop-id');
+
+            $.ajax({
+                url: '@Url.Action("DeleteStop", "Trip")',
+                type: 'POST',
+                data: { stopId: stopId },
+                headers: { 'RequestVerificationToken': token },
+                success: function () {
+                    $card.remove();
+                    $('#stopList li').each(function (idx) {
+                        $(this).find('.stop-order-badge').text(idx + 1);
+                    });
+                }
+            });
+        });
+    })();
+</script>
+}

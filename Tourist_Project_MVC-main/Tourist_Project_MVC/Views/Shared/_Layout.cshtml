@@ -107,7 +107,7 @@
         INNER PAGES
         ============================================= */
         .inner-page-wrapper {
-        padding-top: 80px;
+        padding-top: 140px;
         min-height: 80vh;
         background-color: #FDF6EC;
         font-family: 'Nunito', sans-serif;
@@ -181,103 +181,54 @@
 </head>
 <body id="page-top">
 
-    <!-- NAVBAR -->
+    <!-- NAVBAR (two-tier: utility + primary) -->
     <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
-        <div class="container px-4">
 
-            <!-- Brand -->
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                <span class="brand-icon">🏺</span> EGY<span class="brand-gold">XPLORE</span>
-            </a>
+        <!-- UPPER UTILITY BAR -->
+        <div class="navbar-utility">
+            <div class="container px-4 d-flex align-items-center justify-content-between gy-1">
+                <div class="utility-left">
+                    <span class="role-badge">
+                        <i class="bi bi-patch-check-fill me-1"></i>@(User.IsInRole("Admin") ? "Admin" : (User.Identity.IsAuthenticated ? "Tourist" : "Guest"))
+                    </span>
+                </div>
 
-            <!-- Toggler -->
-            <button class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarResponsive"
-                    aria-controls="navbarResponsive"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <span class="me-2 text-uppercase small tracking-wide">Menu</span>
-                <i class="fas fa-bars"></i>
-            </button>
+                <div class="utility-right d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                    <!-- Site search (initial scope = destination name search via /Explore) -->
+                    <form class="utility-search d-none d-lg-flex" method="get" asp-controller="Explore" asp-action="Index">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="search" class="form-control form-control-sm"
+                                   placeholder="Search Egypt…" aria-label="Search destinations" />
+                            <button class="btn btn-outline-light btn-sm" type="submit" title="Search">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
 
-            <!-- Links -->
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ms-auto align-items-lg-center">
-
-                    <!-- Home (visible to everyone) -->
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">
-                            <i class="bi bi-house-fill"></i> Home
+                    <!-- Language switcher (sets .AspNetCore.Culture cookie) -->
+                    <div class="dropdown lang-switcher">
+                        <a class="utility-link dropdown-toggle" href="#" id="langDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-translate me-1"></i> Language
                         </a>
-                    </li>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="langDropdown">
+                            <li><a class="dropdown-item lang-option" href="#" data-culture="en">English</a></li>
+                            <li><a class="dropdown-item lang-option" href="#" data-culture="ar">العربية</a></li>
+                            <li><a class="dropdown-item lang-option" href="#" data-culture="es">Español</a></li>
+                            <li><a class="dropdown-item lang-option" href="#" data-culture="de">Deutsch</a></li>
+                            <li><a class="dropdown-item lang-option" href="#" data-culture="zh">中文</a></li>
+                        </ul>
+                    </div>
 
-                    <!-- Separator -->
-                    <li class="nav-spacer d-none d-lg-block mx-2">|</li>
-
-                    @if (User.IsInRole("Admin"))
+                    <!-- Account -->
+                    @if (User.Identity.IsAuthenticated)
                     {
-                        <!-- ============ ADMIN EXPERIENCE ============ -->
-                        <!-- Tourists -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Tourist" asp-action="Index">
-                                <i class="bi bi-people-fill"></i> Tourists
-                            </a>
-                        </li>
-
-                        <!-- Destinations -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Destination" asp-action="Index">
-                                <i class="bi bi-geo-alt-fill"></i> Destinations
-                            </a>
-                        </li>
-
-                        <!-- Trip Plans -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="TripPlan" asp-action="Index">
-                                <i class="bi bi-map-fill"></i> Trip Plans
-                            </a>
-                        </li>
-
-                        <!-- Missions -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Mission" asp-action="Index">
-                                <i class="bi bi-trophy-fill"></i> Missions
-                            </a>
-                        </li>
-
-                        <!-- Rewards Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#"
-                               id="rewardsDropdown" role="button"
+                        <div class="dropdown account-switcher">
+                            <a class="utility-link dropdown-toggle" href="#" id="acctDropdown" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-gift-fill"></i> Rewards
+                                <i class="bi bi-person-circle me-1"></i> @User.Identity.Name
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
-                                aria-labelledby="rewardsDropdown">
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Reward" asp-action="Index">
-                                        <i class="bi bi-star-fill me-2"></i> All Rewards
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Sponsor" asp-action="Index">
-                                        <i class="bi bi-building me-2"></i> Sponsors
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <!-- Account Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#"
-                               id="AccountsDropdown" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle"></i> @User.Identity.Name
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
-                                aria-labelledby="AccountsDropdown">
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="acctDropdown">
                                 @if (User.IsInRole("Admin"))
                                 {
                                     <li>
@@ -298,83 +249,183 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
-                    }
-                    else if (User.Identity.IsAuthenticated)
-                    {
-                        <!-- ============ TOURIST EXPERIENCE ============ -->
-                        <!-- Explore -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Explore" asp-action="Index">
-                                <i class="bi bi-compass-fill"></i> Explore
-                            </a>
-                        </li>
-
-                        <!-- Trip -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Trip" asp-action="Index">
-                                <i class="bi bi-map-fill"></i> Trip
-                            </a>
-                        </li>
-
-                        <!-- About -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="About" asp-action="Index">
-                                <i class="bi bi-info-circle-fill"></i> About
-                            </a>
-                        </li>
-
-                        <!-- Account Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#"
-                               id="AccountsDropdown" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle"></i> @User.Identity.Name
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
-                                aria-labelledby="AccountsDropdown">
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Log out
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        </div>
                     }
                     else
                     {
-                        <!-- ============ GUEST EXPERIENCE ============ -->
-                        <!-- Explore (browsable read-only by guests) -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Explore" asp-action="Index">
-                                <i class="bi bi-compass-fill"></i> Explore
-                            </a>
-                        </li>
-
-                        <!-- About -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="About" asp-action="Index">
-                                <i class="bi bi-info-circle-fill"></i> About
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link nav-auth-btn" asp-controller="Account" asp-action="Login">
-                                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-auth-btn auth-register"
-                               asp-controller="Account" asp-action="Register">
-                                <i class="bi bi-person-plus-fill me-1"></i> Sign Up
-                            </a>
-                        </li>
+                        <a class="utility-link" asp-controller="Account" asp-action="Login">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                        </a>
+                        <a class="utility-link utility-register" asp-controller="Account" asp-action="Register">
+                            <i class="bi bi-person-plus-fill me-1"></i> Sign Up
+                        </a>
                     }
+                </div>
+            </div>
+        </div>
 
-                </ul>
+        <!-- LOWER PRIMARY BAR -->
+        <div class="navbar-primary">
+            <div class="container px-4 d-flex align-items-center">
+                <!-- Brand -->
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <span class="brand-icon">🏺</span> EGY<span class="brand-gold">XPLORE</span>
+                </a>
+
+                <!-- Toggler -->
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarResponsive"
+                        aria-controls="navbarResponsive"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="me-2 text-uppercase small tracking-wide">Menu</span>
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Links -->
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                        <!-- Home (visible to everyone) -->
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-fill"></i> Home
+                            </a>
+                        </li>
+
+                        <!-- Separator -->
+                        <li class="nav-spacer d-none d-lg-block mx-2">|</li>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <!-- ============ ADMIN EXPERIENCE ============ -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Tourist" asp-action="Index">
+                                    <i class="bi bi-people-fill"></i> Tourists
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Destination" asp-action="Index">
+                                    <i class="bi bi-geo-alt-fill"></i> Destinations
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="TripPlan" asp-action="Index">
+                                    <i class="bi bi-map-fill"></i> Trip Plans
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Mission" asp-action="Index">
+                                    <i class="bi bi-trophy-fill"></i> Missions
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                   id="rewardsDropdown" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gift-fill"></i> Rewards
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
+                                    aria-labelledby="rewardsDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Reward" asp-action="Index">
+                                            <i class="bi bi-star-fill me-2"></i> All Rewards
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Sponsor" asp-action="Index">
+                                            <i class="bi bi-building me-2"></i> Sponsors
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- Public discovery pages -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="NearMe" asp-action="Index">
+                                    <i class="bi bi-geo-fill"></i> Near Me
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Features" asp-action="Index">
+                                    <i class="bi bi-phone-fill"></i> Features
+                                </a>
+                            </li>
+                        }
+                        else if (User.Identity.IsAuthenticated)
+                        {
+                            <!-- ============ TOURIST EXPERIENCE ============ -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Explore" asp-action="Index">
+                                    <i class="bi bi-compass-fill"></i> Explore
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Trip" asp-action="Index">
+                                    <i class="bi bi-map-fill"></i> Trip
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="NearMe" asp-action="Index">
+                                    <i class="bi bi-geo-fill"></i> Near Me
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Features" asp-action="Index">
+                                    <i class="bi bi-phone-fill"></i> Features
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="About" asp-action="Index">
+                                    <i class="bi bi-info-circle-fill"></i> About
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <!-- ============ GUEST EXPERIENCE ============ -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Explore" asp-action="Index">
+                                    <i class="bi bi-compass-fill"></i> Explore
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="NearMe" asp-action="Index">
+                                    <i class="bi bi-geo-fill"></i> Near Me
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Features" asp-action="Index">
+                                    <i class="bi bi-phone-fill"></i> Features
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="About" asp-action="Index">
+                                    <i class="bi bi-info-circle-fill"></i> About
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
+
+    <!-- Language switcher: persist culture via .AspNetCore.Culture cookie then reload -->
+    <script>
+        (function () {
+            document.querySelectorAll('.lang-option').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var culture = el.getAttribute('data-culture');
+                    document.cookie = ".AspNetCore.Culture=c=" + culture + "|uic=" + culture + ";path=/";
+                    location.reload();
+                });
+            });
+        })();
+    </script>
 
     <!-- MAIN CONTENT -->
     @if (ViewData["IsHomePage"] as bool? == true)

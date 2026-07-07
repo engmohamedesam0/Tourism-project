@@ -26,6 +26,39 @@ namespace Tourist_Project_MVC.Repositories
                 .FirstOrDefault(t => t.Id == id);
         }
 
+        public TripPlan? GetDraftTrip(int touristId)
+        {
+            return _context.TripPlans
+                .Include(t => t.TripDestinations)
+                    .ThenInclude(td => td.Destination)
+                .Where(t => t.TouristId == touristId && t.Status == "Draft")
+                .OrderByDescending(t => t.Id)
+                .FirstOrDefault();
+        }
+
+        public void AddStop(TripDestination stop)
+        {
+            _context.TripDestinations.Add(stop);
+        }
+
+        public TripDestination? GetTripDestination(int tripDestinationId)
+        {
+            return _context.TripDestinations
+                .Include(td => td.TripPlan)
+                .FirstOrDefault(td => td.Id == tripDestinationId);
+        }
+
+        public void UpdateStop(TripDestination stop)
+        {
+            _context.TripDestinations.Update(stop);
+        }
+
+        public void RemoveStop(int tripDestinationId)
+        {
+            var stop = _context.TripDestinations.Find(tripDestinationId);
+            if (stop != null) _context.TripDestinations.Remove(stop);
+        }
+
         public void RemoveTripDestinations(int tripPlanId)
         {
             var existing = _context.TripDestinations

@@ -9,18 +9,37 @@
 
 window.addEventListener('DOMContentLoaded', event => {
 
-    // Navbar shrink function
+    // Navbar shrink / direction-aware utility bar
+    var lastScrollY = 0;
     var navbarShrink = function () {
         const navbarCollapsible = document.body.querySelector('#mainNav');
         if (!navbarCollapsible) {
             return;
         }
-        if (window.scrollY === 0) {
-            navbarCollapsible.classList.remove('navbar-shrink')
-        } else {
-            navbarCollapsible.classList.add('navbar-shrink')
+        const currentY = window.scrollY;
+        const threshold = 10;
+
+        // Top of page: floating translucent, utility bar visible
+        if (currentY === 0) {
+            navbarCollapsible.classList.remove('navbar-shrink');
+            navbarCollapsible.classList.remove('nav-utility-hidden');
+            lastScrollY = currentY;
+            return;
         }
 
+        // Only react to meaningful movement to avoid jitter
+        if (Math.abs(currentY - lastScrollY) >= threshold) {
+            if (currentY > lastScrollY) {
+                // scrolling DOWN: solidify lower bar, slide utility bar away
+                navbarCollapsible.classList.add('navbar-shrink');
+                navbarCollapsible.classList.add('nav-utility-hidden');
+            } else {
+                // scrolling UP: restore translucent bar + utility bar
+                navbarCollapsible.classList.remove('navbar-shrink');
+                navbarCollapsible.classList.remove('nav-utility-hidden');
+            }
+            lastScrollY = currentY;
+        }
     };
 
     // Shrink the navbar 

@@ -1,0 +1,298 @@
+@model Tourist_Project_MVC.View_Model.NearMeIndexVM
+
+@{
+    ViewData["Title"] = "Near Me";
+}
+
+<div class="nearme-page">
+    <div class="container-fluid">
+        <div class="row g-0">
+
+            <!-- LEFT PANEL: filters + sponsor list -->
+            <div class="col-lg-5 col-xl-4 nearme-list-panel">
+
+                <div class="nearme-header">
+                    <h2 class="page-title mb-0">
+                        <i class="bi bi-geo-fill me-1"></i> Near <span class="text-accent">@Model.DestinationName</span>
+                    </h2>
+                    <p class="text-muted small mb-2">Discover partners close to the site you'll visit</p>
+
+                    <!-- Destination picker (re-GET to Index) -->
+                    <form method="get" id="nearMeForm" class="nearme-filter-form">
+                        <input type="hidden" name="type" value="@Model.Type" />
+                        <input type="hidden" name="rating" value="@Model.Rating" />
+                        <input type="hidden" name="distance" value="@Model.Distance" />
+
+                        <div class="mb-2">
+                            <label class="form-label small text-muted mb-1">Reference destination</label>
+                            <select name="destinationId" class="form-select form-select-sm"
+                                    onchange="applyNearMeFilter('destinationId', this.value)">
+                                @foreach (var d in Model.Destinations)
+                                {
+                                    <option value="@d.Value" selected="@d.Selected">@d.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" name="search" class="form-control border-start-0"
+                                   placeholder="Search sponsors…" value="@Model.Search" />
+                            <button class="btn btn-outline-secondary" type="submit">Go</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Type chips -->
+                <div class="nearme-chips">
+                    <span class="chip-label">Type</span>
+                    <button type="button" class="chip @(string.IsNullOrEmpty(Model.Type) ? "chip-active" : "")" onclick="applyNearMeFilter('type', null)">All</button>
+                    <button type="button" class="chip @(Model.Type == "Hotel" ? "chip-active" : "")" onclick="applyNearMeFilter('type','Hotel')">Hotel</button>
+                    <button type="button" class="chip @(Model.Type == "Airline" ? "chip-active" : "")" onclick="applyNearMeFilter('type','Airline')">Airline</button>
+                    <button type="button" class="chip @(Model.Type == "Tourism Agency" ? "chip-active" : "")" onclick="applyNearMeFilter('type','Tourism Agency')">Agency</button>
+                </div>
+
+                <!-- Rating chips -->
+                <div class="nearme-chips">
+                    <span class="chip-label">Rating</span>
+                    <button type="button" class="chip @(string.IsNullOrEmpty(Model.Rating) ? "chip-active" : "")" onclick="applyNearMeFilter('rating', null)">Any</button>
+                    <button type="button" class="chip @(Model.Rating == "4" ? "chip-active" : "")" onclick="applyNearMeFilter('rating','4')">4★+</button>
+                    <button type="button" class="chip @(Model.Rating == "5" ? "chip-active" : "")" onclick="applyNearMeFilter('rating','5')">5★</button>
+                </div>
+
+                <!-- Distance chips -->
+                <div class="nearme-chips">
+                    <span class="chip-label">Distance</span>
+                    <button type="button" class="chip @(string.IsNullOrEmpty(Model.Distance) ? "chip-active" : "")" onclick="applyNearMeFilter('distance', null)">Any</button>
+                    <button type="button" class="chip @(Model.Distance == "5" ? "chip-active" : "")" onclick="applyNearMeFilter('distance','5')">≤ 5 km</button>
+                    <button type="button" class="chip @(Model.Distance == "10" ? "chip-active" : "")" onclick="applyNearMeFilter('distance','10')">≤ 10 km</button>
+                    <button type="button" class="chip @(Model.Distance == "25" ? "chip-active" : "")" onclick="applyNearMeFilter('distance','25')">≤ 25 km</button>
+                </div>
+
+                <!-- Sort -->
+                <div class="nearme-chips">
+                    <span class="chip-label">Sort</span>
+                    <button type="button" class="chip @(Model.Sort != "rating" ? "chip-active" : "")" onclick="applyNearMeFilter('sort','distance')">Nearest</button>
+                    <button type="button" class="chip @(Model.Sort == "rating" ? "chip-active" : "")" onclick="applyNearMeFilter('sort','rating')">Top rated</button>
+                </div>
+
+                <!-- Sponsor list -->
+                <div class="nearme-list" id="nearMeList">
+                    @foreach (var card in Model.Cards)
+                    {
+                        var avg = (int)Math.Round(card.AvgRating);
+                        <div class="nearme-card stat-card"
+                             data-id="@card.Sponsor.Id"
+                             data-lat="@card.Sponsor.Lat"
+                             data-lng="@card.Sponsor.Long"
+                             data-name="@card.Sponsor.Name">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h5 class="nearme-card-title mb-0">@card.Sponsor.Name</h5>
+                                <span class="distance-badge" title="Distance from @Model.DestinationName">
+                                    <i class="bi bi-geo-alt-fill"></i> @card.DistanceKm.ToString("0.#") km
+                                </span>
+                            </div>
+
+                            <span class="badge-category">@card.Sponsor.Type</span>
+
+                            <div class="nearme-rating small mt-2">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= avg)
+                                    {
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star text-muted"></i>
+                                    }
+                                }
+                                <span class="text-muted ms-1">
+                                    @(card.ReviewCount > 0 ? card.AvgRating.ToString("0.0") : "New")
+                                    (@card.ReviewCount)
+                                </span>
+                            </div>
+
+                            <div class="mt-2 d-flex gap-2">
+                                <a asp-controller="NearMe" asp-action="Details" asp-route-id="@card.Sponsor.Id"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-eye-fill me-1"></i> Details
+                                </a>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!Model.Cards.Any())
+                    {
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-geo-alt" style="font-size: 2.5rem; color: var(--egy-primary);"></i>
+                            <p class="mt-2 mb-0">No sponsors match your filters.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: map placeholder -->
+            <div class="col-lg-7 col-xl-8 nearme-map-panel">
+                <div id="nearbyMap" class="nearme-map-container">
+                    <div class="map-watermark">
+                        <i class="bi bi-map" style="font-size: 3rem;"></i>
+                        <p class="mb-0 mt-2">Map will render here</p>
+                        <small class="text-muted">Each list card carries data-lat / data-lng / data-id for future markers</small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .nearme-page {
+            padding-top: 140px;
+        }
+
+        .nearme-list-panel {
+            background: var(--egy-light);
+            border-right: 1px solid rgba(200, 131, 42, 0.2);
+            height: calc(100vh - 140px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nearme-header {
+            padding: 20px 20px 0;
+        }
+
+        .nearme-header .text-accent {
+            color: var(--egy-primary);
+        }
+
+        .nearme-filter-form .form-select-sm {
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .nearme-chips {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px 0;
+        }
+
+        .chip-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            font-weight: 700;
+        }
+
+        .nearme-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 40px;
+        }
+
+        .nearme-card {
+            background: #fff;
+            border: 1px solid rgba(200, 131, 42, 0.25) !important;
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            transition: all 0.3s ease;
+        }
+
+            .nearme-card:hover {
+                background: #fff !important;
+                border-color: var(--egy-primary) !important;
+                transform: translateY(-4px);
+                box-shadow: 0 14px 30px rgba(200, 131, 42, 0.18);
+            }
+
+            .nearme-card::before {
+                display: none;
+            }
+
+        .nearme-card-title {
+            font-family: 'Cinzel', serif;
+            color: var(--egy-dark);
+            font-size: 1.05rem;
+        }
+
+        .distance-badge {
+            background: rgba(200, 131, 42, 0.12);
+            color: var(--egy-muted-gold);
+            border: 1px solid var(--egy-accent);
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+            .distance-badge i {
+                color: var(--egy-primary);
+            }
+
+        .nearme-map-panel {
+            height: calc(100vh - 140px);
+            background: #ece6db;
+            position: relative;
+        }
+
+        .nearme-map-container {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
+        }
+
+        .map-watermark {
+            text-align: center;
+            color: var(--egy-muted-gold);
+            opacity: 0.75;
+        }
+
+        @@media (max-width: 991.98px) {
+            .nearme-list-panel,
+            .nearme-map-panel {
+                height: auto;
+            }
+
+            .nearme-map-panel {
+                min-height: 320px;
+                position: relative;
+            }
+
+            .nearme-map-container {
+                position: relative;
+                inset: auto;
+            }
+
+            .nearme-list {
+                max-height: 60vh;
+            }
+        }
+    </style>
+
+    <script>
+        function applyNearMeFilter(key, value) {
+            var form = document.getElementById('nearMeForm');
+            var input = form.querySelector('input[name="' + key + '"]');
+            if (!input) {
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                form.appendChild(input);
+            }
+            input.value = (value === null) ? '' : value;
+            form.submit();
+        }
+    </script>
+}

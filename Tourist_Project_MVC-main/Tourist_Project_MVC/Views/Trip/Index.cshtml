@@ -28,43 +28,128 @@
                     "Active" => "badge-status-active",
                     "Completed" => "badge-status-pending",
                     "Cancelled" => "badge-status-inactive",
+                    "Draft" => "badge-status-draft",
                     _ => "badge-status-active"
                 };
                 <div class="trip-timeline-item">
                     <div class="trip-timeline-dot"></div>
-                    <div class="card trip-card shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <h5 class="mb-1" style="font-family:'Cinzel',serif; color:var(--egy-dark);">@trip.Title</h5>
-                                <span class="badge-status @statusBadge">@trip.Status</span>
-                            </div>
-                            <div class="text-muted small mb-2">
-                                <i class="bi bi-calendar-event me-1"></i>
-                                @trip.StartDate.ToString("MMM dd, yyyy") &ndash; @trip.EndDate.ToString("MMM dd, yyyy")
-                            </div>
-                            <div class="trip-stops">
-                                @foreach (var td in trip.TripDestinations.OrderBy(x => x.Visit_Order))
-                                {
-                                    <span class="trip-stop-pill">
-                                        <i class="bi bi-geo-alt-fill me-1"></i>@td.Destination?.Name
-                                    </span>
-                                }
+                    <a asp-controller="Trip" asp-action="Details" asp-route-id="@trip.Id" class="text-decoration-none">
+                        <div class="card trip-card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="mb-1" style="font-family:'Cinzel',serif; color:var(--egy-dark);">@trip.Title</h5>
+                                    <span class="badge-status @statusBadge">@trip.Status</span>
+                                </div>
+                                <div class="text-muted small mb-2">
+                                    <i class="bi bi-calendar-event me-1"></i>
+                                    @trip.StartDate.ToString("MMM dd, yyyy") &ndash; @trip.EndDate.ToString("MMM dd, yyyy")
+                                </div>
+                                <div class="trip-stops">
+                                    @foreach (var td in trip.TripDestinations.OrderBy(x => x.Visit_Order))
+                                    {
+                                        <span class="trip-stop-pill">
+                                            <i class="bi bi-geo-alt-fill me-1"></i>@td.Destination?.Name
+                                        </span>
+                                    }
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             }
         </div>
     }
 
-    <!-- BUILDER -->
-    <div class="row g-4">
+</div>
+
+<!-- BUILDER (full-width form) -->
+<form asp-action="Create" method="post" id="tripForm">
+        @Html.AntiForgeryToken()
+
+        <!-- FULL-BLEED MAP + PLANNING FILTERS (Item 3) -->
+        <section class="trip-map-filter-section">
+            <div class="container-fluid px-3 px-lg-4">
+                <div class="row align-items-stretch">
+                    <div class="col-lg-8">
+                        <div id="tripBuilderMap" class="trip-builder-map mb-3">
+                            <div class="map-watermark">
+                                <i class="bi bi-map" style="font-size: 2rem;"></i>
+                                <p class="mb-0 mt-1 small">Map will render here</p>
+                                <small class="text-muted">Your selected stops feed a future map</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <!-- PLANNING FILTER BAR (Item 4) -->
+                        <div class="filter-bar mb-4">
+            <div class="filter-field">
+                <label class="form-label fw-semibold mb-1">Duration</label>
+                <div class="form-control-plaintext fw-semibold" id="tripDuration">—</div>
+            </div>
+
+            <div class="filter-field">
+                <label class="form-label fw-semibold mb-1">Budget</label>
+                <input asp-for="Budget" class="form-control" type="number" min="0" step="0.01"
+                       placeholder="e.g. 1000" />
+            </div>
+
+            <div class="filter-field">
+                <label class="form-label fw-semibold mb-1">Companions</label>
+                <input asp-for="Companions" class="form-control" type="number" min="1"
+                       placeholder="e.g. 2" />
+            </div>
+
+            <div class="filter-field filter-interests" id="tripInterests">
+                <label class="form-label fw-semibold mb-1 d-block">Interests</label>
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="int-hidden" data-status="Pending" />
+                        <label class="form-check-label" for="int-hidden">Hidden Gems</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="int-temples" data-category="Temple" />
+                        <label class="form-check-label" for="int-temples">Temples</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="int-museums" data-category="Museum" />
+                        <label class="form-check-label" for="int-museums">Museums</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="int-nature" data-category="Natural" />
+                        <label class="form-check-label" for="int-nature">Nature</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="int-adventure" data-category="Archaeological" />
+                        <label class="form-check-label" for="int-adventure">Adventure</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="int-historical" data-category="Historical" />
+                        <label class="form-check-label" for="int-historical">Historical</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="int-religious" data-category="Religious" />
+                        <label class="form-check-label" for="int-religious">Religious</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-field filter-actions">
+                <button type="button" class="btn btn-outline-secondary" id="tripFilterBtn">
+                    <i class="bi bi-funnel-fill me-1"></i> Filter
+                </button>
+            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTAINED BUILDER -->
+        <div class="container mt-4" style="max-width:1200px;">
+        <div class="row g-4">
             <!-- Picker -->
             <div class="col-lg-5">
                 <h4 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">1. Pick Destinations</h4>
-                <form asp-action="Create" method="post" id="tripForm">
-                    @Html.AntiForgeryToken()
-
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Trip Title</label>
                         <input asp-for="Title" class="form-control" placeholder="e.g. Cairo & Luxor Escape" />
@@ -74,18 +159,21 @@
                     <div class="row mb-3">
                         <div class="col">
                             <label class="form-label fw-semibold">Start</label>
-                            <input asp-for="StartDate" class="form-control" type="date" />
+                            <input asp-for="StartDate" class="form-control" type="date" id="StartDate" />
                         </div>
                         <div class="col">
                             <label class="form-label fw-semibold">End</label>
-                            <input asp-for="EndDate" class="form-control" type="date" />
+                            <input asp-for="EndDate" class="form-control" type="date" id="EndDate" />
                         </div>
                     </div>
 
                     <div class="destination-picker">
                         @for (int i = 0; i < Model.Stops.Count; i++)
                         {
-                            <div class="picker-row">
+                            <div class="picker-row"
+                                 data-category="@Model.Stops[i].Category"
+                                 data-status="@Model.Stops[i].Status"
+                                 data-price="@(Model.Stops[i].TicketPrice?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")">
                                 <div class="form-check">
                                     <input type="hidden" asp-for="Stops[i].DestinationId" />
                                     <input type="hidden" asp-for="Stops[i].DestinationName" />
@@ -116,7 +204,6 @@
                     <button type="submit" class="btn btn-success w-100">
                         <i class="bi bi-save me-1"></i> Save Trip
                     </button>
-                </form>
             </div>
 
             <!-- Running itinerary -->
@@ -130,10 +217,8 @@
                 </div>
             </div>
         </div>
-
-    </div>
-
-</div>
+        </div>
+    </form>
 
 @section Scripts {
 <style>
@@ -242,6 +327,60 @@
     .itinerary-preview li {
         color: var(--egy-muted-gold);
     }
+
+    /* Planning filter bar (Item 4) */
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 18px;
+        background: var(--egy-light);
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        border-radius: 14px;
+        padding: 16px 18px;
+    }
+
+        .filter-bar .filter-field {
+            min-width: 140px;
+        }
+
+        .filter-bar .filter-interests {
+            flex: 1 1 320px;
+        }
+
+        .filter-bar .filter-actions {
+            margin-left: auto;
+        }
+
+        .filter-bar #tripDuration {
+            color: var(--egy-muted-gold);
+        }
+
+    .trip-map-filter-section {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        padding: 1.5rem 0;
+    }
+
+    .trip-builder-map {
+        height: 100%;
+        min-height: 340px;
+        border-radius: 14px;
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        background: repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .picker-row.match-highlight {
+        background: rgba(200, 131, 42, 0.10);
+        border-radius: 10px;
+    }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
@@ -291,6 +430,62 @@
         });
 
         refresh();
+
+        // ---- Planning filter bar (Item 4) ----
+        function updateDuration() {
+            var start = $('#StartDate').val();
+            var end = $('#EndDate').val();
+            if (start && end) {
+                var d1 = new Date(start), d2 = new Date(end);
+                var days = Math.round((d2 - d1) / 86400000) + 1;
+                $('#tripDuration').text((days > 0 ? days : 0) + (days === 1 ? ' day' : ' days'));
+            } else {
+                $('#tripDuration').text('—');
+            }
+        }
+
+        function applyTripFilter() {
+            var interests = [];
+            $('#tripInterests input:checked').each(function () {
+                interests.push({ cat: $(this).data('category'), st: $(this).data('status') });
+            });
+
+            var budgetRaw = $('#Budget').val();
+            var budget = parseFloat(budgetRaw);
+            var budgetSet = !isNaN(budget);
+            var hasFilter = interests.length > 0 || budgetSet;
+
+            $('.picker-row').each(function () {
+                var cat = $(this).data('category');
+                var st = $(this).data('status');
+                var price = parseFloat($(this).data('price')) || 0;
+
+                var interestMatch = interests.length === 0;
+                for (var j = 0; j < interests.length; j++) {
+                    if (interests[j].cat && cat === interests[j].cat) { interestMatch = true; break; }
+                    if (interests[j].st && st === interests[j].st) { interestMatch = true; break; }
+                }
+
+                var budgetMatch = !budgetSet || price <= budget;
+                var match = interestMatch && budgetMatch;
+
+                if (!hasFilter || match) {
+                    $(this).show();
+                    $(this).toggleClass('match-highlight', hasFilter && match);
+                } else {
+                    $(this).hide();
+                    $(this).removeClass('match-highlight');
+                }
+            });
+        }
+
+        $('#StartDate, #EndDate').on('change', updateDuration);
+        $('#tripFilterBtn').on('click', applyTripFilter);
+        $('#tripInterests input, #Budget').on('change', function () {
+            if ($('#tripInterests input:checked').length || $('#Budget').val()) applyTripFilter();
+        });
+
+        updateDuration();
     })();
 </script>
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tourist_Project_MVC.Data;
 
@@ -11,9 +12,11 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    partial class TouristContextModelSnapshot : ModelSnapshot
+    [Migration("20260707114007_SponsorDiscovery")]
+    partial class SponsorDiscovery
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -866,7 +869,7 @@ namespace Tourist_Project_MVC.Migrations
                             CreatedDate = new DateTime(2026, 3, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Rating = 5,
                             SponsorId = 4,
-                            TouristId = 4
+                            TouristId = 5
                         },
                         new
                         {

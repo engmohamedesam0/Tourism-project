@@ -26,25 +26,111 @@ h1, h2, h3, h4, h5, h6,
 
 /* Structure Formatting */
 .inner-page-wrapper {
-    padding-top: 120px;
+    padding-top: 140px;
     padding-bottom: 60px;
     flex: 1 0 auto;
 }
 
-/* Navbar Restyling */
+/* Navbar Restyling — two-tier (utility + primary) */
 #mainNav {
-    background-color: rgba(30, 18, 10, 0.95);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    background-color: transparent;
     border-bottom: 2px solid var(--egy-primary);
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    transition: all 0.3s ease-in-out;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Upper utility bar (role, search, language, account) */
+.navbar-utility {
+    background-color: rgba(30, 18, 10, 0.9);
+    border-bottom: 1px solid rgba(200, 131, 42, 0.25);
+    font-size: 0.8rem;
+    max-height: 48px;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+
+    #mainNav.nav-utility-hidden .navbar-utility {
+        max-height: 0;
+        opacity: 0;
+        border-bottom: none;
+    }
+
+/* Lower primary bar */
+.navbar-primary {
+    background: rgba(44, 26, 14, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+    #mainNav.navbar-shrink .navbar-primary {
+        background: var(--egy-dark);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+/* Solid bars on inner pages (no hero behind) */
+@media (min-width: 992px) {
+    body:has(.inner-page-wrapper) #mainNav .navbar-utility {
+        background-color: var(--egy-dark);
+    }
+
+    body:has(.inner-page-wrapper) #mainNav .navbar-primary {
+        background: var(--egy-dark);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+/* Utility-bar components */
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    color: var(--egy-accent);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 0.78rem;
+}
+
+.utility-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+    .utility-link:hover,
+    .utility-link:focus {
+        color: var(--egy-accent);
+    }
+
+.utility-register {
+    border: 1px solid var(--egy-primary);
+    color: #fff !important;
+}
+
+    .utility-register:hover {
+        background-color: var(--egy-accent);
+        border-color: var(--egy-accent);
+        color: var(--egy-dark) !important;
+    }
+
+.utility-search .form-control-sm {
+    background-color: rgba(255, 255, 255, 0.92);
+    border-color: transparent;
+}
+
+.lang-switcher .dropdown-toggle::after {
+    margin-left: 0.3em;
 }
 
 /* If transparent on home page before scrolling */
-@media (min-width: 992px) {
-    body:has(.inner-page-wrapper) #mainNav {
-        background-color: var(--egy-dark);
-    }
-}
 
 #mainNav .navbar-brand {
     font-family: 'Cinzel Decorative', serif;
@@ -269,10 +355,8 @@ h1, h2, h3, h4, h5, h6,
         color: var(--egy-accent);
         font-weight: 700;
     }
-#mainNav,
 #mainNav.navbar-shrink,
 #mainNav.navbar-scrolled {
-    background-color: var(--egy-dark) !important;
     border-bottom: 2px solid var(--egy-primary) !important;
 }
 
@@ -289,3 +373,35 @@ h1, h2, h3, h4, h5, h6,
     padding: 6px 12px; /* Adjust these values: top/bottom left/right */
     margin:5px;
 }
+
+/* =============================================
+   BACK BUTTON (shared, gold/outline pill)
+   Reuses design-system tokens; consistent across all detail pages.
+   ============================================= */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--egy-primary);
+    color: var(--egy-primary);
+    background-color: #fff;
+    border-radius: 50rem;
+    padding: 0.35rem 0.9rem;
+    font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.2s ease;
+}
+
+    .btn-back:hover,
+    .btn-back:focus {
+        background-color: var(--egy-light);
+        border-color: var(--egy-accent);
+        color: var(--egy-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(200, 131, 42, 0.2);
+    }
+
+    .btn-back:focus-visible {
+        outline: 2px solid var(--egy-primary);
+        outline-offset: 2px;
+    }

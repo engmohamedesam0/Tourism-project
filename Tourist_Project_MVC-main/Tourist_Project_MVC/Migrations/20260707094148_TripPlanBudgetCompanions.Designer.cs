@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tourist_Project_MVC.Data;
 
@@ -11,9 +12,11 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    partial class TouristContextModelSnapshot : ModelSnapshot
+    [Migration("20260707094148_TripPlanBudgetCompanions")]
+    partial class TripPlanBudgetCompanions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -540,100 +543,6 @@ namespace Tourist_Project_MVC.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Tourist_Project_MVC.Models.MenuItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(10, 2)");
-
-                    b.Property<int>("SponsorId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SponsorId");
-
-                    b.ToTable("MenuItems");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Extensive international & Egyptian breakfast with terrace view.",
-                            Name = "Nile View Breakfast Buffet",
-                            Price = 25.00m,
-                            SponsorId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Signature Lebanese & Egyptian set-menu dinner.",
-                            Name = "Omar Khayyam Oriental Dinner",
-                            Price = 45.00m,
-                            SponsorId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Two-hour traditional sailboat cruise at sunset.",
-                            Name = "Nile Felucca Sunset Tour",
-                            Price = 30.00m,
-                            SponsorId = 3
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Guided visit to Pyramids, Sphinx and Egyptian Museum.",
-                            Name = "Cairo City Day Tour",
-                            Price = 60.00m,
-                            SponsorId = 3
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "Colonial-style tea service in the historic gardens.",
-                            Name = "Winter Palace Royal Afternoon Tea",
-                            Price = 18.00m,
-                            SponsorId = 4
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Description = "Three-course dinner overlooking the Nile.",
-                            Name = "Nile Terrace Set Menu",
-                            Price = 38.00m,
-                            SponsorId = 4
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Description = "Fresh Nile perch grilled with local spices.",
-                            Name = "Aswanian Fish Grill",
-                            Price = 22.00m,
-                            SponsorId = 5
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Description = "Evening pool access with a three-course dinner.",
-                            Name = "Sunset Pool & Dinner Pass",
-                            Price = 40.00m,
-                            SponsorId = 5
-                        });
-                });
-
             modelBuilder.Entity("Tourist_Project_MVC.Models.Mission", b =>
                 {
                     b.Property<int>("Id")
@@ -791,94 +700,6 @@ namespace Tourist_Project_MVC.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Tourist_Project_MVC.Models.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SponsorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TouristId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SponsorId");
-
-                    b.HasIndex("TouristId");
-
-                    b.ToTable("Reviews");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Comment = "Incredible views of the Nile and top-notch service.",
-                            CreatedDate = new DateTime(2026, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Rating = 5,
-                            SponsorId = 1,
-                            TouristId = 2
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Comment = "Comfortable rooms, a bit pricey but worth it.",
-                            CreatedDate = new DateTime(2026, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Rating = 4,
-                            SponsorId = 1,
-                            TouristId = 3
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Comment = "Smooth flight and friendly cabin crew.",
-                            CreatedDate = new DateTime(2026, 4, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Rating = 5,
-                            SponsorId = 2,
-                            TouristId = 4
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Comment = "Great guided tour, very knowledgeable guide.",
-                            CreatedDate = new DateTime(2026, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Rating = 4,
-                            SponsorId = 3,
-                            TouristId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Comment = "Historic atmosphere and beautiful gardens.",
-                            CreatedDate = new DateTime(2026, 3, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Rating = 5,
-                            SponsorId = 4,
-                            TouristId = 4
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Comment = "Lovely sunset dinner by the water.",
-                            CreatedDate = new DateTime(2026, 4, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Rating = 4,
-                            SponsorId = 5,
-                            TouristId = 2
-                        });
-                });
-
             modelBuilder.Entity("Tourist_Project_MVC.Models.Reward", b =>
                 {
                     b.Property<int>("Id")
@@ -990,12 +811,6 @@ namespace Tourist_Project_MVC.Migrations
                     b.Property<int>("ContactNumber")
                         .HasColumnType("int");
 
-                    b.Property<float>("Lat")
-                        .HasColumnType("real");
-
-                    b.Property<float>("Long")
-                        .HasColumnType("real");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1014,8 +829,6 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 1,
                             Address = "16 Saray El Gezira St, Zamalek, Cairo",
                             ContactNumber = 223456789,
-                            Lat = 30.0669f,
-                            Long = 31.2243f,
                             Name = "Cairo Marriott Hotel",
                             Type = "Hotel"
                         },
@@ -1024,8 +837,6 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 2,
                             Address = "Cairo International Airport, Cairo",
                             ContactNumber = 290777000,
-                            Lat = 30.1118f,
-                            Long = 31.4056f,
                             Name = "EgyptAir",
                             Type = "Airline"
                         },
@@ -1034,8 +845,6 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 3,
                             Address = "26 Tahrir Square, Downtown Cairo",
                             ContactNumber = 222756000,
-                            Lat = 30.0444f,
-                            Long = 31.2358f,
                             Name = "Emeco Travel",
                             Type = "Tourism Agency"
                         },
@@ -1044,8 +853,6 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 4,
                             Address = "Corniche El Nile, Luxor",
                             ContactNumber = 953580422,
-                            Lat = 25.6989f,
-                            Long = 32.6394f,
                             Name = "Sofitel Luxor Winter Palace",
                             Type = "Hotel"
                         },
@@ -1054,8 +861,6 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 5,
                             Address = "Elephantine Island, Aswan",
                             ContactNumber = 972780222,
-                            Lat = 24.0822f,
-                            Long = 32.8872f,
                             Name = "Hilton Aswan",
                             Type = "Hotel"
                         });
@@ -1486,17 +1291,6 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Tourist_Project_MVC.Models.MenuItem", b =>
-                {
-                    b.HasOne("Tourist_Project_MVC.Models.Sponsor", "Sponsor")
-                        .WithMany("MenuItems")
-                        .HasForeignKey("SponsorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sponsor");
-                });
-
             modelBuilder.Entity("Tourist_Project_MVC.Models.Mission", b =>
                 {
                     b.HasOne("Tourist_Project_MVC.Models.Destination", "Destination")
@@ -1523,25 +1317,6 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired();
 
                     b.Navigation("Reward");
-
-                    b.Navigation("Tourist");
-                });
-
-            modelBuilder.Entity("Tourist_Project_MVC.Models.Review", b =>
-                {
-                    b.HasOne("Tourist_Project_MVC.Models.Sponsor", "Sponsor")
-                        .WithMany("Reviews")
-                        .HasForeignKey("SponsorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tourist_Project_MVC.Models.Tourist", "Tourist")
-                        .WithMany()
-                        .HasForeignKey("TouristId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sponsor");
 
                     b.Navigation("Tourist");
                 });
@@ -1633,10 +1408,6 @@ namespace Tourist_Project_MVC.Migrations
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.Sponsor", b =>
                 {
-                    b.Navigation("MenuItems");
-
-                    b.Navigation("Reviews");
-
                     b.Navigation("Rewards");
                 });
 

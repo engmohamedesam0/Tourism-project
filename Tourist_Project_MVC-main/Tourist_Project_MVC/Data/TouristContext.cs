@@ -16,6 +16,8 @@ namespace Tourist_Project_MVC.Data
         public DbSet<Redemption> Redemptions { get; set; }
         public DbSet<Mission> Missions { get; set; }
         public DbSet<UserMission> UserMissions { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<MenuItem> MenuItems { get; set; }
 
         public TouristContext(DbContextOptions<TouristContext> options) : base(options)
         {
@@ -32,6 +34,14 @@ namespace Tourist_Project_MVC.Data
             modelBuilder.Entity<Destination>()
                 .Property(d => d.Rating)
                 .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<TripPlan>()
+                .Property(t => t.Budget)
+                .HasColumnType("decimal(10, 2)");
+
+            modelBuilder.Entity<MenuItem>()
+                .Property(m => m.Price)
+                .HasColumnType("decimal(10, 2)");
 
             // Link Tourist -> ApplicationUser (Identity login). Nullable FK:
             // Tourists created directly by an Admin may not have a login account.
@@ -291,46 +301,56 @@ namespace Tourist_Project_MVC.Data
 
             // 2. Seed Sponsors
             modelBuilder.Entity<Sponsor>().HasData(
-                 new
-                 {
-                     Id = 1,
-                     Name = "Cairo Marriott Hotel",
-                     Type = "Hotel",
-                     Address = "16 Saray El Gezira St, Zamalek, Cairo",
-                     ContactNumber = 223456789
-                 },
-                 new
-                 {
-                     Id = 2,
-                     Name = "EgyptAir",
-                     Type = "Airline",
-                     Address = "Cairo International Airport, Cairo",
-                     ContactNumber = 290777000
-                 },
-                 new
-                 {
-                     Id = 3,
-                     Name = "Emeco Travel",
-                     Type = "Tourism Agency",
-                     Address = "26 Tahrir Square, Downtown Cairo",
-                     ContactNumber = 222756000
-                 },
-                 new
-                 {
-                     Id = 4,
-                     Name = "Sofitel Luxor Winter Palace",
-                     Type = "Hotel",
-                     Address = "Corniche El Nile, Luxor",
-                     ContactNumber = 953580422
-                 },
-                 new
-                 {
-                     Id = 5,
-                     Name = "Hilton Aswan",
-                     Type = "Hotel",
-                     Address = "Elephantine Island, Aswan",
-                     ContactNumber = 972780222
-                 }
+                  new
+                  {
+                      Id = 1,
+                      Name = "Cairo Marriott Hotel",
+                      Type = "Hotel",
+                      Address = "16 Saray El Gezira St, Zamalek, Cairo",
+                      ContactNumber = 223456789,
+                      Lat = 30.0669f,
+                      Long = 31.2243f
+                  },
+                  new
+                  {
+                      Id = 2,
+                      Name = "EgyptAir",
+                      Type = "Airline",
+                      Address = "Cairo International Airport, Cairo",
+                      ContactNumber = 290777000,
+                      Lat = 30.1118f,
+                      Long = 31.4056f
+                  },
+                  new
+                  {
+                      Id = 3,
+                      Name = "Emeco Travel",
+                      Type = "Tourism Agency",
+                      Address = "26 Tahrir Square, Downtown Cairo",
+                      ContactNumber = 222756000,
+                      Lat = 30.0444f,
+                      Long = 31.2358f
+                  },
+                  new
+                  {
+                      Id = 4,
+                      Name = "Sofitel Luxor Winter Palace",
+                      Type = "Hotel",
+                      Address = "Corniche El Nile, Luxor",
+                      ContactNumber = 953580422,
+                      Lat = 25.6989f,
+                      Long = 32.6394f
+                  },
+                  new
+                  {
+                      Id = 5,
+                      Name = "Hilton Aswan",
+                      Type = "Hotel",
+                      Address = "Elephantine Island, Aswan",
+                      ContactNumber = 972780222,
+                      Lat = 24.0822f,
+                      Long = 32.8872f
+                  }
              );
 
             // 3. Seed Tourists
@@ -525,6 +545,132 @@ namespace Tourist_Project_MVC.Data
                     QuantityAvailable = 15,
                     ExpirationDate = DateTime.Parse("2027-01-31"),
                     SponsorId = 5
+                }
+            );
+
+            // 5b. Seed Menu Items (per sponsor)
+            modelBuilder.Entity<MenuItem>().HasData(
+                new
+                {
+                    Id = 1,
+                    SponsorId = 1,
+                    Name = "Nile View Breakfast Buffet",
+                    Price = 25.00m,
+                    Description = "Extensive international & Egyptian breakfast with terrace view."
+                },
+                new
+                {
+                    Id = 2,
+                    SponsorId = 1,
+                    Name = "Omar Khayyam Oriental Dinner",
+                    Price = 45.00m,
+                    Description = "Signature Lebanese & Egyptian set-menu dinner."
+                },
+                new
+                {
+                    Id = 3,
+                    SponsorId = 3,
+                    Name = "Nile Felucca Sunset Tour",
+                    Price = 30.00m,
+                    Description = "Two-hour traditional sailboat cruise at sunset."
+                },
+                new
+                {
+                    Id = 4,
+                    SponsorId = 3,
+                    Name = "Cairo City Day Tour",
+                    Price = 60.00m,
+                    Description = "Guided visit to Pyramids, Sphinx and Egyptian Museum."
+                },
+                new
+                {
+                    Id = 5,
+                    SponsorId = 4,
+                    Name = "Winter Palace Royal Afternoon Tea",
+                    Price = 18.00m,
+                    Description = "Colonial-style tea service in the historic gardens."
+                },
+                new
+                {
+                    Id = 6,
+                    SponsorId = 4,
+                    Name = "Nile Terrace Set Menu",
+                    Price = 38.00m,
+                    Description = "Three-course dinner overlooking the Nile."
+                },
+                new
+                {
+                    Id = 7,
+                    SponsorId = 5,
+                    Name = "Aswanian Fish Grill",
+                    Price = 22.00m,
+                    Description = "Fresh Nile perch grilled with local spices."
+                },
+                new
+                {
+                    Id = 8,
+                    SponsorId = 5,
+                    Name = "Sunset Pool & Dinner Pass",
+                    Price = 40.00m,
+                    Description = "Evening pool access with a three-course dinner."
+                }
+            );
+
+            // 5c. Seed Reviews (reusing Sponsor ids 1-5 and Tourist ids 1-5)
+            modelBuilder.Entity<Review>().HasData(
+                new
+                {
+                    Id = 1,
+                    Rating = 5,
+                    Comment = "Incredible views of the Nile and top-notch service.",
+                    TouristId = 2,
+                    SponsorId = 1,
+                    CreatedDate = DateTime.Parse("2026-04-12")
+                },
+                new
+                {
+                    Id = 2,
+                    Rating = 4,
+                    Comment = "Comfortable rooms, a bit pricey but worth it.",
+                    TouristId = 3,
+                    SponsorId = 1,
+                    CreatedDate = DateTime.Parse("2026-05-02")
+                },
+                new
+                {
+                    Id = 3,
+                    Rating = 5,
+                    Comment = "Smooth flight and friendly cabin crew.",
+                    TouristId = 4,
+                    SponsorId = 2,
+                    CreatedDate = DateTime.Parse("2026-04-20")
+                },
+                new
+                {
+                    Id = 4,
+                    Rating = 4,
+                    Comment = "Great guided tour, very knowledgeable guide.",
+                    TouristId = 1,
+                    SponsorId = 3,
+                    CreatedDate = DateTime.Parse("2026-05-18")
+                },
+                new
+                {
+                    Id = 5,
+                    Rating = 5,
+                    Comment = "Historic atmosphere and beautiful gardens.",
+                    TouristId = 4,
+                    SponsorId = 4,
+                    CreatedDate = DateTime.Parse("2026-03-30")
+                },
+                new
+                {
+                    Id = 6,
+                    Rating = 4,
+                    Comment = "Lovely sunset dinner by the water.",
+                    TouristId = 2,
+                    SponsorId = 5,
+                    CreatedDate = DateTime.Parse("2026-04-08")
                 }
             );
 

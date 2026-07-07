@@ -48,6 +48,19 @@ namespace Tourist_Project_MVC.Controllers
             _repo.Update(destination);
             _repo.Save();
 
+            // Context-aware back target: respect the referrer so tourists return
+            // to Explore (filters/scroll intact) and admins return to the admin list.
+            var referrer = Request.Headers["Referer"].ToString();
+            string backUrl = "/Destination";
+            if (!string.IsNullOrEmpty(referrer))
+            {
+                if (referrer.Contains("/Explore", System.StringComparison.OrdinalIgnoreCase))
+                    backUrl = "/Explore";
+                else if (referrer.Contains("/Trip", System.StringComparison.OrdinalIgnoreCase))
+                    backUrl = "/Trip";
+            }
+            ViewBag.BackUrl = backUrl;
+
             return View(destination);
         }
 
