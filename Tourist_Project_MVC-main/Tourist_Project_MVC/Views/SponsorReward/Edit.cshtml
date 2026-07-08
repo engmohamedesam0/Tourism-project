@@ -1,0 +1,86 @@
+@model Tourist_Project_MVC.View_Model.SponsorRewardVM
+
+@{
+    ViewData["Title"] = "Edit Reward";
+}
+
+<div class="inner-page-wrapper">
+    <div class="container">
+        <h2>✏️ Edit Reward</h2>
+        <hr />
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="SponsorId" />
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="RewardType" class="form-label"></label>
+                <input asp-for="RewardType" class="form-control" />
+                <span asp-validation-for="RewardType" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="PointsRequired" class="form-label"></label>
+                    <input asp-for="PointsRequired" class="form-control" type="number" />
+                    <span asp-validation-for="PointsRequired" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="QuantityAvailable" class="form-label"></label>
+                    <input asp-for="QuantityAvailable" class="form-control" type="number" />
+                    <span asp-validation-for="QuantityAvailable" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="ExpirationDate" class="form-label"></label>
+                    <input asp-for="ExpirationDate" class="form-control" type="date" />
+                    <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label"></label>
+                <select asp-for="Status" class="form-select">
+                    <option value="Active">Active</option>
+                    <option value="Paused">Paused</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Removed">Removed</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            @if (Model.AvailableBranches != null && Model.AvailableBranches.Any())
+            {
+                <div class="mb-3">
+                    <label class="form-label">Available Branches</label>
+                    @foreach (var branch in Model.AvailableBranches)
+                    {
+                        var isChecked = Model.SelectedBranchIds.Contains(branch.Id);
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="SelectedBranchIds" value="@branch.Id" id="branch_@branch.Id" @(isChecked ? "checked" : "") />
+                            <label class="form-check-label" for="branch_@branch.Id">
+                                @branch.Name — @branch.Address
+                            </label>
+                        </div>
+                    }
+                </div>
+            }
+
+            <div class="mb-3">
+                <input type="submit" value="Update" class="btn btn-warning" />
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

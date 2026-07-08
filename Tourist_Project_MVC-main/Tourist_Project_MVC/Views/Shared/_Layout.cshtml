@@ -189,7 +189,7 @@
             <div class="container px-4 d-flex align-items-center justify-content-between gy-1">
                 <div class="utility-left">
                     <span class="role-badge">
-                        <i class="bi bi-patch-check-fill me-1"></i>@(User.IsInRole("Admin") ? "Admin" : (User.Identity.IsAuthenticated ? "Tourist" : "Guest"))
+                        <i class="bi bi-patch-check-fill me-1"></i>@(User.IsInRole("Admin") ? "Admin" : (User.IsInRole("Sponsor") ? "Sponsor" : (User.Identity.IsAuthenticated ? "Tourist" : "Guest")))
                     </span>
                 </div>
 
@@ -352,6 +352,40 @@
                                     <i class="bi bi-phone-fill"></i> Features
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Role" asp-action="ManageAccounts">
+                                    <i class="bi bi-person-gear"></i> Accounts
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Sponsor"))
+                        {
+                            <!-- ============ SPONSOR EXPERIENCE ============ -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SponsorPortal" asp-action="Index">
+                                    <i class="bi bi-house-fill"></i> Home
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SponsorBranch" asp-action="Index">
+                                    <i class="bi bi-geo-fill"></i> Branches
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SponsorReward" asp-action="Index">
+                                    <i class="bi bi-gift-fill"></i> Rewards
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SponsorPortal" asp-action="Reports">
+                                    <i class="bi bi-bar-chart-fill"></i> Reports
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SponsorNotification" asp-action="Index">
+                                    <i class="bi bi-bell-fill"></i> Alerts
+                                </a>
+                            </li>
                         }
                         else if (User.Identity.IsAuthenticated)
                         {
@@ -494,6 +528,11 @@
         </div>
     </div>
 
+    @if (User.IsInRole("Sponsor"))
+    {
+        @await Component.InvokeAsync("NotificationBell")
+    }
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Grayscale Script -->
@@ -578,6 +617,43 @@
                 width: 52px;
                 height: 52px;
                 font-size: 1.3rem;
+            }
+        }
+
+        /* Notification bell */
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #dc3545;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 50%;
+            line-height: 1;
+            border: 2px solid #fff;
+        }
+
+        .notification-panel {
+            right: 22px;
+            top: 80px;
+            margin: 0;
+            max-width: 380px;
+            width: calc(100% - 44px);
+        }
+
+        @@media (max-width: 575.98px) {
+            .notification-panel {
+                left: 10px;
+                right: 10px;
+                top: 70px;
+                width: auto;
+                max-width: none;
+            }
+            .notification-bell {
+                right: 14px;
+                top: 14px;
             }
         }
     </style>

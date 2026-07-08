@@ -5,5 +5,7 @@ namespace Tourist_Project_MVC.Repositories
     public interface IRewardRepository : IRepository<Reward>
     {
         IEnumerable<Reward> GetFiltered(string? search, string? rewardType);
+        IEnumerable<Reward> GetBySponsorId(int sponsorId);
+        Reward? GetByIdWithBranches(int id);
     }
 }

@@ -16,5 +16,12 @@ namespace Tourist_Project_MVC.Models
         [ForeignKey("TouristId")]
         public int TouristId { get; set; }
         public Tourist? Tourist { get; set; }
+
+        // The branch where the reward was redeemed. Set at redemption time so
+        // the dashboard can report "most-wanted reward, and which branch it was
+        // most redeemed at". Nullable: older/branch-less redemptions stay null.
+        [ForeignKey("BranchId")]
+        public int? BranchId { get; set; }
+        public Branch? Branch { get; set; }
     }
 }

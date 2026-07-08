@@ -1,0 +1,50 @@
+@model Tourist_Project_MVC.View_Model.SponsorBranchVM
+
+@{
+    ViewData["Title"] = "Add Branch";
+}
+
+<div class="inner-page-wrapper">
+    <div class="container">
+        <h2>➕ Add New Branch</h2>
+        <hr />
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="SponsorId" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Lat" class="form-label"></label>
+                    <input asp-for="Lat" class="form-control" type="number" step="any" />
+                    <span asp-validation-for="Lat" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Long" class="form-label"></label>
+                    <input asp-for="Long" class="form-control" type="number" step="any" />
+                    <span asp-validation-for="Long" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContactNumber" class="form-label"></label>
+                <input asp-for="ContactNumber" class="form-control" type="number" />
+                <span asp-validation-for="ContactNumber" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

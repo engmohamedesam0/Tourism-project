@@ -261,6 +261,93 @@ namespace Tourist_Project_MVC.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.Branch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ContactNumber")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Lat")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Long")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SponsorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SponsorId");
+
+                    b.ToTable("Branches");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "16 Saray El Gezira St, Zamalek, Cairo",
+                            ContactNumber = 223456789,
+                            Lat = 30.0669f,
+                            Long = 31.2243f,
+                            Name = "Cairo Marriott Hotel — Main",
+                            SponsorId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "Cairo International Airport, Cairo",
+                            ContactNumber = 290777000,
+                            Lat = 30.1118f,
+                            Long = 31.4056f,
+                            Name = "EgyptAir — HQ",
+                            SponsorId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Address = "26 Tahrir Square, Downtown Cairo",
+                            ContactNumber = 222756000,
+                            Lat = 30.0444f,
+                            Long = 31.2358f,
+                            Name = "Emeco Travel — Downtown",
+                            SponsorId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Address = "Corniche El Nile, Luxor",
+                            ContactNumber = 953580422,
+                            Lat = 25.6989f,
+                            Long = 32.6394f,
+                            Name = "Sofitel Luxor Winter Palace — Main",
+                            SponsorId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Address = "Elephantine Island, Aswan",
+                            ContactNumber = 972780222,
+                            Lat = 24.0822f,
+                            Long = 32.8872f,
+                            Name = "Hilton Aswan — Main",
+                            SponsorId = 5
+                        });
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.Destination", b =>
                 {
                     b.Property<int>("Id")
@@ -732,6 +819,38 @@ namespace Tourist_Project_MVC.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SponsorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SponsorId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.Redemption", b =>
                 {
                     b.Property<int>("Id")
@@ -739,6 +858,9 @@ namespace Tourist_Project_MVC.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -762,6 +884,8 @@ namespace Tourist_Project_MVC.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BranchId");
+
                     b.HasIndex("RewardId");
 
                     b.HasIndex("TouristId");
@@ -772,6 +896,7 @@ namespace Tourist_Project_MVC.Migrations
                         new
                         {
                             Id = 1,
+                            BranchId = 1,
                             Code = "MARRIOTT15-EGY",
                             PointsRedeemed = 200,
                             RedemptionDate = new DateTime(2026, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -782,6 +907,7 @@ namespace Tourist_Project_MVC.Migrations
                         new
                         {
                             Id = 2,
+                            BranchId = 3,
                             Code = "NILE-CRUISE-EMC",
                             PointsRedeemed = 300,
                             RedemptionDate = new DateTime(2026, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -907,6 +1033,10 @@ namespace Tourist_Project_MVC.Migrations
                     b.Property<int>("SponsorId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -927,6 +1057,7 @@ namespace Tourist_Project_MVC.Migrations
                             QuantityAvailable = 50,
                             RewardType = "Discount",
                             SponsorId = 1,
+                            Status = "Active",
                             Title = "15% Off Marriott Cairo"
                         },
                         new
@@ -938,6 +1069,7 @@ namespace Tourist_Project_MVC.Migrations
                             QuantityAvailable = 10,
                             RewardType = "Ticket",
                             SponsorId = 2,
+                            Status = "Active",
                             Title = "Free EgyptAir Upgrade"
                         },
                         new
@@ -949,6 +1081,7 @@ namespace Tourist_Project_MVC.Migrations
                             QuantityAvailable = 20,
                             RewardType = "Tour",
                             SponsorId = 3,
+                            Status = "Active",
                             Title = "Free Nile Cruise Day"
                         },
                         new
@@ -960,6 +1093,7 @@ namespace Tourist_Project_MVC.Migrations
                             QuantityAvailable = 30,
                             RewardType = "Discount",
                             SponsorId = 4,
+                            Status = "Active",
                             Title = "20% Off Luxor Winter Palace"
                         },
                         new
@@ -971,8 +1105,48 @@ namespace Tourist_Project_MVC.Migrations
                             QuantityAvailable = 15,
                             RewardType = "Experience",
                             SponsorId = 5,
+                            Status = "Active",
                             Title = "Hilton Aswan Sunset Dinner"
                         });
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.RewardBranch", b =>
+                {
+                    b.Property<int>("RewardId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RewardId", "BranchId");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("RewardBranches");
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.RewardView", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("RewardId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TouristId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ViewedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RewardId");
+
+                    b.ToTable("RewardViews");
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.Sponsor", b =>
@@ -987,14 +1161,16 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("ContactNumber")
                         .HasColumnType("int");
 
-                    b.Property<float>("Lat")
-                        .HasColumnType("real");
-
-                    b.Property<float>("Long")
-                        .HasColumnType("real");
+                    b.Property<string>("Email")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1006,6 +1182,8 @@ namespace Tourist_Project_MVC.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicationUserId");
+
                     b.ToTable("Sponsors");
 
                     b.HasData(
@@ -1014,8 +1192,6 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 1,
                             Address = "16 Saray El Gezira St, Zamalek, Cairo",
                             ContactNumber = 223456789,
-                            Lat = 30.0669f,
-                            Long = 31.2243f,
                             Name = "Cairo Marriott Hotel",
                             Type = "Hotel"
                         },
@@ -1024,8 +1200,6 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 2,
                             Address = "Cairo International Airport, Cairo",
                             ContactNumber = 290777000,
-                            Lat = 30.1118f,
-                            Long = 31.4056f,
                             Name = "EgyptAir",
                             Type = "Airline"
                         },
@@ -1034,8 +1208,6 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 3,
                             Address = "26 Tahrir Square, Downtown Cairo",
                             ContactNumber = 222756000,
-                            Lat = 30.0444f,
-                            Long = 31.2358f,
                             Name = "Emeco Travel",
                             Type = "Tourism Agency"
                         },
@@ -1044,8 +1216,6 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 4,
                             Address = "Corniche El Nile, Luxor",
                             ContactNumber = 953580422,
-                            Lat = 25.6989f,
-                            Long = 32.6394f,
                             Name = "Sofitel Luxor Winter Palace",
                             Type = "Hotel"
                         },
@@ -1054,11 +1224,42 @@ namespace Tourist_Project_MVC.Migrations
                             Id = 5,
                             Address = "Elephantine Island, Aswan",
                             ContactNumber = 972780222,
-                            Lat = 24.0822f,
-                            Long = 32.8872f,
                             Name = "Hilton Aswan",
                             Type = "Hotel"
                         });
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.SupportTicket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SponsorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SponsorId");
+
+                    b.ToTable("SupportTickets");
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.Tourist", b =>
@@ -1486,6 +1687,17 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.Branch", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.Sponsor", "Sponsor")
+                        .WithMany("Branches")
+                        .HasForeignKey("SponsorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sponsor");
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.MenuItem", b =>
                 {
                     b.HasOne("Tourist_Project_MVC.Models.Sponsor", "Sponsor")
@@ -1508,8 +1720,21 @@ namespace Tourist_Project_MVC.Migrations
                     b.Navigation("Destination");
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.Notification", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.Sponsor", null)
+                        .WithMany()
+                        .HasForeignKey("SponsorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.Redemption", b =>
                 {
+                    b.HasOne("Tourist_Project_MVC.Models.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
                     b.HasOne("Tourist_Project_MVC.Models.Reward", "Reward")
                         .WithMany("Redemptions")
                         .HasForeignKey("RewardId")
@@ -1521,6 +1746,8 @@ namespace Tourist_Project_MVC.Migrations
                         .HasForeignKey("TouristId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("Reward");
 
@@ -1551,10 +1778,57 @@ namespace Tourist_Project_MVC.Migrations
                     b.HasOne("Tourist_Project_MVC.Models.Sponsor", "Sponsor")
                         .WithMany("Rewards")
                         .HasForeignKey("SponsorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Sponsor");
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.RewardBranch", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.Branch", "Branch")
+                        .WithMany("RewardBranches")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tourist_Project_MVC.Models.Reward", "Reward")
+                        .WithMany("RewardBranches")
+                        .HasForeignKey("RewardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Reward");
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.RewardView", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.Reward", "Reward")
+                        .WithMany()
+                        .HasForeignKey("RewardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reward");
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.Sponsor", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.SupportTicket", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.Sponsor", null)
+                        .WithMany()
+                        .HasForeignKey("SponsorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.Tourist", b =>
@@ -1614,6 +1888,11 @@ namespace Tourist_Project_MVC.Migrations
                     b.Navigation("Tourist");
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.Branch", b =>
+                {
+                    b.Navigation("RewardBranches");
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.Destination", b =>
                 {
                     b.Navigation("Missions");
@@ -1629,10 +1908,14 @@ namespace Tourist_Project_MVC.Migrations
             modelBuilder.Entity("Tourist_Project_MVC.Models.Reward", b =>
                 {
                     b.Navigation("Redemptions");
+
+                    b.Navigation("RewardBranches");
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.Sponsor", b =>
                 {
+                    b.Navigation("Branches");
+
                     b.Navigation("MenuItems");
 
                     b.Navigation("Reviews");

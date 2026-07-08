@@ -48,6 +48,7 @@ namespace Tourist_Project_MVC.Controllers
                 .Include(s => s.Rewards)
                 .Include(s => s.MenuItems)
                 .Include(s => s.Reviews)
+                .Include(s => s.Branches)
                 .AsEnumerable();
 
             // Search by name
@@ -79,10 +80,23 @@ namespace Tourist_Project_MVC.Controllers
                 var avg = s.Reviews != null && s.Reviews.Any()
                     ? s.Reviews.Average(r => r.Rating)
                     : 0;
+
+                // A sponsor may have several branches; use the nearest one to the
+                // reference destination for the card's distance + map coordinates.
+                var nearest = s.Branches != null && s.Branches.Any()
+                    ? s.Branches
+                        .OrderBy(b => Haversine(originLat, originLong, b.Lat, b.Long))
+                        .First()
+                    : null;
+                double sLat = nearest?.Lat ?? 0;
+                double sLong = nearest?.Long ?? 0;
+
                 return new SponsorCardVM
                 {
                     Sponsor = s,
-                    DistanceKm = Haversine(originLat, originLong, s.Lat, s.Long),
+                    Lat = sLat,
+                    Long = sLong,
+                    DistanceKm = Haversine(originLat, originLong, sLat, sLong),
                     AvgRating = avg,
                     ReviewCount = s.Reviews?.Count ?? 0
                 };
@@ -135,6 +149,7 @@ namespace Tourist_Project_MVC.Controllers
                 .Include(s => s.MenuItems)
                 .Include(s => s.Reviews)
                     .ThenInclude(r => r.Tourist)
+                .Include(s => s.Branches)
                 .FirstOrDefault(s => s.Id == id);
 
             if (sponsor == null)

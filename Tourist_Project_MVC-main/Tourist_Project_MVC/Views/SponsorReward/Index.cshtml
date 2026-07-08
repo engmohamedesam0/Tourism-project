@@ -1,0 +1,97 @@
+@model IEnumerable<Tourist_Project_MVC.Models.Reward>
+
+@{
+    ViewData["Title"] = "My Rewards";
+}
+
+<div class="inner-page-wrapper">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title mb-0">🎁 My Rewards</h2>
+            <a asp-action="Create" class="btn btn-success px-4">
+                <i class="bi bi-plus-lg me-1"></i> + Add Reward
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle destinations-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Points</th>
+                        <th>Qty</th>
+                        <th>Redemptions</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        var redemptionCount = item.Redemptions?.Count ?? 0;
+                        var redemptionRate = item.QuantityAvailable > 0
+                            ? (redemptionCount / (double)item.QuantityAvailable * 100).ToString("F1")
+                            : "0.0";
+                        <tr>
+                            <td class="fw-bold text-muted">@i.ToString("D2")</td>
+                            <td><div class="fw-bold">@item.Title</div></td>
+                            <td><span class="badge-category">@item.RewardType</span></td>
+                            <td>@item.PointsRequired pts</td>
+                            <td>@item.QuantityAvailable</td>
+                            <td>
+                                <span class="fw-bold" style="color: var(--egy-primary);">@redemptionRate%</span>
+                                <small class="text-muted">(@redemptionCount)</small>
+                            </td>
+                            <td>
+                                @switch (item.Status)
+                                {
+                                    case "Active":
+                                        <span class="badge bg-success">Active</span>
+                                        break;
+                                    case "Paused":
+                                        <span class="badge bg-warning text-dark">Paused</span>
+                                        break;
+                                    case "Expired":
+                                        <span class="badge bg-secondary">Expired</span>
+                                        break;
+                                    case "Removed":
+                                        <span class="badge bg-danger">Removed</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-light text-dark">@item.Status</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-warning" title="Edit">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-danger" title="Delete">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-gift" style="font-size:3rem; color:var(--egy-primary);"></i>
+                <p class="text-muted mt-2">No rewards found. Add your first reward above.</p>
+            </div>
+        }
+    </div>
+</div>

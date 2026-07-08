@@ -1,0 +1,93 @@
+@model Tourist_Project_MVC.View_Model.SupportTicketVM
+
+@{
+    ViewData["Title"] = "Support Tickets";
+    ViewData["IsHomePage"] = false;
+}
+
+<div class="container my-4" style="max-width: 1000px;">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="page-title mb-0">
+            <i class="bi bi-headset me-2"></i> Support
+        </h1>
+        <a asp-action="Index" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-bell-fill me-1"></i> Notifications
+        </a>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-plus-circle me-1 text-primary"></i> New Ticket</h6>
+                    <form asp-action="CreateSupport" method="post">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Subject</label>
+                            <input type="text" class="form-control" asp-for="Subject" required />
+                            <span class="text-danger small" asp-validation-for="Subject"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Description</label>
+                            <textarea class="form-control" asp-for="Description" rows="4" required></textarea>
+                            <span class="text-danger small" asp-validation-for="Description"></span>
+                        </div>
+                        <button class="btn btn-success btn-sm" type="submit">
+                            <i class="bi bi-send me-1"></i> Submit Ticket
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-ticket-perforated me-1 text-primary"></i> Your Tickets</h6>
+                    @if (!Model.Tickets.Any())
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                            <p class="mb-0 mt-2">No tickets submitted yet.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle destinations-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int i = 1;
+                                    }
+                                    @foreach (var t in Model.Tickets)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold text-muted">@i.ToString("D2")</td>
+                                            <td>
+                                                <div class="fw-bold">@t.Subject</div>
+                                                <small class="text-muted">@t.Description</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-@(t.Status == "Open" ? "warning" : "success")">@t.Status</span>
+                                            </td>
+                                            <td class="small text-muted">@t.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                        </tr>
+                                        i++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

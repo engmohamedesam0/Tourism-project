@@ -1,12 +1,15 @@
 @model Tourist_Project_MVC.Models.Sponsor
 
-@{
-    ViewData["Title"] = "Sponsor Details";
-    var avgRating = Model.Reviews != null && Model.Reviews.Any()
-        ? Model.Reviews.Average(r => r.Rating)
-        : 0;
-    var avgStars = (int)Math.Round(avgRating);
-}
+    @{
+        ViewData["Title"] = "Sponsor Details";
+        var avgRating = Model.Reviews != null && Model.Reviews.Any()
+            ? Model.Reviews.Average(r => r.Rating)
+            : 0;
+        var avgStars = (int)Math.Round(avgRating);
+        var displayBranch = Model.Branches?.FirstOrDefault();
+        var displayLat = displayBranch?.Lat ?? 0;
+        var displayLong = displayBranch?.Long ?? 0;
+    }
 
 <div class="container my-4" style="max-width: 960px;">
 
@@ -53,11 +56,11 @@
 
             <!-- Map placeholder -->
             <div id="sponsorMap" class="sponsor-map-container"
-                 data-lat="@Model.Lat" data-lng="@Model.Long" data-id="@Model.Id">
+                 data-lat="@displayLat" data-lng="@displayLong" data-id="@Model.Id">
                 <div class="map-watermark">
                     <i class="bi bi-geo-alt" style="font-size: 2.5rem;"></i>
                     <p class="mb-0 mt-2 small">Map will render here</p>
-                    <small class="text-muted">data-lat="@Model.Lat" data-lng="@Model.Long"</small>
+                    <small class="text-muted">data-lat="@displayLat" data-lng="@displayLong"</small>
                 </div>
             </div>
         </div>

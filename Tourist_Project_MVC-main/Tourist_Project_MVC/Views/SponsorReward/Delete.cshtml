@@ -1,0 +1,42 @@
+@model Tourist_Project_MVC.Models.Reward
+
+@{
+    ViewData["Title"] = "Delete Reward";
+}
+
+<div class="inner-page-wrapper">
+    <div class="container">
+        <h2>🗑️ Delete Reward</h2>
+        <hr />
+        <div class="alert alert-warning">
+            <strong>Soft-delete will be performed: the reward status will be set to "Removed" instead of being permanently deleted.</strong>
+        </div>
+
+        <dl class="row">
+            <dt class="col-sm-3">Title</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
+
+            <dt class="col-sm-3">Type</dt>
+            <dd class="col-sm-9">@Model.RewardType</dd>
+
+            <dt class="col-sm-3">Points Required</dt>
+            <dd class="col-sm-9">@Model.PointsRequired</dd>
+
+            <dt class="col-sm-3">Quantity Available</dt>
+            <dd class="col-sm-9">@Model.QuantityAvailable</dd>
+
+            <dt class="col-sm-3">Expiration</dt>
+            <dd class="col-sm-9">@Model.ExpirationDate.ToShortDateString()</dd>
+
+            <dt class="col-sm-3">Current Status</dt>
+            <dd class="col-sm-9">@Model.Status</dd>
+        </dl>
+
+        <form asp-action="DeleteConfirmed" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">Soft Delete</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

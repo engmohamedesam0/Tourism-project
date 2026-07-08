@@ -1,0 +1,163 @@
+@model Tourist_Project_MVC.View_Model.RedemptionHistoryVM
+
+@{
+    ViewData["Title"] = "Redemption History";
+}
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title mb-0">
+            <i class="bi bi-receipt me-2"></i> Redemption History
+        </h2>
+        <a asp-controller="SponsorPortal" asp-action="Dashboard" class="btn btn-outline-secondary">
+            <i class="bi bi-speedometer2 me-1"></i> Dashboard
+        </a>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar mb-3">
+        <form method="get" asp-controller="SponsorRedemption" asp-action="Index">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small text-muted mb-1">From</label>
+                    <input type="date" name="fromDate" class="form-control"
+                           value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted mb-1">To</label>
+                    <input type="date" name="toDate" class="form-control"
+                           value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted mb-1">Reward</label>
+                    <select name="rewardId" class="form-select">
+                        <option value="">All Rewards</option>
+                        @foreach (var reward in Model.Rewards)
+                        {
+                            if (Model.RewardId == reward.Id)
+                            {
+                                <option value="@reward.Id" selected>@reward.Title</option>
+                            }
+                            else
+                            {
+                                <option value="@reward.Id">@reward.Title</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small text-muted mb-1">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        @foreach (var st in Model.Statuses)
+                        {
+                            if (Model.Status == st)
+                            {
+                                <option value="@st" selected>@st</option>
+                            }
+                            else
+                            {
+                                <option value="@st">@st</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-1 d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel-fill"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle destinations-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tourist</th>
+                    <th>Reward</th>
+                    <th>Branch</th>
+                    <th>Date</th>
+                    <th>Voucher Code</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 1;
+                }
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td class="fw-bold text-muted">@i.ToString("D2")</td>
+                        <td>@row.TouristName</td>
+                        <td><div class="fw-bold">@row.RewardTitle</div></td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(row.BranchName))
+                            {
+                                <i class="bi bi-geo-alt-fill text-muted me-1"></i>@row.BranchName
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                        <td>@row.RedemptionDate.ToShortDateString()</td>
+                        <td><code>@row.Code</code></td>
+                        <td>
+                            @switch (row.Status)
+                            {
+                                case "Active":
+                                    <span class="badge bg-success">Active</span>
+                                    break;
+                                case "Used":
+                                    <span class="badge bg-primary">Used</span>
+                                    break;
+                                case "Expired":
+                                    <span class="badge bg-secondary">Expired</span>
+                                    break;
+                                case "Cancelled":
+                                    <span class="badge bg-danger">Cancelled</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-light text-dark">@row.Status</span>
+                                    break;
+                            }
+                        </td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Rows.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-receipt" style="font-size:3rem; color:var(--egy-primary);"></i>
+            <p class="text-muted mt-2">No redemptions found for the selected filters.</p>
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <style>
+        .filter-bar {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .destinations-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+    </style>
+}

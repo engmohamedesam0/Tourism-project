@@ -12,11 +12,16 @@ namespace Tourist_Project_MVC.Data
         public DbSet<Destination> Destinations { get; set; }
         public DbSet<TripDestination> TripDestinations { get; set; }
         public DbSet<Sponsor> Sponsors { get; set; }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<RewardBranch> RewardBranches { get; set; }
         public DbSet<Reward> Rewards { get; set; }
         public DbSet<Redemption> Redemptions { get; set; }
+        public DbSet<RewardView> RewardViews { get; set; }
         public DbSet<Mission> Missions { get; set; }
         public DbSet<UserMission> UserMissions { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<SupportTicket> SupportTickets { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
 
         public TouristContext(DbContextOptions<TouristContext> options) : base(options)
@@ -53,6 +58,57 @@ namespace Tourist_Project_MVC.Data
                 .HasOne<ApplicationUser>()
                 .WithMany()
                 .HasForeignKey(t => t.ApplicationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Link Sponsor -> ApplicationUser (Identity login). Nullable FK:
+            // Sponsors created directly by an Admin may not have a login account.
+            // Mirrors the Tourist -> ApplicationUser link above.
+            modelBuilder.Entity<Sponsor>()
+                .Property(s => s.ApplicationUserId)
+                .HasMaxLength(450);
+
+            modelBuilder.Entity<Sponsor>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(s => s.ApplicationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Sponsor>()
+                .Property(s => s.Email)
+                .HasMaxLength(450);
+
+            // Branch -> Sponsor (one-to-many).
+            modelBuilder.Entity<Branch>()
+                .HasOne(b => b.Sponsor)
+                .WithMany(s => s.Branches)
+                .HasForeignKey(b => b.SponsorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Reward <-> Branch many-to-many join (RewardBranch).
+            modelBuilder.Entity<RewardBranch>()
+                .HasKey(rb => new { rb.RewardId, rb.BranchId });
+
+            modelBuilder.Entity<RewardBranch>()
+                .HasOne(rb => rb.Reward)
+                .WithMany(r => r.RewardBranches)
+                .HasForeignKey(rb => rb.RewardId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RewardBranch>()
+                .HasOne(rb => rb.Branch)
+                .WithMany(b => b.RewardBranches)
+                .HasForeignKey(rb => rb.BranchId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Reward -> Sponsor is NoAction (not Cascade) to avoid a second
+            // cascade path into RewardBranch (Sponsor->Reward->RewardBranch and
+            // Sponsor->Branch->RewardBranch would otherwise create a cycle that
+            // SQL Server rejects). Deleting a Sponsor that still has Rewards is
+            // therefore blocked until its Rewards are removed.
+            modelBuilder.Entity<Reward>()
+                .HasOne(r => r.Sponsor)
+                .WithMany(s => s.Rewards)
+                .HasForeignKey(r => r.SponsorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             // 1. Seed Destinations
@@ -307,9 +363,7 @@ namespace Tourist_Project_MVC.Data
                       Name = "Cairo Marriott Hotel",
                       Type = "Hotel",
                       Address = "16 Saray El Gezira St, Zamalek, Cairo",
-                      ContactNumber = 223456789,
-                      Lat = 30.0669f,
-                      Long = 31.2243f
+                      ContactNumber = 223456789
                   },
                   new
                   {
@@ -317,9 +371,7 @@ namespace Tourist_Project_MVC.Data
                       Name = "EgyptAir",
                       Type = "Airline",
                       Address = "Cairo International Airport, Cairo",
-                      ContactNumber = 290777000,
-                      Lat = 30.1118f,
-                      Long = 31.4056f
+                      ContactNumber = 290777000
                   },
                   new
                   {
@@ -327,9 +379,7 @@ namespace Tourist_Project_MVC.Data
                       Name = "Emeco Travel",
                       Type = "Tourism Agency",
                       Address = "26 Tahrir Square, Downtown Cairo",
-                      ContactNumber = 222756000,
-                      Lat = 30.0444f,
-                      Long = 31.2358f
+                      ContactNumber = 222756000
                   },
                   new
                   {
@@ -337,9 +387,7 @@ namespace Tourist_Project_MVC.Data
                       Name = "Sofitel Luxor Winter Palace",
                       Type = "Hotel",
                       Address = "Corniche El Nile, Luxor",
-                      ContactNumber = 953580422,
-                      Lat = 25.6989f,
-                      Long = 32.6394f
+                      ContactNumber = 953580422
                   },
                   new
                   {
@@ -347,11 +395,63 @@ namespace Tourist_Project_MVC.Data
                       Name = "Hilton Aswan",
                       Type = "Hotel",
                       Address = "Elephantine Island, Aswan",
-                      ContactNumber = 972780222,
-                      Lat = 24.0822f,
-                      Long = 32.8872f
+                      ContactNumber = 972780222
                   }
-             );
+              );
+
+            // 2b. Seed Branches (location data moved here from Sponsor.Lat/Long).
+            modelBuilder.Entity<Branch>().HasData(
+                  new
+                  {
+                      Id = 1,
+                      SponsorId = 1,
+                      Name = "Cairo Marriott Hotel — Main",
+                      Address = "16 Saray El Gezira St, Zamalek, Cairo",
+                      Lat = 30.0669f,
+                      Long = 31.2243f,
+                      ContactNumber = 223456789
+                  },
+                  new
+                  {
+                      Id = 2,
+                      SponsorId = 2,
+                      Name = "EgyptAir — HQ",
+                      Address = "Cairo International Airport, Cairo",
+                      Lat = 30.1118f,
+                      Long = 31.4056f,
+                      ContactNumber = 290777000
+                  },
+                  new
+                  {
+                      Id = 3,
+                      SponsorId = 3,
+                      Name = "Emeco Travel — Downtown",
+                      Address = "26 Tahrir Square, Downtown Cairo",
+                      Lat = 30.0444f,
+                      Long = 31.2358f,
+                      ContactNumber = 222756000
+                  },
+                  new
+                  {
+                      Id = 4,
+                      SponsorId = 4,
+                      Name = "Sofitel Luxor Winter Palace — Main",
+                      Address = "Corniche El Nile, Luxor",
+                      Lat = 25.6989f,
+                      Long = 32.6394f,
+                      ContactNumber = 953580422
+                  },
+                  new
+                  {
+                      Id = 5,
+                      SponsorId = 5,
+                      Name = "Hilton Aswan — Main",
+                      Address = "Elephantine Island, Aswan",
+                      Lat = 24.0822f,
+                      Long = 32.8872f,
+                      ContactNumber = 972780222
+                  }
+              );
 
             // 3. Seed Tourists
             modelBuilder.Entity<Tourist>().HasData(
@@ -500,6 +600,7 @@ namespace Tourist_Project_MVC.Data
                     PointsRequired = 200,
                     QuantityAvailable = 50,
                     ExpirationDate = DateTime.Parse("2027-12-31"),
+                    Status = "Active",
                     SponsorId = 1
                 },
                 new
@@ -511,6 +612,7 @@ namespace Tourist_Project_MVC.Data
                     PointsRequired = 500,
                     QuantityAvailable = 10,
                     ExpirationDate = DateTime.Parse("2027-06-30"),
+                    Status = "Active",
                     SponsorId = 2
                 },
                 new
@@ -522,6 +624,7 @@ namespace Tourist_Project_MVC.Data
                     PointsRequired = 300,
                     QuantityAvailable = 20,
                     ExpirationDate = DateTime.Parse("2026-12-31"),
+                    Status = "Active",
                     SponsorId = 3
                 },
                 new
@@ -533,6 +636,7 @@ namespace Tourist_Project_MVC.Data
                     PointsRequired = 250,
                     QuantityAvailable = 30,
                     ExpirationDate = DateTime.Parse("2027-03-31"),
+                    Status = "Active",
                     SponsorId = 4
                 },
                 new
@@ -544,6 +648,7 @@ namespace Tourist_Project_MVC.Data
                     PointsRequired = 400,
                     QuantityAvailable = 15,
                     ExpirationDate = DateTime.Parse("2027-01-31"),
+                    Status = "Active",
                     SponsorId = 5
                 }
             );
@@ -673,6 +778,20 @@ namespace Tourist_Project_MVC.Data
                     CreatedDate = DateTime.Parse("2026-04-08")
                 }
             );
+
+            // Notification -> Sponsor (one-to-many).
+            modelBuilder.Entity<Notification>()
+                .HasOne<Sponsor>()
+                .WithMany()
+                .HasForeignKey(n => n.SponsorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // SupportTicket -> Sponsor (one-to-many).
+            modelBuilder.Entity<SupportTicket>()
+                .HasOne<Sponsor>()
+                .WithMany()
+                .HasForeignKey(st => st.SponsorId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // 6. Seed Trip Plans
             modelBuilder.Entity<TripPlan>().HasData(
@@ -852,7 +971,8 @@ namespace Tourist_Project_MVC.Data
                     Status = "Active",
                     RedemptionDate = DateTime.Parse("2026-08-05"),
                     RewardId = 1,
-                    TouristId = 2
+                    TouristId = 2,
+                    BranchId = 1
                 },
                 new
                 {
@@ -862,7 +982,8 @@ namespace Tourist_Project_MVC.Data
                     Status = "Used",
                     RedemptionDate = DateTime.Parse("2026-10-03"),
                     RewardId = 3,
-                    TouristId = 1
+                    TouristId = 1,
+                    BranchId = 3
                 }
             );
 

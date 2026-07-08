@@ -24,5 +24,25 @@ namespace Tourist_Project_MVC.Repositories
 
             return query.OrderBy(r => r.PointsRequired).ToList();
         }
+
+        public IEnumerable<Reward> GetBySponsorId(int sponsorId)
+        {
+            return _context.Rewards
+                .Include(r => r.Sponsor)
+                .Include(r => r.RewardBranches)
+                .ThenInclude(rb => rb.Branch)
+                .Where(r => r.SponsorId == sponsorId)
+                .OrderBy(r => r.PointsRequired)
+                .ToList();
+        }
+
+        public Reward? GetByIdWithBranches(int id)
+        {
+            return _context.Rewards
+                .Include(r => r.Sponsor)
+                .Include(r => r.RewardBranches)
+                .ThenInclude(rb => rb.Branch)
+                .FirstOrDefault(r => r.Id == id);
+        }
     }
 }

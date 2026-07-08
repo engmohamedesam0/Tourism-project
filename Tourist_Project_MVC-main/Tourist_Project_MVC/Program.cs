@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
+using Tourist_Project_MVC.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
@@ -28,9 +29,12 @@ namespace Tourist_Project_MVC
             builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
             builder.Services.AddScoped<ITouristRepository, TouristRepository>();
             builder.Services.AddScoped<IMissionRepository, MissionRepository>();
+            builder.Services.AddScoped<IBranchRepository, BranchRepository>();
             builder.Services.AddScoped<IRewardRepository, RewardRepository>();
             builder.Services.AddScoped<ISponsorRepository, SponsorRepository>();
             builder.Services.AddScoped<ITripPlanRepository, TripPlanRepository>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<ISupportTicketService, SupportTicketService>();
             builder.Services.AddDbContext<TouristContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("CS")));
 

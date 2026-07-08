@@ -48,7 +48,8 @@ h1, h2, h3, h4, h5, h6,
     border-bottom: 1px solid rgba(200, 131, 42, 0.25);
     font-size: 0.8rem;
     max-height: 48px;
-    overflow: hidden;
+    position: relative;
+    z-index: 1040;
     transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.3s ease;
 }
 
@@ -56,6 +57,7 @@ h1, h2, h3, h4, h5, h6,
         max-height: 0;
         opacity: 0;
         border-bottom: none;
+        overflow: hidden;
     }
 
 /* Lower primary bar */
@@ -63,6 +65,8 @@ h1, h2, h3, h4, h5, h6,
     background: rgba(44, 26, 14, 0.55);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1030;
     transition: background 0.3s ease, backdrop-filter 0.3s ease;
 }
 

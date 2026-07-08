@@ -1,0 +1,112 @@
+@model List<Tourist_Project_MVC.View_Model.AccountRow>
+@using Microsoft.AspNetCore.Identity
+@using Tourist_Project_MVC.Models
+
+@{
+    ViewData["Title"] = "Account Management";
+    var roles = (List<IdentityRole>?)ViewBag.Roles;
+}
+
+<div class="container my-4" style="max-width: 1000px;">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="page-title mb-0">
+            <i class="bi bi-people-fill me-2"></i> Account Management
+        </h1>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-house-fill me-1"></i> Home
+        </a>
+    </div>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle destinations-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Current Role</th>
+                            <th style="width: 320px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var account in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">
+                                    @account.UserName
+                                    @if (account.IsCurrentAdmin)
+                                    {
+                                        <span class="badge bg-warning text-dark ms-1">You</span>
+                                    }
+                                </td>
+                                <td>@account.Email</td>
+                                <td>
+                                    <span class="badge bg-primary">@account.CurrentRole</span>
+                                </td>
+                                <td>
+                                    @if (account.IsCurrentAdmin)
+                                    {
+                                        <span class="text-muted small" title="Cannot change or delete your own account">
+                                            <i class="bi bi-lock-fill me-1"></i> Account protected
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <form method="post" asp-action="ManageAccounts" class="d-flex align-items-center gap-2 mb-2">
+                                            <input type="hidden" name="UserId" value="@account.UserId" />
+                                            <select name="RoleName" class="form-select form-select-sm" required>
+                                                @if (roles != null)
+                                                {
+                                                    foreach (var role in roles)
+                                                    {
+                                                        if (role.Name == account.CurrentRole)
+                                                        {
+                                                            <option value="@role.Name" selected>@role.Name</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@role.Name">@role.Name</option>
+                                                        }
+                                                    }
+                                                }
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-arrow-repeat me-1"></i> Change
+                                            </button>
+                                        </form>
+                                        <form method="post" asp-action="Delete" onsubmit="return confirm('This will permanently remove the login account for @account.UserName@(string.IsNullOrEmpty(account.Email) ? "" : $" ({account.Email})"). The linked Tourist/Sponsor profile and all historical data will be preserved. Are you sure?');">
+                                            <input type="hidden" name="id" value="@account.UserId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash-fill me-1"></i> Delete
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-muted small mt-3 mb-0">
+        Deleting an account removes the login only &mdash; the linked Tourist/Sponsor
+        profile and all historical data are preserved.
+    </p>
+</div>
+
+@section Scripts {
+    <style>
+        .destinations-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+    </style>
+}

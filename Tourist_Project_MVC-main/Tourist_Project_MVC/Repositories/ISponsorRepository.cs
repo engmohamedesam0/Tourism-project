@@ -6,5 +6,7 @@ namespace Tourist_Project_MVC.Repositories
     {
         IEnumerable<Sponsor> GetFiltered(string? search, string? type);
         Sponsor? GetByIdWithRewars(int id);
+
+        Sponsor? GetOrCreateByApplicationUser(string userId, string? email);
     }
 }

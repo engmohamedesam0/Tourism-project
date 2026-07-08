@@ -1,0 +1,140 @@
+@model Tourist_Project_MVC.View_Model.SponsorReportsVM
+
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="container my-4" style="max-width: 1000px;">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="page-title mb-0">
+            <i class="bi bi-bar-chart-fill me-2"></i> Reports
+        </h1>
+        <a asp-controller="SponsorPortal" asp-action="Dashboard" class="btn btn-outline-secondary">
+            <i class="bi bi-speedometer2 me-1"></i> Dashboard
+        </a>
+    </div>
+
+    <p class="text-muted small mb-4">
+        Monthly activity for <strong>@Model.CurrentSponsorName</strong> &middot; @Model.Year
+    </p>
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body">
+            <h6 class="mb-3"><i class="bi bi-graph-up text-primary me-1"></i> Redemptions per Month (@Model.Year)</h6>
+            <div style="height: 320px;">
+                <canvas id="reportsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body">
+            <h6 class="mb-3"><i class="bi bi-calendar3 text-primary me-1"></i> Monthly Breakdown</h6>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle destinations-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Redemptions</th>
+                            <th>Points Redeemed</th>
+                            <th>Reward Views</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.ReportRows)
+                        {
+                            <tr>
+                                <td class="fw-bold">@row.MonthLabel</td>
+                                <td>@row.Redemptions</td>
+                                <td>@row.PointsRedeemed</td>
+                                <td>@row.Views</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+            <h6 class="mb-3"><i class="bi bi-trophy-fill text-primary me-1"></i> Top Rewards</h6>
+            @if (Model.TopRewards.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle destinations-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Reward</th>
+                                <th>Redemptions</th>
+                                <th>Views</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var reward in Model.TopRewards)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@reward.RewardTitle</td>
+                                    <td>@reward.Redemptions</td>
+                                    <td>@reward.Views</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="bi bi-gift" style="font-size:2rem; color:var(--egy-primary);"></i>
+                    <p class="text-muted mt-2 mb-0">No reward activity yet.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            var ctx = document.getElementById('reportsChart');
+            if (!ctx) return;
+            var labels = [@Html.Raw(string.Join(",", Model.ReportRows.Select(r => $"\"{r.MonthLabel}\"")))];
+            var data = [@Html.Raw(string.Join(",", Model.ReportRows.Select(r => r.Redemptions)))];
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Redemptions',
+                        data: data,
+                        backgroundColor: 'rgba(44, 26, 14, 0.75)',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    }
+                }
+            });
+        })();
+    </script>
+
+    <style>
+        .destinations-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+    </style>
+}

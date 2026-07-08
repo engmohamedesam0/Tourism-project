@@ -1,0 +1,68 @@
+@using Tourist_Project_MVC.View_Model
+@model CompleteSponsorProfileViewModel
+
+@{
+    ViewData["Title"] = "Complete Your Sponsor Profile";
+}
+
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+
+        <div class="card-header py-3"
+             style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+            <h4 class="text-white mb-0">
+                <i class="bi bi-building-fill me-2"></i> Complete Your Sponsor Profile
+            </h4>
+        </div>
+
+        <div class="card-body p-4">
+            <p class="text-muted mb-4">
+                Your account is assigned to the Sponsor role, but no sponsor profile is linked yet.
+                Please fill in your business details below to continue.
+            </p>
+
+            <form asp-action="CompleteProfile" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label asp-for="BusinessName" class="form-label fw-bold"></label>
+                    <input asp-for="BusinessName" class="form-control" placeholder="Enter your business name" />
+                    <span asp-validation-for="BusinessName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SponsorType" class="form-label fw-bold"></label>
+                    <input asp-for="SponsorType" class="form-control" placeholder="e.g. Restaurant, Hotel, Tour Operator" />
+                    <span asp-validation-for="SponsorType" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SponsorAddress" class="form-label fw-bold"></label>
+                    <input asp-for="SponsorAddress" class="form-control" placeholder="Business address" />
+                    <span asp-validation-for="SponsorAddress" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ContactNumber" class="form-label fw-bold"></label>
+                    <input asp-for="ContactNumber" class="form-control" type="number" placeholder="Contact phone number" />
+                    <span asp-validation-for="ContactNumber" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="bi bi-check-lg me-1"></i> Save and Continue
+                    </button>
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">
+                        <i class="bi bi-x-lg me-1"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

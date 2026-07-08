@@ -7,6 +7,9 @@ namespace Tourist_Project_MVC.View_Model
     public class SponsorCardVM
     {
         public Sponsor Sponsor { get; set; } = new Sponsor();
+        // Display coordinates of the nearest branch (used by the map placeholder).
+        public double Lat { get; set; }
+        public double Long { get; set; }
         public double DistanceKm { get; set; }
         public double AvgRating { get; set; }
         public int ReviewCount { get; set; }

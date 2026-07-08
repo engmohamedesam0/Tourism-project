@@ -10,12 +10,16 @@ namespace Tourist_Project_MVC.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly ITouristRepository _touristRepo;
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ITouristRepository touristRepo)
+        private readonly ISponsorRepository _sponsorRepo;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, ISponsorRepository sponsorRepo)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.roleManager = roleManager;
             this._touristRepo = touristRepo;
+            this._sponsorRepo = sponsorRepo;
         }
         [HttpGet]
         public IActionResult Register()
@@ -37,17 +41,41 @@ namespace Tourist_Project_MVC.Controllers
                 };
                 var identityResult = await userManager.CreateAsync(applicationUser, userFromRequest.Password);
                 
-                 if (identityResult.Succeeded)
-                 {
-                     await userManager.AddToRoleAsync(applicationUser, "User");
+                  if (identityResult.Succeeded)
+                  {
+                      var createdUser = await userManager.FindByNameAsync(applicationUser.UserName);
 
-                     // Link to (or auto-create) the Tourist record for this account so the
-                     // Trip planner works immediately after registration.
-                     var createdUser = await userManager.FindByNameAsync(applicationUser.UserName);
-                     _touristRepo.GetOrCreateByApplicationUser(createdUser);
+                      if (userFromRequest.AccountType == "Sponsor")
+                      {
+                          // Make sure the Sponsor role exists, then assign it.
+                          await EnsureRoleAsync("Sponsor");
+                          await userManager.AddToRoleAsync(createdUser, "Sponsor");
 
-                     return RedirectToAction("Login");
-                 }
+                          // Link a new Sponsor record to this login account so the
+                          // signed-in sponsor's own data resolves directly by FK.
+                           var sponsor = new Sponsor
+                           {
+                               Name = userFromRequest.BusinessName ?? createdUser.UserName,
+                               Type = userFromRequest.SponsorType ?? string.Empty,
+                               Address = userFromRequest.SponsorAddress ?? string.Empty,
+                               ContactNumber = userFromRequest.ContactNumber ?? 0,
+                               Email = userFromRequest.UserEmail ?? string.Empty,
+                               ApplicationUserId = createdUser.Id
+                           };
+                          _sponsorRepo.Add(sponsor);
+                          _sponsorRepo.Save();
+                      }
+                      else
+                      {
+                          await userManager.AddToRoleAsync(createdUser, "User");
+
+                          // Link to (or auto-create) the Tourist record for this account so the
+                          // Trip planner works immediately after registration.
+                          _touristRepo.GetOrCreateByApplicationUser(createdUser);
+                      }
+
+                      return RedirectToAction("Login");
+                  }
                 foreach (var errorItem in identityResult.Errors)
                 {
                     ModelState.AddModelError("", errorItem.Description);
@@ -74,9 +102,13 @@ namespace Tourist_Project_MVC.Controllers
                         await signInManager.SignInAsync(user, loginUser.RememberMe);
 
                         // Role-based landing: Admins stay in the back office,
-                        // Tourists land on the new Explore discovery page.
+                        // Sponsors land on their own portal, everyone else (Tourists)
+                        // land on the new Explore discovery page.
                         if (await userManager.IsInRoleAsync(user, "Admin"))
                             return RedirectToAction("Index", "Tourist");
+
+                        if (await userManager.IsInRoleAsync(user, "Sponsor"))
+                            return RedirectToAction("Index", "SponsorPortal");
 
                         return RedirectToAction("Index", "Explore");
                     }
@@ -105,6 +137,16 @@ namespace Tourist_Project_MVC.Controllers
         {
             await signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
+        }
+
+        // Creates a role if it does not already exist (so Sponsor sign-ups do
+        // not depend on an Admin having created the role first).
+        private async Task EnsureRoleAsync(string roleName)
+        {
+            if (!await roleManager.RoleExistsAsync(roleName))
+            {
+                await roleManager.CreateAsync(new IdentityRole(roleName));
+            }
         }
     }
 }

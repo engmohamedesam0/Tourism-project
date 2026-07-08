@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.View_Model;
@@ -9,11 +11,19 @@ namespace Tourist_Project_MVC.Controllers
     {
         private readonly IRewardRepository _repo;
         private readonly ISponsorRepository SponserRepo;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITouristRepository _touristRepo;
+        private readonly TouristContext _context;
 
-        public RewardController(IRewardRepository repo, ISponsorRepository SponserRepo)
+        public RewardController(IRewardRepository repo, ISponsorRepository SponserRepo,
+            UserManager<ApplicationUser> userManager, ITouristRepository touristRepo,
+            TouristContext context)
         {
             _repo = repo;
             this.SponserRepo = SponserRepo;
+            _userManager = userManager;
+            _touristRepo = touristRepo;
+            _context = context;
         }
         public IActionResult Index(string? search, string? rewardType)
         {
@@ -40,10 +50,35 @@ namespace Tourist_Project_MVC.Controllers
             return View("Index", Rewards);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
             Reward Reward = _repo.GetById(id);
             if (Reward == null) return NotFound();
+
+            // Log a "reward detail view" for the sponsor dashboard metric.
+            // Only authenticated tourists are linked; everyone else is anonymous.
+            if (User.Identity.IsAuthenticated)
+            {
+                string? touristId = null;
+                if (User.IsInRole("User"))
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    if (user != null)
+                    {
+                        var tourist = _touristRepo.GetOrCreateByApplicationUser(user);
+                        touristId = tourist.Id.ToString();
+                    }
+                }
+
+                _context.RewardViews.Add(new RewardView
+                {
+                    RewardId = Reward.Id,
+                    TouristId = touristId,
+                    ViewedDate = DateTime.Now
+                });
+                _context.SaveChanges();
+            }
+
             return View("Details", Reward);
         }
 

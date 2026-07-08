@@ -11,11 +11,14 @@ namespace Tourist_Project_MVC.Models
         public int PointsRequired { get; set; }
         public int QuantityAvailable { get; set; }
         public DateTime ExpirationDate { get; set; }
+        public string Status { get; set; } = "Active";
 
         [ForeignKey("SponsorId")]
         public int SponsorId { get; set; }
         public Sponsor? Sponsor { get; set; }
 
         public List<Redemption>? Redemptions { get; set; }
+
+        public List<RewardBranch>? RewardBranches { get; set; }
     }
 }
