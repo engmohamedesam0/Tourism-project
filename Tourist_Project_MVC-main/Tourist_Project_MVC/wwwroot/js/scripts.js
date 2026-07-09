@@ -9,6 +9,17 @@
 
 window.addEventListener('DOMContentLoaded', event => {
 
+    // Keep --nav-offset in sync with the actual rendered navbar height so the
+    // content offset (padding-top / 100vh - offset) matches the two-tier bar.
+    // Measured at top-of-page where both the utility and primary bars are visible.
+    var syncNavOffset = function () {
+        const navbar = document.body.querySelector('#mainNav');
+        if (!navbar) {
+            return;
+        }
+        document.documentElement.style.setProperty('--nav-offset', navbar.offsetHeight + 'px');
+    };
+
     // Navbar shrink / direction-aware utility bar
     var lastScrollY = 0;
     var navbarShrink = function () {
@@ -23,6 +34,7 @@ window.addEventListener('DOMContentLoaded', event => {
         if (currentY === 0) {
             navbarCollapsible.classList.remove('navbar-shrink');
             navbarCollapsible.classList.remove('nav-utility-hidden');
+            syncNavOffset();
             lastScrollY = currentY;
             return;
         }
@@ -42,11 +54,15 @@ window.addEventListener('DOMContentLoaded', event => {
         }
     };
 
-    // Shrink the navbar 
+    // Shrink the navbar
     navbarShrink();
 
     // Shrink the navbar when page is scrolled
     document.addEventListener('scroll', navbarShrink);
+
+    // Sync the content offset to the real navbar height
+    syncNavOffset();
+    window.addEventListener('resize', syncNavOffset);
 
     // Activate Bootstrap scrollspy on the main nav element
     const mainNav = document.body.querySelector('#mainNav');

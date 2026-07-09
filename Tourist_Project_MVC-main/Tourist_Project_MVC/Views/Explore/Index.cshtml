@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Explore";
+    ViewData["IsHomePage"] = true;
 }
 
 <div class="explore-page">
@@ -136,13 +137,13 @@
 @section Scripts {
 <style>
     .explore-page {
-        padding-top: 140px;
+        padding-top: var(--nav-offset);
     }
 
     .explore-list-panel {
         background: var(--egy-light);
         border-right: 1px solid rgba(200, 131, 42, 0.2);
-        height: calc(100vh - 140px);
+        height: calc(100vh - var(--nav-offset));
         display: flex;
         flex-direction: column;
     }
@@ -258,7 +259,7 @@
     }
 
     .explore-map-panel {
-        height: calc(100vh - 140px);
+        height: calc(100vh - var(--nav-offset));
         background: #ece6db;
         position: relative;
     }

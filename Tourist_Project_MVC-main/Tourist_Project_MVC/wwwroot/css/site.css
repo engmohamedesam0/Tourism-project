@@ -5,6 +5,7 @@
     --egy-light: #FDF9F3; /* Soft Papyrus Alabaster */
     --egy-accent: #E8A045; /* Radiant Sun Amber */
     --egy-muted-gold: #b37424;
+    --nav-offset: 80px; /* live navbar height; synced by scripts.js (#mainNav.offsetHeight) */
 }
 
 /* Global Font Schemes */
@@ -26,9 +27,15 @@ h1, h2, h3, h4, h5, h6,
 
 /* Structure Formatting */
 .inner-page-wrapper {
-    padding-top: 140px;
+    padding-top: var(--nav-offset);
     padding-bottom: 60px;
     flex: 1 0 auto;
+}
+
+/* Nested wrappers (some views self-wrap in .inner-page-wrapper while the
+   layout already wraps non-home pages) must not re-apply the top offset. */
+.inner-page-wrapper .inner-page-wrapper {
+    padding-top: 0 !important;
 }
 
 /* Navbar Restyling — two-tier (utility + primary) */
@@ -78,11 +85,15 @@ h1, h2, h3, h4, h5, h6,
 
 /* Solid bars on inner pages (no hero behind) */
 @media (min-width: 992px) {
-    body:has(.inner-page-wrapper) #mainNav .navbar-utility {
+    body:has(.inner-page-wrapper) #mainNav .navbar-utility,
+    body:has(.explore-page) #mainNav .navbar-utility,
+    body:has(.nearme-page) #mainNav .navbar-utility {
         background-color: var(--egy-dark);
     }
 
-    body:has(.inner-page-wrapper) #mainNav .navbar-primary {
+    body:has(.inner-page-wrapper) #mainNav .navbar-primary,
+    body:has(.explore-page) #mainNav .navbar-primary,
+    body:has(.nearme-page) #mainNav .navbar-primary {
         background: var(--egy-dark);
         backdrop-filter: none;
         -webkit-backdrop-filter: none;

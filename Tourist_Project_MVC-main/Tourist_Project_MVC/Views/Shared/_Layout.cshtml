@@ -106,7 +106,7 @@
         .stat-red    .stat-icon { background: #e0533d; }
         .stat-amber  .stat-icon { background: #e8a045; }
 
-        .stat-card {
+        .stats-section .stat-card {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(200, 131, 42, 0.25);
         border-radius: 16px;
@@ -116,7 +116,7 @@
         overflow: hidden;
         }
 
-        .stat-card::before {
+        .stats-section .stat-card::before {
         content: '';
         position: absolute;
         top: 0;
@@ -128,25 +128,25 @@
         transition: opacity 0.4s ease;
         }
 
-        .stat-card:hover {
+        .stats-section .stat-card:hover {
         background: rgba(200, 131, 42, 0.08);
         border-color: #C8832A;
         transform: translateY(-8px);
         box-shadow: 0 20px 40px rgba(200, 131, 42, 0.15);
         }
 
-        .stat-card:hover::before {
+        .stats-section .stat-card:hover::before {
         opacity: 1;
         }
 
-        .stat-icon {
+        .stats-section .stat-icon {
         font-size: 2.5rem;
         color: #C8832A;
         margin-bottom: 20px;
         display: block;
         }
 
-        .stat-number {
+        .stats-section .stat-number {
         font-family: 'Cinzel', sans-serif;
         font-size: 3.5rem;
         font-weight: 900;
@@ -156,7 +156,7 @@
         line-height: 1;
         }
 
-        .stat-suffix {
+        .stats-section .stat-suffix {
         font-family: 'Cinzel', sans-serif;
         font-size: 2rem;
         font-weight: 900;
@@ -164,7 +164,7 @@
         display: inline;
         }
 
-        .stat-label {
+        .stats-section .stat-label {
         font-family: 'Nunito', sans-serif;
         font-size: 0.8rem;
         color: rgba(255, 255, 255, 0.55);
@@ -178,7 +178,7 @@
         INNER PAGES
         ============================================= */
         .inner-page-wrapper {
-        padding-top: 140px;
+        padding-top: var(--nav-offset);
         min-height: 80vh;
         background-color: #FDF6EC;
         font-family: 'Nunito', sans-serif;
@@ -187,6 +187,12 @@
         .inner-page-wrapper .container {
         padding-top: 30px;
         padding-bottom: 50px;
+        }
+
+        /* Nested wrappers (some views self-wrap in .inner-page-wrapper while the
+           layout already wraps non-home pages) must not re-apply the top offset. */
+        .inner-page-wrapper .inner-page-wrapper {
+        padding-top: 0 !important;
         }
 
         /* Tables */
@@ -372,34 +378,35 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <!-- ============ ADMIN EXPERIENCE ============ -->
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Tourist" asp-action="Index">
-                                    <i class="bi bi-people-fill"></i> Tourists
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Destination" asp-action="Index">
-                                    <i class="bi bi-geo-alt-fill"></i> Destinations
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="TripPlan" asp-action="Index">
-                                    <i class="bi bi-map-fill"></i> Trip Plans
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Mission" asp-action="Index">
-                                    <i class="bi bi-trophy-fill"></i> Missions
-                                </a>
-                            </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#"
-                                   id="rewardsDropdown" role="button"
+                                <a class="nav-link dropdown-toggle position-relative" href="#"
+                                   id="adminDropdown" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-gift-fill"></i> Rewards
+                                    <i class="bi bi-shield-lock-fill me-1"></i> Administration
+                                    @await Component.InvokeAsync("AdminApprovalBell")
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
-                                    aria-labelledby="rewardsDropdown">
+                                    aria-labelledby="adminDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Tourist" asp-action="Index">
+                                            <i class="bi bi-people-fill me-2"></i> Tourists
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Destination" asp-action="Index">
+                                            <i class="bi bi-geo-alt-fill me-2"></i> Destinations
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="TripPlan" asp-action="Index">
+                                            <i class="bi bi-map-fill me-2"></i> Trip Plans
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Mission" asp-action="Index">
+                                            <i class="bi bi-trophy-fill me-2"></i> Missions
+                                        </a>
+                                    </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Reward" asp-action="Index">
                                             <i class="bi bi-star-fill me-2"></i> All Rewards
@@ -408,6 +415,22 @@
                                     <li>
                                         <a class="dropdown-item" asp-controller="Sponsor" asp-action="Index">
                                             <i class="bi bi-building me-2"></i> Sponsors
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Role" asp-action="ManageAccounts">
+                                            <i class="bi bi-person-gear me-2"></i> Accounts
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="AdminSupport" asp-action="Index">
+                                            <i class="bi bi-headset me-2"></i> Support Inbox
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="SponsorApproval" asp-action="Index">
+                                            <i class="bi bi-bell-fill me-2"></i> Approvals
                                         </a>
                                     </li>
                                 </ul>
@@ -423,17 +446,6 @@
                                     <i class="bi bi-phone-fill"></i> Features
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Role" asp-action="ManageAccounts">
-                                    <i class="bi bi-person-gear"></i> Accounts
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="AdminSupport" asp-action="Index">
-                                    <i class="bi bi-headset"></i> Support Inbox
-                                </a>
-                            </li>
-                            @await Component.InvokeAsync("AdminApprovalBell")
                         }
                         else if (User.IsInRole("Sponsor"))
                         {
