@@ -1,0 +1,12 @@
+[
+  { "Id": 1,  "MissionType": "Photography", "Title": "Pyramid Panorama", "Description": "Capture a panoramic photo of all three pyramids at sunset", "PointsReward": 150, "DestinationId": 1 },
+  { "Id": 2,  "MissionType": "Exploration", "Title": "Valley Explorer", "Description": "Visit at least 5 different tombs inside the Valley of the Kings", "PointsReward": 200, "DestinationId": 4 },
+  { "Id": 3,  "MissionType": "Cultural", "Title": "Karnak Night Show", "Description": "Attend the Sound and Light Show at Karnak Temple", "PointsReward": 100, "DestinationId": 3 },
+  { "Id": 4,  "MissionType": "Adventure", "Title": "Sun Alignment Witness", "Description": "Witness the solar alignment phenomenon at Abu Simbel Temple", "PointsReward": 300, "DestinationId": 5 },
+  { "Id": 5,  "MissionType": "Discovery", "Title": "Hidden Oasis Quest", "Description": "Explore the Oracle Temple of Amun in Siwa Oasis", "PointsReward": 250, "DestinationId": 9 },
+  { "Id": 6,  "MissionType": "Photography", "Title": "Whale Valley Fossils", "Description": "Photograph 10 different whale fossils in Wadi El Hitan", "PointsReward": 180, "DestinationId": 10 },
+  { "Id": 7,  "MissionType": "Cultural", "Title": "Tutankhamun Treasure Hunt", "Description": "Locate and photograph 5 artifacts from Tutankhamun's collection in the Egyptian Museum", "PointsReward": 120, "DestinationId": 7 },
+  { "Id": 8,  "MissionType": "Photography", "Title": "Citadel Skyline", "Description": "Photograph the Saladin Citadel at golden hour from a rooftop cafe", "PointsReward": 130, "DestinationId": 15 },
+  { "Id": 9,  "MissionType": "Discovery", "Title": "Library of Alexandria Quest", "Description": "Find three themed reading rooms inside Bibliotheca Alexandrina", "PointsReward": 140, "DestinationId": 16 },
+  { "Id": 10, "MissionType": "Exploration", "Title": "Philae Island Walk", "Description": "Walk the full circumference of Philae Temple and log 3 inscriptions", "PointsReward": 160, "DestinationId": 18 }
+]

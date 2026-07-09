@@ -1,0 +1,133 @@
+@model Tourist_Project_MVC.View_Model.SponsorReviewListVM
+
+@{
+    ViewData["Title"] = "My Reviews";
+}
+
+<div class="inner-page-wrapper">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title mb-0">⭐ My Reviews</h2>
+        </div>
+
+        @if (Model.RatingAvailable)
+        {
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body text-center py-4">
+                    <div class="stat-mini-number">@Model.AverageRating!.Value.ToString("0.0")</div>
+                    <div class="mb-2">
+                        @for (int starIdx = 1; starIdx <= 5; starIdx++)
+                        {
+                            if (starIdx <= Math.Round(Model.AverageRating.Value))
+                            {
+                                <i class="bi bi-star-fill text-warning"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-star text-muted"></i>
+                            }
+                        }
+                    </div>
+                    <div class="text-muted">Average rating from @Model.ReviewCount review@(Model.ReviewCount == 1 ? "" : "s")</div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle-fill me-1"></i>
+                No reviews yet for your place — the rating card will populate once tourists leave reviews.
+            </div>
+        }
+
+        <div class="filter-bar mb-3">
+            <form method="get" asp-controller="SponsorReview" asp-action="Index">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted mb-1">Filter by rating</label>
+                        <select name="ratingFilter" class="form-select">
+                            <option value="">All Ratings</option>
+                            @for (int stars = 5; stars >= 1; stars--)
+                            {
+                                if (Model.SelectedRating == stars)
+                                {
+                                    <option value="@stars" selected>@stars ★</option>
+                                }
+                                else
+                                {
+                                    <option value="@stars">@stars ★</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-funnel-fill"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle destinations-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tourist</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int rowNum = 1;
+                    }
+                    @foreach (var review in Model.Reviews)
+                    {
+                        <tr>
+                            <td class="fw-bold text-muted">@rowNum.ToString("D2")</td>
+                            <td>@review.TouristName</td>
+                            <td>
+                                @for (int s = 1; s <= 5; s++)
+                                {
+                                    if (s <= review.Rating)
+                                    {
+                                        <i class="bi bi-star-fill text-warning small"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star text-muted small"></i>
+                                    }
+                                }
+                            </td>
+                            <td>@review.Comment</td>
+                            <td>@review.CreatedDate.ToShortDateString()</td>
+                        </tr>
+                        rowNum++;
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Reviews.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-chat-square-quote" style="font-size:3rem; color:var(--egy-primary);"></i>
+                <p class="text-muted mt-2">No reviews found for the selected filter.</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .stat-mini-number {
+            font-family: 'Cinzel', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2C1A0E;
+        }
+    </style>
+}

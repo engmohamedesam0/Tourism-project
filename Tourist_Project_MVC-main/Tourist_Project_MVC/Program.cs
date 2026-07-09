@@ -45,6 +45,12 @@ namespace Tourist_Project_MVC
             }).AddEntityFrameworkStores<TouristContext>();
 
             var app = builder.Build();
+
+            // JSON-driven, idempotent sample-data seeding (see Services/DbInitializer.cs
+            // and the SeedData/ folder). Safe to run on every startup: each table is
+            // only populated when empty.
+            DbInitializer.Initialize(app.Services);
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {

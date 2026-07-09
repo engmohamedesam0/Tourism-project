@@ -1,0 +1,14 @@
+[
+  { "Id": 1,  "SponsorId": 1,  "Type": "RewardRedeemed", "Message": "Reward '15% Off Marriott Cairo' was redeemed by a tourist.", "IsRead": false, "CreatedDate": "2026-06-01", "RelatedEntityType": "Reward",      "RelatedEntityId": 1 },
+  { "Id": 2,  "SponsorId": 1,  "Type": "LowStock",       "Message": "Reward 'Marriott Spa Day Pass' is running low on stock.",     "IsRead": true,  "CreatedDate": "2026-06-02", "RelatedEntityType": "Reward",      "RelatedEntityId": 2 },
+  { "Id": 3,  "SponsorId": 2,  "Type": "RewardRedeemed", "Message": "Reward 'Free EgyptAir Upgrade' was redeemed by a tourist.",   "IsRead": false, "CreatedDate": "2026-06-03", "RelatedEntityType": "Reward",      "RelatedEntityId": 3 },
+  { "Id": 4,  "SponsorId": 3,  "Type": "Expired",        "Message": "Reward 'White Desert Overnight' has expired.",                "IsRead": true,  "CreatedDate": "2026-07-01", "RelatedEntityType": "Reward",      "RelatedEntityId": 5 },
+  { "Id": 5,  "SponsorId": 4,  "Type": "RewardRedeemed", "Message": "Reward '20% Off Luxor Winter Palace' was redeemed.",           "IsRead": false, "CreatedDate": "2026-06-05", "RelatedEntityType": "Reward",      "RelatedEntityId": 6 },
+  { "Id": 6,  "SponsorId": 5,  "Type": "LowStock",       "Message": "Reward 'Aswan Spa Credit' is running low on stock.",          "IsRead": true,  "CreatedDate": "2026-06-06", "RelatedEntityType": "Reward",      "RelatedEntityId": 9 },
+  { "Id": 7,  "SponsorId": 6,  "Type": "RewardRedeemed", "Message": "Reward 'El Fishawy 20% Off' was redeemed by a tourist.",      "IsRead": false, "CreatedDate": "2026-06-07", "RelatedEntityType": "Reward",      "RelatedEntityId": 10 },
+  { "Id": 8,  "SponsorId": 7,  "Type": "Expired",        "Message": "Reward 'Free Umm Ali' is about to expire soon.",              "IsRead": true,  "CreatedDate": "2026-07-02", "RelatedEntityType": "Reward",      "RelatedEntityId": 14 },
+  { "Id": 9,  "SponsorId": 8,  "Type": "RewardRedeemed", "Message": "Reward 'Mena House 25% Off' was redeemed by a tourist.",      "IsRead": false, "CreatedDate": "2026-06-09", "RelatedEntityType": "Reward",      "RelatedEntityId": 15 },
+  { "Id": 10, "SponsorId": 9,  "Type": "LowStock",       "Message": "Reward 'Nile Cruise Cabin Credit' is running low on stock.",  "IsRead": true,  "CreatedDate": "2026-06-10", "RelatedEntityType": "Reward",      "RelatedEntityId": 17 },
+  { "Id": 11, "SponsorId": 10, "Type": "RewardRedeemed", "Message": "Reward 'Cilantro Free Drink' was redeemed by a tourist.",     "IsRead": false, "CreatedDate": "2026-06-11", "RelatedEntityType": "Reward",      "RelatedEntityId": 19 },
+  { "Id": 12, "SponsorId": 1,  "Type": "SupportReply",   "Message": "An admin replied to your support ticket #1.",                 "IsRead": false, "CreatedDate": "2026-06-12", "RelatedEntityType": "SupportTicket", "RelatedEntityId": 1 }
+]

@@ -1,0 +1,23 @@
+[
+  { "Id": 1,  "SponsorId": 1, "Name": "Nile View Breakfast Buffet", "Price": 25.00, "Description": "Extensive international & Egyptian breakfast with terrace view." },
+  { "Id": 2,  "SponsorId": 1, "Name": "Omar Khayyam Oriental Dinner", "Price": 45.00, "Description": "Signature Lebanese & Egyptian set-menu dinner." },
+  { "Id": 3,  "SponsorId": 1, "Name": "Bazooka Poolside Grill", "Price": 30.00, "Description": "Casual grilled meats and salads by the pool." },
+  { "Id": 4,  "SponsorId": 4, "Name": "Winter Palace Royal Afternoon Tea", "Price": 18.00, "Description": "Colonial-style tea service in the historic gardens." },
+  { "Id": 5,  "SponsorId": 4, "Name": "Nile Terrace Set Menu", "Price": 38.00, "Description": "Three-course dinner overlooking the Nile." },
+  { "Id": 6,  "SponsorId": 4, "Name": "1886 French Restaurant", "Price": 55.00, "Description": "Fine dining in the original 1886 palace wing." },
+  { "Id": 7,  "SponsorId": 5, "Name": "Aswanian Fish Grill", "Price": 22.00, "Description": "Fresh Nile perch grilled with local spices." },
+  { "Id": 8,  "SponsorId": 5, "Name": "Sunset Pool & Dinner Pass", "Price": 40.00, "Description": "Evening pool access with a three-course dinner." },
+  { "Id": 9,  "SponsorId": 6, "Name": "Mint Tea & Baklava Plate", "Price": 8.00, "Description": "Traditional mint tea with assorted Egyptian sweets." },
+  { "Id": 10, "SponsorId": 6, "Name": "Shisha & Coffee Combo", "Price": 12.00, "Description": "Classic ahwa experience with flavoured shisha." },
+  { "Id": 11, "SponsorId": 6, "Name": "Mezze Sharing Board", "Price": 16.00, "Description": "Hummus, baba ganoush, and warm pita." },
+  { "Id": 12, "SponsorId": 7, "Name": "Molokhia & Rice", "Price": 14.00, "Description": "Home-style green molokhia stew with vermicelli rice." },
+  { "Id": 13, "SponsorId": 7, "Name": "Stuffed Vine Leaves", "Price": 13.00, "Description": "Warak enab stuffed with rice, herbs and lamb." },
+  { "Id": 14, "SponsorId": 7, "Name": "Umm Ali Dessert", "Price": 10.00, "Description": "Warm national bread pudding with nuts and cream." },
+  { "Id": 15, "SponsorId": 8, "Name": "Pyramids View Dinner", "Price": 60.00, "Description": "Buffet dinner with direct Great Pyramid views." },
+  { "Id": 16, "SponsorId": 8, "Name": "Bread & Butter Breakfast", "Price": 20.00, "Description": "Continental breakfast with fresh baladi bread." },
+  { "Id": 17, "SponsorId": 8, "Name": "Pool Bar Club Sandwich", "Price": 15.00, "Description": "Grilled chicken club with fries." },
+  { "Id": 18, "SponsorId": 10, "Name": "Spanish Latte", "Price": 6.00, "Description": "Creamy condensed-milk latte, hot or iced." },
+  { "Id": 19, "SponsorId": 10, "Name": "Avocado Toast", "Price": 11.00, "Description": "Sourdough with mashed avocado and feta." },
+  { "Id": 20, "SponsorId": 10, "Name": "Berry Smoothie Bowl", "Price": 13.00, "Description": "Seasonal berries with granola and honey." },
+  { "Id": 21, "SponsorId": 10, "Name": "Croissant Sandwich", "Price": 9.00, "Description": "Butter croissant with egg and cheese." }
+]

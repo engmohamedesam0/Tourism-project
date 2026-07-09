@@ -1,0 +1,20 @@
+[
+  { "Id": 1,  "Visit_Order": 1, "ArrivalDate": "2026-08-01", "DepartureDate": "2026-08-03", "TripPlanId": 1, "DestinationId": 1 },
+  { "Id": 2,  "Visit_Order": 2, "ArrivalDate": "2026-08-03", "DepartureDate": "2026-08-05", "TripPlanId": 1, "DestinationId": 7 },
+  { "Id": 3,  "Visit_Order": 3, "ArrivalDate": "2026-08-05", "DepartureDate": "2026-08-08", "TripPlanId": 1, "DestinationId": 3 },
+  { "Id": 4,  "Visit_Order": 4, "ArrivalDate": "2026-08-08", "DepartureDate": "2026-08-10", "TripPlanId": 1, "DestinationId": 5 },
+  { "Id": 5,  "Visit_Order": 1, "ArrivalDate": "2026-09-05", "DepartureDate": "2026-09-07", "TripPlanId": 2, "DestinationId": 9 },
+  { "Id": 6,  "Visit_Order": 2, "ArrivalDate": "2026-09-07", "DepartureDate": "2026-09-09", "TripPlanId": 2, "DestinationId": 10 },
+  { "Id": 7,  "Visit_Order": 3, "ArrivalDate": "2026-09-09", "DepartureDate": "2026-09-12", "TripPlanId": 2, "DestinationId": 11 },
+  { "Id": 8,  "Visit_Order": 1, "ArrivalDate": "2026-10-01", "DepartureDate": "2026-10-03", "TripPlanId": 3, "DestinationId": 14 },
+  { "Id": 9,  "Visit_Order": 2, "ArrivalDate": "2026-10-03", "DepartureDate": "2026-10-05", "TripPlanId": 3, "DestinationId": 4 },
+  { "Id": 10, "Visit_Order": 3, "ArrivalDate": "2026-10-05", "DepartureDate": "2026-10-08", "TripPlanId": 3, "DestinationId": 3 },
+  { "Id": 11, "Visit_Order": 1, "ArrivalDate": "2026-07-12", "DepartureDate": "2026-07-14", "TripPlanId": 4, "DestinationId": 6 },
+  { "Id": 12, "Visit_Order": 2, "ArrivalDate": "2026-07-14", "DepartureDate": "2026-07-16", "TripPlanId": 4, "DestinationId": 16 },
+  { "Id": 13, "Visit_Order": 3, "ArrivalDate": "2026-07-16", "DepartureDate": "2026-07-19", "TripPlanId": 4, "DestinationId": 17 },
+  { "Id": 14, "Visit_Order": 1, "ArrivalDate": "2026-08-22", "DepartureDate": "2026-08-23", "TripPlanId": 5, "DestinationId": 15 },
+  { "Id": 15, "Visit_Order": 2, "ArrivalDate": "2026-08-23", "DepartureDate": "2026-08-24", "TripPlanId": 5, "DestinationId": 7 },
+  { "Id": 16, "Visit_Order": 1, "ArrivalDate": "2026-11-03", "DepartureDate": "2026-11-05", "TripPlanId": 6, "DestinationId": 5 },
+  { "Id": 17, "Visit_Order": 2, "ArrivalDate": "2026-11-05", "DepartureDate": "2026-11-08", "TripPlanId": 6, "DestinationId": 8 },
+  { "Id": 18, "Visit_Order": 3, "ArrivalDate": "2026-11-08", "DepartureDate": "2026-11-10", "TripPlanId": 6, "DestinationId": 18 }
+]

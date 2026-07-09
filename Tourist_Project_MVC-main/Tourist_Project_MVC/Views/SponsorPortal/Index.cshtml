@@ -19,31 +19,37 @@
 
     <div class="row g-3">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-geo-alt-fill text-primary" style="font-size: 2rem;"></i>
-                    <div class="stat-mini-number mt-2">@(Model.Branches?.Count ?? 0)</div>
-                    <div class="stat-mini-label">Branches</div>
+            <a asp-controller="SponsorBranch" asp-action="Index" class="text-decoration-none portal-stat-link">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-geo-alt-fill text-primary" style="font-size: 2rem;"></i>
+                        <div class="stat-mini-number mt-2">@(Model.Branches?.Count ?? 0)</div>
+                        <div class="stat-mini-label">Branches</div>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-gift-fill text-primary" style="font-size: 2rem;"></i>
-                    <div class="stat-mini-number mt-2">@(Model.Rewards?.Count ?? 0)</div>
-                    <div class="stat-mini-label">Rewards</div>
+            <a asp-controller="SponsorReward" asp-action="Index" class="text-decoration-none portal-stat-link">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-gift-fill text-primary" style="font-size: 2rem;"></i>
+                        <div class="stat-mini-number mt-2">@(Model.Rewards?.Count ?? 0)</div>
+                        <div class="stat-mini-label">Rewards</div>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-star-fill text-primary" style="font-size: 2rem;"></i>
-                    <div class="stat-mini-number mt-2">@(Model.Reviews?.Count ?? 0)</div>
-                    <div class="stat-mini-label">Reviews</div>
+            <a asp-controller="SponsorReview" asp-action="Index" class="text-decoration-none portal-stat-link">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-star-fill text-primary" style="font-size: 2rem;"></i>
+                        <div class="stat-mini-number mt-2">@(Model.Reviews?.Count ?? 0)</div>
+                        <div class="stat-mini-label">Reviews</div>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -92,8 +98,21 @@
                     <div class="card-body d-flex align-items-center gap-3">
                         <i class="bi bi-bell-fill text-primary" style="font-size: 1.6rem;"></i>
                         <div>
-                            <div class="fw-bold">Notifications &amp; Support</div>
-                            <div class="small text-muted">Alerts and support tickets</div>
+                            <div class="fw-bold">Notifications</div>
+                            <div class="small text-muted">Alerts and updates</div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="SponsorNotification" asp-action="Support" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <i class="bi bi-life-preserver text-primary" style="font-size: 1.6rem;"></i>
+                        <div>
+                            <div class="fw-bold">Support</div>
+                            <div class="small text-muted">Tickets and help</div>
                         </div>
                     </div>
                 </div>
@@ -132,6 +151,17 @@
             color: #999;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        .portal-stat-link .card {
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+            border: 1px solid transparent;
+        }
+
+        .portal-stat-link:hover .card {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(200, 131, 42, 0.18);
+            border-color: var(--egy-primary);
         }
     </style>
 }

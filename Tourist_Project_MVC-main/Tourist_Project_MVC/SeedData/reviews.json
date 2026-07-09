@@ -1,0 +1,17 @@
+[
+  { "Id": 1,  "Rating": 5, "Comment": "Incredible views of the Nile and top-notch service.", "TouristId": 2,  "SponsorId": 1, "CreatedDate": "2026-04-12" },
+  { "Id": 2,  "Rating": 4, "Comment": "Comfortable rooms, a bit pricey but worth it.", "TouristId": 3,  "SponsorId": 1, "CreatedDate": "2026-05-02" },
+  { "Id": 3,  "Rating": 5, "Comment": "Smooth flight and friendly cabin crew.", "TouristId": 4,  "SponsorId": 2, "CreatedDate": "2026-04-20" },
+  { "Id": 4,  "Rating": 4, "Comment": "Great guided tour, very knowledgeable guide.", "TouristId": 1,  "SponsorId": 3, "CreatedDate": "2026-05-18" },
+  { "Id": 5,  "Rating": 5, "Comment": "Historic atmosphere and beautiful gardens.", "TouristId": 4,  "SponsorId": 4, "CreatedDate": "2026-03-30" },
+  { "Id": 6,  "Rating": 4, "Comment": "Lovely sunset dinner by the water.", "TouristId": 2,  "SponsorId": 5, "CreatedDate": "2026-04-08" },
+  { "Id": 7,  "Rating": 5, "Comment": "The oldest cafe in Cairo, magical at night.", "TouristId": 5,  "SponsorId": 6, "CreatedDate": "2026-05-25" },
+  { "Id": 8,  "Rating": 4, "Comment": "Rich molokhia and warm hospitality.", "TouristId": 6,  "SponsorId": 7, "CreatedDate": "2026-04-15" },
+  { "Id": 9,  "Rating": 5, "Comment": "Unbeatable pyramid view from the terrace.", "TouristId": 7,  "SponsorId": 8, "CreatedDate": "2026-06-01" },
+  { "Id": 10, "Rating": 3, "Comment": "Nice cruise but the cabin felt dated.", "TouristId": 8,  "SponsorId": 9, "CreatedDate": "2026-05-10" },
+  { "Id": 11, "Rating": 4, "Comment": "Best iced latte in Maadi, great vibe.", "TouristId": 9,  "SponsorId": 10, "CreatedDate": "2026-06-08" },
+  { "Id": 12, "Rating": 5, "Comment": "We came back twice, that good.", "TouristId": 1,  "SponsorId": 1, "CreatedDate": "2026-06-12" },
+  { "Id": 13, "Rating": 4, "Comment": "Upgrade cleared without a hitch.", "TouristId": 10, "SponsorId": 2, "CreatedDate": "2026-05-21" },
+  { "Id": 14, "Rating": 5, "Comment": "The high tea is a must-do in Luxor.", "TouristId": 11, "SponsorId": 4, "CreatedDate": "2026-06-18" },
+  { "Id": 15, "Rating": 4, "Comment": "Chill felucca sail at golden hour.", "TouristId": 12, "SponsorId": 5, "CreatedDate": "2026-04-28" }
+]

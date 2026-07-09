@@ -1,0 +1,8 @@
+[
+  { "Id": 1, "Title": "Classic Egypt Tour",       "StartDate": "2026-08-01", "EndDate": "2026-08-10", "Status": "Active",  "Budget": 2500.00, "Companions": 2, "TouristId": 2 },
+  { "Id": 2, "Title": "Hidden Wonders of Egypt",  "StartDate": "2026-09-05", "EndDate": "2026-09-12", "Status": "Active",  "Budget": 1800.00, "Companions": 1, "TouristId": 3 },
+  { "Id": 3, "Title": "Nile Valley Explorer",     "StartDate": "2026-10-01", "EndDate": "2026-10-08", "Status": "Active",  "Budget": 3000.00, "Companions": 4, "TouristId": 1 },
+  { "Id": 4, "Title": "Red Sea Escape",           "StartDate": "2026-07-12", "EndDate": "2026-07-19", "Status": "Draft",   "Budget": 1500.00, "Companions": 2, "TouristId": 5 },
+  { "Id": 5, "Title": "Cairo Weekend",            "StartDate": "2026-08-22", "EndDate": "2026-08-24", "Status": "Draft",   "Budget": 600.00,  "Companions": 1, "TouristId": 7 },
+  { "Id": 6, "Title": "Luxor & Aswan Cruise",     "StartDate": "2026-11-03", "EndDate": "2026-11-10", "Status": "Active",  "Budget": 2200.00, "Companions": 3, "TouristId": 9 }
+]
