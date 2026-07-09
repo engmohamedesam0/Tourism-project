@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.View_Model;
@@ -10,11 +12,13 @@ namespace Tourist_Project_MVC.Controllers
     {
         private readonly ISponsorRepository sponsorRepo;
         private readonly IRewardRepository rewardsRepo;
+        private readonly TouristContext _context;
 
-        public SponsorController(ISponsorRepository sponsorRepo, IRewardRepository rewardsRepo)
+        public SponsorController(ISponsorRepository sponsorRepo, IRewardRepository rewardsRepo, TouristContext context)
         {
             this.sponsorRepo = sponsorRepo;
             this.rewardsRepo = rewardsRepo;
+            _context = context;
         }
 
         #region Index
@@ -40,6 +44,15 @@ namespace Tourist_Project_MVC.Controllers
 
             if (!string.IsNullOrEmpty(type))
                 allSponsers = allSponsers.Where(s => s.Type == type);
+
+            // Top stat-box row (real aggregates, query-level).
+            ViewBag.StatBoxes = new List<StatBoxItem>
+            {
+                new StatBoxItem { IconClass = "bi-building-fill", Color = "blue", Value = allSponsers.Count().ToString("N0"), Label = "Total Sponsors" },
+                new StatBoxItem { IconClass = "bi-hourglass-split", Color = "amber", Value = _context.SponsorApprovalRequests.Count(r => r.Status == "Pending").ToString("N0"), Label = "Pending Approvals" },
+                new StatBoxItem { IconClass = "bi-gift-fill", Color = "green", Value = _context.Rewards.Count(r => r.Status == "Active").ToString("N0"), Label = "Active Rewards" },
+                new StatBoxItem { IconClass = "bi-receipt-fill", Color = "purple", Value = _context.Redemptions.Count().ToString("N0"), Label = "Total Redemptions" }
+            };
 
             return View("index", allSponsers);
         }

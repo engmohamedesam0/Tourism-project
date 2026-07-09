@@ -8,5 +8,11 @@ namespace Tourist_Project_MVC.Models
         public string Message { get; set; } = string.Empty;
         public bool IsRead { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        // Optional link to the entity this notification is about, so a click can
+        // route the sponsor to the relevant page (e.g. Reward edit, Redemption
+        // history, or a Support ticket). Null for legacy/generic notifications.
+        public string? RelatedEntityType { get; set; }
+        public int? RelatedEntityId { get; set; }
     }
 }

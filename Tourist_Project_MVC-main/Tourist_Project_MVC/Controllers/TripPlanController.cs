@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Collections.Generic;
+using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
 {
@@ -10,15 +14,18 @@ namespace Tourist_Project_MVC.Controllers
         private readonly ITripPlanRepository _repo;
         private readonly ITouristRepository _touristRepo;
         private readonly IDestinationRepository _destinationRepo;
+        private readonly TouristContext _context;
 
         public TripPlanController(
             ITripPlanRepository repo,
             ITouristRepository touristRepo,
-            IDestinationRepository destinationRepo)
+            IDestinationRepository destinationRepo,
+            TouristContext context)
         {
             _repo = repo;
             _touristRepo = touristRepo;
             _destinationRepo = destinationRepo;
+            _context = context;
         }
 
         public IActionResult Index(string? search, int? touristId)
@@ -38,6 +45,20 @@ namespace Tourist_Project_MVC.Controllers
 
             if (touristId.HasValue)
                 all = all.Where(t => t.TouristId == touristId);
+
+            // Top stat-box row (real aggregates, query-level).
+            var now = DateTime.Now;
+            var total = _context.TripPlans.Count();
+            var startingThisMonth = _context.TripPlans.Count(t =>
+                t.StartDate.Year == now.Year && t.StartDate.Month == now.Month);
+
+            ViewBag.StatBoxes = new List<StatBoxItem>
+            {
+                new StatBoxItem { IconClass = "bi-map-fill", Color = "blue", Value = total.ToString("N0"), Label = "Total Trip Plans" },
+                new StatBoxItem { IconClass = "bi-check-circle-fill", Color = "green", Value = _context.TripPlans.Count(t => t.Status == "Active").ToString("N0"), Label = "Active Trip Plans" },
+                new StatBoxItem { IconClass = "bi-calendar-event-fill", Color = "gold", Value = startingThisMonth.ToString("N0"), Label = "Starting This Month" },
+                new StatBoxItem { IconClass = "bi-pin-map-fill", Color = "purple", Value = _context.TripDestinations.Count().ToString("N0"), Label = "Destinations Planned" }
+            };
 
             return View(all);
         }

@@ -1,0 +1,80 @@
+@model Tourist_Project_MVC.View_Model.TouristProfileVM
+
+@{
+    ViewData["Title"] = "My Profile";
+    ViewData["IsHomePage"] = false;
+}
+
+<div class="container my-4" style="max-width: 900px;">
+
+    <h1 class="page-title mb-4">
+        <i class="bi bi-person-circle me-2"></i> My Profile
+    </h1>
+
+    <div class="row g-3">
+        <!-- Profile picture + main identity -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
+                    {
+                        <img src="@Model.ProfilePicturePath" alt="Profile picture"
+                             class="rounded-circle mb-3"
+                             style="width: 140px; height: 140px; object-fit: cover; border: 3px solid var(--egy-primary);" />
+                    }
+                    else
+                    {
+                        <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                             style="width: 140px; height: 140px; background: var(--egy-light); border: 3px solid var(--egy-primary); font-size: 3.5rem; color: var(--egy-muted-gold);">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    }
+                    <h5 class="mb-1" style="font-family:'Cinzel',serif;">@($"{Model.FirstName} {Model.LastName}".Trim())</h5>
+                    <p class="text-muted small mb-0">@Model.Email</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="form-label small text-muted">Full Name</label>
+                            <p class="fw-semibold mb-0">@Model.Name</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small text-muted">Nationality</label>
+                            <p class="fw-semibold mb-0">@Model.Nationality</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small text-muted">Email</label>
+                            <p class="fw-semibold mb-0">@Model.Email</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small text-muted">Phone Number</label>
+                            <p class="fw-semibold mb-0">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Not provided" : Model.PhoneNumber)</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small text-muted">Registration Date</label>
+                            <p class="fw-semibold mb-0">@Model.RegisterDate.ToString("yyyy-MM-dd")</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small text-muted">Account Status</label>
+                            <p class="mb-0">
+                                <span class="badge bg-@(Model.Status == "Active" ? "success" : "secondary")">@Model.Status</span>
+                            </p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-muted">Points Balance</label>
+                            <p class="fw-bold mb-0" style="font-size: 1.25rem; color: var(--egy-primary);">
+                                <i class="bi bi-coin me-1"></i> @Model.PointBalance.ToString("N0") pts
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

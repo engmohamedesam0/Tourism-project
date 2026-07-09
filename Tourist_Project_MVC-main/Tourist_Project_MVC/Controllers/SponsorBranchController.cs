@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
@@ -35,6 +36,29 @@ namespace Tourist_Project_MVC.Controllers
             if (sponsor == null) return RedirectToAction("CompleteProfile", "SponsorPortal");
 
             var branches = _branchRepo.GetBySponsorId(sponsor.Id);
+
+            // Top stat-box row (scoped to this sponsor, query-level aggregates).
+            var sponsorId = sponsor.Id;
+            var totalRedemptions = _context.Redemptions.Count(r => r.Reward != null && r.Reward.SponsorId == sponsorId);
+
+            var topBranchId = _context.Redemptions
+                .Where(r => r.Reward != null && r.Reward.SponsorId == sponsorId && r.BranchId != null)
+                .GroupBy(r => r.BranchId)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .FirstOrDefault();
+            var topBranchName = topBranchId.HasValue
+                ? _context.Branches.Where(b => b.Id == topBranchId.Value).Select(b => b.Name).FirstOrDefault()
+                : null;
+
+            ViewBag.StatBoxes = new List<StatBoxItem>
+            {
+                new StatBoxItem { IconClass = "bi-diagram-3-fill", Color = "blue", Value = _context.Branches.Count(b => b.SponsorId == sponsorId).ToString("N0"), Label = "Total Branches" },
+                new StatBoxItem { IconClass = "bi-gift-fill", Color = "green", Value = _context.Rewards.Count(r => r.SponsorId == sponsorId).ToString("N0"), Label = "Total Rewards" },
+                new StatBoxItem { IconClass = "bi-receipt-fill", Color = "gold", Value = totalRedemptions.ToString("N0"), Label = "Total Redemptions" },
+                new StatBoxItem { IconClass = "bi-trophy-fill", Color = "purple", Value = topBranchName ?? "—", Label = "Most Active Branch" }
+            };
+
             return View("Index", branches);
         }
 

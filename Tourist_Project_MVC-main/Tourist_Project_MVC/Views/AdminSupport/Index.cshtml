@@ -1,0 +1,142 @@
+@model Tourist_Project_MVC.View_Model.AdminSupportIndexVM
+
+@{
+    ViewData["Title"] = "Support Inbox";
+    ViewData["IsHomePage"] = false;
+}
+
+<div class="container my-4" style="max-width: 1200px;">
+
+    <h1 class="page-title mb-4">
+        <i class="bi bi-headset me-2"></i> Support Inbox
+    </h1>
+
+    @await Html.PartialAsync("_StatBoxRow", (List<Tourist_Project_MVC.View_Model.StatBoxItem>)ViewBag.StatBoxes)
+
+    <!-- Filter Bar -->
+    <div class="filter-bar mb-3">
+        <form method="get" asp-controller="AdminSupport" asp-action="Index">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small text-muted mb-1">Search</label>
+                    <input type="text" name="search" class="form-control" value="@Model.Search" placeholder="Subject or description…" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small text-muted mb-1">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        @foreach (var st in Model.Statuses)
+                        {
+                            if (Model.StatusFilter == st)
+                            {
+                                <option value="@st" selected>@st</option>
+                            }
+                            else
+                            {
+                                <option value="@st">@st</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small text-muted mb-1">Category</label>
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        @foreach (var c in Model.Categories)
+                        {
+                            if (Model.CategoryFilter == c)
+                            {
+                                <option value="@c" selected>@c</option>
+                            }
+                            else
+                            {
+                                <option value="@c">@c</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small text-muted mb-1">Submitter</label>
+                    <select name="submitterType" class="form-select">
+                        <option value="">All</option>
+                        @foreach (var st in Model.SubmitterTypes)
+                        {
+                            if (Model.SubmitterTypeFilter == st)
+                            {
+                                <option value="@st" selected>@st</option>
+                            }
+                            else
+                            {
+                                <option value="@st">@st</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel-fill me-1"></i> Filter
+                    </button>
+                </div>
+                <div class="col-md-1 d-grid">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+            @if (!Model.Tickets.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox" style="font-size:2.5rem;"></i>
+                    <p class="mb-0 mt-2">No support tickets found.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle destinations-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Submitter</th>
+                                <th>Category</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.Tickets)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-@(row.SubmitterType == "Tourist" ? "info" : "secondary")">
+                                            <i class="bi bi-@(row.SubmitterType == "Tourist" ? "person" : "building") me-1"></i>@row.SubmitterType
+                                        </span>
+                                    </td>
+                                    <td class="fw-semibold">@row.SubmitterName</td>
+                                    <td><span class="badge-category">@row.Ticket.Category</span></td>
+                                    <td>@row.Ticket.Subject</td>
+                                    <td>
+                                        <span class="badge bg-@(row.Ticket.Status == "Open" ? "warning" : row.Ticket.Status == "Resolved" ? "success" : "info")">@row.Ticket.Status</span>
+                                    </td>
+                                    <td class="small text-muted">@row.Ticket.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                    <td class="text-end">
+                                        <a asp-action="Details" asp-route-id="@row.Ticket.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-box-arrow-in-right me-1"></i> Open
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -13,6 +13,8 @@
             </a>
         </div>
 
+    @await Html.PartialAsync("_StatBoxRow", (List<Tourist_Project_MVC.View_Model.StatBoxItem>)ViewBag.StatBoxes)
+
         <div class="table-responsive">
             <table class="table table-hover align-middle destinations-table">
                 <thead>

@@ -52,12 +52,40 @@
                 <hr style="border-color: #C8832A; width: 60px; border-width: 2px; margin: auto;" />
             </div>
             <div class="col-md-3 col-sm-6 mb-4">
-                <div class="stat-card">
-                    <i class="fas fa-monument stat-icon"></i>
+                <div class="stat-card stat-blue">
+                    <i class="bi bi-geo-alt-fill stat-icon"></i>
                     <div class="stat-number" data-target="@ViewBag.DestinationCount">0</div>
                     <div class="stat-suffix"></div>
                     <div class="stat-label">Archaeological Sites</div>
                 </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="stat-card stat-green">
+                    <i class="bi bi-people-fill stat-icon"></i>
+                    <div class="stat-number" data-target="@ViewBag.TouristCount">0</div>
+                    <div class="stat-suffix">+</div>
+                    <div class="stat-label">Registered Tourists</div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="stat-card stat-gold">
+                    <i class="bi bi-signpost-split stat-icon"></i>
+                    <div class="stat-number" data-target="@ViewBag.TripPlanCount">0</div>
+                    <div class="stat-suffix">+</div>
+                    <div class="stat-label">Trip Plans Created</div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="stat-card stat-purple">
+                    <i class="bi bi-trophy-fill stat-icon"></i>
+                    <div class="stat-number" data-target="@ViewBag.MissionCount">0</div>
+                    <div class="stat-suffix"></div>
+                    <div class="stat-label">Active Missions</div>
+                </div>
+            </div>
             </div>
 
             <div class="col-md-3 col-sm-6 mb-4">
@@ -244,72 +272,13 @@
             border-bottom: 2px solid #C8832A;
         }
 
-        .stat-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(200, 131, 42, 0.25);
-            border-radius: 16px;
-            padding: 45px 25px 35px;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
+        /* Hero stat numbers stay prominent on the dark section. */
+        .stats-section .stat-number {
+            font-size: 2.8rem;
         }
 
-            .stat-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 3px;
-                background: linear-gradient(90deg, transparent, #C8832A, transparent);
-                opacity: 0;
-                transition: opacity 0.4s ease;
-            }
-
-            .stat-card:hover {
-                background: rgba(200, 131, 42, 0.08);
-                border-color: #C8832A;
-                transform: translateY(-8px);
-                box-shadow: 0 20px 40px rgba(200, 131, 42, 0.15);
-            }
-
-                .stat-card:hover::before {
-                    opacity: 1;
-                }
-
-        .stat-icon {
-            font-size: 2.5rem;
-            color: #C8832A;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .stat-number {
-            font-family: 'Varela Round', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: #E8A045;
-            letter-spacing: 2px;
-            display: inline;
-            line-height: 1;
-        }
-
-        .stat-suffix {
-            font-family: 'Varela Round', sans-serif;
-            font-size: 2rem;
-            font-weight: 900;
-            color: #C8832A;
-            display: inline;
-        }
-
-        .stat-label {
-            font-family: 'Nunito', sans-serif;
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.55);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 12px;
-            display: block;
+        .stats-section .stat-label {
+            color: #6b7280;
         }
     </style>
 

@@ -1,0 +1,118 @@
+@model Tourist_Project_MVC.View_Model.SupportTicketVM
+
+@{
+    ViewData["Title"] = "Support";
+    ViewData["IsHomePage"] = false;
+}
+
+<div class="container my-4" style="max-width: 1000px;">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="page-title mb-0">
+            <i class="bi bi-headset me-2"></i> Support
+        </h1>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-5" id="newTicketForm">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-plus-circle me-1 text-primary"></i> New Ticket</h6>
+                    <form asp-action="CreateSupport" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Subject</label>
+                            <input type="text" class="form-control" asp-for="Subject" required />
+                            <span class="text-danger small" asp-validation-for="Subject"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Category</label>
+                            <select class="form-select" asp-for="Category" required>
+                                <option value="">Select a category…</option>
+                                @foreach (var c in Tourist_Project_MVC.View_Model.SupportTicketVM.Categories)
+                                {
+                                    if (Model.Category == c)
+                                    {
+                                        <option value="@c" selected>@c</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@c">@c</option>
+                                    }
+                                }
+                            </select>
+                            <span class="text-danger small" asp-validation-for="Category"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Description</label>
+                            <textarea class="form-control" asp-for="Description" rows="4" required></textarea>
+                            <span class="text-danger small" asp-validation-for="Description"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Attachment (photo or video, optional)</label>
+                            <input type="file" class="form-control" asp-for="Attachment" accept="image/*,video/*" />
+                            <span class="text-danger small" asp-validation-for="Attachment"></span>
+                        </div>
+                        <button class="btn btn-success btn-sm" type="submit">
+                            <i class="bi bi-send me-1"></i> Submit Ticket
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-ticket-perforated me-1 text-primary"></i> Your Tickets</h6>
+                    @if (!Model.Tickets.Any())
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                            <p class="mb-0 mt-2">No tickets submitted yet.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle destinations-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Subject</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int i = 1;
+                                    }
+                                    @foreach (var t in Model.Tickets)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold text-muted">@i.ToString("D2")</td>
+                                            <td>
+                                                <a asp-action="Details" asp-route-id="@t.Id" class="fw-bold text-decoration-none">@t.Subject</a>
+                                                @if (!string.IsNullOrEmpty(t.AdminResponse))
+                                                {
+                                                    <span class="badge bg-success ms-1" title="Admin has responded"><i class="bi bi-reply-fill"></i></span>
+                                                }
+                                            </td>
+                                            <td><span class="badge-category">@t.Category</span></td>
+                                            <td>
+                                                <span class="badge bg-@(t.Status == "Open" ? "warning" : t.Status == "Resolved" ? "success" : "info")">@t.Status</span>
+                                            </td>
+                                            <td class="small text-muted">@t.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                        </tr>
+                                        i++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

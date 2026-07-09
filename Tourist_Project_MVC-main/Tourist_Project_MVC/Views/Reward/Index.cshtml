@@ -21,6 +21,8 @@
         
     </div>
 
+    @await Html.PartialAsync("_StatBoxRow", (List<Tourist_Project_MVC.View_Model.StatBoxItem>)ViewBag.StatBoxes)
+
     <!-- Filter Bar -->
     <div class="filter-bar mb-3">
         <div class="row g-2 align-items-center">

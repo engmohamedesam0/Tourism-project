@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.View_Model;
@@ -9,11 +11,13 @@ namespace Tourist_Project_MVC.Controllers
     {
         private readonly IMissionRepository missionRepo;
         private readonly IDestinationRepository destRepo;
+        private readonly TouristContext _context;
 
-        public MissionController(IMissionRepository missionRepo, IDestinationRepository destRepo)
+        public MissionController(IMissionRepository missionRepo, IDestinationRepository destRepo, TouristContext context)
         {
             this.missionRepo = missionRepo;
             this.destRepo = destRepo;
+            _context = context;
         }
 
         public IActionResult Index(string? search, string? missionType)
@@ -37,6 +41,20 @@ namespace Tourist_Project_MVC.Controllers
 
             if (!string.IsNullOrEmpty(missionType))
                 missions = missions.Where(m => m.MissionType == missionType);
+
+            // Top stat-box row (real aggregates, query-level).
+            var total = _context.Missions.Count();
+            var destinationsCovered = _context.Missions.Select(m => m.DestinationId).Distinct().Count();
+            var avgPoints = total > 0 ? Math.Round(_context.Missions.Average(m => m.PointsReward)) : 0;
+            var missionTypes = _context.Missions.Select(m => m.MissionType).Distinct().Count();
+
+            ViewBag.StatBoxes = new List<StatBoxItem>
+            {
+                new StatBoxItem { IconClass = "bi-flag-fill", Color = "blue", Value = total.ToString("N0"), Label = "Total Missions" },
+                new StatBoxItem { IconClass = "bi-geo-alt-fill", Color = "green", Value = destinationsCovered.ToString("N0"), Label = "Destinations Covered" },
+                new StatBoxItem { IconClass = "bi-stars", Color = "gold", Value = avgPoints.ToString("N0"), Label = "Avg Points Reward" },
+                new StatBoxItem { IconClass = "bi-collection", Color = "purple", Value = missionTypes.ToString("N0"), Label = "Mission Types" }
+            };
 
             return View(missions);
         }

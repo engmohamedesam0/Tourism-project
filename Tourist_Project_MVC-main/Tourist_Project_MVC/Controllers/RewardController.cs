@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
@@ -46,6 +47,18 @@ namespace Tourist_Project_MVC.Controllers
 
             if (!string.IsNullOrEmpty(rewardType))
                 Rewards = Rewards.Where(r => r.RewardType == rewardType);
+
+            // Top stat-box row (real aggregates, query-level).
+            var total = _context.Rewards.Count();
+            var avgPoints = total > 0 ? Math.Round(_context.Rewards.Average(r => r.PointsRequired)) : 0;
+
+            ViewBag.StatBoxes = new List<StatBoxItem>
+            {
+                new StatBoxItem { IconClass = "bi-gift-fill", Color = "blue", Value = total.ToString("N0"), Label = "Total Rewards" },
+                new StatBoxItem { IconClass = "bi-check-circle-fill", Color = "green", Value = _context.Rewards.Count(r => r.Status == "Active").ToString("N0"), Label = "Active Rewards" },
+                new StatBoxItem { IconClass = "bi-receipt-fill", Color = "gold", Value = _context.Redemptions.Count().ToString("N0"), Label = "Total Redemptions" },
+                new StatBoxItem { IconClass = "bi-coin", Color = "purple", Value = avgPoints.ToString("N0"), Label = "Avg Points Required" }
+            };
 
             return View("Index", Rewards);
         }

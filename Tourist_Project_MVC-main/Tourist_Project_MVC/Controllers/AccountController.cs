@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.View_Model;
@@ -12,14 +15,16 @@ namespace Tourist_Project_MVC.Controllers
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly ITouristRepository _touristRepo;
-        private readonly ISponsorRepository _sponsorRepo;
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, ISponsorRepository sponsorRepo)
+        private readonly TouristContext _context;
+        private readonly IWebHostEnvironment _env;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, TouristContext context, IWebHostEnvironment env)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.roleManager = roleManager;
             this._touristRepo = touristRepo;
-            this._sponsorRepo = sponsorRepo;
+            this._context = context;
+            this._env = env;
         }
         [HttpGet]
         public IActionResult Register()
@@ -33,45 +38,83 @@ namespace Tourist_Project_MVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Optional profile picture upload (image only, reasonable size cap).
+                string? profilePicturePath = null;
+                var profileFile = userFromRequest.ProfilePicture;
+                if (profileFile != null && profileFile.Length > 0)
+                {
+                    var allowed = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                    var ext = Path.GetExtension(profileFile.FileName).ToLowerInvariant();
+                    if (!allowed.Contains(ext))
+                    {
+                        ModelState.AddModelError("ProfilePicture", "Only image files are allowed.");
+                        return View("Register", userFromRequest);
+                    }
+                    if (profileFile.Length > 2 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("ProfilePicture", "Image must be 2 MB or smaller.");
+                        return View("Register", userFromRequest);
+                    }
+
+                    var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "profile-pictures");
+                    Directory.CreateDirectory(uploadsFolder);
+                    var fileName = $"{Guid.NewGuid()}{ext}";
+                    var fullPath = Path.Combine(uploadsFolder, fileName);
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await profileFile.CopyToAsync(stream);
+                    }
+                    profilePicturePath = $"/uploads/profile-pictures/{fileName}";
+                }
+
+                var userName = $"{userFromRequest.FirstName} {userFromRequest.LastName}".Trim();
+
                 var applicationUser = new ApplicationUser()
                 {
-                    UserName = userFromRequest.UserName,
+                    UserName = userName,
                     Email = userFromRequest.UserEmail,
-                    PasswordHash = userFromRequest.Password
+                    PasswordHash = userFromRequest.Password,
+                    PhoneNumber = userFromRequest.PhoneNumber,
+                    FirstName = userFromRequest.FirstName,
+                    LastName = userFromRequest.LastName,
+                    Nationality = userFromRequest.Nationality,
+                    ProfilePicturePath = profilePicturePath
                 };
                 var identityResult = await userManager.CreateAsync(applicationUser, userFromRequest.Password);
-                
+
                   if (identityResult.Succeeded)
                   {
                       var createdUser = await userManager.FindByNameAsync(applicationUser.UserName);
 
                       if (userFromRequest.AccountType == "Sponsor")
                       {
-                          // Make sure the Sponsor role exists, then assign it.
-                          await EnsureRoleAsync("Sponsor");
-                          await userManager.AddToRoleAsync(createdUser, "Sponsor");
+                          // Sponsor sign-up is gated by Admin approval: create the
+                          // account with shared profile fields but DO NOT assign the
+                          // Sponsor role and DO NOT create a Sponsor record yet.
+                          var request = new SponsorApprovalRequest
+                          {
+                              ApplicationUserId = createdUser.Id,
+                              Status = "Pending",
+                              RequestedDate = DateTime.Now
+                          };
+                          _context.SponsorApprovalRequests.Add(request);
+                          await _context.SaveChangesAsync();
 
-                          // Link a new Sponsor record to this login account so the
-                          // signed-in sponsor's own data resolves directly by FK.
-                           var sponsor = new Sponsor
-                           {
-                               Name = userFromRequest.BusinessName ?? createdUser.UserName,
-                               Type = userFromRequest.SponsorType ?? string.Empty,
-                               Address = userFromRequest.SponsorAddress ?? string.Empty,
-                               ContactNumber = userFromRequest.ContactNumber ?? 0,
-                               Email = userFromRequest.UserEmail ?? string.Empty,
-                               ApplicationUserId = createdUser.Id
-                           };
-                          _sponsorRepo.Add(sponsor);
-                          _sponsorRepo.Save();
+                          return RedirectToAction("SponsorApprovalStatus", new { status = "submitted" });
                       }
                       else
                       {
                           await userManager.AddToRoleAsync(createdUser, "User");
 
                           // Link to (or auto-create) the Tourist record for this account so the
-                          // Trip planner works immediately after registration.
-                          _touristRepo.GetOrCreateByApplicationUser(createdUser);
+                          // Trip planner works immediately after registration. Populate it from
+                          // the new shared profile fields where columns match.
+                          var tourist = _touristRepo.GetOrCreateByApplicationUser(createdUser);
+                          tourist.Name = $"{createdUser.FirstName} {createdUser.LastName}".Trim();
+                          tourist.Nationality = createdUser.Nationality;
+                          tourist.Email = createdUser.Email ?? string.Empty;
+                          _touristRepo.Update(tourist);
+                          _touristRepo.Save();
                       }
 
                       return RedirectToAction("Login");
@@ -99,6 +142,15 @@ namespace Tourist_Project_MVC.Controllers
                     var passed = await userManager.CheckPasswordAsync(user, loginUser.UserPassword);
                     if(passed)
                     {
+                        // Sponsor approval gate: a pending/rejected request short-circuits
+                        // any portal redirect and shows a clear status message instead.
+                        var approval = await _context.SponsorApprovalRequests
+                            .FirstOrDefaultAsync(r => r.ApplicationUserId == user.Id);
+                        if (approval != null && approval.Status == "Pending")
+                            return RedirectToAction("SponsorApprovalStatus", new { status = "pending" });
+                        if (approval != null && approval.Status == "Rejected")
+                            return RedirectToAction("SponsorApprovalStatus", new { status = "rejected" });
+
                         await signInManager.SignInAsync(user, loginUser.RememberMe);
 
                         // Role-based landing: Admins stay in the back office,
@@ -116,6 +168,15 @@ namespace Tourist_Project_MVC.Controllers
                 ModelState.AddModelError("", "Invalid Account");
             }
             return View("Login", loginUser);
+        }
+
+        // Clear status page shown after a Sponsor sign-up and on login attempts
+        // for accounts whose SponsorApprovalRequest is still pending/rejected.
+        [HttpGet]
+        public IActionResult SponsorApprovalStatus(string status)
+        {
+            ViewData["Status"] = status;
+            return View("SponsorApprovalStatus");
         }
 
         public IActionResult Reset()
@@ -139,7 +200,7 @@ namespace Tourist_Project_MVC.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        // Creates a role if it does not already exist (so Sponsor sign-ups do
+        // Creates a role if it does not already exist (so Sponsor approval does
         // not depend on an Admin having created the role first).
         private async Task EnsureRoleAsync(string roleName)
         {

@@ -15,6 +15,8 @@
         </a>
     </div>
 
+    @await Html.PartialAsync("_StatBoxRow", (List<Tourist_Project_MVC.View_Model.StatBoxItem>)ViewBag.StatBoxes)
+
     <!-- Filter Bar -->
     <div class="filter-bar mb-3">
         <form method="get" asp-controller="SponsorRedemption" asp-action="Index">

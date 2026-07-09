@@ -1,7 +1,7 @@
 @model Tourist_Project_MVC.View_Model.SponsorNotificationVM
 
 @{
-    ViewData["Title"] = "Notifications & Support";
+    ViewData["Title"] = "Notifications";
     ViewData["IsHomePage"] = false;
 }
 
@@ -11,167 +11,69 @@
         <h1 class="page-title mb-0">
             <i class="bi bi-bell-fill me-2"></i> Notifications
         </h1>
-        <div class="d-flex gap-2">
-            <form asp-action="MarkAllRead" method="post" id="markAllReadForm">
-                <button class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-check2-all me-1"></i> Mark All Read
-                </button>
-            </form>
-            <a asp-action="Support" class="btn btn-success btn-sm">
-                <i class="bi bi-headset me-1"></i> Support
-            </a>
+        <form asp-action="MarkAllRead" method="post" id="markAllReadForm">
+            <button class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-check2-all me-1"></i> Mark All Read
+            </button>
+        </form>
+    </div>
+
+    <!-- Filter: All / Read / Unread -->
+    <div class="filter-bar mb-3">
+        <div class="d-flex gap-2 flex-wrap">
+            <a class="btn btn-sm @(string.IsNullOrEmpty(Model.Filter) ? "btn-primary" : "btn-outline-secondary")"
+               asp-action="Index" asp-route-filter="">All</a>
+            <a class="btn btn-sm @(Model.Filter == "Read" ? "btn-primary" : "btn-outline-secondary")"
+               asp-action="Index" asp-route-filter="Read">Read</a>
+            <a class="btn btn-sm @(Model.Filter == "Unread" ? "btn-primary" : "btn-outline-secondary")"
+               asp-action="Index" asp-route-filter="Unread">Unread</a>
         </div>
     </div>
 
-    <div class="row g-3">
-        <div class="col-lg-5">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3"><i class="bi bi-bell me-1 text-primary"></i> Alerts</h6>
-                    @if (!Model.Notifications.Any())
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+            @if (!Model.Notifications.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-check-circle" style="font-size:2.5rem;"></i>
+                    <p class="mb-0 mt-2">No notifications here.</p>
+                </div>
+            }
+            else
+            {
+                <div class="list-group list-group-flush notification-list" data-notif-list data-current-filter="@Model.Filter">
+                    @foreach (var n in Model.Notifications)
                     {
-                        <div class="text-center py-4 text-muted">
-                            <i class="bi bi-check-circle" style="font-size:2rem;"></i>
-                            <p class="mb-0 mt-2">No notifications yet.</p>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="list-group list-group-flush notification-list">
-                            @foreach (var n in Model.Notifications)
-                            {
-                                <div class="list-group-item notification-item @(n.IsRead ? "notification-read" : "notification-unread")" id="notification-@n.Id">
-                                    <div class="d-flex justify-content-between align-items-start gap-3">
-                                        <div class="flex-grow-1">
-                                            <span class="badge bg-@(n.Type == "RewardExpired" ? "danger" : n.Type == "RewardLowStock" ? "warning" : "info") me-1">@n.Type</span>
-                                            <p class="mb-1 mt-1 small @(n.IsRead ? "text-muted" : "fw-semibold")">@n.Message</p>
-                                            <small class="text-muted">@n.CreatedDate.ToString("yyyy-MM-dd HH:mm")</small>
-                                        </div>
-                                        @if (!n.IsRead)
-                                        {
-                                            <form asp-action="MarkRead" asp-route-id="@n.Id" method="post" class="mark-read-form">
-                                                <button class="btn btn-sm btn-outline-success" type="submit">
-                                                    <i class="bi bi-check-lg"></i>
-                                                </button>
-                                            </form>
-                                        }
-                                    </div>
+                        <div class="list-group-item notification-item @(n.IsRead ? "notification-read" : "notification-unread")"
+                             id="notification-@n.Id"
+                             data-notif-id="@n.Id"
+                             data-related-type="@n.RelatedEntityType"
+                             data-related-id="@n.RelatedEntityId"
+                             style="cursor: pointer;">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <div class="flex-grow-1">
+                                    <span class="badge bg-@(n.Type == "RewardExpired" ? "danger" : n.Type == "RewardLowStock" ? "warning" : "info") me-1">@n.Type</span>
+                                    <p class="mb-1 mt-1 small @(n.IsRead ? "text-muted" : "fw-semibold")">@n.Message</p>
+                                    <small class="text-muted">@n.CreatedDate.ToString("yyyy-MM-dd HH:mm")</small>
                                 </div>
-                            }
+                                <button type="button" class="btn btn-sm btn-link text-danger notif-delete p-0" title="Delete" data-notif-id="@n.Id">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
                         </div>
                     }
                 </div>
-            </div>
-        </div>
-
-        <div class="col-lg-7">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3"><i class="bi bi-headset me-1 text-primary"></i> Support Tickets</h6>
-                    @if (!Model.SupportTickets.Any())
-                    {
-                        <div class="text-center py-4 text-muted">
-                            <i class="bi bi-ticket-perforated" style="font-size:2rem;"></i>
-                            <p class="mb-0 mt-2">No support tickets yet.</p>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle destinations-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Subject</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @{
-                                        int i = 1;
-                                    }
-                                    @foreach (var t in Model.SupportTickets)
-                                    {
-                                        <tr>
-                                            <td class="fw-bold text-muted">@i.ToString("D2")</td>
-                                            <td>@t.Subject</td>
-                                            <td>
-                                                <span class="badge bg-@(t.Status == "Open" ? "warning" : "success")">@t.Status</span>
-                                            </td>
-                                            <td class="small text-muted">@t.CreatedDate.ToString("yyyy-MM-dd")</td>
-                                        </tr>
-                                        i++;
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                </div>
-            </div>
+            }
         </div>
     </div>
 
     <p class="text-muted small mt-4 mb-0">
         Alerts are generated automatically for expired or out-of-stock rewards and recent redemptions.
+        Click a notification to open what it refers to.
     </p>
 </div>
 
 @section Scripts {
-    <script>
-        document.querySelectorAll('.mark-read-form').forEach(function (form) {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                var btn = form.querySelector('button');
-                var originalHtml = btn.innerHTML;
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-
-                var formData = new FormData(form);
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    if (data.success) {
-                        var row = form.closest('.notification-item');
-                        row.classList.remove('notification-unread');
-                        row.classList.add('notification-read');
-                        form.remove();
-                        location.reload();
-                    }
-                })
-                .catch(function () {
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
-                });
-            });
-        });
-
-        document.getElementById('markAllReadForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            var btn = e.target.querySelector('button');
-            btn.disabled = true;
-
-            var formData = new FormData(e.target);
-            fetch(e.target.action, {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                if (data.success) {
-                    location.reload();
-                }
-            })
-            .catch(function () {
-                btn.disabled = false;
-            });
-        });
-    </script>
     <style>
         .notification-item {
             transition: all 0.2s ease;
@@ -184,14 +86,8 @@
             opacity: 0.7;
         }
         .notification-list {
-            max-height: 55vh;
+            max-height: 60vh;
             overflow-y: auto;
-        }
-        .destinations-table {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
     </style>
 }

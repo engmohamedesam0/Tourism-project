@@ -1,0 +1,80 @@
+@using Tourist_Project_MVC.View_Model
+@model List<SponsorApprovalListItem>
+
+@{
+    ViewData["Title"] = "Sponsor Approval Requests";
+}
+
+<h1 class="page-title">Sponsor Approval Requests</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle-fill me-2"></i> There are no sponsor approval requests yet.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Applicant</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Nationality</th>
+                    <th>Requested</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@item.ApplicantName</td>
+                        <td>@item.Email</td>
+                        <td>@item.PhoneNumber</td>
+                        <td>@item.Nationality</td>
+                        <td>@item.RequestedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            @if (item.Status == "Pending")
+                            {
+                                <span class="badge rounded-pill text-bg-warning">Pending</span>
+                            }
+                            else if (item.Status == "Approved")
+                            {
+                                <span class="badge rounded-pill text-bg-success">Approved</span>
+                            }
+                            else
+                            {
+                                <span class="badge rounded-pill text-bg-danger">Rejected</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Status == "Pending")
+                            {
+                                <form asp-action="Approve" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bi bi-check-lg me-1"></i> Approve
+                                    </button>
+                                </form>
+                                <form asp-action="Reject" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-x-lg me-1"></i> Reject
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">Reviewed</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

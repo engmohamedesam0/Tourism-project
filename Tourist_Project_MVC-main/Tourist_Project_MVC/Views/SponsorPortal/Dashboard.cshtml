@@ -19,66 +19,58 @@
     <div class="row g-3">
         <!-- Redeemed rewards count -->
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-ticket-perforated-fill text-primary" style="font-size: 2rem;"></i>
-                    <div class="stat-mini-number mt-2">@Model.RedeemedCount</div>
-                    <div class="stat-mini-label">Rewards Redeemed</div>
-                </div>
+            <div class="stat-card stat-blue h-100">
+                <i class="bi bi-ticket-perforated-fill stat-icon"></i>
+                <div class="stat-number">@Model.RedeemedCount</div>
+                <div class="stat-label">Rewards Redeemed</div>
             </div>
         </div>
 
         <!-- Reward detail views -->
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-eye-fill text-primary" style="font-size: 2rem;"></i>
-                    <div class="stat-mini-number mt-2">@Model.RewardViewCount</div>
-                    <div class="stat-mini-label">Reward Detail Views</div>
-                </div>
+            <div class="stat-card stat-green h-100">
+                <i class="bi bi-eye-fill stat-icon"></i>
+                <div class="stat-number">@Model.RewardViewCount</div>
+                <div class="stat-label">Reward Detail Views</div>
             </div>
         </div>
 
         <!-- Most-wanted reward + branch -->
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-fire text-primary" style="font-size: 2rem;"></i>
-                    <div class="stat-mini-number mt-2" style="font-size: 1.1rem; line-height: 1.3;">
-                        @(Model.MostWantedRewardTitle ?? "—")
-                    </div>
-                    <div class="stat-mini-label">
-                        Most-Wanted
-                        @if (Model.MostWantedRewardRedemptions > 0)
-                        {
-                            @:(@Model.MostWantedRewardRedemptions)
-                        }
-                    </div>
-                    @if (!string.IsNullOrEmpty(Model.MostWantedBranchName))
+            <div class="stat-card stat-gold h-100">
+                <i class="bi bi-fire stat-icon"></i>
+                <div class="stat-number" style="font-size: 1.15rem; line-height: 1.3;">
+                    @(Model.MostWantedRewardTitle ?? "—")
+                </div>
+                <div class="stat-label">
+                    Most-Wanted
+                    @if (Model.MostWantedRewardRedemptions > 0)
                     {
-                        <div class="small text-muted mt-1">
-                            <i class="bi bi-geo-alt-fill"></i> @Model.MostWantedBranchName
-                        </div>
+                        @:(@Model.MostWantedRewardRedemptions)
                     }
                 </div>
+                @if (!string.IsNullOrEmpty(Model.MostWantedBranchName))
+                {
+                    <div class="small text-muted mt-1">
+                        <i class="bi bi-geo-alt-fill"></i> @Model.MostWantedBranchName
+                    </div>
+                }
             </div>
         </div>
 
         <!-- Tourist rating -->
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-star-fill text-primary" style="font-size: 2rem;"></i>
-                    <div class="stat-mini-number mt-2">
-                        @(Model.RatingAvailable ? $"{Model.AverageRating:F1}" : "—")
-                    </div>
-                    <div class="stat-mini-label">
-                        Avg. Rating
-                        @if (Model.RatingAvailable)
-                        {
-                            @:(@Model.ReviewCount)
-                        }
-                    </div>
+            <div class="stat-card stat-purple h-100">
+                <i class="bi bi-star-fill stat-icon"></i>
+                <div class="stat-number">
+                    @(Model.RatingAvailable ? $"{Model.AverageRating:F1}" : "—")
+                </div>
+                <div class="stat-label">
+                    Avg. Rating
+                    @if (Model.RatingAvailable)
+                    {
+                        @:(@Model.ReviewCount)
+                    }
                 </div>
             </div>
         </div>
@@ -96,20 +88,3 @@
         Metrics are scoped to your own rewards and branches.
     </p>
 </div>
-
-@section Scripts {
-    <style>
-        .stat-mini-number {
-            font-family: 'Cinzel', sans-serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #2C1A0E;
-        }
-        .stat-mini-label {
-            font-size: 0.72rem;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-    </style>
-}

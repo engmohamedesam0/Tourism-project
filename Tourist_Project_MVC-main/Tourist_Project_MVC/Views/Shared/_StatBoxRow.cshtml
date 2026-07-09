@@ -1,0 +1,25 @@
+@model System.Collections.Generic.List<Tourist_Project_MVC.View_Model.StatBoxItem>
+@if (Model != null && Model.Any())
+{
+    // Responsive column count based on the number of boxes:
+    // 2 boxes -> 2-up, 3 -> 3-up (from md), 4 -> 4-up (from md).
+    var colClass = Model.Count switch
+    {
+        2 => "row-cols-1 row-cols-sm-2",
+        3 => "row-cols-2 row-cols-md-3",
+        _ => "row-cols-2 row-cols-md-4"
+    };
+
+    <div class="row @colClass g-3 mb-4 stat-box-row">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="stat-card stat-@item.Color h-100">
+                    <i class="bi @item.IconClass stat-icon"></i>
+                    <div class="stat-number">@item.Value</div>
+                    <div class="stat-label">@item.Label</div>
+                </div>
+            </div>
+        }
+    </div>
+}

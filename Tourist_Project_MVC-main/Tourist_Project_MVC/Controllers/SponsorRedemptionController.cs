@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
@@ -37,6 +39,36 @@ namespace Tourist_Project_MVC.Controllers
             if (sponsor == null) return RedirectToAction("CompleteProfile", "SponsorPortal");
 
             var sponsorId = sponsor.Id;
+
+            // Top stat-box row (scoped to this sponsor, query-level aggregates).
+            var now = DateTime.Now;
+            var totalRedemptions = _context.Redemptions.Count(r => r.Reward != null && r.Reward.SponsorId == sponsorId);
+            var redemptionsThisMonth = _context.Redemptions.Count(r =>
+                r.Reward != null && r.Reward.SponsorId == sponsorId &&
+                r.RedemptionDate.Year == now.Year && r.RedemptionDate.Month == now.Month);
+            var uniqueTourists = _context.Redemptions
+                .Where(r => r.Reward != null && r.Reward.SponsorId == sponsorId)
+                .Select(r => r.TouristId)
+                .Distinct()
+                .Count();
+
+            var topRewardId = _context.Redemptions
+                .Where(r => r.Reward != null && r.Reward.SponsorId == sponsorId)
+                .GroupBy(r => r.RewardId)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .FirstOrDefault();
+            var topRewardTitle = topRewardId > 0
+                ? _context.Rewards.Where(rw => rw.Id == topRewardId).Select(rw => rw.Title).FirstOrDefault()
+                : null;
+
+            ViewBag.StatBoxes = new List<StatBoxItem>
+            {
+                new StatBoxItem { IconClass = "bi-receipt-fill", Color = "blue", Value = totalRedemptions.ToString("N0"), Label = "Total Redemptions" },
+                new StatBoxItem { IconClass = "bi-calendar-month-fill", Color = "green", Value = redemptionsThisMonth.ToString("N0"), Label = "Redemptions This Month" },
+                new StatBoxItem { IconClass = "bi-people-fill", Color = "gold", Value = uniqueTourists.ToString("N0"), Label = "Unique Tourists Served" },
+                new StatBoxItem { IconClass = "bi-trophy-fill", Color = "purple", Value = topRewardTitle ?? "—", Label = "Most Redeemed Reward" }
+            };
 
             // Distinct statuses present on this sponsor's redemptions, for the filter dropdown.
             var statuses = _context.Redemptions

@@ -26,14 +26,85 @@
 
     <style>
         /* =============================================
-        STATS SECTION
-        ============================================= */
+           STAT-BOX (reusable stat cards: Home hero,
+           About values, Tourist rewards, Admin/Sponsor
+           data pages — one consistent white treatment)
+           ============================================= */
         .stats-section {
         background: linear-gradient(135deg, #1a0f00 0%, #2C1A0E 50%, #1a0f00 100%);
         padding: 100px 0;
         border-top: 2px solid #C8832A;
         border-bottom: 2px solid #C8832A;
         }
+
+        .stat-card {
+        background: #ffffff;
+        border: 1px solid rgba(30, 18, 10, 0.08);
+        border-radius: 14px;
+        padding: 22px 22px 20px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+        height: 100%;
+        position: relative;
+        }
+
+        .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(30, 18, 10, 0.12);
+        border-color: var(--egy-primary);
+        }
+
+        /* Small colored square icon — accent tone set per card below. */
+        .stat-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        font-size: 1.4rem;
+        color: #ffffff;
+        background: var(--egy-primary);
+        margin-bottom: 16px;
+        }
+
+        .stat-number {
+        font-family: 'Cinzel', serif;
+        font-size: 2.1rem;
+        font-weight: 900;
+        color: var(--egy-dark);
+        line-height: 1.1;
+        display: inline-block;
+        }
+
+        .stat-suffix {
+        font-family: 'Cinzel', serif;
+        font-size: 1.3rem;
+        font-weight: 900;
+        color: var(--egy-primary);
+        margin-left: 2px;
+        display: inline;
+        }
+
+        .stat-label {
+        font-family: 'Nunito', sans-serif;
+        font-size: 0.8rem;
+        color: #6b7280;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        margin-top: 6px;
+        display: block;
+        }
+
+        /* Per-card accent colors (colored square icon). Reuses the site's
+           ochre/gold palette plus a few complementary tones for variety. */
+        .stat-blue   .stat-icon { background: #2f6fed; }
+        .stat-green  .stat-icon { background: #2e9e5b; }
+        .stat-gold   .stat-icon { background: var(--egy-primary); }
+        .stat-purple .stat-icon { background: #8b5cf6; }
+        .stat-teal   .stat-icon { background: #0d9488; }
+        .stat-red    .stat-icon { background: #e0533d; }
+        .stat-amber  .stat-icon { background: #e8a045; }
 
         .stat-card {
         background: rgba(255, 255, 255, 0.04);
@@ -357,6 +428,12 @@
                                     <i class="bi bi-person-gear"></i> Accounts
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="AdminSupport" asp-action="Index">
+                                    <i class="bi bi-headset"></i> Support Inbox
+                                </a>
+                            </li>
+                            @await Component.InvokeAsync("AdminApprovalBell")
                         }
                         else if (User.IsInRole("Sponsor"))
                         {
@@ -381,11 +458,8 @@
                                     <i class="bi bi-bar-chart-fill"></i> Reports
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="SponsorNotification" asp-action="Index">
-                                    <i class="bi bi-bell-fill"></i> Alerts
-                                </a>
-                            </li>
+                            @await Component.InvokeAsync("NotificationBell")
+                            @await Component.InvokeAsync("SupportBell")
                         }
                         else if (User.Identity.IsAuthenticated)
                         {
@@ -408,6 +482,21 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Features" asp-action="Index">
                                     <i class="bi bi-phone-fill"></i> Features
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="TouristReward" asp-action="Index">
+                                    <i class="bi bi-gift-fill"></i> Rewards
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="TouristProfile" asp-action="Index">
+                                    <i class="bi bi-person-fill"></i> Profile
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="TouristSupport" asp-action="Index">
+                                    <i class="bi bi-headset"></i> Support
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -528,10 +617,10 @@
         </div>
     </div>
 
-    @if (User.IsInRole("Sponsor"))
-    {
-        @await Component.InvokeAsync("NotificationBell")
-    }
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Global anti-forgery token for AJAX POSTs (read by JS helpers). -->
+    <form id="antiforgeryForm" style="display:none">@Html.AntiForgeryToken()</form>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -657,8 +746,6 @@
             }
         }
     </style>
-
-    @await RenderSectionAsync("Scripts", required: false)
 
 </body>
 </html>

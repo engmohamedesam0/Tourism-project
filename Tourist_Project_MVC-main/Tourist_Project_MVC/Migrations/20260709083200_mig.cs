@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tourist_Project_MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class Kilo_Edits : Migration
+    public partial class mig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,6 +32,10 @@ namespace Tourist_Project_MVC.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Nationality = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ProfilePicturePath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -74,43 +78,6 @@ namespace Tourist_Project_MVC.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Destinations", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sponsors",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ContactNumber = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sponsors", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tourists",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IdNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Passport = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    point_Balance = table.Column<int>(type: "int", nullable: false),
-                    RegisterDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tourists", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -220,6 +187,79 @@ namespace Tourist_Project_MVC.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SponsorApprovalRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequestedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReviewedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReviewedByAdminId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SponsorApprovalRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SponsorApprovalRequests_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sponsors",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContactNumber = table.Column<int>(type: "int", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sponsors", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sponsors_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tourists",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IdNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Passport = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    point_Balance = table.Column<int>(type: "int", nullable: false),
+                    RegisterDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tourists", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tourists_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Missions",
                 columns: table => new
                 {
@@ -243,6 +283,77 @@ namespace Tourist_Project_MVC.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Branches",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SponsorId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Lat = table.Column<float>(type: "real", nullable: false),
+                    Long = table.Column<float>(type: "real", nullable: false),
+                    ContactNumber = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Branches", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Branches_Sponsors_SponsorId",
+                        column: x => x.SponsorId,
+                        principalTable: "Sponsors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MenuItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SponsorId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MenuItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MenuItems_Sponsors_SponsorId",
+                        column: x => x.SponsorId,
+                        principalTable: "Sponsors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SponsorId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RelatedEntityType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RelatedEntityId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Sponsors_SponsorId",
+                        column: x => x.SponsorId,
+                        principalTable: "Sponsors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Rewards",
                 columns: table => new
                 {
@@ -254,6 +365,7 @@ namespace Tourist_Project_MVC.Migrations
                     PointsRequired = table.Column<int>(type: "int", nullable: false),
                     QuantityAvailable = table.Column<int>(type: "int", nullable: false),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SponsorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -263,8 +375,70 @@ namespace Tourist_Project_MVC.Migrations
                         name: "FK_Rewards_Sponsors_SponsorId",
                         column: x => x.SponsorId,
                         principalTable: "Sponsors",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TouristId = table.Column<int>(type: "int", nullable: false),
+                    SponsorId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Sponsors_SponsorId",
+                        column: x => x.SponsorId,
+                        principalTable: "Sponsors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Tourists_TouristId",
+                        column: x => x.TouristId,
+                        principalTable: "Tourists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SupportTickets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SponsorId = table.Column<int>(type: "int", nullable: false),
+                    TouristId = table.Column<int>(type: "int", nullable: true),
+                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AttachmentPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AdminResponse = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RespondedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RespondedByAdminId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SupportTickets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SupportTickets_Sponsors_SponsorId",
+                        column: x => x.SponsorId,
+                        principalTable: "Sponsors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SupportTickets_Tourists_TouristId",
+                        column: x => x.TouristId,
+                        principalTable: "Tourists",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -277,6 +451,8 @@ namespace Tourist_Project_MVC.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Budget = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    Companions = table.Column<int>(type: "int", nullable: true),
                     TouristId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -330,11 +506,17 @@ namespace Tourist_Project_MVC.Migrations
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RedemptionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RewardId = table.Column<int>(type: "int", nullable: false),
-                    TouristId = table.Column<int>(type: "int", nullable: false)
+                    TouristId = table.Column<int>(type: "int", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Redemptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Redemptions_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Redemptions_Rewards_RewardId",
                         column: x => x.RewardId,
@@ -345,6 +527,51 @@ namespace Tourist_Project_MVC.Migrations
                         name: "FK_Redemptions_Tourists_TouristId",
                         column: x => x.TouristId,
                         principalTable: "Tourists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RewardBranches",
+                columns: table => new
+                {
+                    RewardId = table.Column<int>(type: "int", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RewardBranches", x => new { x.RewardId, x.BranchId });
+                    table.ForeignKey(
+                        name: "FK_RewardBranches_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RewardBranches_Rewards_RewardId",
+                        column: x => x.RewardId,
+                        principalTable: "Rewards",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RewardViews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RewardId = table.Column<int>(type: "int", nullable: false),
+                    TouristId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ViewedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RewardViews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RewardViews_Rewards_RewardId",
+                        column: x => x.RewardId,
+                        principalTable: "Rewards",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -389,8 +616,8 @@ namespace Tourist_Project_MVC.Migrations
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "admin-user-id", 0, "STATIC-CONCURRENCY-12345", "admin@egyxplore.com", false, false, null, "ADMIN@EGYXPLORE.COM", "ADMIN", "AQAAAAIAAYagAAAAEKAL8njrbJvg9ETwynEH//f1WRUeqjGkQwDjyymt3nZ80AjWGoDryl5K+MtnAPrRuw==", null, false, "STATIC-STAMP-12345", false, "admin" });
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "Nationality", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfilePicturePath", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "admin-user-id", 0, "STATIC-CONCURRENCY-12345", "admin@egyxplore.com", false, "", "", false, null, "", "ADMIN@EGYXPLORE.COM", "ADMIN", "AQAAAAIAAYagAAAAEKAL8njrbJvg9ETwynEH//f1WRUeqjGkQwDjyymt3nZ80AjWGoDryl5K+MtnAPrRuw==", null, false, null, "STATIC-STAMP-12345", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "Destinations",
@@ -416,32 +643,59 @@ namespace Tourist_Project_MVC.Migrations
 
             migrationBuilder.InsertData(
                 table: "Sponsors",
-                columns: new[] { "Id", "Address", "ContactNumber", "Name", "Type" },
+                columns: new[] { "Id", "Address", "ApplicationUserId", "ContactNumber", "Email", "Name", "Type" },
                 values: new object[,]
                 {
-                    { 1, "16 Saray El Gezira St, Zamalek, Cairo", 223456789, "Cairo Marriott Hotel", "Hotel" },
-                    { 2, "Cairo International Airport, Cairo", 290777000, "EgyptAir", "Airline" },
-                    { 3, "26 Tahrir Square, Downtown Cairo", 222756000, "Emeco Travel", "Tourism Agency" },
-                    { 4, "Corniche El Nile, Luxor", 953580422, "Sofitel Luxor Winter Palace", "Hotel" },
-                    { 5, "Elephantine Island, Aswan", 972780222, "Hilton Aswan", "Hotel" }
+                    { 1, "16 Saray El Gezira St, Zamalek, Cairo", null, 223456789, null, "Cairo Marriott Hotel", "Hotel" },
+                    { 2, "Cairo International Airport, Cairo", null, 290777000, null, "EgyptAir", "Airline" },
+                    { 3, "26 Tahrir Square, Downtown Cairo", null, 222756000, null, "Emeco Travel", "Tourism Agency" },
+                    { 4, "Corniche El Nile, Luxor", null, 953580422, null, "Sofitel Luxor Winter Palace", "Hotel" },
+                    { 5, "Elephantine Island, Aswan", null, 972780222, null, "Hilton Aswan", "Hotel" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Tourists",
-                columns: new[] { "Id", "Email", "IdNumber", "Name", "Nationality", "Passport", "Password", "RegisterDate", "Status", "point_Balance" },
+                columns: new[] { "Id", "ApplicationUserId", "Email", "IdNumber", "Name", "Nationality", "Passport", "Password", "RegisterDate", "Status", "point_Balance" },
                 values: new object[,]
                 {
-                    { 1, "ahmed.hassan@email.com", "EG123456789", "Ahmed Hassan", "Egyptian", null, "HashedPass123", new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", 350 },
-                    { 2, "james.wilson@email.com", null, "James Wilson", "American", "US987654321", "HashedPass456", new DateTime(2026, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", 120 },
-                    { 3, "sophie.muller@email.com", null, "Sophie Müller", "German", "DE456789123", "HashedPass789", new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", 200 },
-                    { 4, "yuki.tanaka@email.com", null, "Yuki Tanaka", "Japanese", "JP321654987", "HashedPassABC", new DateTime(2026, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", 80 },
-                    { 5, "mohamed.ali@email.com", "EG987654321", "Mohamed Ali", "Egyptian", null, "HashedPassXYZ", new DateTime(2026, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", 500 }
+                    { 1, null, "ahmed.hassan@email.com", "EG123456789", "Ahmed Hassan", "Egyptian", null, "HashedPass123", new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", 350 },
+                    { 2, null, "james.wilson@email.com", null, "James Wilson", "American", "US987654321", "HashedPass456", new DateTime(2026, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", 120 },
+                    { 3, null, "sophie.muller@email.com", null, "Sophie Müller", "German", "DE456789123", "HashedPass789", new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", 200 },
+                    { 4, null, "yuki.tanaka@email.com", null, "Yuki Tanaka", "Japanese", "JP321654987", "HashedPassABC", new DateTime(2026, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", 80 },
+                    { 5, null, "mohamed.ali@email.com", "EG987654321", "Mohamed Ali", "Egyptian", null, "HashedPassXYZ", new DateTime(2026, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", 500 }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[] { "role-admin-id", "admin-user-id" });
+
+            migrationBuilder.InsertData(
+                table: "Branches",
+                columns: new[] { "Id", "Address", "ContactNumber", "Lat", "Long", "Name", "SponsorId" },
+                values: new object[,]
+                {
+                    { 1, "16 Saray El Gezira St, Zamalek, Cairo", 223456789, 30.0669f, 31.2243f, "Cairo Marriott Hotel — Main", 1 },
+                    { 2, "Cairo International Airport, Cairo", 290777000, 30.1118f, 31.4056f, "EgyptAir — HQ", 2 },
+                    { 3, "26 Tahrir Square, Downtown Cairo", 222756000, 30.0444f, 31.2358f, "Emeco Travel — Downtown", 3 },
+                    { 4, "Corniche El Nile, Luxor", 953580422, 25.6989f, 32.6394f, "Sofitel Luxor Winter Palace — Main", 4 },
+                    { 5, "Elephantine Island, Aswan", 972780222, 24.0822f, 32.8872f, "Hilton Aswan — Main", 5 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MenuItems",
+                columns: new[] { "Id", "Description", "Name", "Price", "SponsorId" },
+                values: new object[,]
+                {
+                    { 1, "Extensive international & Egyptian breakfast with terrace view.", "Nile View Breakfast Buffet", 25.00m, 1 },
+                    { 2, "Signature Lebanese & Egyptian set-menu dinner.", "Omar Khayyam Oriental Dinner", 45.00m, 1 },
+                    { 3, "Two-hour traditional sailboat cruise at sunset.", "Nile Felucca Sunset Tour", 30.00m, 3 },
+                    { 4, "Guided visit to Pyramids, Sphinx and Egyptian Museum.", "Cairo City Day Tour", 60.00m, 3 },
+                    { 5, "Colonial-style tea service in the historic gardens.", "Winter Palace Royal Afternoon Tea", 18.00m, 4 },
+                    { 6, "Three-course dinner overlooking the Nile.", "Nile Terrace Set Menu", 38.00m, 4 },
+                    { 7, "Fresh Nile perch grilled with local spices.", "Aswanian Fish Grill", 22.00m, 5 },
+                    { 8, "Evening pool access with a three-course dinner.", "Sunset Pool & Dinner Pass", 40.00m, 5 }
+                });
 
             migrationBuilder.InsertData(
                 table: "Missions",
@@ -458,34 +712,47 @@ namespace Tourist_Project_MVC.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Rewards",
-                columns: new[] { "Id", "Description", "ExpirationDate", "PointsRequired", "QuantityAvailable", "RewardType", "SponsorId", "Title" },
+                table: "Reviews",
+                columns: new[] { "Id", "Comment", "CreatedDate", "Rating", "SponsorId", "TouristId" },
                 values: new object[,]
                 {
-                    { 1, "Get 15% discount on your next stay at Cairo Marriott Hotel", new DateTime(2027, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), 200, 50, "Discount", 1, "15% Off Marriott Cairo" },
-                    { 2, "Complimentary business class upgrade on domestic EgyptAir flights", new DateTime(2027, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 500, 10, "Ticket", 2, "Free EgyptAir Upgrade" },
-                    { 3, "Complimentary one-day Nile cruise provided by Emeco Travel", new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), 300, 20, "Tour", 3, "Free Nile Cruise Day" },
-                    { 4, "Enjoy 20% off at the historic Sofitel Luxor Winter Palace Hotel", new DateTime(2027, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), 250, 30, "Discount", 4, "20% Off Luxor Winter Palace" },
-                    { 5, "Exclusive Nile-view sunset dinner for two at Hilton Aswan", new DateTime(2027, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), 400, 15, "Experience", 5, "Hilton Aswan Sunset Dinner" }
+                    { 1, "Incredible views of the Nile and top-notch service.", new DateTime(2026, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, 1, 2 },
+                    { 2, "Comfortable rooms, a bit pricey but worth it.", new DateTime(2026, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 1, 3 },
+                    { 3, "Smooth flight and friendly cabin crew.", new DateTime(2026, 4, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, 2, 4 },
+                    { 4, "Great guided tour, very knowledgeable guide.", new DateTime(2026, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 3, 1 },
+                    { 5, "Historic atmosphere and beautiful gardens.", new DateTime(2026, 3, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, 4, 4 },
+                    { 6, "Lovely sunset dinner by the water.", new DateTime(2026, 4, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 5, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Rewards",
+                columns: new[] { "Id", "Description", "ExpirationDate", "PointsRequired", "QuantityAvailable", "RewardType", "SponsorId", "Status", "Title" },
+                values: new object[,]
+                {
+                    { 1, "Get 15% discount on your next stay at Cairo Marriott Hotel", new DateTime(2027, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), 200, 50, "Discount", 1, "Active", "15% Off Marriott Cairo" },
+                    { 2, "Complimentary business class upgrade on domestic EgyptAir flights", new DateTime(2027, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 500, 10, "Ticket", 2, "Active", "Free EgyptAir Upgrade" },
+                    { 3, "Complimentary one-day Nile cruise provided by Emeco Travel", new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), 300, 20, "Tour", 3, "Active", "Free Nile Cruise Day" },
+                    { 4, "Enjoy 20% off at the historic Sofitel Luxor Winter Palace Hotel", new DateTime(2027, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), 250, 30, "Discount", 4, "Active", "20% Off Luxor Winter Palace" },
+                    { 5, "Exclusive Nile-view sunset dinner for two at Hilton Aswan", new DateTime(2027, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), 400, 15, "Experience", 5, "Active", "Hilton Aswan Sunset Dinner" }
                 });
 
             migrationBuilder.InsertData(
                 table: "TripPlans",
-                columns: new[] { "Id", "EndDate", "StartDate", "Status", "Title", "TouristId" },
+                columns: new[] { "Id", "Budget", "Companions", "EndDate", "StartDate", "Status", "Title", "TouristId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2026, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", "Classic Egypt Tour", 2 },
-                    { 2, new DateTime(2026, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", "Hidden Wonders of Egypt", 3 },
-                    { 3, new DateTime(2026, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", "Nile Valley Explorer", 1 }
+                    { 1, null, null, new DateTime(2026, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", "Classic Egypt Tour", 2 },
+                    { 2, null, null, new DateTime(2026, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", "Hidden Wonders of Egypt", 3 },
+                    { 3, null, null, new DateTime(2026, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Active", "Nile Valley Explorer", 1 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Redemptions",
-                columns: new[] { "Id", "Code", "PointsRedeemed", "RedemptionDate", "RewardId", "Status", "TouristId" },
+                columns: new[] { "Id", "BranchId", "Code", "PointsRedeemed", "RedemptionDate", "RewardId", "Status", "TouristId" },
                 values: new object[,]
                 {
-                    { 1, "MARRIOTT15-EGY", 200, new DateTime(2026, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Active", 2 },
-                    { 2, "NILE-CRUISE-EMC", 300, new DateTime(2026, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "Used", 1 }
+                    { 1, 1, "MARRIOTT15-EGY", 200, new DateTime(2026, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Active", 2 },
+                    { 2, 3, "NILE-CRUISE-EMC", 300, new DateTime(2026, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "Used", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -556,9 +823,29 @@ namespace Tourist_Project_MVC.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Branches_SponsorId",
+                table: "Branches",
+                column: "SponsorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MenuItems_SponsorId",
+                table: "MenuItems",
+                column: "SponsorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Missions_DestinationId",
                 table: "Missions",
                 column: "DestinationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_SponsorId",
+                table: "Notifications",
+                column: "SponsorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Redemptions_BranchId",
+                table: "Redemptions",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Redemptions_RewardId",
@@ -571,9 +858,54 @@ namespace Tourist_Project_MVC.Migrations
                 column: "TouristId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reviews_SponsorId",
+                table: "Reviews",
+                column: "SponsorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_TouristId",
+                table: "Reviews",
+                column: "TouristId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RewardBranches_BranchId",
+                table: "RewardBranches",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Rewards_SponsorId",
                 table: "Rewards",
                 column: "SponsorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RewardViews_RewardId",
+                table: "RewardViews",
+                column: "RewardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SponsorApprovalRequests_ApplicationUserId",
+                table: "SponsorApprovalRequests",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sponsors_ApplicationUserId",
+                table: "Sponsors",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SupportTickets_SponsorId",
+                table: "SupportTickets",
+                column: "SponsorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SupportTickets_TouristId",
+                table: "SupportTickets",
+                column: "TouristId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tourists_ApplicationUserId",
+                table: "Tourists",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TripDestinations_DestinationId",
@@ -620,7 +952,28 @@ namespace Tourist_Project_MVC.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "MenuItems");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
+
+            migrationBuilder.DropTable(
                 name: "Redemptions");
+
+            migrationBuilder.DropTable(
+                name: "Reviews");
+
+            migrationBuilder.DropTable(
+                name: "RewardBranches");
+
+            migrationBuilder.DropTable(
+                name: "RewardViews");
+
+            migrationBuilder.DropTable(
+                name: "SponsorApprovalRequests");
+
+            migrationBuilder.DropTable(
+                name: "SupportTickets");
 
             migrationBuilder.DropTable(
                 name: "TripDestinations");
@@ -632,7 +985,7 @@ namespace Tourist_Project_MVC.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Branches");
 
             migrationBuilder.DropTable(
                 name: "Rewards");
@@ -651,6 +1004,9 @@ namespace Tourist_Project_MVC.Migrations
 
             migrationBuilder.DropTable(
                 name: "Destinations");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

@@ -197,11 +197,26 @@ namespace Tourist_Project_MVC.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Nationality")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -219,6 +234,10 @@ namespace Tourist_Project_MVC.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ProfilePicturePath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -250,7 +269,10 @@ namespace Tourist_Project_MVC.Migrations
                             ConcurrencyStamp = "STATIC-CONCURRENCY-12345",
                             Email = "admin@egyxplore.com",
                             EmailConfirmed = false,
+                            FirstName = "",
+                            LastName = "",
                             LockoutEnabled = false,
+                            Nationality = "",
                             NormalizedEmail = "ADMIN@EGYXPLORE.COM",
                             NormalizedUserName = "ADMIN",
                             PasswordHash = "AQAAAAIAAYagAAAAEKAL8njrbJvg9ETwynEH//f1WRUeqjGkQwDjyymt3nZ80AjWGoDryl5K+MtnAPrRuw==",
@@ -837,6 +859,12 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("RelatedEntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RelatedEntityType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("SponsorId")
                         .HasColumnType("int");
 
@@ -1229,6 +1257,40 @@ namespace Tourist_Project_MVC.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.SponsorApprovalRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("RequestedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReviewedByAdminId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ReviewedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("SponsorApprovalRequests");
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.SupportTicket", b =>
                 {
                     b.Property<int>("Id")
@@ -1237,12 +1299,28 @@ namespace Tourist_Project_MVC.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AdminResponse")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AttachmentPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RespondedByAdminId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RespondedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("SponsorId")
                         .HasColumnType("int");
@@ -1255,9 +1333,14 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("TouristId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SponsorId");
+
+                    b.HasIndex("TouristId");
 
                     b.ToTable("SupportTickets");
                 });
@@ -1822,6 +1905,15 @@ namespace Tourist_Project_MVC.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.SponsorApprovalRequest", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.SupportTicket", b =>
                 {
                     b.HasOne("Tourist_Project_MVC.Models.Sponsor", null)
@@ -1829,6 +1921,11 @@ namespace Tourist_Project_MVC.Migrations
                         .HasForeignKey("SponsorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Tourist_Project_MVC.Models.Tourist", null)
+                        .WithMany()
+                        .HasForeignKey("TouristId")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.Tourist", b =>

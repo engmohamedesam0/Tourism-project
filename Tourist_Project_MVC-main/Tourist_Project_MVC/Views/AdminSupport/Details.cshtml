@@ -1,0 +1,112 @@
+@model Tourist_Project_MVC.View_Model.AdminSupportDetailsVM
+
+@{
+    ViewData["Title"] = "Ticket";
+    ViewData["IsHomePage"] = false;
+}
+
+<div class="container my-4" style="max-width: 1000px;">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="page-title mb-0">
+            <i class="bi bi-ticket-perforated me-2"></i> @Model.Ticket.Subject
+        </h1>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Inbox
+        </a>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 mb-3">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge bg-@(Model.SubmitterType == "Tourist" ? "info" : "secondary")">
+                            <i class="bi bi-@(Model.SubmitterType == "Tourist" ? "person" : "building") me-1"></i>@Model.SubmitterType
+                        </span>
+                        <span class="badge-category">@Model.Ticket.Category</span>
+                        <span class="badge bg-@(Model.Ticket.Status == "Open" ? "warning" : Model.Ticket.Status == "Resolved" ? "success" : "info")">@Model.Ticket.Status</span>
+                    </div>
+                    <p class="text-muted small mb-1">
+                        <i class="bi bi-@(Model.SubmitterType == "Tourist" ? "person" : "building") me-1"></i>
+                        @Model.SubmitterType: <strong>@Model.SubmitterName</strong>
+                    </p>
+                    <p class="text-muted small mb-3"><i class="bi bi-calendar me-1"></i> Submitted @Model.Ticket.CreatedDate.ToString("yyyy-MM-dd HH:mm")</p>
+                    <h6 class="text-muted small text-uppercase">Message</h6>
+                    <p class="mb-0">@Model.Ticket.Description</p>
+
+                    @if (!string.IsNullOrEmpty(Model.Ticket.AttachmentPath))
+                    {
+                        var isVideo = System.IO.Path.GetExtension(Model.Ticket.AttachmentPath).ToLowerInvariant() is ".mp4" or ".webm" or ".mov" or ".mkv" or ".avi";
+                        <hr />
+                        <h6 class="text-muted small text-uppercase">Attachment</h6>
+                        if (isVideo)
+                        {
+                            <video src="@Model.Ticket.AttachmentPath" controls class="img-fluid rounded-3" style="max-height: 360px;"></video>
+                        }
+                        else
+                        {
+                            <img src="@Model.Ticket.AttachmentPath" alt="Attachment" class="img-fluid rounded-3" style="max-height: 360px;" />
+                        }
+                        <div class="mt-2">
+                            <a href="@Model.Ticket.AttachmentPath" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-download me-1"></i> Open / Download
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-reply-fill me-1 text-primary"></i> Admin Response</h6>
+
+                    @if (!string.IsNullOrEmpty(Model.Ticket.AdminResponse))
+                    {
+                        <div class="alert alert-success mb-3">
+                            <p class="mb-1">@Model.Ticket.AdminResponse</p>
+                            <small class="text-muted">
+                                @if (Model.Ticket.RespondedDate.HasValue)
+                                {
+                                    <text>Answered on @Model.Ticket.RespondedDate.Value.ToString("yyyy-MM-dd HH:mm")</text>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.RespondedByAdminName))
+                                {
+                                    <text> by @Model.RespondedByAdminName</text>
+                                }
+                            </small>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3 text-muted mb-3">
+                            <i class="bi bi-hourglass-split" style="font-size:1.8rem;"></i>
+                            <p class="mb-0 mt-2 small">No response yet.</p>
+                        </div>
+                    }
+
+                    <form asp-action="Respond" method="post" asp-route-id="@Model.Ticket.Id">
+                        <div class="mb-2">
+                            <textarea name="adminResponse" class="form-control" rows="4"
+                                      placeholder="Type your reply…">@Model.Ticket.AdminResponse</textarea>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success btn-sm" type="submit">
+                                <i class="bi bi-send me-1"></i> Send Response
+                            </button>
+                            @if (Model.Ticket.Status != "Resolved")
+                            {
+                                <button formaction="@Url.Action("Resolve", new { id = Model.Ticket.Id })"
+                                        formmethod="post" class="btn btn-outline-secondary btn-sm" type="submit">
+                                    <i class="bi bi-check2-circle me-1"></i> Mark Resolved
+                                </button>
+                            }
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

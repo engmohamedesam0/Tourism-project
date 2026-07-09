@@ -11,6 +11,8 @@ namespace Tourist_Project_MVC.Services
         List<Notification> GetNotifications(int sponsorId, bool? isRead = null);
         bool MarkAsRead(int notificationId, int sponsorId);
         void MarkAllRead(int sponsorId);
+        void Create(int sponsorId, string type, string message, string? relatedEntityType = null, int? relatedEntityId = null);
+        bool Delete(int notificationId, int sponsorId);
     }
 
     public class NotificationService : INotificationService
@@ -43,7 +45,9 @@ namespace Tourist_Project_MVC.Services
                         SponsorId = sponsorId,
                         Type = "RewardRedeemed",
                         Message = message,
-                        IsRead = false
+                        IsRead = false,
+                        RelatedEntityType = "Redemption",
+                        RelatedEntityId = redemption.Id
                     });
                     created = true;
                 }
@@ -58,13 +62,15 @@ namespace Tourist_Project_MVC.Services
                 var message = $"Reward \"{reward.Title}\" expired on {reward.ExpirationDate:yyyy-MM-dd}.";
                 if (!_context.Notifications.Any(n => n.SponsorId == sponsorId && n.Type == "RewardExpired" && n.Message == message))
                 {
-                    _context.Notifications.Add(new Notification
-                    {
-                        SponsorId = sponsorId,
-                        Type = "RewardExpired",
-                        Message = message,
-                        IsRead = false
-                    });
+                _context.Notifications.Add(new Notification
+                {
+                    SponsorId = sponsorId,
+                    Type = "RewardExpired",
+                    Message = message,
+                    IsRead = false,
+                    RelatedEntityType = "Reward",
+                    RelatedEntityId = reward.Id
+                });
                     created = true;
                 }
             }
@@ -78,13 +84,15 @@ namespace Tourist_Project_MVC.Services
                 var message = $"Reward \"{reward.Title}\" is out of stock.";
                 if (!_context.Notifications.Any(n => n.SponsorId == sponsorId && n.Type == "RewardLowStock" && n.Message == message))
                 {
-                    _context.Notifications.Add(new Notification
-                    {
-                        SponsorId = sponsorId,
-                        Type = "RewardLowStock",
-                        Message = message,
-                        IsRead = false
-                    });
+                _context.Notifications.Add(new Notification
+                {
+                    SponsorId = sponsorId,
+                    Type = "RewardLowStock",
+                    Message = message,
+                    IsRead = false,
+                    RelatedEntityType = "Reward",
+                    RelatedEntityId = reward.Id
+                });
                     created = true;
                 }
             }
@@ -134,6 +142,32 @@ namespace Tourist_Project_MVC.Services
 
             if (unread.Any())
                 _context.SaveChanges();
+        }
+
+        public void Create(int sponsorId, string type, string message, string? relatedEntityType = null, int? relatedEntityId = null)
+        {
+            _context.Notifications.Add(new Notification
+            {
+                SponsorId = sponsorId,
+                Type = type,
+                Message = message,
+                IsRead = false,
+                RelatedEntityType = relatedEntityType,
+                RelatedEntityId = relatedEntityId
+            });
+            _context.SaveChanges();
+        }
+
+        public bool Delete(int notificationId, int sponsorId)
+        {
+            var notification = _context.Notifications
+                .FirstOrDefault(n => n.Id == notificationId && n.SponsorId == sponsorId);
+
+            if (notification == null) return false;
+
+            _context.Notifications.Remove(notification);
+            _context.SaveChanges();
+            return true;
         }
     }
 }

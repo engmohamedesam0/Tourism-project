@@ -1,0 +1,61 @@
+@model Tourist_Project_MVC.View_Model.SupportBellVM
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle position-relative" href="#" id="supportNavDropdown" role="button"
+       data-bs-toggle="dropdown" aria-expanded="false" title="Support">
+        <i class="bi bi-headset"></i> Support
+        @if (Model?.OpenCount > 0)
+        {
+            <span class="badge rounded-pill text-bg-danger ms-1" id="supportNavBadge">@Model.OpenCount</span>
+        }
+    </a>
+    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="supportNavDropdown" style="width: 360px; max-width: calc(100vw - 40px);">
+        <li class="px-3 py-2 d-flex align-items-center justify-content-between">
+            <h6 class="mb-0"><i class="bi bi-headset me-1"></i> Your Tickets</h6>
+            @if (Model?.OpenCount > 0)
+            {
+                <small class="text-white-50">@Model.OpenCount open</small>
+            }
+        </li>
+        <li><hr class="dropdown-divider" /></li>
+        <li>
+            <div id="supportNavBody" style="max-height: 55vh; overflow-y: auto;">
+                <div class="text-center py-4 text-white-50">
+                    <div class="spinner-border text-warning" role="status"><span class="visually-hidden">Loading…</span></div>
+                </div>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider" /></li>
+        <li>
+            <a class="dropdown-item" asp-controller="SponsorNotification" asp-action="Support">
+                <i class="bi bi-list-ul me-2"></i> View all
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-controller="SponsorNotification" asp-action="Support" asp-fragment="newTicketForm">
+                <i class="bi bi-plus-circle me-2"></i> New ticket
+            </a>
+        </li>
+    </ul>
+</li>
+
+<script>
+    (function () {
+        var toggle = document.getElementById('supportNavDropdown');
+        if (!toggle) return;
+        var loaded = false;
+
+        toggle.addEventListener('shown.bs.dropdown', function () {
+            if (loaded) return;
+            loaded = true;
+            fetch('@Url.Action("SupportPanel", "SponsorNotification")')
+                .then(function (r) { return r.text(); })
+                .then(function (html) {
+                    document.getElementById('supportNavBody').innerHTML = html;
+                })
+                .catch(function () {
+                    document.getElementById('supportNavBody').innerHTML = '<div class="alert alert-danger m-3">Failed to load.</div>';
+                });
+        });
+    })();
+</script>

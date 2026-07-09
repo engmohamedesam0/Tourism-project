@@ -1,0 +1,132 @@
+@model Tourist_Project_MVC.View_Model.TouristRewardVM
+
+@{
+    ViewData["Title"] = "Points & Rewards";
+    ViewData["IsHomePage"] = false;
+}
+
+<div class="container my-4" style="max-width: 1200px;">
+
+    <h1 class="page-title mb-4">
+        <i class="bi bi-gift me-2"></i> Points & Rewards
+    </h1>
+
+    @if (!string.IsNullOrEmpty(TempData["RewardMessage"] as string))
+    {
+        var msgType = TempData["RewardMessageType"] as string ?? "info";
+        <div class="alert alert-@msgType alert-dismissible fade show" role="alert">
+            @Html.Raw(TempData["RewardMessage"])
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Points balance -->
+    <div class="row mb-4">
+        <div class="col-md-4 mx-auto">
+            <div class="stat-card text-center">
+                <i class="bi bi-coin stat-icon"></i>
+                <div>
+                    <span class="stat-number">@Model.PointBalance.ToString("N0")</span>
+                    <span class="stat-suffix">pts</span>
+                </div>
+                <span class="stat-label">Your Balance</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available rewards -->
+    <h4 class="mb-3" style="font-family:'Cinzel',serif; color: var(--egy-dark);">
+        <i class="bi bi-shop me-2"></i> Available Rewards
+    </h4>
+
+    @if (!Model.AvailableRewards.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-gift" style="font-size:2.5rem;"></i>
+            <p class="mb-0 mt-2">No rewards available right now. Check back later!</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var reward in Model.AvailableRewards)
+            {
+                var canAfford = Model.PointBalance >= reward.PointsRequired;
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="fw-bold mb-0">@reward.Title</h6>
+                                <span class="badge bg-@(reward.RewardType == "Discount" ? "primary" : reward.RewardType == "Experience" ? "success" : "info")">@reward.RewardType</span>
+                            </div>
+                            <p class="small text-muted mb-2">@reward.Description</p>
+                            <p class="small mb-2">
+                                <i class="bi bi-building me-1"></i> @reward.Sponsor?.Name
+                            </p>
+                            <p class="small text-muted mb-3">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                @if (reward.RewardBranches != null && reward.RewardBranches.Any())
+                                {
+                                    @string.Join(", ", reward.RewardBranches.Select(rb => rb.Branch?.Name).Where(n => !string.IsNullOrEmpty(n)))
+                                }
+                                else
+                                {
+                                    <text>Any branch</text>
+                                }
+                            </p>
+                            <div class="mt-auto d-flex justify-content-between align-items-center">
+                                <span class="fw-bold" style="color: var(--egy-primary);">
+                                    <i class="bi bi-coin me-1"></i> @reward.PointsRequired.ToString("N0") pts
+                                </span>
+                                <form asp-action="Redeem" method="post" asp-route-rewardId="@reward.Id" onsubmit="return confirm('Redeem @reward.Title for @reward.PointsRequired points?');">
+                                    <button type="submit" class="btn btn-sm @(canAfford ? "btn-success" : "btn-secondary")" @(canAfford ? "" : "disabled")>
+                                        <i class="bi bi-gift me-1"></i> @(canAfford ? "Redeem" : "Not enough points")
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- My redemptions -->
+    @if (Model.MyRedemptions.Any())
+    {
+        <h4 class="mt-5 mb-3" style="font-family:'Cinzel',serif; color: var(--egy-dark);">
+            <i class="bi bi-ticket-perforated me-2"></i> My Vouchers
+        </h4>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle destinations-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Reward</th>
+                                <th>Points</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in Model.MyRedemptions)
+                            {
+                                <tr>
+                                    <td class="fw-bold" style="font-family:'Cinzel',serif; letter-spacing:1px;">@r.Code</td>
+                                    <td>@r.Reward?.Title</td>
+                                    <td>@r.PointsRedeemed.ToString("N0")</td>
+                                    <td class="small text-muted">@r.RedemptionDate.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        <span class="badge bg-@(r.Status == "Active" ? "success" : r.Status == "Used" ? "secondary" : "warning")">@r.Status</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

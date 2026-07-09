@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
@@ -37,6 +38,19 @@ namespace Tourist_Project_MVC.Controllers
             if (sponsor == null) return RedirectToAction("CompleteProfile", "SponsorPortal");
 
             var rewards = _rewardRepo.GetBySponsorId(sponsor.Id);
+
+            // Top stat-box row (scoped to this sponsor, query-level aggregates).
+            var sponsorId = sponsor.Id;
+            var totalRedemptions = _context.Redemptions.Count(r => r.Reward != null && r.Reward.SponsorId == sponsorId);
+
+            ViewBag.StatBoxes = new List<StatBoxItem>
+            {
+                new StatBoxItem { IconClass = "bi-gift-fill", Color = "blue", Value = _context.Rewards.Count(r => r.SponsorId == sponsorId).ToString("N0"), Label = "Total Rewards" },
+                new StatBoxItem { IconClass = "bi-check-circle-fill", Color = "green", Value = _context.Rewards.Count(r => r.SponsorId == sponsorId && r.Status == "Active").ToString("N0"), Label = "Active Rewards" },
+                new StatBoxItem { IconClass = "bi-pause-circle-fill", Color = "amber", Value = _context.Rewards.Count(r => r.SponsorId == sponsorId && r.Status == "Paused").ToString("N0"), Label = "Paused Rewards" },
+                new StatBoxItem { IconClass = "bi-receipt-fill", Color = "purple", Value = totalRedemptions.ToString("N0"), Label = "Total Redemptions" }
+            };
+
             return View("Index", rewards);
         }
 

@@ -1,16 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
 {
     public class DestinationController : Controller
     {
         private readonly IDestinationRepository _repo;
+        private readonly TouristContext _context;
 
-        public DestinationController(IDestinationRepository repo)
+        public DestinationController(IDestinationRepository repo, TouristContext context)
         {
             _repo = repo;
+            _context = context;
         }
 
         // GET: /Destination/Index
@@ -34,6 +39,24 @@ namespace Tourist_Project_MVC.Controllers
             ViewBag.Search = search;
             ViewBag.Status = status;
             ViewBag.Category = category;
+
+            // Top stat-box row (real aggregates, query-level).
+            var totalVisits = _context.Destinations.Sum(d => (int?)d.Visits) ?? 0;
+            var topCategory = _context.Destinations
+                .Where(d => d.Category != null)
+                .GroupBy(d => d.Category)
+                .Select(g => new { Cat = g.Key, Visits = g.Sum(d => d.Visits) })
+                .OrderByDescending(g => g.Visits)
+                .Select(g => g.Cat)
+                .FirstOrDefault() ?? "—";
+
+            ViewBag.StatBoxes = new List<StatBoxItem>
+            {
+                new StatBoxItem { IconClass = "bi-geo-alt-fill", Color = "blue", Value = all.Count().ToString("N0"), Label = "Total Destinations" },
+                new StatBoxItem { IconClass = "bi-eye-fill", Color = "green", Value = totalVisits.ToString("N0"), Label = "Total Visits" },
+                new StatBoxItem { IconClass = "bi-check-circle-fill", Color = "gold", Value = all.Count(d => d.Status == "Active").ToString("N0"), Label = "Active Destinations" },
+                new StatBoxItem { IconClass = "bi-bar-chart-fill", Color = "purple", Value = topCategory, Label = "Top Category (by Visits)" }
+            };
 
             return View(destinations);
         }

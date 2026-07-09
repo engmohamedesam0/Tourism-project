@@ -22,6 +22,7 @@ namespace Tourist_Project_MVC.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<SupportTicket> SupportTickets { get; set; }
+        public DbSet<SponsorApprovalRequest> SponsorApprovalRequests { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
 
         public TouristContext(DbContextOptions<TouristContext> options) : base(options)
@@ -779,6 +780,39 @@ namespace Tourist_Project_MVC.Data
                 }
             );
 
+            // SponsorApprovalRequest -> ApplicationUser (one-to-many).
+            modelBuilder.Entity<SponsorApprovalRequest>()
+                .Property(r => r.ApplicationUserId)
+                .HasMaxLength(450);
+
+            modelBuilder.Entity<SponsorApprovalRequest>()
+                .Property(r => r.ReviewedByAdminId)
+                .HasMaxLength(450);
+
+            modelBuilder.Entity<SponsorApprovalRequest>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(r => r.ApplicationUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // App-user shared profile columns (sized to match the
+            // Identity column limits and keep the table compact).
+            modelBuilder.Entity<ApplicationUser>()
+                .Property(u => u.FirstName)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .Property(u => u.LastName)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .Property(u => u.Nationality)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .Property(u => u.ProfilePicturePath)
+                .HasMaxLength(500);
+
             // Notification -> Sponsor (one-to-many).
             modelBuilder.Entity<Notification>()
                 .HasOne<Sponsor>()
@@ -792,6 +826,13 @@ namespace Tourist_Project_MVC.Data
                 .WithMany()
                 .HasForeignKey(st => st.SponsorId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // SupportTicket -> Tourist (one-to-many, optional).
+            modelBuilder.Entity<SupportTicket>()
+                .HasOne<Tourist>()
+                .WithMany()
+                .HasForeignKey(st => st.TouristId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             // 6. Seed Trip Plans
             modelBuilder.Entity<TripPlan>().HasData(
