@@ -67,11 +67,9 @@ namespace Tourist_Project_MVC.Controllers
                     profilePicturePath = $"/uploads/profile-pictures/{fileName}";
                 }
 
-                var userName = $"{userFromRequest.FirstName} {userFromRequest.LastName}".Trim();
-
                 var applicationUser = new ApplicationUser()
                 {
-                    UserName = userName,
+                    UserName = userFromRequest.UserEmail,
                     Email = userFromRequest.UserEmail,
                     PasswordHash = userFromRequest.Password,
                     PhoneNumber = userFromRequest.PhoneNumber,
