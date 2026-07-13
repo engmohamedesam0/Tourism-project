@@ -1,3 +1,5 @@
+using NetTopologySuite.Geometries;
+
 namespace Tourist_Project_MVC.Models
 {
     // A physical location belonging to a Sponsor. A Sponsor may have several
@@ -12,8 +14,7 @@ namespace Tourist_Project_MVC.Models
 
         public string Name { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
-        public float Lat { get; set; }
-        public float Long { get; set; }
+        public Point Location { get; set; } = null!;
         public int? ContactNumber { get; set; }
 
         public List<RewardBranch>? RewardBranches { get; set; }

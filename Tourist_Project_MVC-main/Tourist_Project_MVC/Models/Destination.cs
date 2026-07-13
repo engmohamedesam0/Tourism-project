@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using NetTopologySuite.Geometries;
 
 namespace Tourist_Project_MVC.Models
 {
@@ -9,8 +10,7 @@ namespace Tourist_Project_MVC.Models
         public string City { get; set; } = string.Empty;
         public DateTime? OpeningHours { get; set; }
         public string? Category { get; set; }
-        public float Lat { get; set; }
-        public float Long { get; set; }
+        public Point Location { get; set; } = null!;
         public string? Description { get; set; }
         public decimal? TicketPrice { get; set; }
 

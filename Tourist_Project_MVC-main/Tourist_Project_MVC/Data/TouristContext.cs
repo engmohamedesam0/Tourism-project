@@ -85,6 +85,15 @@ namespace Tourist_Project_MVC.Data
                 .HasForeignKey(b => b.SponsorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Spatial location columns (PostGIS geometry(Point, 4326)).
+            modelBuilder.Entity<Destination>()
+                .Property(d => d.Location)
+                .HasColumnType("geometry");
+
+            modelBuilder.Entity<Branch>()
+                .Property(b => b.Location)
+                .HasColumnType("geometry");
+
             // Reward <-> Branch many-to-many join (RewardBranch).
             modelBuilder.Entity<RewardBranch>()
                 .HasKey(rb => new { rb.RewardId, rb.BranchId });

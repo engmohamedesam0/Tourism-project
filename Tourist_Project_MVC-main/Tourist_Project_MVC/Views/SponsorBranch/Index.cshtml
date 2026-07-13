@@ -37,7 +37,7 @@
                             <td class="fw-bold text-muted">@i.ToString("D2")</td>
                             <td><div class="fw-bold">@item.Name</div></td>
                             <td>@item.Address</td>
-                            <td><small class="text-muted">@item.Lat, @item.Long</small></td>
+                            <td><small class="text-muted">@item.Location.Y, @item.Location.X</small></td>
                             <td>@(item.ContactNumber?.ToString() ?? "—")</td>
                             <td>
                                 <div class="d-flex gap-2">

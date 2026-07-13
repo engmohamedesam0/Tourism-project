@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 using System.Collections.Generic;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
@@ -83,8 +84,7 @@ namespace Tourist_Project_MVC.Controllers
                 {
                     Name = vm.Name,
                     Address = vm.Address,
-                    Lat = vm.Lat,
-                    Long = vm.Long,
+                    Location = new Point(vm.Long, vm.Lat) { SRID = 4326 },
                     ContactNumber = vm.ContactNumber,
                     SponsorId = sponsor.Id
                 };
@@ -111,8 +111,8 @@ namespace Tourist_Project_MVC.Controllers
                 Id = branch.Id,
                 Name = branch.Name,
                 Address = branch.Address,
-                Lat = branch.Lat,
-                Long = branch.Long,
+                Lat = (float)branch.Location.Y,
+                Long = (float)branch.Location.X,
                 ContactNumber = branch.ContactNumber,
                 SponsorId = branch.SponsorId
             };
@@ -134,8 +134,7 @@ namespace Tourist_Project_MVC.Controllers
             {
                 branch.Name = vm.Name;
                 branch.Address = vm.Address;
-                branch.Lat = vm.Lat;
-                branch.Long = vm.Long;
+                branch.Location = new Point(vm.Long, vm.Lat) { SRID = 4326 };
                 branch.ContactNumber = vm.ContactNumber;
                 _branchRepo.Update(branch);
                 _branchRepo.Save();

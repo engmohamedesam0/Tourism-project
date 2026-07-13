@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using NetTopologySuite.Geometries;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
@@ -96,10 +97,11 @@ namespace Tourist_Project_MVC.Controllers
         // POST: /Destination/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Destination destination)
+        public IActionResult Create(Destination destination, double Lat, double Long)
         {
             if (ModelState.IsValid)
             {
+                destination.Location = new Point(Long, Lat) { SRID = 4326 };
                 destination.Visits = 0;
                 _repo.Add(destination);
                 _repo.Save();
@@ -119,10 +121,11 @@ namespace Tourist_Project_MVC.Controllers
         // POST: /Destination/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Destination destination)
+        public IActionResult Edit(Destination destination, double Lat, double Long)
         {
             if (ModelState.IsValid)
             {
+                destination.Location = new Point(Long, Lat) { SRID = 4326 };
                 _repo.Update(destination);
                 _repo.Save();
                 return RedirectToAction("Index");

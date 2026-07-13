@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
@@ -34,15 +35,29 @@ namespace Tourist_Project_MVC.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Index(int? destinationId, string? search, string? type, string? sort, string? distance, string? rating)
+        public async Task<IActionResult> Index(int? destinationId, string? search, string? type, string? sort, string? distance, string? rating)
         {
             var destinations = _destinationRepo.GetAll().ToList();
             var selectedDest = destinationId.HasValue
                 ? destinations.FirstOrDefault(d => d.Id == destinationId.Value) ?? destinations.FirstOrDefault()
                 : destinations.FirstOrDefault();
 
-            double originLat = selectedDest?.Lat ?? 0;
-            double originLong = selectedDest?.Long ?? 0;
+            var origin = selectedDest?.Location != null
+                ? new Point(selectedDest.Location.X, selectedDest.Location.Y) { SRID = 4326 }
+                : new Point(0, 0) { SRID = 4326 };
+
+            // Real spatial proximity: nearest-branch distance per sponsor via
+            // PostGIS ST_Distance on geography (meter-accurate, not Haversine).
+            var proximity = await _context.Database
+                .SqlQuery<BranchProximity>(@$"
+                    SELECT s.""Id"" AS SponsorId,
+                           MIN(ST_Distance(b.""Location""::geography, {origin}::geography) / 1000.0) AS DistanceKm,
+                           (ARRAY_AGG(b.""Id"" ORDER BY ST_Distance(b.""Location""::geography, {origin}::geography)))[1] AS NearestBranchId
+                    FROM ""Sponsors"" s
+                    JOIN ""Branches"" b ON b.""SponsorId"" = s.""Id""
+                    GROUP BY s.""Id""")
+                .ToListAsync();
+            var proximityById = proximity.ToDictionary(p => p.SponsorId);
 
             var sponsors = _context.Sponsors
                 .Include(s => s.Rewards)
@@ -83,20 +98,19 @@ namespace Tourist_Project_MVC.Controllers
 
                 // A sponsor may have several branches; use the nearest one to the
                 // reference destination for the card's distance + map coordinates.
-                var nearest = s.Branches != null && s.Branches.Any()
-                    ? s.Branches
-                        .OrderBy(b => Haversine(originLat, originLong, b.Lat, b.Long))
-                        .First()
-                    : null;
-                double sLat = nearest?.Lat ?? 0;
-                double sLong = nearest?.Long ?? 0;
+                var prox = proximityById.TryGetValue(s.Id, out var p) ? p : null;
+                var nearest = (s.Branches != null && prox != null)
+                    ? s.Branches.FirstOrDefault(b => b.Id == prox.NearestBranchId) ?? s.Branches.FirstOrDefault()
+                    : s.Branches?.FirstOrDefault();
+                double sLat = nearest?.Location.Y ?? 0;
+                double sLong = nearest?.Location.X ?? 0;
 
                 return new SponsorCardVM
                 {
                     Sponsor = s,
                     Lat = sLat,
                     Long = sLong,
-                    DistanceKm = Haversine(originLat, originLong, sLat, sLong),
+                    DistanceKm = prox?.DistanceKm ?? 0,
                     AvgRating = avg,
                     ReviewCount = s.Reviews?.Count ?? 0
                 };
@@ -192,19 +206,12 @@ namespace Tourist_Project_MVC.Controllers
             return RedirectToAction("Details", new { id });
         }
 
-        // Pure C# Haversine distance (km). Coords are float -> cast to double.
-        private static double Haversine(double lat1, double lon1, double lat2, double lon2)
+        // Per-sponsor nearest-branch proximity result from the spatial query.
+        private sealed record BranchProximity
         {
-            const double r = 6371.0; // Earth radius (km)
-            var dLat = ToRad(lat2 - lat1);
-            var dLon = ToRad(lon2 - lon1);
-            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                    Math.Cos(ToRad(lat1)) * Math.Cos(ToRad(lat2)) *
-                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-            return r * c;
+            public int SponsorId { get; set; }
+            public double DistanceKm { get; set; }
+            public int NearestBranchId { get; set; }
         }
-
-        private static double ToRad(double deg) => deg * Math.PI / 180.0;
     }
 }

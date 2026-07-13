@@ -7,8 +7,8 @@
             : 0;
         var avgStars = (int)Math.Round(avgRating);
         var displayBranch = Model.Branches?.FirstOrDefault();
-        var displayLat = displayBranch?.Lat ?? 0;
-        var displayLong = displayBranch?.Long ?? 0;
+        var displayLat = displayBranch?.Location?.Y ?? 0;
+        var displayLong = displayBranch?.Location?.X ?? 0;
     }
 
 <div class="container my-4" style="max-width: 960px;">

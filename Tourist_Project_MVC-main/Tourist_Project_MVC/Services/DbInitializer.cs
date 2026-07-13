@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NetTopologySuite.Geometries;
 using System.Text.Json;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
@@ -49,8 +50,10 @@ namespace Tourist_Project_MVC.Services
             // 2. Application tables, in FK-dependency order.
             await SeedTableAsync<Sponsor>(context, seedDir, "sponsors.json");
             await SeedTableAsync<Tourist>(context, seedDir, "tourists.json");
-            await SeedTableAsync<Destination>(context, seedDir, "destinations.json");
-            await SeedTableAsync<Branch>(context, seedDir, "branches.json");
+            await SeedGeoAsync<Destination>(context, seedDir, "destinations.json",
+                (e, el) => e.Location = new Point(el.GetProperty("lng").GetDouble(), el.GetProperty("lat").GetDouble()) { SRID = 4326 });
+            await SeedGeoAsync<Branch>(context, seedDir, "branches.json",
+                (e, el) => e.Location = new Point(el.GetProperty("lng").GetDouble(), el.GetProperty("lat").GetDouble()) { SRID = 4326 });
             await SeedTableAsync<MenuItem>(context, seedDir, "menu-items.json");
             await SeedTableAsync<Mission>(context, seedDir, "missions.json");
             await SeedTableAsync<Reward>(context, seedDir, "rewards.json");
@@ -114,6 +117,57 @@ namespace Tourist_Project_MVC.Services
                         string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
             }
+        }
+
+        private static async Task SeedGeoAsync<TEntity>(TouristContext context, string seedDir, string fileName, Action<TEntity, JsonElement> buildLocation)
+            where TEntity : class
+        {
+            var set = context.Set<TEntity>();
+            if (await set.AnyAsync())
+            {
+                return;
+            }
+
+            var path = Path.Combine(seedDir, fileName);
+            if (!File.Exists(path))
+            {
+                return;
+            }
+
+            var json = await File.ReadAllTextAsync(path);
+            var elements = JsonSerializer.Deserialize<List<JsonElement>>(json);
+            if (elements == null || elements.Count == 0)
+            {
+                return;
+            }
+
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var entityType = context.Model.FindEntityType(typeof(TEntity))!;
+            var tableName = entityType.GetTableName()!;
+            var primaryKey = entityType.FindPrimaryKey()!;
+            var identityProperty = primaryKey.Properties.FirstOrDefault(p => p.ValueGenerated.HasFlag(ValueGenerated.OnAdd));
+
+            await using var transaction = await context.Database.BeginTransactionAsync();
+
+            foreach (var el in elements)
+            {
+                var entity = el.Deserialize<TEntity>(options)!;
+                buildLocation(entity, el);
+                set.Add(entity);
+            }
+            await context.SaveChangesAsync();
+
+            if (identityProperty != null)
+            {
+                #pragma warning disable EF1002
+                var columnName = identityProperty.GetColumnName();
+                await context.Database.ExecuteSqlRawAsync(
+                $"SELECT setval(pg_get_serial_sequence('\"{tableName}\"', '{columnName}'), " +
+                $"COALESCE((SELECT MAX(\"{columnName}\") FROM \"{tableName}\"), 1))");
+                #pragma warning restore EF1002
+            }
+
+            await transaction.CommitAsync();
         }
 
         private static async Task SeedTableAsync<TEntity>(TouristContext context, string seedDir, string fileName)

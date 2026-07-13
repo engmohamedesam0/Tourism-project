@@ -1,13 +1,13 @@
 [
-  { "Id": 1,  "SponsorId": 1,  "Name": "Cairo Marriott Hotel — Main", "Address": "16 Saray El Gezira St, Zamalek, Cairo", "Lat": 30.0669, "Long": 31.2243, "ContactNumber": 223456789 },
-  { "Id": 2,  "SponsorId": 1,  "Name": "Cairo Marriott — Garden Pavilion", "Address": "16 Saray El Gezira St, Zamalek, Cairo", "Lat": 30.0675, "Long": 31.2251, "ContactNumber": 223456790 },
-  { "Id": 3,  "SponsorId": 2,  "Name": "EgyptAir — HQ", "Address": "Cairo International Airport, Cairo", "Lat": 30.1118, "Long": 31.4056, "ContactNumber": 290777000 },
-  { "Id": 4,  "SponsorId": 3,  "Name": "Emeco Travel — Downtown", "Address": "26 Tahrir Square, Downtown Cairo", "Lat": 30.0444, "Long": 31.2358, "ContactNumber": 222756000 },
-  { "Id": 5,  "SponsorId": 4,  "Name": "Sofitel Luxor Winter Palace — Main", "Address": "Corniche El Nile, Luxor", "Lat": 25.6989, "Long": 32.6394, "ContactNumber": 953580422 },
-  { "Id": 6,  "SponsorId": 5,  "Name": "Hilton Aswan — Main", "Address": "Elephantine Island, Aswan", "Lat": 24.0822, "Long": 32.8872, "ContactNumber": 972780222 },
-  { "Id": 7,  "SponsorId": 6,  "Name": "El Fishawy — Khan El Khalili", "Address": "Al-Hussein Square, Khan El Khalili, Cairo", "Lat": 30.0463, "Long": 31.2631, "ContactNumber": 25902836 },
-  { "Id": 8,  "SponsorId": 7,  "Name": "Abou El Sid — Zamalek", "Address": "157 26th of July St, Zamalek, Cairo", "Lat": 30.0589, "Long": 31.2201, "ContactNumber": 27359595 },
-  { "Id": 9,  "SponsorId": 8,  "Name": "Mena House — Giza", "Address": "Pyramids Road, Giza", "Lat": 29.9772, "Long": 31.1256, "ContactNumber": 23332222 },
-  { "Id": 10, "SponsorId": 9,  "Name": "Nile Cruise Co — Aswan Dock", "Address": "Aswan River Dock, Aswan", "Lat": 24.0908, "Long": 32.8998, "ContactNumber": 97345678 },
-  { "Id": 11, "SponsorId": 10, "Name": "Cilantro — Maadi", "Address": "9 Road 9, Maadi, Cairo", "Lat": 29.9622, "Long": 31.2489, "ContactNumber": 27582525 }
+  { "Id": 1,  "SponsorId": 1,  "Name": "Cairo Marriott Hotel — Main", "Address": "16 Saray El Gezira St, Zamalek, Cairo", "lat": 30.0669, "lng": 31.2243, "ContactNumber": 223456789 },
+  { "Id": 2,  "SponsorId": 1,  "Name": "Cairo Marriott — Garden Pavilion", "Address": "16 Saray El Gezira St, Zamalek, Cairo", "lat": 30.0675, "lng": 31.2251, "ContactNumber": 223456790 },
+  { "Id": 3,  "SponsorId": 2,  "Name": "EgyptAir — HQ", "Address": "Cairo International Airport, Cairo", "lat": 30.1118, "lng": 31.4056, "ContactNumber": 290777000 },
+  { "Id": 4,  "SponsorId": 3,  "Name": "Emeco Travel — Downtown", "Address": "26 Tahrir Square, Downtown Cairo", "lat": 30.0444, "lng": 31.2358, "ContactNumber": 222756000 },
+  { "Id": 5,  "SponsorId": 4,  "Name": "Sofitel Luxor Winter Palace — Main", "Address": "Corniche El Nile, Luxor", "lat": 25.6989, "lng": 32.6394, "ContactNumber": 953580422 },
+  { "Id": 6,  "SponsorId": 5,  "Name": "Hilton Aswan — Main", "Address": "Elephantine Island, Aswan", "lat": 24.0822, "lng": 32.8872, "ContactNumber": 972780222 },
+  { "Id": 7,  "SponsorId": 6,  "Name": "El Fishawy — Khan El Khalili", "Address": "Al-Hussein Square, Khan El Khalili, Cairo", "lat": 30.0463, "lng": 31.2631, "ContactNumber": 25902836 },
+  { "Id": 8,  "SponsorId": 7,  "Name": "Abou El Sid — Zamalek", "Address": "157 26th of July St, Zamalek, Cairo", "lat": 30.0589, "lng": 31.2201, "ContactNumber": 27359595 },
+  { "Id": 9,  "SponsorId": 8,  "Name": "Mena House — Giza", "Address": "Pyramids Road, Giza", "lat": 29.9772, "lng": 31.1256, "ContactNumber": 23332222 },
+  { "Id": 10, "SponsorId": 9,  "Name": "Nile Cruise Co — Aswan Dock", "Address": "Aswan River Dock, Aswan", "lat": 24.0908, "lng": 32.8998, "ContactNumber": 97345678 },
+  { "Id": 11, "SponsorId": 10, "Name": "Cilantro — Maadi", "Address": "9 Road 9, Maadi, Cairo", "lat": 29.9622, "lng": 31.2489, "ContactNumber": 27582525 }
 ]

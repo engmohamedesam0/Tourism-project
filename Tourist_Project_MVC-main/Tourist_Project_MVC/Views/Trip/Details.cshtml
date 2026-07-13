@@ -69,8 +69,8 @@
                 {
                     <li class="trip-stop-card"
                         data-stop-id="@td.Id"
-                        data-lat="@td.Destination?.Lat"
-                        data-lng="@td.Destination?.Long"
+                         data-lat="@td.Destination?.Location?.Y"
+                         data-lng="@td.Destination?.Location?.X"
                         data-id="@td.DestinationId">
                         <div class="d-flex align-items-center gap-2">
                             <span class="stop-handle" title="Drag to reorder"><i class="bi bi-grip-vertical"></i></span>
