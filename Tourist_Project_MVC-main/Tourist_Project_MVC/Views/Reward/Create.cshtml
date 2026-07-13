@@ -1,61 +1,61 @@
 ﻿@model AddNewRewardVM
 
 @{
-    ViewData["Title"] = "Add Reward";
+    ViewData["Title"] = @Localizer["RewardAdmin_CreateTitle"].Value;
     SelectList SponsorOptions = new SelectList(Model.Sponsors, "Id", "Name");
 }
 @if (User.Identity.IsAuthenticated)
 {
     <div class="container mt-4">
-        <h2>➕ Add New Reward</h2>
+        <h2>➕ @Localizer["RewardAdmin_CreateHeading"].Value</h2>
         <hr />
         <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()
 
             <div class="mb-3">
-                <label asp-for="Title" class="form-label"></label>
+                <label asp-for="Title" class="form-label">@Localizer["RewardAdmin_FieldTitle"].Value</label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="RewardType" class="form-label"></label>
+                <label asp-for="RewardType" class="form-label">@Localizer["RewardAdmin_FieldType"].Value</label>
                 <input asp-for="RewardType" class="form-control" />
                 <span asp-validation-for="RewardType" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Description" class="form-label"></label>
+                <label asp-for="Description" class="form-label">@Localizer["RewardAdmin_FieldDescription"].Value</label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="PointsRequired" class="form-label"></label>
+                <label asp-for="PointsRequired" class="form-label">@Localizer["RewardAdmin_FieldPoints"].Value</label>
                 <input asp-for="PointsRequired" class="form-control" type="number" />
                 <span asp-validation-for="PointsRequired" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="QuantityAvailable" class="form-label"></label>
+                <label asp-for="QuantityAvailable" class="form-label">@Localizer["RewardAdmin_FieldQuantity"].Value</label>
                 <input asp-for="QuantityAvailable" class="form-control" type="number" />
                 <span asp-validation-for="QuantityAvailable" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="ExpirationDate" class="form-label"></label>
+                <label asp-for="ExpirationDate" class="form-label">@Localizer["RewardAdmin_FieldExpiration"].Value</label>
                 <input asp-for="ExpirationDate" class="form-control" value="" type="date" />
                 <span asp-validation-for="ExpirationDate" class="text-danger"></span>
             </div>
 
-            <label asp-for="Sponsors" class="control-label"></label>
+            <label asp-for="Sponsors" class="control-label">@Localizer["RewardAdmin_FieldSponsor"].Value</label>
             <select asp-for="SponsorId" asp-items="SponsorOptions" class="form form-control">
-                <option value="">--Select Sponsor--</option>
+                <option value="">@Localizer["RewardAdmin_SelectSponsor"].Value</option>
             </select>
             <span asp-validation-for="SponsorId" class="text-danger"></span>
 
-            <button type="submit" class="btn btn-success">Save</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success">@Localizer["RewardAdmin_Save"].Value</button>
+            <a asp-action="Index" class="btn btn-secondary">@Localizer["RewardAdmin_Cancel"].Value</a>
         </form>
     </div>
 }

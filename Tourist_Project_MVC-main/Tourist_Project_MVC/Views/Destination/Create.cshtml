@@ -1,12 +1,12 @@
-﻿@model Tourist_Project_MVC.Models.Destination
+@model Tourist_Project_MVC.Models.Destination
 
 @{
-    ViewData["Title"] = "Add Destination";
+    ViewData["Title"] = @Localizer["Destination_CreateTitle"].Value;
 }
 @if (User.Identity.IsAuthenticated)
 {
     <div class="container mt-4">
-        <h2>➕ Add New Destination</h2>
+        <h2>@Localizer["Destination_CreateHeading"].Value</h2>
         <hr />
         <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()
@@ -29,7 +29,7 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="Description" class="form-label">Description</label>
+                <label asp-for="Description" class="form-label">@Localizer["Destination_Description"].Value</label>
                 <textarea asp-for="Description" class="form-control" rows="3"></textarea>
             </div>
 
@@ -40,17 +40,17 @@
 
             <div class="row">
                 <div class="col mb-3">
-                    <label asp-for="Lat" class="form-label">Latitude</label>
+                    <label asp-for="Lat" class="form-label">@Localizer["Destination_Latitude"].Value</label>
                     <input asp-for="Lat" class="form-control" />
                 </div>
                 <div class="col mb-3">
-                    <label asp-for="Long" class="form-label">Longitude</label>
+                    <label asp-for="Long" class="form-label">@Localizer["Destination_Longitude"].Value</label>
                     <input asp-for="Long" class="form-control" />
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-success">Save</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success">@Localizer["Destination_Save"].Value</button>
+            <a asp-action="Index" class="btn btn-secondary">@Localizer["Destination_Cancel"].Value</a>
         </form>
     </div>
 }

@@ -1,9 +1,9 @@
-@model List<Tourist_Project_MVC.View_Model.AccountRow>
+﻿@model List<Tourist_Project_MVC.View_Model.AccountRow>
 @using Microsoft.AspNetCore.Identity
 @using Tourist_Project_MVC.Models
 
 @{
-    ViewData["Title"] = "Account Management";
+    ViewData["Title"] = Localizer["RoleAdmin_AccountManagement"].Value;
     var roles = (List<IdentityRole>?)ViewBag.Roles;
 }
 
@@ -11,10 +11,10 @@
 
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h1 class="page-title mb-0">
-            <i class="bi bi-people-fill me-2"></i> Account Management
+            <i class="bi bi-people-fill me-2"></i> @Localizer["RoleAdmin_AccountManagement"].Value
         </h1>
         <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
-            <i class="bi bi-house-fill me-1"></i> Home
+            <i class="bi bi-house-fill me-1"></i> @Localizer["RoleAdmin_Home"].Value
         </a>
     </div>
 
@@ -26,10 +26,10 @@
                 <table class="table table-hover align-middle destinations-table mb-0">
                     <thead>
                         <tr>
-                            <th>User</th>
-                            <th>Email</th>
-                            <th>Current Role</th>
-                            <th style="width: 320px;">Actions</th>
+                            <th>@Localizer["RoleAdmin_User"].Value</th>
+                            <th>@Localizer["RoleAdmin_Email"].Value</th>
+                            <th>@Localizer["RoleAdmin_CurrentRole"].Value</th>
+                            <th style="width: 320px;">@Localizer["RoleAdmin_Actions"].Value</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,7 +40,7 @@
                                     @account.UserName
                                     @if (account.IsCurrentAdmin)
                                     {
-                                        <span class="badge bg-warning text-dark ms-1">You</span>
+                                        <span class="badge bg-warning text-dark ms-1">@Localizer["RoleAdmin_You"].Value</span>
                                     }
                                 </td>
                                 <td>@account.Email</td>
@@ -50,8 +50,8 @@
                                 <td>
                                     @if (account.IsCurrentAdmin)
                                     {
-                                        <span class="text-muted small" title="Cannot change or delete your own account">
-                                            <i class="bi bi-lock-fill me-1"></i> Account protected
+                                        <span class="text-muted small" title="@Localizer["RoleAdmin_AccountProtectedTitle"].Value">
+                                            <i class="bi bi-lock-fill me-1"></i> @Localizer["RoleAdmin_AccountProtected"].Value
                                         </span>
                                     }
                                     else
@@ -75,13 +75,13 @@
                                                 }
                                             </select>
                                             <button type="submit" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-arrow-repeat me-1"></i> Change
+                                                <i class="bi bi-arrow-repeat me-1"></i> @Localizer["RoleAdmin_Change"].Value
                                             </button>
                                         </form>
-                                        <form method="post" asp-action="Delete" onsubmit="return confirm('This will permanently remove the login account for @account.UserName@(string.IsNullOrEmpty(account.Email) ? "" : $" ({account.Email})"). The linked Tourist/Sponsor profile and all historical data will be preserved. Are you sure?');">
+                                        <form method="post" asp-action="Delete" onsubmit="return confirm('@Localizer["RoleAdmin_DeleteConfirmPrefix"].Value @account.UserName@(string.IsNullOrEmpty(account.Email) ? "" : $" ({account.Email})"). @Localizer["RoleAdmin_DeleteConfirmSuffix"].Value');">
                                             <input type="hidden" name="id" value="@account.UserId" />
                                             <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="bi bi-trash-fill me-1"></i> Delete
+                                                <i class="bi bi-trash-fill me-1"></i> @Localizer["RoleAdmin_Delete"].Value
                                             </button>
                                         </form>
                                     }
@@ -95,8 +95,7 @@
     </div>
 
     <p class="text-muted small mt-3 mb-0">
-        Deleting an account removes the login only &mdash; the linked Tourist/Sponsor
-        profile and all historical data are preserved.
+        @Localizer["RoleAdmin_DeleteHelp"].Value
     </p>
 </div>
 

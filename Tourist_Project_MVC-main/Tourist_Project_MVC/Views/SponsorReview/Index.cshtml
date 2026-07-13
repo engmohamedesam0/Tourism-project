@@ -1,13 +1,13 @@
-@model Tourist_Project_MVC.View_Model.SponsorReviewListVM
+﻿@model Tourist_Project_MVC.View_Model.SponsorReviewListVM
 
 @{
-    ViewData["Title"] = "My Reviews";
+    ViewData["Title"] = Localizer["SponsorReview_IndexTitle"].Value;
 }
 
 <div class="inner-page-wrapper">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="page-title mb-0">⭐ My Reviews</h2>
+            <h2 class="page-title mb-0">⭐ @Localizer["SponsorReview_IndexHeading"].Value</h2>
         </div>
 
         @if (Model.RatingAvailable)
@@ -28,7 +28,7 @@
                             }
                         }
                     </div>
-                    <div class="text-muted">Average rating from @Model.ReviewCount review@(Model.ReviewCount == 1 ? "" : "s")</div>
+                    <div class="text-muted">@Localizer["SponsorReview_AverageFrom"].Value @Model.ReviewCount @(Model.ReviewCount == 1 ? Localizer["SponsorReview_ReviewSingular"].Value : Localizer["SponsorReview_ReviewPlural"].Value)</div>
                 </div>
             </div>
         }
@@ -36,7 +36,7 @@
         {
             <div class="alert alert-info" role="alert">
                 <i class="bi bi-info-circle-fill me-1"></i>
-                No reviews yet for your place — the rating card will populate once tourists leave reviews.
+                @Localizer["SponsorReview_NoReviewsInfo"].Value
             </div>
         }
 
@@ -44,9 +44,9 @@
             <form method="get" asp-controller="SponsorReview" asp-action="Index">
                 <div class="row g-2 align-items-end">
                     <div class="col-md-3">
-                        <label class="form-label small text-muted mb-1">Filter by rating</label>
+                        <label class="form-label small text-muted mb-1">@Localizer["SponsorReview_FilterByRating"].Value</label>
                         <select name="ratingFilter" class="form-select">
-                            <option value="">All Ratings</option>
+                            <option value="">@Localizer["SponsorReview_AllRatings"].Value</option>
                             @for (int stars = 5; stars >= 1; stars--)
                             {
                                 if (Model.SelectedRating == stars)
@@ -73,11 +73,11 @@
             <table class="table table-hover align-middle destinations-table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Tourist</th>
-                        <th>Rating</th>
-                        <th>Comment</th>
-                        <th>Date</th>
+                        <th>@Localizer["SponsorReview_ColHash"].Value</th>
+                        <th>@Localizer["SponsorReview_ColTourist"].Value</th>
+                        <th>@Localizer["SponsorReview_ColRating"].Value</th>
+                        <th>@Localizer["SponsorReview_ColComment"].Value</th>
+                        <th>@Localizer["SponsorReview_ColDate"].Value</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -115,7 +115,7 @@
         {
             <div class="text-center py-5">
                 <i class="bi bi-chat-square-quote" style="font-size:3rem; color:var(--egy-primary);"></i>
-                <p class="text-muted mt-2">No reviews found for the selected filter.</p>
+                <p class="text-muted mt-2">@Localizer["SponsorReview_EmptyMessage"].Value</p>
             </div>
         }
     </div>
@@ -127,7 +127,7 @@
             font-family: 'Cinzel', sans-serif;
             font-size: 2.5rem;
             font-weight: 700;
-            color: #2C1A0E;
+            color: var(--egy-dark);
         }
     </style>
 }

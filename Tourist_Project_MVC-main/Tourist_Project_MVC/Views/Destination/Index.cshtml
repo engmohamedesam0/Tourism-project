@@ -1,18 +1,18 @@
-﻿@model IEnumerable<Tourist_Project_MVC.Models.Destination>
+@model IEnumerable<Tourist_Project_MVC.Models.Destination>
 
 @{
-    ViewData["Title"] = "Destinations";
+    ViewData["Title"] = @Localizer["Destination_PageTitle"].Value;
 }
 
 <div class="container-fluid mt-4">
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="page-title mb-0">🗺️ Destinations</h2>
+        <h2 class="page-title mb-0">🗺️ @Localizer["Destination_Heading"].Value</h2>
         @if (User.IsInRole("Admin"))
         {
             <a asp-action="Create" class="btn btn-success px-4">
-                <i class="bi bi-plus-lg me-1"></i> + Add
+                <i class="bi bi-plus-lg me-1"></i> @Localizer["Destination_AddBtn"].Value
             </a>            
         }
     </div>
@@ -33,7 +33,7 @@
                         <input type="text"
                                name="search"
                                class="form-control border-start-0"
-                               placeholder="Search destinations..."
+                               placeholder="@Localizer["Destination_SearchPlaceholder"].Value"
                                value="@ViewBag.Search" />
                         <input type="hidden" name="status" value="@ViewBag.Status" />
                         <input type="hidden" name="category" value="@ViewBag.Category" />
@@ -45,19 +45,19 @@
                 <div class="btn-group w-100" role="group">
                     <a href="@Url.Action("Index", new { search = ViewBag.Search, category = ViewBag.Category })"
                        class="btn @(ViewBag.Status == null ? "btn-primary" : "btn-outline-secondary")">
-                        All (@ViewBag.AllCount)
+                        @Localizer["Destination_FilterAll"].Value (@ViewBag.AllCount)
                     </a>
                     <a href="@Url.Action("Index", new { search = ViewBag.Search, status = "Active", category = ViewBag.Category })"
                        class="btn @(ViewBag.Status == "Active" ? "btn-success" : "btn-outline-secondary")">
-                        Active (@ViewBag.ActiveCount)
+                        @Localizer["Destination_FilterActive"].Value (@ViewBag.ActiveCount)
                     </a>
                     <a href="@Url.Action("Index", new { search = ViewBag.Search, status = "Pending", category = ViewBag.Category })"
                        class="btn @(ViewBag.Status == "Pending" ? "btn-warning" : "btn-outline-secondary")">
-                        Pending (@ViewBag.PendingCount)
+                        @Localizer["Destination_FilterPending"].Value (@ViewBag.PendingCount)
                     </a>
                     <a href="@Url.Action("Index", new { search = ViewBag.Search, status = "Inactive", category = ViewBag.Category })"
                        class="btn @(ViewBag.Status == "Inactive" ? "btn-danger" : "btn-outline-secondary")">
-                        Inactive (@ViewBag.InactiveCount)
+                        @Localizer["Destination_FilterInactive"].Value (@ViewBag.InactiveCount)
                     </a>
                 </div>
             </div>
@@ -66,7 +66,7 @@
                 <select class="form-select"
                         onchange="window.location.href=this.value">
                     <option value="@Url.Action("Index", new { search = ViewBag.Search, status = ViewBag.Status })">
-                        All Categories
+                        @Localizer["Destination_AllCategories"].Value
                     </option>
                     @foreach (var cat in ViewBag.Categories as List<string> ?? new List<string>())
                     {
@@ -91,14 +91,14 @@
         <table class="table table-hover align-middle destinations-table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Destination</th>
-                    <th>Governorate</th>
-                    <th>Category</th>
-                    <th>Visits</th>
-                    <th>Ticket Price</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>@Localizer["Destination_TableNum"].Value</th>
+                    <th>@Localizer["Destination_TableDestination"].Value</th>
+                    <th>@Localizer["Destination_TableGovernorate"].Value</th>
+                    <th>@Localizer["Destination_TableCategory"].Value</th>
+                    <th>@Localizer["Destination_TableVisits"].Value</th>
+                    <th>@Localizer["Destination_TableTicketPrice"].Value</th>
+                    <th>@Localizer["Destination_TableStatus"].Value</th>
+                    <th>@Localizer["Destination_TableActions"].Value</th>
                 </tr>
             </thead>
             <tbody>
@@ -120,7 +120,7 @@
                             @item.Visits.ToString("N0")
                         </td>
                         <td>
-                            @(item.TicketPrice == 0 ? "Free" : item.TicketPrice?.ToString("C"))
+                            @(item.TicketPrice == 0 ? Localizer["Destination_Free"].Value : item.TicketPrice?.ToString("C"))
                         </td>
                         <td>
                             @{
@@ -139,7 +139,7 @@
                             <div class="d-flex gap-2">
                                 <a asp-action="Details" asp-route-id="@item.Id"
                                         class="btn btn-sm btn-outline-info"
-                                        title="Details">
+                                        title="@Localizer["Destination_DetailsTitle"].Value">
                                             <i class="bi bi-eye-fill"></i>
                                  </a>
 
@@ -147,21 +147,21 @@
                                     {
                                 <a asp-action="Edit" asp-route-id="@item.Id"
                                    class="btn btn-sm btn-outline-warning"
-                                   title="Edit">
+                                   title="@Localizer["Destination_EditTitle"].Value">
                                     <i class="bi bi-pencil-fill"></i>
                                 </a>
                                         <a asp-action="Delete" asp-route-id="@item.Id"
                                         class="btn btn-sm btn-outline-danger"
-                                        title="Delete">
+                                        title="@Localizer["Destination_DeleteTitle"].Value">
                                             <i class="bi bi-trash-fill"></i>
                                         </a>                    
                                     }
                                </div>
-                            }
-                            else
-                            {
-                            <span class="text-muted small">Guests only view</span>
-                            }
+                             }
+                             else
+                             {
+                            <span class="text-muted small">@Localizer["Destination_GuestsOnly"].Value</span>
+                             }
                         </td>
                     </tr>
                     i++;
@@ -174,8 +174,8 @@
     {
         <div class="text-center py-5">
             <i class="bi bi-geo-alt" style="font-size: 3rem; color: #C8832A;"></i>
-            <p class="text-muted mt-2">No destinations found.</p>
-            <a asp-action="Create" class="btn btn-primary">Add First Destination</a>
+            <p class="text-muted mt-2">@Localizer["Destination_NoDestinations"].Value</p>
+            <a asp-action="Create" class="btn btn-primary">@Localizer["Destination_AddFirst"].Value</a>
         </div>
     }
 

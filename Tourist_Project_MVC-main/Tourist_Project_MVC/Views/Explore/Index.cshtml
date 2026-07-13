@@ -13,8 +13,8 @@
             <div class="col-lg-5 col-xl-4 explore-list-panel">
 
                 <div class="explore-header">
-                    <h2 class="page-title mb-0">🧭 Explore Egypt</h2>
-                    <p class="text-muted small mb-0">Discover destinations across the Nile Valley & beyond</p>
+                    <h2 class="page-title mb-0">🧭 @Localizer["Explore_Title"].Value</h2>
+                    <p class="text-muted small mb-0">@Localizer["Explore_Subtitle"].Value</p>
                 </div>
 
                 <!-- Search box (reuses Destination admin search pattern) -->
@@ -28,7 +28,7 @@
                                    name="search"
                                    id="exploreSearch"
                                    class="form-control border-start-0"
-                                   placeholder="Search destinations or cities..."
+                                   placeholder="@Localizer["Explore_SearchPlaceholder"].Value"
                                    value="@ViewBag.Search" />
                         </div>
                     </form>
@@ -47,12 +47,12 @@
                                      (closest adventurous/excavation vibe). CONFIRM / adjust.
                 -->
                 <div class="category-chips" id="categoryChips">
-                    <button type="button" class="chip chip-active" data-filter="all">All</button>
-                    <button type="button" class="chip" data-filter="Hidden Gems" data-status="Pending">Hidden Gems</button>
-                    <button type="button" class="chip" data-filter="Temples" data-category="Temple">Temples</button>
-                    <button type="button" class="chip" data-filter="Museums" data-category="Museum">Museums</button>
-                    <button type="button" class="chip" data-filter="Nature" data-category="Natural">Nature</button>
-                    <button type="button" class="chip" data-filter="Adventure" data-category="Archaeological">Adventure</button>
+                    <button type="button" class="chip chip-active" data-filter="all">@Localizer["Explore_All"].Value</button>
+                    <button type="button" class="chip" data-filter="Hidden Gems" data-status="Pending">@Localizer["Explore_HiddenGems"].Value</button>
+                    <button type="button" class="chip" data-filter="Temples" data-category="Temple">@Localizer["Explore_Temples"].Value</button>
+                    <button type="button" class="chip" data-filter="Museums" data-category="Museum">@Localizer["Explore_Museums"].Value</button>
+                    <button type="button" class="chip" data-filter="Nature" data-category="Natural">@Localizer["Explore_Nature"].Value</button>
+                    <button type="button" class="chip" data-filter="Adventure" data-category="Archaeological">@Localizer["Explore_Adventure"].Value</button>
                 </div>
 
                 <!-- Scrollable destination list -->
@@ -76,7 +76,7 @@
                                 }
                                 else
                                 {
-                                    <span class="rating-badge rating-new" title="Not yet rated">New</span>
+                                     <span class="rating-badge rating-new" title="@Localizer["Explore_NotRated"].Value">@Localizer["Explore_New"].Value</span>
                                 }
                             </div>
 
@@ -101,9 +101,9 @@
                             }
 
                             <div class="mt-2">
-                                <a asp-controller="Destination" asp-action="Details" asp-route-id="@item.Id"
+                                 <a asp-controller="Destination" asp-action="Details" asp-route-id="@item.Id"
                                    class="btn btn-sm btn-outline-secondary">
-                                    <i class="bi bi-eye-fill me-1"></i> Details
+                                    <i class="bi bi-eye-fill me-1"></i> @Localizer["Explore_Details"].Value
                                 </a>
                             </div>
                         </div>
@@ -113,7 +113,7 @@
                     {
                         <div class="text-center text-muted py-5">
                             <i class="bi bi-geo-alt" style="font-size: 2.5rem; color: var(--egy-primary);"></i>
-                            <p class="mt-2 mb-0">No destinations found.</p>
+                            <p class="mt-2 mb-0">@Localizer["Explore_NoDestinations"].Value</p>
                         </div>
                     }
                 </div>
@@ -124,8 +124,8 @@
                 <div id="exploreMap" class="explore-map-container">
                     <div class="map-watermark">
                         <i class="bi bi-map" style="font-size: 3rem;"></i>
-                        <p class="mb-0 mt-2">Map will render here</p>
-                        <small class="text-muted">Each list card carries data-lat / data-lng / data-id for future markers</small>
+                        <p class="mb-0 mt-2">@Localizer["Explore_MapPlaceholder"].Value</p>
+                        <small class="text-muted">@Localizer["Explore_MapNote"].Value</small>
                     </div>
                 </div>
             </div>

@@ -1,14 +1,14 @@
 ﻿@model AddNewRewardVM
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = @Localizer["RewardAdmin_EditTitle"].Value;
     SelectList SponsorOptions = new SelectList(Model.Sponsors, "Id", "Name");
 }
 
 @if (User.Identity.IsAuthenticated)
 {
     <div class="container mt-4">
-        <h2>✏️ Edit Mission</h2>
+        <h2>✏️ @Localizer["RewardAdmin_EditHeading"].Value</h2>
         <hr />
 
         <form asp-action="Edit">
@@ -53,14 +53,14 @@
 
             <label asp-for="Sponsors" class="control-label"></label>
             <select asp-for="SponsorId" asp-items="SponsorOptions" class="form form-control">
-                <option value="">--Select Sponsor--</option>
+                <option value="">@Localizer["RewardAdmin_SelectSponsor"].Value</option>
             </select>
             <span asp-validation-for="SponsorId" class="text-danger"></span>
 
 
             <div class="mb-3">
-                <input type="submit" value="Update" class="btn btn-warning" />
-                <a asp-action="Index" class="btn-back">Back to List</a>
+                <input type="submit" value="@Localizer["RewardAdmin_Update"].Value" class="btn btn-warning" />
+                <a asp-action="Index" class="btn-back">@Localizer["RewardAdmin_BackToList"].Value</a>
             </div>
         </form>
     </div>

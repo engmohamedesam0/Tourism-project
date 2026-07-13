@@ -1,17 +1,17 @@
-@model Tourist_Project_MVC.View_Model.RedemptionHistoryVM
+﻿@model Tourist_Project_MVC.View_Model.RedemptionHistoryVM
 
 @{
-    ViewData["Title"] = "Redemption History";
+    ViewData["Title"] = Localizer["SponsorRedemption_IndexTitle"].Value;
 }
 
 <div class="container-fluid mt-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="page-title mb-0">
-            <i class="bi bi-receipt me-2"></i> Redemption History
+            <i class="bi bi-receipt me-2"></i> @Localizer["SponsorRedemption_IndexHeading"].Value
         </h2>
         <a asp-controller="SponsorPortal" asp-action="Dashboard" class="btn btn-outline-secondary">
-            <i class="bi bi-speedometer2 me-1"></i> Dashboard
+            <i class="bi bi-speedometer2 me-1"></i> @Localizer["SponsorRedemption_DashboardBtn"].Value
         </a>
     </div>
 
@@ -22,19 +22,19 @@
         <form method="get" asp-controller="SponsorRedemption" asp-action="Index">
             <div class="row g-2 align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label small text-muted mb-1">From</label>
+                    <label class="form-label small text-muted mb-1">@Localizer["SponsorRedemption_FromLabel"].Value</label>
                     <input type="date" name="fromDate" class="form-control"
                            value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" />
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label small text-muted mb-1">To</label>
+                    <label class="form-label small text-muted mb-1">@Localizer["SponsorRedemption_ToLabel"].Value</label>
                     <input type="date" name="toDate" class="form-control"
                            value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" />
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label small text-muted mb-1">Reward</label>
+                    <label class="form-label small text-muted mb-1">@Localizer["SponsorRedemption_RewardLabel"].Value</label>
                     <select name="rewardId" class="form-select">
-                        <option value="">All Rewards</option>
+                        <option value="">@Localizer["SponsorRedemption_AllRewards"].Value</option>
                         @foreach (var reward in Model.Rewards)
                         {
                             if (Model.RewardId == reward.Id)
@@ -49,9 +49,9 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label small text-muted mb-1">Status</label>
+                    <label class="form-label small text-muted mb-1">@Localizer["SponsorRedemption_StatusLabel"].Value</label>
                     <select name="status" class="form-select">
-                        <option value="">All Statuses</option>
+                        <option value="">@Localizer["SponsorRedemption_AllStatuses"].Value</option>
                         @foreach (var st in Model.Statuses)
                         {
                             if (Model.Status == st)
@@ -78,13 +78,13 @@
         <table class="table table-hover align-middle destinations-table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Tourist</th>
-                    <th>Reward</th>
-                    <th>Branch</th>
-                    <th>Date</th>
-                    <th>Voucher Code</th>
-                    <th>Status</th>
+                    <th>@Localizer["SponsorRedemption_ColHash"].Value</th>
+                    <th>@Localizer["SponsorRedemption_ColTourist"].Value</th>
+                    <th>@Localizer["SponsorRedemption_ColReward"].Value</th>
+                    <th>@Localizer["SponsorRedemption_ColBranch"].Value</th>
+                    <th>@Localizer["SponsorRedemption_ColDate"].Value</th>
+                    <th>@Localizer["SponsorRedemption_ColVoucherCode"].Value</th>
+                    <th>@Localizer["SponsorRedemption_ColStatus"].Value</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,16 +113,16 @@
                             @switch (row.Status)
                             {
                                 case "Active":
-                                    <span class="badge bg-success">Active</span>
+                                    <span class="badge bg-success">@Localizer["SponsorRedemption_Status_Active"].Value</span>
                                     break;
                                 case "Used":
-                                    <span class="badge bg-primary">Used</span>
+                                    <span class="badge bg-primary">@Localizer["SponsorRedemption_Status_Used"].Value</span>
                                     break;
                                 case "Expired":
-                                    <span class="badge bg-secondary">Expired</span>
+                                    <span class="badge bg-secondary">@Localizer["SponsorRedemption_Status_Expired"].Value</span>
                                     break;
                                 case "Cancelled":
-                                    <span class="badge bg-danger">Cancelled</span>
+                                    <span class="badge bg-danger">@Localizer["SponsorRedemption_Status_Cancelled"].Value</span>
                                     break;
                                 default:
                                     <span class="badge bg-light text-dark">@row.Status</span>
@@ -140,7 +140,7 @@
     {
         <div class="text-center py-5">
             <i class="bi bi-receipt" style="font-size:3rem; color:var(--egy-primary);"></i>
-            <p class="text-muted mt-2">No redemptions found for the selected filters.</p>
+            <p class="text-muted mt-2">@Localizer["SponsorRedemption_EmptyMessage"].Value</p>
         </div>
     }
 

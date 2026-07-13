@@ -1,30 +1,29 @@
 ﻿@model sponsorViewModel
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = Localizer["Sponsor_DeleteTitle"].Value;
 }
 <div class="container mt-4">
-    <h2 class="text-danger">🗑️ Delete Reward</h2>
+    <h2 class="text-danger">🗑️ @Localizer["Sponsor_DeleteHeading"].Value</h2>
     <hr />
-    <p class="lead">Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+    <p class="lead">@Localizer["Sponsor_DeleteConfirm"].Value <strong>@Model.Name</strong>?</p>
 
     <dl class="row">
-        <dt class="col-sm-3">Name</dt>
+        <dt class="col-sm-3">@Localizer["Sponsor_ColName"].Value</dt>
         <dd class="col-sm-9">@Model.Name</dd>
 
-        <dt class="col-sm-3">Type</dt>
+        <dt class="col-sm-3">@Localizer["Sponsor_ColType"].Value</dt>
         <dd class="col-sm-9">@Model.Type</dd>
 
 
-        <dt class="col-sm-3">Address</dt>
+        <dt class="col-sm-3">@Localizer["Sponsor_ColAddress"].Value</dt>
         <dd class="col-sm-9">@Model.City</dd>
     </dl>
 
     <form asp-action="DeleteConfirmed" method="post">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">Yes, Delete</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-danger">@Localizer["Sponsor_DeleteConfirmBtn"].Value</button>
+        <a asp-action="Index" class="btn btn-secondary">@Localizer["Sponsor_CancelBtn"].Value</a>
     </form>
 </div>
-

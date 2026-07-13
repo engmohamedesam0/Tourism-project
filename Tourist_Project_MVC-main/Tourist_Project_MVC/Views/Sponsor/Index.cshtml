@@ -1,17 +1,17 @@
-@model IEnumerable<Tourist_Project_MVC.Models.Sponsor>
+﻿@model IEnumerable<Tourist_Project_MVC.Models.Sponsor>
 @{
-    ViewData["Title"] = "Sponsors";
+    ViewData["Title"] = Localizer["Sponsor_IndexTitle"].Value;
 }
 
 <div class="container-fluid mt-4">
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="page-title mb-0">🤝 Sponsors</h2>
+        <h2 class="page-title mb-0">🤝 @Localizer["Sponsor_IndexHeading"].Value</h2>
         @if (User.IsInRole("Admin"))
         {
             <a asp-action="Create" class="btn btn-success px-4">
-                <i class="bi bi-plus-lg me-1"></i> + Add
+                <i class="bi bi-plus-lg me-1"></i> @Localizer["Sponsor_CreateBtn"].Value
             </a>
         }
     </div>
@@ -30,7 +30,7 @@
                         </span>
                         <input type="text" name="search"
                                class="form-control border-start-0"
-                               placeholder="Search sponsors..."
+                               placeholder="@Localizer["Sponsor_SearchPlaceholder"].Value"
                                value="@ViewBag.Search" />
                         <input type="hidden" name="type" value="@ViewBag.Type" />
                     </div>
@@ -40,7 +40,7 @@
             <div class="col-md-4">
                 <select class="form-select" onchange="window.location.href=this.value">
                     <option value="@Url.Action("Index", new { search = ViewBag.Search })">
-                        All Types
+                        @Localizer["Sponsor_AllTypes"].Value
                     </option>
                     @foreach (var t in ViewBag.Types as List<string> ?? new List<string>())
                     {
@@ -58,7 +58,7 @@
             </div>
 
             <div class="col-md-3 text-muted small">
-                Total: <strong>@ViewBag.AllCount</strong> sponsors
+                @Localizer["Sponsor_TotalLabel"].Value: <strong>@ViewBag.AllCount</strong> @Localizer["Sponsor_SponsorsUnit"].Value
             </div>
 
         </div>
@@ -69,12 +69,12 @@
         <table class="table table-hover align-middle destinations-table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Address</th>
-                    <th>Contact</th>
-                    <th>Actions</th>
+                    <th>@Localizer["Sponsor_ColHash"].Value</th>
+                    <th>@Localizer["Sponsor_ColName"].Value</th>
+                    <th>@Localizer["Sponsor_ColType"].Value</th>
+                    <th>@Localizer["Sponsor_ColAddress"].Value</th>
+                    <th>@Localizer["Sponsor_ColContact"].Value</th>
+                    <th>@Localizer["Sponsor_ColActions"].Value</th>
                 </tr>
             </thead>
             <tbody>
@@ -94,17 +94,17 @@
                             {
                             <div class="d-flex gap-2">
                                 <a asp-action="Details" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-outline-info" title="Details">
+                                   class="btn btn-sm btn-outline-info" title="@Localizer["Sponsor_DetailsTip"].Value">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
                                 @if (User.IsInRole("Admin"))
                                 {
                                     <a asp-action="Edit" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-warning" title="Edit">
+                                       class="btn btn-sm btn-outline-warning" title="@Localizer["Sponsor_EditTip"].Value">
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
                                     <a asp-action="Delete" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-danger" title="Delete">
+                                       class="btn btn-sm btn-outline-danger" title="@Localizer["Sponsor_DeleteTip"].Value">
                                         <i class="bi bi-trash-fill"></i>
                                     </a>
                                 }
@@ -112,7 +112,7 @@
                             }
                             else
                             {
-                                <span class="text-muted small">Guests only view</span>
+                                <span class="text-muted small">@Localizer["Sponsor_GuestsOnly"].Value</span>
                             }
                         </td>
                     </tr>
@@ -126,10 +126,10 @@
     {
         <div class="text-center py-5">
             <i class="bi bi-building" style="font-size:3rem; color:var(--egy-primary);"></i>
-            <p class="text-muted mt-2">No sponsors found.</p>
+            <p class="text-muted mt-2">@Localizer["Sponsor_EmptyMessage"].Value</p>
             @if (User.IsInRole("Admin"))
             {
-                <a asp-action="Create" class="btn btn-success">Add First Sponsor</a>
+                <a asp-action="Create" class="btn btn-success">@Localizer["Sponsor_AddFirstBtn"].Value</a>
             }
         </div>
     }

@@ -1,10 +1,10 @@
-@model List<Tourist_Project_MVC.Models.SupportTicket>
+﻿@model List<Tourist_Project_MVC.Models.SupportTicket>
 
 @if (!Model.Any())
 {
     <div class="text-center py-4 text-white-50 w-100">
         <i class="bi bi-inbox" style="font-size:2rem;"></i>
-        <p class="mb-0 mt-2">No tickets submitted yet.</p>
+        <p class="mb-0 mt-2">@Localizer["SponsorNotification_NoTickets"].Value</p>
     </div>
 }
 else

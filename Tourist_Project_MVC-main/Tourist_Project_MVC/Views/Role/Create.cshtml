@@ -1,11 +1,11 @@
 ﻿@model Tourist_Project_MVC.View_Model.RoleViewModel
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = Localizer["RoleAdmin_Create"].Value;
 }
 
-<h1>Create</h1>
+<h1>@Localizer["RoleAdmin_Create"].Value</h1>
 
-<h4>RoleViewModel</h4>
+<h4>@Localizer["RoleAdmin_RoleViewModel"].Value</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -17,14 +17,14 @@
                 <span asp-validation-for="RoleName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="@Localizer["RoleAdmin_Create"].Value" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index" asp-controller="Home" class="btn-secondary">Cancel</a>
+    <a asp-action="Index" asp-controller="Home" class="btn-secondary">@Localizer["RoleAdmin_Cancel"].Value</a>
 </div>
 
 @section Scripts {

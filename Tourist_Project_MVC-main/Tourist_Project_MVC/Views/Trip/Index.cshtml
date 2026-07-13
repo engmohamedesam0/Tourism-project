@@ -70,6 +70,67 @@
         <section class="trip-map-filter-section">
             <div class="container-fluid px-3 px-lg-4">
                 <div class="row align-items-stretch">
+                    <div class="col-lg-4">
+                        <!-- PLANNING FILTER BAR (Item 4) -->
+                        <div class="filter-bar mb-4">
+                            <div class="filter-field">
+                                <label class="form-label fw-semibold mb-1">@Localizer["Trip_Duration"].Value</label>
+                                <div class="form-control-plaintext fw-semibold" id="tripDuration">—</div>
+                            </div>
+
+                            <div class="filter-field">
+                                <label class="form-label fw-semibold mb-1">@Localizer["Trip_Budget"].Value</label>
+                                <input asp-for="Budget" class="form-control" type="number" min="0" step="0.01"
+                                       placeholder="@Localizer["Trip_BudgetPlaceholder"].Value" />
+                            </div>
+
+                            <div class="filter-field">
+                                <label class="form-label fw-semibold mb-1">@Localizer["Trip_Companions"].Value</label>
+                                <input asp-for="Companions" class="form-control" type="number" min="1"
+                                       placeholder="@Localizer["Trip_CompanionsPlaceholder"].Value" />
+                            </div>
+
+                            <div class="filter-field filter-interests" id="tripInterests">
+                                <label class="form-label fw-semibold mb-1 d-block">@Localizer["Trip_Interests"].Value</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="int-hidden" data-status="Pending" />
+                                        <label class="form-check-label" for="int-hidden">@Localizer["Trip_HiddenGems"].Value</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="int-temples" data-category="Temple" />
+                                        <label class="form-check-label" for="int-temples">@Localizer["Trip_Temples"].Value</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="int-museums" data-category="Museum" />
+                                        <label class="form-check-label" for="int-museums">@Localizer["Trip_Museums"].Value</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="int-nature" data-category="Natural" />
+                                        <label class="form-check-label" for="int-nature">@Localizer["Trip_Nature"].Value</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="int-adventure" data-category="Archaeological" />
+                                        <label class="form-check-label" for="int-adventure">@Localizer["Trip_Adventure"].Value</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="int-historical" data-category="Historical" />
+                                        <label class="form-check-label" for="int-historical">@Localizer["Trip_Historical"].Value</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="int-religious" data-category="Religious" />
+                                        <label class="form-check-label" for="int-religious">@Localizer["Trip_Religious"].Value</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="filter-field filter-actions">
+                                <button type="button" class="btn btn-outline-secondary" id="tripFilterBtn">
+                                    <i class="bi bi-funnel-fill me-1"></i> @Localizer["Trip_Filter"].Value
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-8">
                         <div id="tripBuilderMap" class="trip-builder-map mb-3">
                             <div class="map-watermark">
@@ -79,70 +140,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <!-- PLANNING FILTER BAR (Item 4) -->
-                        <div class="filter-bar mb-4">
-            <div class="filter-field">
-                <label class="form-label fw-semibold mb-1">Duration</label>
-                <div class="form-control-plaintext fw-semibold" id="tripDuration">—</div>
-            </div>
-
-            <div class="filter-field">
-                <label class="form-label fw-semibold mb-1">Budget</label>
-                <input asp-for="Budget" class="form-control" type="number" min="0" step="0.01"
-                       placeholder="e.g. 1000" />
-            </div>
-
-            <div class="filter-field">
-                <label class="form-label fw-semibold mb-1">Companions</label>
-                <input asp-for="Companions" class="form-control" type="number" min="1"
-                       placeholder="e.g. 2" />
-            </div>
-
-            <div class="filter-field filter-interests" id="tripInterests">
-                <label class="form-label fw-semibold mb-1 d-block">Interests</label>
-                <div class="d-flex flex-wrap gap-2">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="int-hidden" data-status="Pending" />
-                        <label class="form-check-label" for="int-hidden">Hidden Gems</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="int-temples" data-category="Temple" />
-                        <label class="form-check-label" for="int-temples">Temples</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="int-museums" data-category="Museum" />
-                        <label class="form-check-label" for="int-museums">Museums</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="int-nature" data-category="Natural" />
-                        <label class="form-check-label" for="int-nature">Nature</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="int-adventure" data-category="Archaeological" />
-                        <label class="form-check-label" for="int-adventure">Adventure</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="int-historical" data-category="Historical" />
-                        <label class="form-check-label" for="int-historical">Historical</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="int-religious" data-category="Religious" />
-                        <label class="form-check-label" for="int-religious">Religious</label>
-                    </div>
                 </div>
-            </div>
-
-            <div class="filter-field filter-actions">
-                <button type="button" class="btn btn-outline-secondary" id="tripFilterBtn">
-                    <i class="bi bi-funnel-fill me-1"></i> Filter
-                </button>
-            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <!-- CONTAINED BUILDER -->
         <div class="container mt-4" style="max-width:1200px;">

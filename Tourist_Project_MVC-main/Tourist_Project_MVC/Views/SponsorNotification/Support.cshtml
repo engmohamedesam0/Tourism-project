@@ -1,7 +1,7 @@
-@model Tourist_Project_MVC.View_Model.SupportTicketVM
+﻿@model Tourist_Project_MVC.View_Model.SupportTicketVM
 
 @{
-    ViewData["Title"] = "Support Tickets";
+    ViewData["Title"] = Localizer["SponsorNotification_SupportPageTitle"].Value;
     ViewData["IsHomePage"] = false;
 }
 
@@ -9,10 +9,10 @@
 
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h1 class="page-title mb-0">
-            <i class="bi bi-headset me-2"></i> Support
+            <i class="bi bi-headset me-2"></i> @Localizer["SponsorNotification_SupportTitle"].Value
         </h1>
         <a asp-action="Index" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-bell-fill me-1"></i> Notifications
+            <i class="bi bi-bell-fill me-1"></i> @Localizer["SponsorNotification_Notifications"].Value
         </a>
     </div>
 
@@ -22,17 +22,17 @@
         <div class="col-lg-5" id="newTicketForm">
             <div class="card border-0 shadow-sm rounded-4 h-100">
                 <div class="card-body">
-                    <h6 class="fw-bold mb-3"><i class="bi bi-plus-circle me-1 text-primary"></i> New Ticket</h6>
+                    <h6 class="fw-bold mb-3"><i class="bi bi-plus-circle me-1 text-primary"></i> @Localizer["SponsorNotification_NewTicket"].Value</h6>
                     <form asp-action="CreateSupport" method="post" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label class="form-label small text-muted">Subject</label>
+                            <label class="form-label small text-muted">@Localizer["SponsorNotification_Subject"].Value</label>
                             <input type="text" class="form-control" asp-for="Subject" required />
                             <span class="text-danger small" asp-validation-for="Subject"></span>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label small text-muted">Category</label>
+                            <label class="form-label small text-muted">@Localizer["SponsorNotification_Category"].Value</label>
                             <select class="form-select" asp-for="Category" required>
-                                <option value="">Select a category…</option>
+                                <option value="">@Localizer["SponsorNotification_SelectCategory"].Value</option>
                                 @foreach (var c in Tourist_Project_MVC.View_Model.SupportTicketVM.Categories)
                                 {
                                     if (Model.Category == c)
@@ -48,17 +48,17 @@
                             <span class="text-danger small" asp-validation-for="Category"></span>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label small text-muted">Description</label>
+                            <label class="form-label small text-muted">@Localizer["SponsorNotification_Description"].Value</label>
                             <textarea class="form-control" asp-for="Description" rows="4" required></textarea>
                             <span class="text-danger small" asp-validation-for="Description"></span>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label small text-muted">Attachment (photo or video, optional)</label>
+                            <label class="form-label small text-muted">@Localizer["SponsorNotification_Attachment"].Value</label>
                             <input type="file" class="form-control" asp-for="Attachment" accept="image/*,video/*" />
                             <span class="text-danger small" asp-validation-for="Attachment"></span>
                         </div>
                         <button class="btn btn-success btn-sm" type="submit">
-                            <i class="bi bi-send me-1"></i> Submit Ticket
+                            <i class="bi bi-send me-1"></i> @Localizer["SponsorNotification_SubmitTicket"].Value
                         </button>
                     </form>
                 </div>
@@ -68,12 +68,12 @@
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm rounded-4 h-100">
                 <div class="card-body">
-                    <h6 class="fw-bold mb-3"><i class="bi bi-ticket-perforated me-1 text-primary"></i> Your Tickets</h6>
+                    <h6 class="fw-bold mb-3"><i class="bi bi-ticket-perforated me-1 text-primary"></i> @Localizer["SponsorNotification_YourTickets"].Value</h6>
                     @if (!Model.Tickets.Any())
                     {
                         <div class="text-center py-4 text-muted">
                             <i class="bi bi-inbox" style="font-size:2rem;"></i>
-                            <p class="mb-0 mt-2">No tickets submitted yet.</p>
+                            <p class="mb-0 mt-2">@Localizer["SponsorNotification_NoTickets"].Value</p>
                         </div>
                     }
                     else
@@ -82,11 +82,11 @@
                             <table class="table table-hover align-middle destinations-table">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Subject</th>
-                                        <th>Category</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
+                                        <th>@Localizer["SponsorNotification_Number"].Value</th>
+                                        <th>@Localizer["SponsorNotification_Subject"].Value</th>
+                                        <th>@Localizer["SponsorNotification_Category"].Value</th>
+                                        <th>@Localizer["SponsorNotification_TableHeaderStatus"].Value</th>
+                                        <th>@Localizer["SponsorNotification_Date"].Value</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -101,7 +101,7 @@
                                                 <a asp-action="SupportDetails" asp-route-id="@t.Id" class="fw-bold text-decoration-none">@t.Subject</a>
                                                 @if (!string.IsNullOrEmpty(t.AdminResponse))
                                                 {
-                                                    <span class="badge bg-success ms-1" title="Admin has responded"><i class="bi bi-reply-fill"></i></span>
+                                                    <span class="badge bg-success ms-1" title="@Localizer["SponsorNotification_AdminResponded"].Value"><i class="bi bi-reply-fill"></i></span>
                                                 }
                                             </td>
                                             <td><span class="badge-category">@t.Category</span></td>

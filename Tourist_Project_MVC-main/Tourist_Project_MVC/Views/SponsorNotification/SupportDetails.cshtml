@@ -1,7 +1,7 @@
-@model Tourist_Project_MVC.Models.SupportTicket
+﻿@model Tourist_Project_MVC.Models.SupportTicket
 
 @{
-    ViewData["Title"] = "Ticket Details";
+    ViewData["Title"] = Localizer["SponsorNotification_TicketDetailsPageTitle"].Value;
     ViewData["IsHomePage"] = false;
 }
 
@@ -12,7 +12,7 @@
             <i class="bi bi-ticket-perforated me-2"></i> @Model.Subject
         </h1>
         <a asp-action="Support" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left me-1"></i> Back to Support
+            <i class="bi bi-arrow-left me-1"></i> @Localizer["SponsorNotification_BackToSupport"].Value
         </a>
     </div>
 
@@ -21,31 +21,31 @@
             <div class="d-flex flex-wrap gap-2 mb-3">
                 <span class="badge-category">@Model.Category</span>
                 <span class="badge bg-@(Model.Status == "Open" ? "warning" : Model.Status == "Resolved" ? "success" : "info")">@Model.Status</span>
-                <small class="text-muted align-self-center">Submitted @Model.CreatedDate.ToString("yyyy-MM-dd HH:mm")</small>
+                <small class="text-muted align-self-center">@Localizer["SponsorNotification_Submitted"].Value @Model.CreatedDate.ToString("yyyy-MM-dd HH:mm")</small>
             </div>
-            <h6 class="text-muted small text-uppercase">Description</h6>
+            <h6 class="text-muted small text-uppercase">@Localizer["SponsorNotification_Description"].Value</h6>
             <p class="mb-0">@Model.Description</p>
 
             @if (!string.IsNullOrEmpty(Model.AttachmentPath))
             {
                 <hr />
-                <h6 class="text-muted small text-uppercase">Attachment</h6>
+                <h6 class="text-muted small text-uppercase">@Localizer["SponsorNotification_AttachmentHeading"].Value</h6>
                 var isVideo = System.IO.Path.GetExtension(Model.AttachmentPath).ToLowerInvariant() is ".mp4" or ".webm" or ".mov" or ".mkv" or ".avi";
                 if (isVideo)
                 {
                     <video src="@Model.AttachmentPath" controls class="img-fluid rounded-3" style="max-height: 360px;"></video>
                     <div class="mt-2">
                         <a href="@Model.AttachmentPath" download class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-download me-1"></i> Download
+                            <i class="bi bi-download me-1"></i> @Localizer["SponsorNotification_Download"].Value
                         </a>
                     </div>
                 }
                 else
                 {
-                    <img src="@Model.AttachmentPath" alt="Attachment" class="img-fluid rounded-3" style="max-height: 360px;" />
+                    <img src="@Model.AttachmentPath" alt="@Localizer["SponsorNotification_AttachmentHeading"].Value" class="img-fluid rounded-3" style="max-height: 360px;" />
                     <div class="mt-2">
                         <a href="@Model.AttachmentPath" target="_blank" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-fullscreen me-1"></i> Open full size
+                            <i class="bi bi-fullscreen me-1"></i> @Localizer["SponsorNotification_OpenFullSize"].Value
                         </a>
                     </div>
                 }
@@ -55,12 +55,12 @@
 
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body">
-            <h6 class="fw-bold mb-3"><i class="bi bi-reply-fill me-1 text-primary"></i> Admin Response</h6>
+            <h6 class="fw-bold mb-3"><i class="bi bi-reply-fill me-1 text-primary"></i> @Localizer["SponsorNotification_AdminResponse"].Value</h6>
             @if (string.IsNullOrEmpty(Model.AdminResponse))
             {
                 <div class="text-center py-4 text-muted">
                     <i class="bi bi-hourglass-split" style="font-size:2rem;"></i>
-                    <p class="mb-0 mt-2">No response yet. We'll notify you here once an admin replies.</p>
+                    <p class="mb-0 mt-2">@Localizer["SponsorNotification_NoResponseYet"].Value</p>
                 </div>
             }
             else
@@ -69,7 +69,7 @@
                     <p class="mb-1">@Model.AdminResponse</p>
                     @if (Model.RespondedDate.HasValue)
                     {
-                        <small class="text-muted">Answered on @Model.RespondedDate.Value.ToString("yyyy-MM-dd HH:mm")</small>
+                        <small class="text-muted">@Localizer["SponsorNotification_AnsweredOn"].Value @Model.RespondedDate.Value.ToString("yyyy-MM-dd HH:mm")</small>
                     }
                 </div>
             }

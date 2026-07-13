@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar" ? "rtl" : "ltr")">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -23,6 +23,10 @@
     <link href="~/css/styles.css" rel="stylesheet" />
     <!-- Custom Egyptian Theme -->
     <link href="~/css/site.css" rel="stylesheet" />
+    @if (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar")
+    {
+        <link href="~/css/rtl.css" rel="stylesheet" />
+    }
 
     <style>
         /* =============================================
@@ -31,7 +35,7 @@
            data pages — one consistent white treatment)
            ============================================= */
         .stats-section {
-        background: linear-gradient(135deg, #1a0f00 0%, #2C1A0E 50%, #1a0f00 100%);
+        background: linear-gradient(135deg, #1a0f00 0%, var(--egy-dark) 50%, #1a0f00 100%);
         padding: 100px 0;
         border-top: 2px solid #C8832A;
         border-bottom: 2px solid #C8832A;
@@ -197,7 +201,7 @@
 
         /* Tables */
         .table thead {
-        background-color: #2C1A0E;
+        background-color: var(--egy-dark);
         color: white;
         }
 
@@ -210,7 +214,7 @@
 
         /* Page Title */
         .page-title {
-        color: #2C1A0E;
+        color: var(--egy-dark);
         font-family: 'Cinzel', sans-serif;
         border-bottom: 2px solid #C8832A;
         padding-bottom: 8px;
@@ -219,22 +223,13 @@
         letter-spacing: 2px;
         }
 
-        /* Buttons Override */
-        .btn-success {
-        background-color: #2C1A0E;
-        border-color: #2C1A0E;
-        }
-
-        .btn-success:hover {
-        background-color: #C8832A;
-        border-color: #C8832A;
-        }
+        /* Add / Create (.btn-success) is styled in site.css with the EGY green tokens. */
 
         /* =============================================
         FOOTER
         ============================================= */
         .main-footer {
-        background-color: #2C1A0E;
+        background-color: var(--egy-dark);
         color: #f0d9b5;
         border-top: 3px solid #C8832A;
         padding: 20px 0;
@@ -266,7 +261,7 @@
             <div class="container px-4 d-flex align-items-center justify-content-between gy-1">
                 <div class="utility-left">
                     <span class="role-badge">
-                        <i class="bi bi-patch-check-fill me-1"></i>@(User.IsInRole("Admin") ? "Admin" : (User.IsInRole("Sponsor") ? "Sponsor" : (User.Identity.IsAuthenticated ? "Tourist" : "Guest")))
+                        <i class="bi bi-patch-check-fill me-1"></i>@(User.IsInRole("Admin") ? Localizer["Role_Admin"].Value : (User.IsInRole("Sponsor") ? Localizer["Role_Sponsor"].Value : (User.Identity.IsAuthenticated ? Localizer["Role_Tourist"].Value : Localizer["Role_Guest"].Value)))
                     </span>
                 </div>
 
@@ -274,11 +269,11 @@
                     <!-- Site search (initial scope = destination name search via /Explore) -->
                     <form class="utility-search d-none d-lg-flex" method="get" asp-controller="Explore" asp-action="Index">
                         <div class="input-group input-group-sm">
-                            <input type="text" name="search" class="form-control form-control-sm"
-                                   placeholder="Search Egypt…" aria-label="Search destinations" />
-                            <button class="btn btn-outline-light btn-sm" type="submit" title="Search">
+                            <span class="input-group-text utility-search-icon">
                                 <i class="bi bi-search"></i>
-                            </button>
+                            </span>
+                            <input type="text" name="search" class="form-control form-control-sm"
+                                   placeholder="@Localizer["Search_Placeholder"].Value" aria-label="@Localizer["Search_Aria"].Value" />
                         </div>
                     </form>
 
@@ -286,14 +281,14 @@
                     <div class="dropdown lang-switcher">
                         <a class="utility-link dropdown-toggle" href="#" id="langDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-translate me-1"></i> Language
+                            <i class="bi bi-translate me-1"></i> @Localizer["Language"].Value
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="langDropdown">
-                            <li><a class="dropdown-item lang-option" href="#" data-culture="en">English</a></li>
-                            <li><a class="dropdown-item lang-option" href="#" data-culture="ar">العربية</a></li>
-                            <li><a class="dropdown-item lang-option" href="#" data-culture="es">Español</a></li>
-                            <li><a class="dropdown-item lang-option" href="#" data-culture="de">Deutsch</a></li>
-                            <li><a class="dropdown-item lang-option" href="#" data-culture="zh">中文</a></li>
+                            <li><a class="dropdown-item lang-option" href="#" data-culture="en">@Localizer["Lang_English"].Value</a></li>
+                            <li><a class="dropdown-item lang-option" href="#" data-culture="ar">@Localizer["Lang_Arabic"].Value</a></li>
+                            <li><a class="dropdown-item lang-option" href="#" data-culture="es">@Localizer["Lang_Spanish"].Value</a></li>
+                            <li><a class="dropdown-item lang-option" href="#" data-culture="de">@Localizer["Lang_German"].Value</a></li>
+                            <li><a class="dropdown-item lang-option" href="#" data-culture="zh">@Localizer["Lang_Chinese"].Value</a></li>
                         </ul>
                     </div>
 
@@ -310,19 +305,19 @@
                                 {
                                     <li>
                                         <a class="dropdown-item" asp-controller="Role" asp-action="Create">
-                                            <i class="bi bi-shield-fill me-2"></i> Add Role
+                                            <i class="bi bi-shield-fill me-2"></i> @Localizer["Nav_AddRole"].Value
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Role" asp-action="AssignRole">
-                                            <i class="bi bi-person-check-fill me-2"></i> Assign Roles
+                                            <i class="bi bi-person-check-fill me-2"></i> @Localizer["Nav_AssignRoles"].Value
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider" /></li>
                                 }
                                 <li>
                                     <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Log out
+                                        <i class="bi bi-box-arrow-right me-2"></i> @Localizer["Nav_Logout"].Value
                                     </a>
                                 </li>
                             </ul>
@@ -331,10 +326,10 @@
                     else
                     {
                         <a class="utility-link" asp-controller="Account" asp-action="Login">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                            <i class="bi bi-box-arrow-in-right me-1"></i> @Localizer["SignIn"].Value
                         </a>
                         <a class="utility-link utility-register" asp-controller="Account" asp-action="Register">
-                            <i class="bi bi-person-plus-fill me-1"></i> Sign Up
+                            <i class="bi bi-person-plus-fill me-1"></i> @Localizer["SignUp"].Value
                         </a>
                     }
                 </div>
@@ -357,7 +352,7 @@
                         aria-controls="navbarResponsive"
                         aria-expanded="false"
                         aria-label="Toggle navigation">
-                    <span class="me-2 text-uppercase small tracking-wide">Menu</span>
+                    <span class="me-2 text-uppercase small tracking-wide">@Localizer["Menu"].Value</span>
                     <i class="fas fa-bars"></i>
                 </button>
 
@@ -368,11 +363,10 @@
                         <!-- Home (visible to everyone) -->
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house-fill"></i> Home
+                                <i class="bi bi-house-fill"></i> @Localizer["Nav_Home"].Value
                             </a>
                         </li>
 
-                        <!-- Separator -->
                         <li class="nav-spacer d-none d-lg-block mx-2">|</li>
 
                         @if (User.IsInRole("Admin"))
@@ -382,55 +376,55 @@
                                 <a class="nav-link dropdown-toggle position-relative" href="#"
                                    id="adminDropdown" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-shield-lock-fill me-1"></i> Administration
+                                    <i class="bi bi-shield-lock-fill me-1"></i> @Localizer["Nav_Administration"].Value
                                     @await Component.InvokeAsync("AdminApprovalBell")
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
                                     aria-labelledby="adminDropdown">
                                     <li>
                                         <a class="dropdown-item" asp-controller="Tourist" asp-action="Index">
-                                            <i class="bi bi-people-fill me-2"></i> Tourists
+                                            <i class="bi bi-people-fill me-2"></i> @Localizer["Nav_Tourists"].Value
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Destination" asp-action="Index">
-                                            <i class="bi bi-geo-alt-fill me-2"></i> Destinations
+                                            <i class="bi bi-geo-alt-fill me-2"></i> @Localizer["Nav_Destinations"].Value
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="TripPlan" asp-action="Index">
-                                            <i class="bi bi-map-fill me-2"></i> Trip Plans
+                                            <i class="bi bi-map-fill me-2"></i> @Localizer["Nav_TripPlans"].Value
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Mission" asp-action="Index">
-                                            <i class="bi bi-trophy-fill me-2"></i> Missions
+                                            <i class="bi bi-trophy-fill me-2"></i> @Localizer["Nav_Missions"].Value
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Reward" asp-action="Index">
-                                            <i class="bi bi-star-fill me-2"></i> All Rewards
+                                            <i class="bi bi-star-fill me-2"></i> @Localizer["Nav_AllRewards"].Value
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Sponsor" asp-action="Index">
-                                            <i class="bi bi-building me-2"></i> Sponsors
+                                            <i class="bi bi-building me-2"></i> @Localizer["Nav_Sponsors"].Value
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Role" asp-action="ManageAccounts">
-                                            <i class="bi bi-person-gear me-2"></i> Accounts
+                                            <i class="bi bi-person-gear me-2"></i> @Localizer["Nav_Accounts"].Value
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="AdminSupport" asp-action="Index">
-                                            <i class="bi bi-headset me-2"></i> Support Inbox
+                                            <i class="bi bi-headset me-2"></i> @Localizer["Nav_SupportInbox"].Value
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="SponsorApproval" asp-action="Index">
-                                            <i class="bi bi-bell-fill me-2"></i> Approvals
+                                            <i class="bi bi-bell-fill me-2"></i> @Localizer["Nav_Approvals"].Value
                                         </a>
                                     </li>
                                 </ul>
@@ -438,12 +432,12 @@
                             <!-- Public discovery pages -->
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="NearMe" asp-action="Index">
-                                    <i class="bi bi-geo-fill"></i> Near Me
+                                    <i class="bi bi-geo-fill"></i> @Localizer["Nav_NearMe"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Features" asp-action="Index">
-                                    <i class="bi bi-phone-fill"></i> Features
+                                    <i class="bi bi-phone-fill"></i> @Localizer["Nav_Features"].Value
                                 </a>
                             </li>
                         }
@@ -452,22 +446,22 @@
                             <!-- ============ SPONSOR EXPERIENCE ============ -->
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="SponsorPortal" asp-action="Index">
-                                    <i class="bi bi-house-fill"></i> Portal
+                                    <i class="bi bi-house-fill"></i> @Localizer["Nav_Portal"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="SponsorBranch" asp-action="Index">
-                                    <i class="bi bi-geo-fill"></i> Branches
+                                    <i class="bi bi-geo-fill"></i> @Localizer["Nav_Branches"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="SponsorReward" asp-action="Index">
-                                    <i class="bi bi-gift-fill"></i> Rewards
+                                    <i class="bi bi-gift-fill"></i> @Localizer["Nav_Rewards"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="SponsorPortal" asp-action="Reports">
-                                    <i class="bi bi-bar-chart-fill"></i> Reports
+                                    <i class="bi bi-bar-chart-fill"></i> @Localizer["Nav_Reports"].Value
                                 </a>
                             </li>
                             @await Component.InvokeAsync("NotificationBell")
@@ -478,42 +472,42 @@
                             <!-- ============ TOURIST EXPERIENCE ============ -->
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Explore" asp-action="Index">
-                                    <i class="bi bi-compass-fill"></i> Explore
+                                    <i class="bi bi-compass-fill"></i> @Localizer["Nav_Explore"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Trip" asp-action="Index">
-                                    <i class="bi bi-map-fill"></i> Trip
+                                    <i class="bi bi-map-fill"></i> @Localizer["Nav_Trip"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="NearMe" asp-action="Index">
-                                    <i class="bi bi-geo-fill"></i> Near Me
+                                    <i class="bi bi-geo-fill"></i> @Localizer["Nav_NearMe"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Features" asp-action="Index">
-                                    <i class="bi bi-phone-fill"></i> Features
+                                    <i class="bi bi-phone-fill"></i> @Localizer["Nav_Features"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="TouristReward" asp-action="Index">
-                                    <i class="bi bi-gift-fill"></i> Rewards
+                                    <i class="bi bi-gift-fill"></i> @Localizer["Nav_Rewards"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="TouristProfile" asp-action="Index">
-                                    <i class="bi bi-person-fill"></i> Profile
+                                    <i class="bi bi-person-fill"></i> @Localizer["Nav_Profile"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="TouristSupport" asp-action="Index">
-                                    <i class="bi bi-headset"></i> Support
+                                    <i class="bi bi-headset"></i> @Localizer["Nav_Support"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="About" asp-action="Index">
-                                    <i class="bi bi-info-circle-fill"></i> About
+                                    <i class="bi bi-info-circle-fill"></i> @Localizer["Nav_About"].Value
                                 </a>
                             </li>
                         }
@@ -522,22 +516,22 @@
                             <!-- ============ GUEST EXPERIENCE ============ -->
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Explore" asp-action="Index">
-                                    <i class="bi bi-compass-fill"></i> Explore
+                                    <i class="bi bi-compass-fill"></i> @Localizer["Nav_Explore"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="NearMe" asp-action="Index">
-                                    <i class="bi bi-geo-fill"></i> Near Me
+                                    <i class="bi bi-geo-fill"></i> @Localizer["Nav_NearMe"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Features" asp-action="Index">
-                                    <i class="bi bi-phone-fill"></i> Features
+                                    <i class="bi bi-phone-fill"></i> @Localizer["Nav_Features"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="About" asp-action="Index">
-                                    <i class="bi bi-info-circle-fill"></i> About
+                                    <i class="bi bi-info-circle-fill"></i> @Localizer["Nav_About"].Value
                                 </a>
                             </li>
                         }
@@ -562,6 +556,43 @@
         })();
     </script>
 
+    <!-- AI Assistant widget toggle -->
+    <script>
+        (function () {
+            var btn = document.getElementById('aiAssistantBtn');
+            var panel = document.getElementById('aiAssistantPanel');
+            var closeBtn = panel ? panel.querySelector('.ai-widget-close') : null;
+
+            function openWidget() {
+                panel.classList.add('ai-widget-open');
+                panel.setAttribute('aria-hidden', 'false');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+
+            function closeWidget() {
+                panel.classList.remove('ai-widget-open');
+                panel.setAttribute('aria-hidden', 'true');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+
+            if (btn && panel) {
+                btn.addEventListener('click', function () {
+                    if (panel.classList.contains('ai-widget-open')) {
+                        closeWidget();
+                    } else {
+                        openWidget();
+                    }
+                });
+            }
+
+            if (closeBtn && panel) {
+                closeBtn.addEventListener('click', function () {
+                    closeWidget();
+                });
+            }
+        })();
+    </script>
+
     <!-- MAIN CONTENT -->
     @if (ViewData["IsHomePage"] as bool? == true)
     {
@@ -580,11 +611,46 @@
 
     <!-- FOOTER -->
     <footer class="main-footer">
-        <div class="container text-center">
-            <div class="footer-logo mb-2">🏺 EGYXPLORE</div>
-            <p class="mb-0 small text-muted">
-                &copy; @DateTime.Now.Year — Unlocking Hidden Wonders Across Egypt. All rights reserved.
-            </p>
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-6 col-md-3">
+                    <h6 class="footer-col-header">EXPLORE</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li><a asp-controller="Explore" asp-action="Index">Explore Egypt</a></li>
+                        <li><a asp-controller="NearMe" asp-action="Index">Near Me</a></li>
+                        <li><a asp-controller="Trip" asp-action="Index">Plan Your Trip</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6 class="footer-col-header">ACCOUNT</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li><a asp-controller="TouristProfile" asp-action="Index">My Profile</a></li>
+                        <li><a asp-controller="TouristReward" asp-action="Index">Points & Rewards</a></li>
+                        <li><a asp-controller="Account" asp-action="Login">Sign In</a></li>
+                        <li><a asp-controller="Account" asp-action="Register">Sign Up</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6 class="footer-col-header">SUPPORT</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li><a asp-controller="TouristSupport" asp-action="Index">Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6 class="footer-col-header">COMPANY</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li><a asp-controller="About" asp-action="Index">About Us</a></li>
+                        <li><a asp-controller="Features" asp-action="Index">Features</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="footer-divider" />
+            <div class="text-center">
+                <div class="footer-logo mb-2">🏺 EGYXPLORE</div>
+                <p class="mb-0 small text-muted">
+                    &copy; @DateTime.Now.Year — @Localizer["Footer_Copyright"].Value
+                </p>
+            </div>
         </div>
     </footer>
 
@@ -595,37 +661,33 @@
     <button type="button"
             id="aiAssistantBtn"
             class="ai-fab"
-            data-bs-toggle="modal"
-            data-bs-target="#aiAssistantModal"
-            aria-label="Open AI assistant">
+            aria-label="@Localizer["Ai_Open"].Value"
+            aria-expanded="false"
+            aria-controls="aiAssistantPanel">
         <i class="bi bi-stars"></i>
     </button>
 
-    <div class="modal fade" id="aiAssistantModal" tabindex="-1"
-         aria-labelledby="aiAssistantModalLabel" aria-hidden="true">
-        <div class="modal-dialog ai-modal-dialog">
-            <div class="modal-content ai-modal">
-                <div class="modal-header ai-modal-header">
-                    <h5 class="modal-title" id="aiAssistantModalLabel">
-                        <i class="bi bi-stars me-2"></i> EGYXPLORE Assistant
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white"
-                            data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body ai-modal-body">
-                    <div class="ai-coming-soon text-center">
-                        <i class="bi bi-stars" style="font-size: 2.5rem; color: var(--egy-primary);"></i>
-                        <p class="mt-3 mb-1 fw-semibold">AI Assistant — Coming Soon</p>
-                        <p class="text-muted small">
-                            Your smart travel companion for personalized itineraries will live here.
-                        </p>
-                    </div>
-                </div>
-                <div class="modal-footer ai-modal-footer">
-                    <input type="text" class="form-control" placeholder="Ask me anything…" disabled />
-                    <button class="btn btn-secondary" disabled>Send</button>
-                </div>
+    <div class="ai-widget-panel" id="aiAssistantPanel" aria-hidden="true">
+        <div class="ai-widget-header">
+            <h5 class="ai-widget-title">
+                <i class="bi bi-stars me-2"></i> @Localizer["Ai_Title"].Value
+            </h5>
+            <button type="button" class="ai-widget-close" aria-label="@Localizer["Ai_Close"].Value">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="ai-widget-body">
+            <div class="ai-coming-soon text-center">
+                <i class="bi bi-stars" style="font-size: 2.5rem; color: var(--egy-primary);"></i>
+                <p class="mt-3 mb-1 fw-semibold">@Localizer["Ai_ComingSoon"].Value</p>
+                <p class="text-muted small">
+                    @Localizer["Ai_Description"].Value
+                </p>
             </div>
+        </div>
+        <div class="ai-widget-footer">
+            <input type="text" class="form-control" placeholder="@Localizer["Ai_Placeholder"].Value" disabled />
+            <button class="btn btn-secondary" disabled>@Localizer["Ai_Send"].Value</button>
         </div>
     </div>
 
@@ -666,52 +728,90 @@
                 box-shadow: 0 12px 28px rgba(200, 131, 42, 0.55);
             }
 
-        .ai-modal-dialog {
+        .ai-widget-panel {
             position: fixed;
             right: 22px;
             bottom: 90px;
-            margin: 0;
-            max-width: 360px;
+            z-index: 1040;
             width: calc(100% - 44px);
+            max-width: 360px;
+            background: #fff;
+            border: 1px solid var(--egy-primary);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 28px rgba(200, 131, 42, 0.25);
+            transform: translateY(12px) scale(0.96);
+            opacity: 0;
+            pointer-events: none;
+            transition: all .25s ease;
+        }
+
+        .ai-widget-open .ai-widget-panel,
+        .ai-widget-panel.ai-widget-open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .ai-widget-header {
+            background: var(--egy-dark);
+            color: #fff;
+            border-bottom: 2px solid var(--egy-primary);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-widget-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .ai-widget-close {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            transition: color .2s ease;
+        }
+
+        .ai-widget-close:hover,
+        .ai-widget-close:focus {
+            color: #fff;
+            outline: none;
+        }
+
+        .ai-widget-body {
+            background: var(--egy-light);
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .ai-widget-footer {
+            background: #fff;
+            border-top: 1px solid rgba(200, 131, 42, 0.2);
+            padding: 12px 16px;
+            display: flex;
+            gap: 8px;
         }
 
         @@media (max-width: 575.98px) {
-            .ai-modal-dialog {
+            .ai-widget-panel {
                 right: 10px;
                 left: 10px;
                 bottom: 80px;
                 width: auto;
                 max-width: none;
             }
-        }
 
-        .ai-modal {
-            border: 1px solid var(--egy-primary);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .ai-modal-header {
-            background: var(--egy-dark);
-            color: #fff;
-            border-bottom: 2px solid var(--egy-primary);
-        }
-
-        .ai-modal-body {
-            background: var(--egy-light);
-            min-height: 220px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .ai-modal-footer {
-            background: #fff;
-            border-top: 1px solid rgba(200, 131, 42, 0.2);
-        }
-
-        /* Keep it clear of the footer on small screens */
-        @@media (max-width: 575.98px) {
             .ai-fab {
                 right: 14px;
                 bottom: 14px;

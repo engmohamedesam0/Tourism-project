@@ -1,12 +1,12 @@
 @model Tourist_Project_MVC.View_Model.SponsorRewardVM
 
 @{
-    ViewData["Title"] = "Edit Reward";
+    ViewData["Title"] = Localizer["SponsorReward_EditTitle"].Value;
 }
 
 <div class="inner-page-wrapper">
     <div class="container">
-        <h2>✏️ Edit Reward</h2>
+        <h2>✏️ @Localizer["SponsorReward_EditTitle"].Value</h2>
         <hr />
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -52,10 +52,10 @@
             <div class="mb-3">
                 <label asp-for="Status" class="form-label"></label>
                 <select asp-for="Status" class="form-select">
-                    <option value="Active">Active</option>
-                    <option value="Paused">Paused</option>
-                    <option value="Expired">Expired</option>
-                    <option value="Removed">Removed</option>
+                    <option value="Active">@Localizer["SponsorReward_Active"].Value</option>
+                    <option value="Paused">@Localizer["SponsorReward_Paused"].Value</option>
+                    <option value="Expired">@Localizer["SponsorReward_Expired"].Value</option>
+                    <option value="Removed">@Localizer["SponsorReward_Removed"].Value</option>
                 </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
@@ -63,7 +63,7 @@
             @if (Model.AvailableBranches != null && Model.AvailableBranches.Any())
             {
                 <div class="mb-3">
-                    <label class="form-label">Available Branches</label>
+                    <label class="form-label">@Localizer["SponsorReward_AvailableBranches"].Value</label>
                     @foreach (var branch in Model.AvailableBranches)
                     {
                         var isChecked = Model.SelectedBranchIds.Contains(branch.Id);

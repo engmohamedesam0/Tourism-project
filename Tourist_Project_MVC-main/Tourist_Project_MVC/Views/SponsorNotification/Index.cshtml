@@ -1,7 +1,7 @@
-@model Tourist_Project_MVC.View_Model.SponsorNotificationVM
+﻿@model Tourist_Project_MVC.View_Model.SponsorNotificationVM
 
 @{
-    ViewData["Title"] = "Notifications";
+    ViewData["Title"] = Localizer["SponsorNotification_NotificationsPageTitle"].Value;
     ViewData["IsHomePage"] = false;
 }
 
@@ -9,24 +9,23 @@
 
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h1 class="page-title mb-0">
-            <i class="bi bi-bell-fill me-2"></i> Notifications
+            <i class="bi bi-bell-fill me-2"></i> @Localizer["SponsorNotification_NotificationsTitle"].Value
         </h1>
         <form asp-action="MarkAllRead" method="post" id="markAllReadForm">
             <button class="btn btn-outline-primary btn-sm">
-                <i class="bi bi-check2-all me-1"></i> Mark All Read
+                <i class="bi bi-check2-all me-1"></i> @Localizer["SponsorNotification_MarkAllRead"].Value
             </button>
         </form>
     </div>
 
-    <!-- Filter: All / Read / Unread -->
     <div class="filter-bar mb-3">
         <div class="d-flex gap-2 flex-wrap">
             <a class="btn btn-sm @(string.IsNullOrEmpty(Model.Filter) ? "btn-primary" : "btn-outline-secondary")"
-               asp-action="Index" asp-route-filter="">All</a>
+               asp-action="Index" asp-route-filter="">@Localizer["SponsorNotification_All"].Value</a>
             <a class="btn btn-sm @(Model.Filter == "Read" ? "btn-primary" : "btn-outline-secondary")"
-               asp-action="Index" asp-route-filter="Read">Read</a>
+               asp-action="Index" asp-route-filter="Read">@Localizer["SponsorNotification_Read"].Value</a>
             <a class="btn btn-sm @(Model.Filter == "Unread" ? "btn-primary" : "btn-outline-secondary")"
-               asp-action="Index" asp-route-filter="Unread">Unread</a>
+               asp-action="Index" asp-route-filter="Unread">@Localizer["SponsorNotification_Unread"].Value</a>
         </div>
     </div>
 
@@ -36,7 +35,7 @@
             {
                 <div class="text-center py-5 text-muted">
                     <i class="bi bi-check-circle" style="font-size:2.5rem;"></i>
-                    <p class="mb-0 mt-2">No notifications here.</p>
+                    <p class="mb-0 mt-2">@Localizer["SponsorNotification_NoNotifications"].Value</p>
                 </div>
             }
             else
@@ -56,7 +55,7 @@
                                     <p class="mb-1 mt-1 small @(n.IsRead ? "text-muted" : "fw-semibold")">@n.Message</p>
                                     <small class="text-muted">@n.CreatedDate.ToString("yyyy-MM-dd HH:mm")</small>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-link text-danger notif-delete p-0" title="Delete" data-notif-id="@n.Id">
+                                <button type="button" class="btn btn-sm btn-link text-danger notif-delete p-0" title="@Localizer["SponsorNotification_Delete"].Value" data-notif-id="@n.Id">
                                     <i class="bi bi-x-lg"></i>
                                 </button>
                             </div>
@@ -68,8 +67,7 @@
     </div>
 
     <p class="text-muted small mt-4 mb-0">
-        Alerts are generated automatically for expired or out-of-stock rewards and recent redemptions.
-        Click a notification to open what it refers to.
+        @Localizer["SponsorNotification_AlertsInfo"].Value
     </p>
 </div>
 

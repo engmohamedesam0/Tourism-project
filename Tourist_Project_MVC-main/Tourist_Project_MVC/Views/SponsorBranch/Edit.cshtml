@@ -1,12 +1,12 @@
-@model Tourist_Project_MVC.View_Model.SponsorBranchVM
+﻿@model Tourist_Project_MVC.View_Model.SponsorBranchVM
 
 @{
-    ViewData["Title"] = "Edit Branch";
+    ViewData["Title"] = Localizer["SponsorBranch_EditTitle"].Value;
 }
 
 <div class="inner-page-wrapper">
     <div class="container">
-        <h2>✏️ Edit Branch</h2>
+        <h2>✏️ @Localizer["SponsorBranch_EditHeading"].Value</h2>
         <hr />
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -45,8 +45,8 @@
             </div>
 
             <div class="mb-3">
-                <input type="submit" value="Update" class="btn btn-warning" />
-                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                <input type="submit" value="@Localizer["SponsorBranch_UpdateBtn"].Value" class="btn btn-warning" />
+                <a asp-action="Index" class="btn btn-secondary">@Localizer["SponsorBranch_CancelBtn"].Value</a>
             </div>
         </form>
     </div>

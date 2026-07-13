@@ -1,17 +1,17 @@
 ﻿@model IEnumerable<Tourist_Project_MVC.Models.TripPlan>
 
 @{
-    ViewData["Title"] = "Trip Plans";
+    ViewData["Title"] = @Localizer["TripPlan_Title"].Value;
 }
 
 <div class="container-fluid mt-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="page-title mb-0">✈️ Trip Plans</h2>
+        <h2 class="page-title mb-0">✈️ @Localizer["TripPlan_Heading"].Value</h2>
         @if (User.IsInRole("Admin")){
 
             <a asp-action="Create" class="btn btn-success px-4">
-                <i class="bi bi-plus-lg me-1"></i> + Add
+                <i class="bi bi-plus-lg me-1"></i> @Localizer["TripPlan_Add"].Value
             </a>
          }
 
@@ -33,7 +33,7 @@
                         </span>
                         <input type="text" name="search"
                                class="form-control border-start-0"
-                               placeholder="Search trip plans..."
+                               placeholder="@Localizer["TripPlan_SearchPlaceholder"].Value"
                                value="@ViewBag.Search" />
                         <input type="hidden" name="touristId" value="@ViewBag.TouristId" />
                     </div>
@@ -43,7 +43,7 @@
             <div class="col-md-4">
                 <select class="form-select" onchange="window.location.href=this.value">
                     <option value="@Url.Action("Index", new { search = ViewBag.Search })">
-                        All Tourists
+                        @Localizer["TripPlan_AllTourists"].Value
                     </option>
                     @foreach (var t in ViewBag.Tourists as SelectList ?? new SelectList(new List<object>()))
                     {
@@ -61,7 +61,7 @@
             </div>
 
             <div class="col-md-3 text-muted small">
-                Total: <strong>@ViewBag.AllCount</strong> trips
+                @Localizer["TripPlan_Total"].Value <strong>@ViewBag.AllCount</strong> @Localizer["TripPlan_Trips"].Value
             </div>
 
         </div>
@@ -72,14 +72,14 @@
         <table class="table table-hover align-middle destinations-table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Tourist</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Destinations</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>@Localizer["TripPlan_Index"].Value</th>
+                    <th>@Localizer["TripPlan_TitleColumn"].Value</th>
+                    <th>@Localizer["TripPlan_Tourist"].Value</th>
+                    <th>@Localizer["TripPlan_Start"].Value</th>
+                    <th>@Localizer["TripPlan_End"].Value</th>
+                    <th>@Localizer["TripPlan_Destinations"].Value</th>
+                    <th>@Localizer["TripPlan_Status"].Value</th>
+                    <th>@Localizer["TripPlan_Actions"].Value</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,7 +113,7 @@
                             }
                             else
                             {
-                                <span class="text-muted">No destinations</span>
+                                <span class="text-muted">@Localizer["TripPlan_NoDestinations"].Value</span>
                             }
                         </td>
                         <td>
@@ -124,27 +124,27 @@
                             {
                                 <div class="d-flex gap-2">
                                     <a asp-action="Details" asp-route-id="@item.Id"
-                                    class="btn btn-sm btn-outline-info" title="Details">
+                                    class="btn btn-sm btn-outline-info" title="@Localizer["TripPlan_DetailsTitle"].Value">
                                         <i class="bi bi-eye-fill"></i>
                                     </a>
                                     @if (User.IsInRole("Admin"))
                                     {
 
                                         <a asp-action="Edit" asp-route-id="@item.Id"
-                                        class="btn btn-sm btn-outline-warning" title="Edit">
+                                        class="btn btn-sm btn-outline-warning" title="@Localizer["TripPlan_EditTitle"].Value">
                                             <i class="bi bi-pencil-fill"></i>
                                         </a>
                                         <a asp-action="Delete" asp-route-id="@item.Id"
-                                        class="btn btn-sm btn-outline-danger" title="Delete">
+                                        class="btn btn-sm btn-outline-danger" title="@Localizer["TripPlan_DeleteTitle"].Value">
                                             <i class="bi bi-trash-fill"></i>
                                         </a>
 
                                     }
-                                </div>                
+                                </div>
                             }
                             else
                             {
-                                <span class="text-muted small">Guests only view</span>
+                                <span class="text-muted small">@Localizer["TripPlan_GuestsOnlyView"].Value</span>
                             }
                         </td>
                     </tr>
@@ -158,7 +158,7 @@
     {
         <div class="text-center py-5">
             <i class="bi bi-map" style="font-size:3rem; color:var(--egy-primary);"></i>
-            <p class="text-muted mt-2">No trip plans found.</p>
+            <p class="text-muted mt-2">@Localizer["TripPlan_EmptyState"].Value</p>
         </div>
     }
 

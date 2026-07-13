@@ -1,16 +1,16 @@
-﻿@model Tourist_Project_MVC.Models.TripPlan
+@model Tourist_Project_MVC.Models.TripPlan
 
 @{
-    ViewData["Title"] = "Add Trip Plan";
+    ViewData["Title"] = @Localizer["TripPlan_AddTripPlan"].Value;
 }
 
 <div class="container mt-4" style="max-width: 800px;">
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
 
         <div class="card-header py-3"
-             style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+             style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
             <h4 class="text-white mb-0">
-                <i class="bi bi-plus-circle-fill me-2"></i> Add New Trip Plan
+                <i class="bi bi-plus-circle-fill me-2"></i> @Localizer["TripPlan_AddNewTripPlan"].Value
             </h4>
         </div>
 
@@ -19,25 +19,25 @@
                 @Html.AntiForgeryToken()
 
                 <div class="mb-3">
-                    <label asp-for="Title" class="form-label fw-bold"></label>
+                    <label asp-for="Title" class="form-label fw-bold">@Localizer["TripPlan_Title"].Value</label>
                     <input asp-for="Title" class="form-control" />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="TouristId" class="form-label fw-bold">Tourist</label>
+                    <label asp-for="TouristId" class="form-label fw-bold">@Localizer["TripPlan_Tourist"].Value</label>
                     <select asp-for="TouristId" asp-items="ViewBag.Tourists" class="form-select">
-                        <option value="">-- Select Tourist --</option>
+                        <option value="">@Localizer["TripPlan_SelectTourist"].Value</option>
                     </select>
                 </div>
 
                 <div class="row">
                     <div class="col mb-3">
-                        <label asp-for="StartDate" class="form-label fw-bold">Start Date</label>
+                        <label asp-for="StartDate" class="form-label fw-bold">@Localizer["TripPlan_StartDate"].Value</label>
                         <input asp-for="StartDate" class="form-control" type="date" />
                     </div>
                     <div class="col mb-3">
-                        <label asp-for="EndDate" class="form-label fw-bold">End Date</label>
+                        <label asp-for="EndDate" class="form-label fw-bold">@Localizer["TripPlan_EndDate"].Value</label>
                         <input asp-for="EndDate" class="form-control" type="date" />
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                 <div class="mb-3">
                     <label class="form-label fw-bold">
                         <i class="bi bi-geo-alt-fill me-1" style="color:var(--egy-primary);"></i>
-                        Select Destinations (in order)
+                        @Localizer["TripPlan_SelectDestinations"].Value
                     </label>
                     <div class="border rounded p-3"
                          style="max-height: 300px; overflow-y: auto; background: #FDF6EC;">
@@ -57,7 +57,7 @@
                                        value="@dest.Id"
                                        id="dest_@dest.Id" />
                                 <label class="form-check-label" for="dest_@dest.Id">
-                                    📍 <strong>@dest.Name</strong> — @dest.City
+                                    ?? <strong>@dest.Name</strong> — @dest.City
                                 </label>
                             </div>
                         }
@@ -66,10 +66,10 @@
 
                 <div class="d-flex gap-2 mt-4">
                     <button type="submit" class="btn btn-success px-4">
-                        <i class="bi bi-check-lg me-1"></i> Save
+                        <i class="bi bi-check-lg me-1"></i> @Localizer["TripPlan_Save"].Value
                     </button>
                     <a asp-action="Index" class="btn btn-secondary">
-                        <i class="bi bi-x-lg me-1"></i> Cancel
+                        <i class="bi bi-x-lg me-1"></i> @Localizer["TripPlan_Cancel"].Value
                     </a>
                 </div>
             </form>

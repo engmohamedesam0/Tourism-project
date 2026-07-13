@@ -1,16 +1,16 @@
-@using Tourist_Project_MVC.View_Model
+﻿@using Tourist_Project_MVC.View_Model
 @model List<SponsorApprovalListItem>
 
 @{
-    ViewData["Title"] = "Sponsor Approval Requests";
+    ViewData["Title"] = Localizer["SponsorApproval_IndexTitle"].Value;
 }
 
-<h1 class="page-title">Sponsor Approval Requests</h1>
+<h1 class="page-title">@Localizer["SponsorApproval_IndexHeading"].Value</h1>
 
 @if (!Model.Any())
 {
     <div class="alert alert-info">
-        <i class="bi bi-info-circle-fill me-2"></i> There are no sponsor approval requests yet.
+        <i class="bi bi-info-circle-fill me-2"></i> @Localizer["SponsorApproval_EmptyMessage"].Value
     </div>
 }
 else
@@ -19,13 +19,13 @@ else
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
-                    <th>Applicant</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Nationality</th>
-                    <th>Requested</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>@Localizer["SponsorApproval_ColApplicant"].Value</th>
+                    <th>@Localizer["SponsorApproval_ColEmail"].Value</th>
+                    <th>@Localizer["SponsorApproval_ColPhone"].Value</th>
+                    <th>@Localizer["SponsorApproval_ColNationality"].Value</th>
+                    <th>@Localizer["SponsorApproval_ColRequested"].Value</th>
+                    <th>@Localizer["SponsorApproval_ColStatus"].Value</th>
+                    <th>@Localizer["SponsorApproval_ColActions"].Value</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,15 +40,15 @@ else
                         <td>
                             @if (item.Status == "Pending")
                             {
-                                <span class="badge rounded-pill text-bg-warning">Pending</span>
+                                <span class="badge rounded-pill text-bg-warning">@Localizer["SponsorApproval_Status_Pending"].Value</span>
                             }
                             else if (item.Status == "Approved")
                             {
-                                <span class="badge rounded-pill text-bg-success">Approved</span>
+                                <span class="badge rounded-pill text-bg-success">@Localizer["SponsorApproval_Status_Approved"].Value</span>
                             }
                             else
                             {
-                                <span class="badge rounded-pill text-bg-danger">Rejected</span>
+                                <span class="badge rounded-pill text-bg-danger">@Localizer["SponsorApproval_Status_Rejected"].Value</span>
                             }
                         </td>
                         <td>
@@ -57,19 +57,19 @@ else
                                 <form asp-action="Approve" method="post" class="d-inline">
                                     <input type="hidden" name="id" value="@item.Id" />
                                     <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="bi bi-check-lg me-1"></i> Approve
+                                        <i class="bi bi-check-lg me-1"></i> @Localizer["SponsorApproval_ApproveBtn"].Value
                                     </button>
                                 </form>
                                 <form asp-action="Reject" method="post" class="d-inline">
                                     <input type="hidden" name="id" value="@item.Id" />
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-x-lg me-1"></i> Reject
+                                        <i class="bi bi-x-lg me-1"></i> @Localizer["SponsorApproval_RejectBtn"].Value
                                     </button>
                                 </form>
                             }
                             else
                             {
-                                <span class="text-muted fst-italic">Reviewed</span>
+                                <span class="text-muted fst-italic">@Localizer["SponsorApproval_Reviewed"].Value</span>
                             }
                         </td>
                     </tr>

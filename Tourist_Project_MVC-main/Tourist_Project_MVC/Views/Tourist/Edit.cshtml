@@ -1,7 +1,7 @@
-﻿@model Tourist_Project_MVC.Models.Tourist
+@model Tourist_Project_MVC.Models.Tourist
 
 @{
-    ViewData["Title"] = "Edit Tourist";
+    ViewData["Title"] = @Localizer["TouristAdmin_EditTourist"].Value;
 }
 
 @if (User.Identity.IsAuthenticated)
@@ -10,9 +10,9 @@
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
 
             <div class="card-header py-3"
-                 style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+                 style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
                 <h4 class="text-white mb-0">
-                    <i class="bi bi-pencil-fill me-2"></i> Edit Tourist
+                    <i class="bi bi-pencil-fill me-2"></i> @Localizer["TouristAdmin_EditTourist"].Value
                 </h4>
             </div>
 
@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="IdNumber" class="form-label fw-bold">ID Number</label>
+                        <label asp-for="IdNumber" class="form-label fw-bold">@Localizer["TouristAdmin_IdNumber"].Value</label>
                         <input asp-for="IdNumber" class="form-control" />
                         <span asp-validation-for="IdNumber" class="text-danger"></span>
                     </div>
@@ -60,28 +60,28 @@
 
                     <div class="mb-3">
                         <label asp-for="point_Balance" class="form-label fw-bold">
-                            Point Balance
+                            @Localizer["TouristAdmin_PointBalance"].Value
                         </label>
                         <input asp-for="point_Balance" class="form-control" type="number" />
                         <span asp-validation-for="point_Balance" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Status" class="form-label fw-bold">Tourist Status</label>
+                        <label asp-for="Status" class="form-label fw-bold">@Localizer["TouristAdmin_TouristStatus"].Value</label>
                         <select asp-for="Status" class="form-select">
-                            <option value="Active">🟢 Active</option>
-                            <option value="Inactive">🔴 Inactive</option>
-                            <option value="Suspended">🟡 Suspended</option>
+                            <option value="Active">🟢 @Localizer["TouristAdmin_StatusActive"].Value</option>
+                            <option value="Inactive">🔴 @Localizer["TouristAdmin_StatusInactive"].Value</option>
+                            <option value="Suspended">🟡 @Localizer["TouristAdmin_StatusSuspended"].Value</option>
                         </select>
                         <span asp-validation-for="Status" class="text-danger"></span>
                     </div>
 
                     <div class="d-flex gap-2 mt-4">
                         <button type="submit" class="btn btn-warning px-4">
-                            <i class="bi bi-check-lg me-1"></i> Update
+                            <i class="bi bi-check-lg me-1"></i> @Localizer["TouristAdmin_Update"].Value
                         </button>
                         <a asp-action="Index" class="btn btn-secondary">
-                            <i class="bi bi-x-lg me-1"></i> Cancel
+                            <i class="bi bi-x-lg me-1"></i> @Localizer["TouristAdmin_Cancel"].Value
                         </a>
                     </div>
                 </form>

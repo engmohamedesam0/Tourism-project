@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Security.Claims;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
@@ -84,6 +86,30 @@ namespace Tourist_Project_MVC.Controllers
             }
             ViewBag.BackUrl = backUrl;
 
+            var reviews = _context.SiteReviews
+                .Include(r => r.Tourist)
+                .Where(r => r.DestinationId == id)
+                .OrderByDescending(r => r.CreatedDate)
+                .Take(5)
+                .ToList();
+
+            ViewBag.ReviewsCarousel = new Tourist_Project_MVC.View_Model.ReviewsCarouselVM
+            {
+                Title = "Traveler Reviews",
+                TargetTitle = destination.Name,
+                Items = reviews.Select(r => new Tourist_Project_MVC.View_Model.ReviewsCarouselItemVM
+                {
+                    TouristName = r.Tourist?.Name ?? "Tourist",
+                    TouristPhotoPath = r.Tourist?.ApplicationUser != null ? r.Tourist.ApplicationUser.ProfilePicturePath : null,
+                    Rating = r.Rating,
+                    Comment = r.Comment,
+                    CreatedDate = r.CreatedDate
+                }).ToList(),
+                CanAddReview = User.IsInRole("User"),
+                TargetId = destination.Id,
+                TargetType = "Destination"
+            };
+
             return View(destination);
         }
 
@@ -146,6 +172,35 @@ namespace Tourist_Project_MVC.Controllers
             _repo.Delete(id);
             _repo.Save();
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddReview(int id, [Bind("Rating,Comment")] SiteReview vm)
+        {
+            var destination = _repo.GetById(id);
+            if (destination == null) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+                var tourist = _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId);
+                if (tourist == null) return RedirectToAction("Index");
+
+                var review = new SiteReview
+                {
+                    Rating = vm.Rating,
+                    Comment = vm.Comment,
+                    DestinationId = id,
+                    TouristId = tourist.Id,
+                    CreatedDate = DateTime.Now
+                };
+
+                _context.SiteReviews.Add(review);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Details", new { id });
         }
     }
 }

@@ -8,7 +8,7 @@
 <div class="container my-4" style="max-width: 1200px;">
 
     <h1 class="page-title mb-4">
-        <i class="bi bi-gift me-2"></i> Points & Rewards
+        <i class="bi bi-gift me-2"></i> @Localizer["Reward_Title"].Value
     </h1>
 
     @if (!string.IsNullOrEmpty(TempData["RewardMessage"] as string))
@@ -29,21 +29,21 @@
                     <span class="stat-number">@Model.PointBalance.ToString("N0")</span>
                     <span class="stat-suffix">pts</span>
                 </div>
-                <span class="stat-label">Your Balance</span>
+                 <span class="stat-label">@Localizer["Reward_YourBalance"].Value</span>
             </div>
         </div>
     </div>
 
     <!-- Available rewards -->
     <h4 class="mb-3" style="font-family:'Cinzel',serif; color: var(--egy-dark);">
-        <i class="bi bi-shop me-2"></i> Available Rewards
+        <i class="bi bi-shop me-2"></i> @Localizer["Reward_Available"].Value
     </h4>
 
     @if (!Model.AvailableRewards.Any())
     {
         <div class="text-center py-5 text-muted">
             <i class="bi bi-gift" style="font-size:2.5rem;"></i>
-            <p class="mb-0 mt-2">No rewards available right now. Check back later!</p>
+            <p class="mb-0 mt-2">@Localizer["Reward_NoneAvailable"].Value</p>
         </div>
     }
     else
@@ -80,7 +80,7 @@
                                 </span>
                                 <form asp-action="Redeem" method="post" asp-route-rewardId="@reward.Id" onsubmit="return confirm('Redeem @reward.Title for @reward.PointsRequired points?');">
                                     <button type="submit" class="btn btn-sm @(canAfford ? "btn-success" : "btn-secondary")" @(canAfford ? "" : "disabled")>
-                                        <i class="bi bi-gift me-1"></i> @(canAfford ? "Redeem" : "Not enough points")
+                                         <i class="bi bi-gift me-1"></i> @(canAfford ? @Localizer["Reward_Redeem"].Value : @Localizer["Reward_NotEnough"].Value)
                                     </button>
                                 </form>
                             </div>
@@ -95,7 +95,7 @@
     @if (Model.MyRedemptions.Any())
     {
         <h4 class="mt-5 mb-3" style="font-family:'Cinzel',serif; color: var(--egy-dark);">
-            <i class="bi bi-ticket-perforated me-2"></i> My Vouchers
+            <i class="bi bi-ticket-perforated me-2"></i> @Localizer["Reward_MyVouchers"].Value
         </h4>
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body">
@@ -103,11 +103,11 @@
                     <table class="table table-hover align-middle destinations-table">
                         <thead>
                             <tr>
-                                <th>Code</th>
-                                <th>Reward</th>
-                                <th>Points</th>
-                                <th>Date</th>
-                                <th>Status</th>
+                                <th>@Localizer["Reward_Code"].Value</th>
+                                <th>@Localizer["Reward_Reward"].Value</th>
+                                <th>@Localizer["Reward_Points"].Value</th>
+                                <th>@Localizer["Reward_Date"].Value</th>
+                                <th>@Localizer["Reward_Status"].Value</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -130,3 +130,10 @@
         </div>
     }
 </div>
+
+@if (ViewBag.RewardsCarousel is Tourist_Project_MVC.View_Model.ReviewsCarouselVM rewardVm && rewardVm.Items != null && rewardVm.Items.Any())
+{
+    <div class="container my-4" style="max-width: 1200px;">
+        @await Html.PartialAsync("_ReviewsCarousel", rewardVm)
+    </div>
+}

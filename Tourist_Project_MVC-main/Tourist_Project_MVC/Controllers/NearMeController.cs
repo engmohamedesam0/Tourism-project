@@ -138,6 +138,34 @@ namespace Tourist_Project_MVC.Controllers
                 Cards = cards
             };
 
+            var firstSponsor = vm.Cards.FirstOrDefault()?.Sponsor;
+            if (firstSponsor != null)
+            {
+                var sponsorReviews = _context.Reviews
+                    .Include(r => r.Tourist)
+                    .Where(r => r.SponsorId == firstSponsor.Id)
+                    .OrderByDescending(r => r.CreatedDate)
+                    .Take(5)
+                    .ToList();
+
+                ViewBag.NearMeCarousel = new Tourist_Project_MVC.View_Model.ReviewsCarouselVM
+                {
+                    Title = "Traveler Reviews",
+                    TargetTitle = firstSponsor.Name,
+                    Items = sponsorReviews.Select(r => new Tourist_Project_MVC.View_Model.ReviewsCarouselItemVM
+                    {
+                        TouristName = r.Tourist?.Name ?? "Tourist",
+                        TouristPhotoPath = null,
+                        Rating = r.Rating,
+                        Comment = r.Comment,
+                        CreatedDate = r.CreatedDate
+                    }).ToList(),
+                    CanAddReview = false,
+                    TargetId = firstSponsor.Id,
+                    TargetType = "Sponsor"
+                };
+            }
+
             return View(vm);
         }
 

@@ -1,0 +1,2278 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Role_Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="Role_Sponsor" xml:space="preserve">
+    <value>Sponsor</value>
+  </data>
+  <data name="Role_Tourist" xml:space="preserve">
+    <value>Tourist</value>
+  </data>
+  <data name="Role_Guest" xml:space="preserve">
+    <value>Guest</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Lang_English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Lang_Arabic" xml:space="preserve">
+    <value>العربية</value>
+  </data>
+  <data name="Lang_Spanish" xml:space="preserve">
+    <value>Español</value>
+  </data>
+  <data name="Lang_German" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="Lang_Chinese" xml:space="preserve">
+    <value>中文</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
+  <data name="SignUp" xml:space="preserve">
+    <value>Sign Up</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Nav_Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Nav_Administration" xml:space="preserve">
+    <value>Administration</value>
+  </data>
+  <data name="Nav_Tourists" xml:space="preserve">
+    <value>Tourists</value>
+  </data>
+  <data name="Nav_Destinations" xml:space="preserve">
+    <value>Destinations</value>
+  </data>
+  <data name="Nav_TripPlans" xml:space="preserve">
+    <value>Trip Plans</value>
+  </data>
+  <data name="Nav_Missions" xml:space="preserve">
+    <value>Missions</value>
+  </data>
+  <data name="Nav_AllRewards" xml:space="preserve">
+    <value>All Rewards</value>
+  </data>
+  <data name="Nav_Sponsors" xml:space="preserve">
+    <value>Sponsors</value>
+  </data>
+  <data name="Nav_Accounts" xml:space="preserve">
+    <value>Accounts</value>
+  </data>
+  <data name="Nav_SupportInbox" xml:space="preserve">
+    <value>Support Inbox</value>
+  </data>
+  <data name="Nav_Approvals" xml:space="preserve">
+    <value>Approvals</value>
+  </data>
+  <data name="Nav_AddRole" xml:space="preserve">
+    <value>Add Role</value>
+  </data>
+  <data name="Nav_AssignRoles" xml:space="preserve">
+    <value>Assign Roles</value>
+  </data>
+  <data name="Nav_Logout" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="Nav_NearMe" xml:space="preserve">
+    <value>Near Me</value>
+  </data>
+  <data name="Nav_Features" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="Nav_Portal" xml:space="preserve">
+    <value>Portal</value>
+  </data>
+  <data name="Nav_Branches" xml:space="preserve">
+    <value>Branches</value>
+  </data>
+  <data name="Nav_Rewards" xml:space="preserve">
+    <value>Rewards</value>
+  </data>
+  <data name="Nav_Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="Nav_Explore" xml:space="preserve">
+    <value>Explore</value>
+  </data>
+  <data name="Nav_Trip" xml:space="preserve">
+    <value>Trip</value>
+  </data>
+  <data name="Nav_Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Nav_Support" xml:space="preserve">
+    <value>Support</value>
+  </data>
+  <data name="Nav_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Footer_Copyright" xml:space="preserve">
+    <value>Unlocking Hidden Wonders Across Egypt. All rights reserved.</value>
+  </data>
+  <data name="Ai_Title" xml:space="preserve">
+    <value>EGYXPLORE Assistant</value>
+  </data>
+  <data name="Ai_ComingSoon" xml:space="preserve">
+    <value>AI Assistant — Coming Soon</value>
+  </data>
+  <data name="Ai_Description" xml:space="preserve">
+    <value>Your smart travel companion for personalized itineraries will live here.</value>
+  </data>
+  <data name="Ai_Placeholder" xml:space="preserve">
+    <value>Ask me anything…</value>
+  </data>
+  <data name="Ai_Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Ai_Open" xml:space="preserve">
+    <value>Open AI assistant</value>
+  </data>
+  <data name="Ai_Close" xml:space="preserve">
+    <value>Close assistant</value>
+  </data>
+  <data name="Search_Placeholder" xml:space="preserve">
+    <value>Search Egypt…</value>
+  </data>
+  <data name="Search_Aria" xml:space="preserve">
+    <value>Search destinations</value>
+  </data>
+  <data name="Stats_Title" xml:space="preserve">
+    <value>Tourism in Numbers</value>
+  </data>
+  <data name="Stat_ArchaeologicalSites" xml:space="preserve">
+    <value>Archaeological Sites</value>
+  </data>
+  <data name="Stat_RegisteredTourists" xml:space="preserve">
+    <value>Registered Tourists</value>
+  </data>
+  <data name="Stat_TripPlansCreated" xml:space="preserve">
+    <value>Trip Plans Created</value>
+  </data>
+  <data name="Stat_ActiveMissions" xml:space="preserve">
+    <value>Active Missions</value>
+  </data>
+  <data name="Hero_Title" xml:space="preserve">
+    <value>EGYXPLORE</value>
+  </data>
+  <data name="Hero_Subtitle" xml:space="preserve">
+    <value>Unlock Hidden Wonders Across Egypt</value>
+  </data>
+  <data name="Hero_ExploreBtn" xml:space="preserve">
+    <value>Explore Now</value>
+  </data>
+  <data name="About_Title" xml:space="preserve">
+    <value>AI-Powered Smart Tourism Platform</value>
+  </data>
+  <data name="About_Text" xml:space="preserve">
+    <value>EGYXPLORE combines Artificial Intelligence, GIS, and Gamification to revolutionize tourism in Egypt. Discover hidden archaeological sites, earn rewards, and experience Egypt like never before.</value>
+  </data>
+  <data name="Feature1_Title" xml:space="preserve">
+    <value>Tourist Attractions in Egypt</value>
+  </data>
+  <data name="Feature1_Text" xml:space="preserve">
+    <value>The Great Pyramids of Giza were built more than 4,500 years ago as tombs for the ancient Egyptian pharaohs. The Great Pyramid is the oldest of the Seven Wonders of the Ancient World and the only one still standing today. The Pyramids of Giza are one of the most famous tourist attractions in the world. There are many interesting places to visit in Egypt.</value>
+  </data>
+  <data name="Feature1_Link" xml:space="preserve">
+    <value>View All Destinations</value>
+  </data>
+  <data name="Feature2_Title" xml:space="preserve">
+    <value>AI Trip Planner</value>
+  </data>
+  <data name="Feature2_Text" xml:space="preserve">
+    <value>Our AI generates personalized itineraries based on your interests, budget, and trip duration. Smart GIS routing finds the optimal path between destinations.</value>
+  </data>
+  <data name="Feature2_Link" xml:space="preserve">
+    <value>Plan Your Trip</value>
+  </data>
+  <data name="Feature3_Title" xml:space="preserve">
+    <value>Gamification &amp; Rewards</value>
+  </data>
+  <data name="Feature3_Text" xml:space="preserve">
+    <value>Complete missions, earn points, and collect badges on your Digital Heritage Passport. Redeem points for hotel discounts, museum tickets, and exclusive experiences.</value>
+  </data>
+  <data name="Feature3_Link" xml:space="preserve">
+    <value>View Missions</value>
+  </data>
+  <data name="Contact_GIS" xml:space="preserve">
+    <value>GIS Powered</value>
+  </data>
+  <data name="Contact_GIS_Text" xml:space="preserve">
+    <value>Smart route optimization using ArcGIS Network Analysis</value>
+  </data>
+  <data name="Contact_AI" xml:space="preserve">
+    <value>AI Driven</value>
+  </data>
+  <data name="Contact_AI_Text" xml:space="preserve">
+    <value>Personalized recommendations powered by OpenAI</value>
+  </data>
+  <data name="Contact_Gamified" xml:space="preserve">
+    <value>Gamified</value>
+  </data>
+  <data name="Contact_Gamified_Text" xml:space="preserve">
+    <value>Missions, badges, and rewards for every explorer</value>
+  </data>
+  <data name="Explore_Title" xml:space="preserve">
+    <value>Explore Egypt</value>
+  </data>
+  <data name="Explore_Subtitle" xml:space="preserve">
+    <value>Discover destinations across the Nile Valley &amp; beyond</value>
+  </data>
+  <data name="Explore_SearchPlaceholder" xml:space="preserve">
+    <value>Search destinations or cities...</value>
+  </data>
+  <data name="Explore_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Explore_HiddenGems" xml:space="preserve">
+    <value>Hidden Gems</value>
+  </data>
+  <data name="Explore_Temples" xml:space="preserve">
+    <value>Temples</value>
+  </data>
+  <data name="Explore_Museums" xml:space="preserve">
+    <value>Museums</value>
+  </data>
+  <data name="Explore_Nature" xml:space="preserve">
+    <value>Nature</value>
+  </data>
+  <data name="Explore_Adventure" xml:space="preserve">
+    <value>Adventure</value>
+  </data>
+  <data name="Explore_NotRated" xml:space="preserve">
+    <value>Not yet rated</value>
+  </data>
+  <data name="Explore_New" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="Explore_NoDestinations" xml:space="preserve">
+    <value>No destinations found.</value>
+  </data>
+  <data name="Explore_Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Explore_MapPlaceholder" xml:space="preserve">
+    <value>Map will render here</value>
+  </data>
+  <data name="Explore_MapNote" xml:space="preserve">
+    <value>Each list card carries data-lat / data-lng / data-id for future markers</value>
+  </data>
+  <data name="NearMe_Title" xml:space="preserve">
+    <value>Near Me</value>
+  </data>
+  <data name="NearMe_Subtitle" xml:space="preserve">
+    <value>Discover partners close to the site you'll visit</value>
+  </data>
+  <data name="NearMe_Reference" xml:space="preserve">
+    <value>Reference destination</value>
+  </data>
+  <data name="NearMe_SearchPlaceholder" xml:space="preserve">
+    <value>Search sponsors…</value>
+  </data>
+  <data name="NearMe_Go" xml:space="preserve">
+    <value>Go</value>
+  </data>
+  <data name="NearMe_Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="NearMe_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="NearMe_Hotel" xml:space="preserve">
+    <value>Hotel</value>
+  </data>
+  <data name="NearMe_Airline" xml:space="preserve">
+    <value>Airline</value>
+  </data>
+  <data name="NearMe_Agency" xml:space="preserve">
+    <value>Tourism Agency</value>
+  </data>
+  <data name="NearMe_Rating" xml:space="preserve">
+    <value>Rating</value>
+  </data>
+  <data name="NearMe_Any" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="NearMe_Distance" xml:space="preserve">
+    <value>Distance</value>
+  </data>
+  <data name="NearMe_Sort" xml:space="preserve">
+    <value>Sort</value>
+  </data>
+  <data name="NearMe_Nearest" xml:space="preserve">
+    <value>Nearest</value>
+  </data>
+  <data name="NearMe_TopRated" xml:space="preserve">
+    <value>Top rated</value>
+  </data>
+  <data name="NearMe_DistanceTitle" xml:space="preserve">
+    <value>Distance from destination</value>
+  </data>
+  <data name="NearMe_NoSponsors" xml:space="preserve">
+    <value>No sponsors match your filters.</value>
+  </data>
+  <data name="About_PageTitle" xml:space="preserve">
+    <value>About EGYXPLORE</value>
+  </data>
+  <data name="About_Intro" xml:space="preserve">
+    <value>[Organization intro goes here — e.g. who we are and our mission to make Egypt's heritage accessible to every traveler.]</value>
+  </data>
+  <data name="About_Story" xml:space="preserve">
+    <value>Our Story</value>
+  </data>
+  <data name="About_StoryText" xml:space="preserve">
+    <value>[Organization story goes here — founding, what inspired the platform, and the problem it solves for tourists and local sites.]</value>
+  </data>
+  <data name="About_Values" xml:space="preserve">
+    <value>What We Value</value>
+  </data>
+  <data name="About_Discovery" xml:space="preserve">
+    <value>Discovery</value>
+  </data>
+  <data name="About_DiscoveryText" xml:space="preserve">
+    <value>[Value description goes here]</value>
+  </data>
+  <data name="About_Innovation" xml:space="preserve">
+    <value>Innovation</value>
+  </data>
+  <data name="About_InnovationText" xml:space="preserve">
+    <value>[Value description goes here]</value>
+  </data>
+  <data name="About_Community" xml:space="preserve">
+    <value>Community</value>
+  </data>
+  <data name="About_CommunityText" xml:space="preserve">
+    <value>[Value description goes here]</value>
+  </data>
+  <data name="About_Team" xml:space="preserve">
+    <value>The Team</value>
+  </data>
+  <data name="About_TeamText" xml:space="preserve">
+    <value>[Team section goes here — founders, contributors, or partners. Replace with real copy later.]</value>
+  </data>
+  <data name="Features_Title" xml:space="preserve">
+    <value>The EGYXPLORE App</value>
+  </data>
+  <data name="Features_Subtitle" xml:space="preserve">
+    <value>Your smart companion for exploring Egypt — maps, games, AI, and rewards, all in your pocket.</value>
+  </data>
+  <data name="Features_Feature1_Title" xml:space="preserve">
+    <value>Indoor Maps</value>
+  </data>
+  <data name="Features_Feature1_Text" xml:space="preserve">
+    <value>Never get lost inside vast museums and temples. High-detail indoor maps guide you corridor by corridor through Egypt's heritage sites.</value>
+  </data>
+  <data name="Features_Feature2_Title" xml:space="preserve">
+    <value>Navigation Mode</value>
+  </data>
+  <data name="Features_Feature2_Text" xml:space="preserve">
+    <value>Turn-by-turn routing between destinations with smart GIS optimization that accounts for opening hours and travel time.</value>
+  </data>
+  <data name="Features_Feature3_Title" xml:space="preserve">
+    <value>Fun Games</value>
+  </data>
+  <data name="Features_Feature3_Text" xml:space="preserve">
+    <value>Turn every visit into an adventure with location-based mini-games and scavenger hunts for the whole family.</value>
+  </data>
+  <data name="Features_Feature4_Title" xml:space="preserve">
+    <value>Camera Scanner</value>
+  </data>
+  <data name="Features_Feature4_Text" xml:space="preserve">
+    <value>Point your camera at a monument to instantly reveal its history, era, and the stories carved into every stone.</value>
+  </data>
+  <data name="Features_Feature5_Title" xml:space="preserve">
+    <value>AI Assistant</value>
+  </data>
+  <data name="Features_Feature5_Text" xml:space="preserve">
+    <value>Ask anything about Egypt's wonders and get personalized itineraries, tips, and answers powered by a smart travel assistant.</value>
+  </data>
+  <data name="Features_Feature6_Title" xml:space="preserve">
+    <value>P2P Translation</value>
+  </data>
+  <data name="Features_Feature6_Text" xml:space="preserve">
+    <value>Break the language barrier with real-time peer-to-peer translation, so you can connect with locals wherever you roam.</value>
+  </data>
+  <data name="Features_Feature7_Title" xml:space="preserve">
+    <value>Rewarding System</value>
+  </data>
+  <data name="Features_Feature7_Text" xml:space="preserve">
+    <value>Earn points for every mission and redeem them for exclusive discounts on meals, stays, and experiences with our partners.</value>
+  </data>
+  <data name="Features_BottomTitle" xml:space="preserve">
+    <value>Start Exploring Today</value>
+  </data>
+  <data name="Features_BottomText" xml:space="preserve">
+    <value>Download the app and unlock hidden wonders across Egypt.</value>
+  </data>
+  <data name="Login_EmailOrUsername" xml:space="preserve">
+    <value>Email or Username</value>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Login_Submit" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login_NeedAccount" xml:space="preserve">
+    <value>Need an account? Register</value>
+  </data>
+  <data name="Login_ForgotPassword" xml:space="preserve">
+    <value>Forgot Password</value>
+  </data>
+  <data name="Register_AccountType" xml:space="preserve">
+    <value>I am registering as a</value>
+  </data>
+  <data name="Register_Tourist" xml:space="preserve">
+    <value>Sign up as Tourist</value>
+  </data>
+  <data name="Register_Sponsor" xml:space="preserve">
+    <value>Sign up as Sponsor</value>
+  </data>
+  <data name="Register_Submit" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Register_AlreadyHaveAccount" xml:space="preserve">
+    <value>Already have an account? Login</value>
+  </data>
+  <data name="Trip_Duration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="Trip_Budget" xml:space="preserve">
+    <value>Budget</value>
+  </data>
+  <data name="Trip_BudgetPlaceholder" xml:space="preserve">
+    <value>e.g. 1000</value>
+  </data>
+  <data name="Trip_Companions" xml:space="preserve">
+    <value>Companions</value>
+  </data>
+  <data name="Trip_CompanionsPlaceholder" xml:space="preserve">
+    <value>e.g. 2</value>
+  </data>
+  <data name="Trip_Interests" xml:space="preserve">
+    <value>Interests</value>
+  </data>
+  <data name="Trip_HiddenGems" xml:space="preserve">
+    <value>Hidden Gems</value>
+  </data>
+  <data name="Trip_Temples" xml:space="preserve">
+    <value>Temples</value>
+  </data>
+  <data name="Trip_Museums" xml:space="preserve">
+    <value>Museums</value>
+  </data>
+  <data name="Trip_Nature" xml:space="preserve">
+    <value>Nature</value>
+  </data>
+  <data name="Trip_Adventure" xml:space="preserve">
+    <value>Adventure</value>
+  </data>
+  <data name="Trip_Historical" xml:space="preserve">
+    <value>Historical</value>
+  </data>
+  <data name="Trip_Religious" xml:space="preserve">
+    <value>Religious</value>
+  </data>
+  <data name="Trip_Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Profile_Title" xml:space="preserve">
+    <value>My Profile</value>
+  </data>
+  <data name="Profile_FullName" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
+  <data name="Profile_Nationality" xml:space="preserve">
+    <value>Nationality</value>
+  </data>
+  <data name="Profile_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Profile_Phone" xml:space="preserve">
+    <value>Phone Number</value>
+  </data>
+  <data name="Profile_NotProvided" xml:space="preserve">
+    <value>Not provided</value>
+  </data>
+  <data name="Profile_RegistrationDate" xml:space="preserve">
+    <value>Registration Date</value>
+  </data>
+  <data name="Profile_AccountStatus" xml:space="preserve">
+    <value>Account Status</value>
+  </data>
+  <data name="Profile_PointsBalance" xml:space="preserve">
+    <value>Points Balance</value>
+  </data>
+  <data name="Reward_Title" xml:space="preserve">
+    <value>Points &amp; Rewards</value>
+  </data>
+  <data name="Reward_YourBalance" xml:space="preserve">
+    <value>Your Balance</value>
+  </data>
+  <data name="Reward_Available" xml:space="preserve">
+    <value>Available Rewards</value>
+  </data>
+  <data name="Reward_NoneAvailable" xml:space="preserve">
+    <value>No rewards available right now. Check back later!</value>
+  </data>
+  <data name="Reward_Redeem" xml:space="preserve">
+    <value>Redeem</value>
+  </data>
+  <data name="Reward_NotEnough" xml:space="preserve">
+    <value>Not enough points</value>
+  </data>
+  <data name="Reward_MyVouchers" xml:space="preserve">
+    <value>My Vouchers</value>
+  </data>
+  <data name="Reward_Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Reward_Reward" xml:space="preserve">
+    <value>Reward</value>
+  </data>
+  <data name="Reward_Points" xml:space="preserve">
+    <value>Points</value>
+  </data>
+  <data name="Reward_Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Reward_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="RewardAdmin_EditHeading" xml:space="preserve">
+    <value>Edit Mission</value>
+  </data>
+  <data name="TripDetails_Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="SponsorNotification_Unread" xml:space="preserve">
+    <value>Unread</value>
+  </data>
+  <data name="TripPlan_Destinations" xml:space="preserve">
+    <value>Destinations</value>
+  </data>
+  <data name="TripPlan_NoDestinations" xml:space="preserve">
+    <value>No destinations</value>
+  </data>
+  <data name="TripPlan_SelectTourist" xml:space="preserve">
+    <value>-- Select Tourist --</value>
+  </data>
+  <data name="Mission_SearchPlaceholder" xml:space="preserve">
+    <value>Search missions...</value>
+  </data>
+  <data name="Sponsor_DetailsTitle" xml:space="preserve">
+    <value>Sponsor Details</value>
+  </data>
+  <data name="TouristAdmin_StatusInactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="TouristAdmin_Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Destination_Latitude" xml:space="preserve">
+    <value>Latitude</value>
+  </data>
+  <data name="SponsorRedemption_Status_Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="TouristSupport_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="RewardAdmin_SearchPlaceholder" xml:space="preserve">
+    <value>Search rewards...</value>
+  </data>
+  <data name="Destination_CityGovernorate" xml:space="preserve">
+    <value>City / Governorate</value>
+  </data>
+  <data name="TouristAdmin_Nationality" xml:space="preserve">
+    <value>Nationality</value>
+  </data>
+  <data name="SponsorPortal_Month" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="SponsorApproval_Reviewed" xml:space="preserve">
+    <value>Already reviewed</value>
+  </data>
+  <data name="AdminSupport_SendResponse" xml:space="preserve">
+    <value>Send Response</value>
+  </data>
+  <data name="Reviews_Rating" xml:space="preserve">
+    <value>Rating</value>
+  </data>
+  <data name="SponsorPortal_NoReviewsInfo" xml:space="preserve">
+    <value>No reviews yet for your place — the rating card will populate once tourists leave reviews.</value>
+  </data>
+  <data name="Destination_StatusPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="SponsorPortal_TypeLabel" xml:space="preserve">
+    <value>Type:</value>
+  </data>
+  <data name="SponsorNotification_AdminResponded" xml:space="preserve">
+    <value>Admin has responded</value>
+  </data>
+  <data name="TouristAdmin_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="AdminSupport_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="SponsorPortal_NoRewardActivity" xml:space="preserve">
+    <value>No reward activity yet.</value>
+  </data>
+  <data name="TouristAdmin_Done" xml:space="preserve">
+    <value>done</value>
+  </data>
+  <data name="Destination_SearchPlaceholder" xml:space="preserve">
+    <value>Search destinations...</value>
+  </data>
+  <data name="SponsorBranch_ColPhone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="SponsorReview_ColRating" xml:space="preserve">
+    <value>Rating</value>
+  </data>
+  <data name="SponsorNotification_NoNotifications" xml:space="preserve">
+    <value>No notifications here.</value>
+  </data>
+  <data name="SponsorReward_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TripPlan_StartDate" xml:space="preserve">
+    <value>Start Date</value>
+  </data>
+  <data name="SponsorPortal_ViewsHeader" xml:space="preserve">
+    <value>Views</value>
+  </data>
+  <data name="RewardAdmin_FieldQuantity" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="Sponsor_DeleteTip" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Mission_TitleColumn" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TouristSupport_NoResponse" xml:space="preserve">
+    <value>No response yet. We'll notify you here once an admin replies.</value>
+  </data>
+  <data name="SponsorRedemption_ToLabel" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="SponsorNotification_NoResponseYet" xml:space="preserve">
+    <value>No response yet. We'll notify you here once an admin replies.</value>
+  </data>
+  <data name="SponsorReview_AllRatings" xml:space="preserve">
+    <value>All ratings</value>
+  </data>
+  <data name="SponsorPortal_RedemptionsPerMonth" xml:space="preserve">
+    <value>Redemptions per Month</value>
+  </data>
+  <data name="AdminSupport_By" xml:space="preserve">
+    <value>by</value>
+  </data>
+  <data name="RoleAdmin_SelectUserOption" xml:space="preserve">
+    <value>-- Select a User --</value>
+  </data>
+  <data name="SponsorApproval_RejectBtn" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="SponsorBranch_EditTitle" xml:space="preserve">
+    <value>Edit Branch</value>
+  </data>
+  <data name="SponsorBranch_CancelBtn" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SponsorNotification_OpenFullSize" xml:space="preserve">
+    <value>Open full size</value>
+  </data>
+  <data name="SponsorApproval_Status_Rejected" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="TripPlan_Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="SponsorReward_ExpirationDate" xml:space="preserve">
+    <value>Expiration Date</value>
+  </data>
+  <data name="Account_ResetEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="TouristAdmin_AddNewTourist" xml:space="preserve">
+    <value>Add New Tourist</value>
+  </data>
+  <data name="SponsorReward_TableRedemptions" xml:space="preserve">
+    <value>Redemptions</value>
+  </data>
+  <data name="Mission_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TouristAdmin_IdNumber" xml:space="preserve">
+    <value>ID Number</value>
+  </data>
+  <data name="Sponsor_CancelBtn" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="TripPlan_End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="Destination_Heading" xml:space="preserve">
+    <value>Destinations</value>
+  </data>
+  <data name="AdminSupport_MarkResolved" xml:space="preserve">
+    <value>Mark Resolved</value>
+  </data>
+  <data name="Destination_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Destination_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TouristAdmin_YesDelete" xml:space="preserve">
+    <value>Yes, Delete</value>
+  </data>
+  <data name="Destination_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Destination_TableDestination" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="SponsorPortal_RedemptionHistoryDesc" xml:space="preserve">
+    <value>Filter by date, reward &amp; status</value>
+  </data>
+  <data name="RoleAdmin_SelectUser" xml:space="preserve">
+    <value>Select User</value>
+  </data>
+  <data name="SponsorReward_Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="SponsorPortal_ManageHelp" xml:space="preserve">
+    <value>Manage your branches and rewards from the respective portal sections.</value>
+  </data>
+  <data name="SponsorBranch_UpdateBtn" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="SponsorNotification_Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="SponsorPortal_Branches" xml:space="preserve">
+    <value>Branches</value>
+  </data>
+  <data name="Sponsor_ColContact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Destination_Longitude" xml:space="preserve">
+    <value>Longitude</value>
+  </data>
+  <data name="RoleAdmin_AccountProtectedTitle" xml:space="preserve">
+    <value>Cannot change or delete your own account</value>
+  </data>
+  <data name="SponsorPortal_WelcomeMessage" xml:space="preserve">
+    <value>Welcome to your sponsor portal.</value>
+  </data>
+  <data name="Mission_Label_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="SponsorRedemption_ColBranch" xml:space="preserve">
+    <value>Branch</value>
+  </data>
+  <data name="TouristSupport_Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="RewardAdmin_GuestsOnlyView" xml:space="preserve">
+    <value>Guests only view</value>
+  </data>
+  <data name="AdminSupport_Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Mission_Total" xml:space="preserve">
+    <value>Total:</value>
+  </data>
+  <data name="Destination_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Mission_AddTitle" xml:space="preserve">
+    <value>Add Mission</value>
+  </data>
+  <data name="SponsorPortal_TopRewards" xml:space="preserve">
+    <value>Top Rewards</value>
+  </data>
+  <data name="Mission_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="TouristAdmin_TotalTrips" xml:space="preserve">
+    <value>Total Trips</value>
+  </data>
+  <data name="SponsorPortal_Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="SponsorRedemption_ColReward" xml:space="preserve">
+    <value>Reward</value>
+  </data>
+  <data name="Destination_FilterActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Destination_TableTicketPrice" xml:space="preserve">
+    <value>Ticket Price</value>
+  </data>
+  <data name="SponsorNotification_NoTickets" xml:space="preserve">
+    <value>No tickets submitted yet.</value>
+  </data>
+  <data name="RewardAdmin_Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Destination_TableGovernorate" xml:space="preserve">
+    <value>Governorate</value>
+  </data>
+  <data name="SponsorPortal_SponsorAddressPlaceholder" xml:space="preserve">
+    <value>Business address</value>
+  </data>
+  <data name="TouristAdmin_PointBalance" xml:space="preserve">
+    <value>Point Balance</value>
+  </data>
+  <data name="TouristAdmin_TouristStatus" xml:space="preserve">
+    <value>Tourist Status</value>
+  </data>
+  <data name="AdminSupport_Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Mission_Page_Title_Edit" xml:space="preserve">
+    <value>Edit Mission</value>
+  </data>
+  <data name="Sponsor_ColActions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="SponsorReview_AverageFrom" xml:space="preserve">
+    <value>Average rating from</value>
+  </data>
+  <data name="TouristAdmin_Trips" xml:space="preserve">
+    <value>Trips</value>
+  </data>
+  <data name="SponsorPortal_PageTitle" xml:space="preserve">
+    <value>Sponsor Portal</value>
+  </data>
+  <data name="Sponsor_ColHash" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="Destination_Coordinates" xml:space="preserve">
+    <value>Coordinates</value>
+  </data>
+  <data name="RewardAdmin_FieldPoints" xml:space="preserve">
+    <value>Points Required</value>
+  </data>
+  <data name="TripPlan_TitleColumn" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="SponsorNotification_SubmitTicket" xml:space="preserve">
+    <value>Submit Ticket</value>
+  </data>
+  <data name="SponsorBranch_DeleteHeading" xml:space="preserve">
+    <value>Delete Branch</value>
+  </data>
+  <data name="RewardAdmin_Expiration" xml:space="preserve">
+    <value>Expiration</value>
+  </data>
+  <data name="SponsorReward_AddNewReward" xml:space="preserve">
+    <value>Add New Reward</value>
+  </data>
+  <data name="AdminSupport_SupportInbox" xml:space="preserve">
+    <value>Support Inbox</value>
+  </data>
+  <data name="SponsorReward_TableQty" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+  <data name="Sponsor_UpdateBtn" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="RoleAdmin_SelectRole" xml:space="preserve">
+    <value>Select Role</value>
+  </data>
+  <data name="Destination_AddToMyTrip" xml:space="preserve">
+    <value>Add to My Trip</value>
+  </data>
+  <data name="TripDetails_EditDates" xml:space="preserve">
+    <value>Edit dates</value>
+  </data>
+  <data name="TripPlan_SelectDestinations" xml:space="preserve">
+    <value>Select Destinations (in order)</value>
+  </data>
+  <data name="Reviews_Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="RewardAdmin_Sponsor" xml:space="preserve">
+    <value>Sponsor</value>
+  </data>
+  <data name="Destination_TotalVisits" xml:space="preserve">
+    <value>Total Visits</value>
+  </data>
+  <data name="RewardAdmin_FieldSponsor" xml:space="preserve">
+    <value>Sponsor</value>
+  </data>
+  <data name="RoleAdmin_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="TouristSupport_Attachment" xml:space="preserve">
+    <value>Attachment</value>
+  </data>
+  <data name="SponsorRedemption_Status_Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="SponsorNotification_AdminResponse" xml:space="preserve">
+    <value>Admin Response</value>
+  </data>
+  <data name="TripPlan_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Mission_CreateButton" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="SponsorRedemption_EmptyMessage" xml:space="preserve">
+    <value>No redemptions found for the selected filters.</value>
+  </data>
+  <data name="Sponsor_EditTitle" xml:space="preserve">
+    <value>Edit Sponsor</value>
+  </data>
+  <data name="TouristAdmin_Active" xml:space="preserve">
+    <value>active</value>
+  </data>
+  <data name="TouristAdmin_SearchPlaceholder" xml:space="preserve">
+    <value>Search tourists...</value>
+  </data>
+  <data name="TouristAdmin_Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="SponsorApproval_Status_Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="SponsorPortal_RewardHeader" xml:space="preserve">
+    <value>Reward</value>
+  </data>
+  <data name="Mission_Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SponsorApproval_ColStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="SponsorReward_Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Mission_Select_Destination" xml:space="preserve">
+    <value>-- Select Destination --</value>
+  </data>
+  <data name="SponsorApproval_EmptyMessage" xml:space="preserve">
+    <value>No pending sponsorship requests.</value>
+  </data>
+  <data name="SponsorNotification_Subject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="TouristAdmin_Heading" xml:space="preserve">
+    <value>Tourists</value>
+  </data>
+  <data name="TouristAdmin_Points" xml:space="preserve">
+    <value>Points</value>
+  </data>
+  <data name="TripPlan_AllTourists" xml:space="preserve">
+    <value>All Tourists</value>
+  </data>
+  <data name="SponsorReview_ColDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="TripPlan_YesDelete" xml:space="preserve">
+    <value>Yes, Delete</value>
+  </data>
+  <data name="TripPlan_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SponsorReward_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Mission_PointsRewardColumn" xml:space="preserve">
+    <value>Points Reward</value>
+  </data>
+  <data name="Sponsor_DeleteConfirmBtn" xml:space="preserve">
+    <value>Yes, Delete</value>
+  </data>
+  <data name="TouristAdmin_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Account_ResetBackToLogin" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Destination_GuestsOnly" xml:space="preserve">
+    <value>Guests only view</value>
+  </data>
+  <data name="RewardAdmin_DeleteHeading" xml:space="preserve">
+    <value>Delete Reward</value>
+  </data>
+  <data name="SponsorPortal_SponsorTypePlaceholder" xml:space="preserve">
+    <value>e.g. Restaurant, Hotel, Tour Operator</value>
+  </data>
+  <data name="TripPlan_ConfirmDelete" xml:space="preserve">
+    <value>Are you sure you want to delete</value>
+  </data>
+  <data name="TouristAdmin_GuestsOnly" xml:space="preserve">
+    <value>Guests only view</value>
+  </data>
+  <data name="RewardAdmin_AddNew" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="SponsorBranch_CreateBtn" xml:space="preserve">
+    <value>Create New</value>
+  </data>
+  <data name="TouristAdmin_Duration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="TripDetails_BackToTrip" xml:space="preserve">
+    <value>Back to Trip</value>
+  </data>
+  <data name="TouristSupport_OpenFullSize" xml:space="preserve">
+    <value>Open full size</value>
+  </data>
+  <data name="SponsorNotification_Read" xml:space="preserve">
+    <value>Read</value>
+  </data>
+  <data name="AdminSupport_Ticket" xml:space="preserve">
+    <value>Ticket</value>
+  </data>
+  <data name="Mission_Page_Title_Details" xml:space="preserve">
+    <value>Mission Details</value>
+  </data>
+  <data name="AdminSupport_Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="RewardAdmin_CreateHeading" xml:space="preserve">
+    <value>Add New Reward</value>
+  </data>
+  <data name="TouristAdmin_Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="TouristSupport_AdminResponse" xml:space="preserve">
+    <value>Admin Response</value>
+  </data>
+  <data name="SponsorPortal_Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="RewardAdmin_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="RoleAdmin_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="RoleAdmin_AccountManagement" xml:space="preserve">
+    <value>Account Management</value>
+  </data>
+  <data name="TouristAdmin_DeleteConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete</value>
+  </data>
+  <data name="SponsorPortal_Rewards" xml:space="preserve">
+    <value>Rewards</value>
+  </data>
+  <data name="Mission_Page_Heading_Delete" xml:space="preserve">
+    <value>Delete Trip Plan</value>
+  </data>
+  <data name="SponsorReview_IndexHeading" xml:space="preserve">
+    <value>Reviews</value>
+  </data>
+  <data name="AdminSupport_AdminResponse" xml:space="preserve">
+    <value>Admin Response</value>
+  </data>
+  <data name="SponsorNotification_Number" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="TripDetails_StatusDraft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="RewardAdmin_Heading" xml:space="preserve">
+    <value>Rewards</value>
+  </data>
+  <data name="Mission_Page_Heading_Edit" xml:space="preserve">
+    <value>Edit Mission</value>
+  </data>
+  <data name="Destination_PageTitle" xml:space="preserve">
+    <value>Destinations</value>
+  </data>
+  <data name="AdminSupport_NoTicketsFound" xml:space="preserve">
+    <value>No support tickets found.</value>
+  </data>
+  <data name="SponsorPortal_SupportDesc" xml:space="preserve">
+    <value>Tickets and help</value>
+  </data>
+  <data name="AdminSupport_Attachment" xml:space="preserve">
+    <value>Attachment</value>
+  </data>
+  <data name="TouristAdmin_RegisterDate" xml:space="preserve">
+    <value>Register Date</value>
+  </data>
+  <data name="Sponsor_EditTip" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Destination_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Sponsor_DetailsTip" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Mission_NoMissions" xml:space="preserve">
+    <value>No missions found.</value>
+  </data>
+  <data name="TripDetails_MapPlaceholder" xml:space="preserve">
+    <value>Map will render here</value>
+  </data>
+  <data name="TripPlan_Order" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="TripDetails_PageTitle" xml:space="preserve">
+    <value>Trip Details</value>
+  </data>
+  <data name="SponsorReview_ColTourist" xml:space="preserve">
+    <value>Tourist</value>
+  </data>
+  <data name="SponsorBranch_ColName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SponsorBranch_ColActions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="RewardAdmin_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="TouristAdmin_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Destination_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Mission_Button_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="SponsorBranch_EmptyMessage" xml:space="preserve">
+    <value>No branches found.</value>
+  </data>
+  <data name="TripDetails_MapMarkerInfo" xml:space="preserve">
+    <value>Each stop carries data-lat / data-lng / data-id for future markers</value>
+  </data>
+  <data name="RoleAdmin_AccountProtected" xml:space="preserve">
+    <value>Account protected</value>
+  </data>
+  <data name="RoleAdmin_Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="AdminSupport_OpenDownload" xml:space="preserve">
+    <value>Open / Download</value>
+  </data>
+  <data name="Sponsor_ColDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Mission_SelectDestination" xml:space="preserve">
+    <value>-- Select Destination --</value>
+  </data>
+  <data name="SponsorNotification_Attachment" xml:space="preserve">
+    <value>Attachment (photo or video, optional)</value>
+  </data>
+  <data name="TouristAdmin_Missions" xml:space="preserve">
+    <value>Missions</value>
+  </data>
+  <data name="Sponsor_SaveBtn" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TouristSupport_NoTickets" xml:space="preserve">
+    <value>No tickets submitted yet.</value>
+  </data>
+  <data name="TouristSupport_SubmitTicket" xml:space="preserve">
+    <value>Submit Ticket</value>
+  </data>
+  <data name="Mission_PageTitle" xml:space="preserve">
+    <value>Missions</value>
+  </data>
+  <data name="Sponsor_NoRewardsMessage" xml:space="preserve">
+    <value>No rewards provided yet.</value>
+  </data>
+  <data name="Mission_Page_Title_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="TripPlan_Heading" xml:space="preserve">
+    <value>Trip Plans</value>
+  </data>
+  <data name="TouristAdmin_PointsEarned" xml:space="preserve">
+    <value>Points Earned</value>
+  </data>
+  <data name="Mission_AddNewTitle" xml:space="preserve">
+    <value>Add New Mission</value>
+  </data>
+  <data name="TouristSupport_Submitted" xml:space="preserve">
+    <value>Submitted</value>
+  </data>
+  <data name="SponsorReview_ColComment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="SponsorBranch_EditHeading" xml:space="preserve">
+    <value>Edit Branch</value>
+  </data>
+  <data name="TripPlan_Index" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="Destination_TableStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TouristAdmin_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="RewardAdmin_BackToList" xml:space="preserve">
+    <value>Back to List</value>
+  </data>
+  <data name="RewardAdmin_SelectSponsor" xml:space="preserve">
+    <value>--Select Sponsor--</value>
+  </data>
+  <data name="SponsorBranch_ColAddress" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="SponsorBranch_EditTip" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="TripPlan_AddTripPlan" xml:space="preserve">
+    <value>Add Trip Plan</value>
+  </data>
+  <data name="TouristSupport_TicketDetails" xml:space="preserve">
+    <value>Ticket Details</value>
+  </data>
+  <data name="Destination_TableVisits" xml:space="preserve">
+    <value>Visits</value>
+  </data>
+  <data name="Destination_TableNum" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="SponsorNotification_TableHeaderStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="SponsorPortal_MostWanted" xml:space="preserve">
+    <value>Most-Wanted</value>
+  </data>
+  <data name="TripDetails_StatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Sponsor_PhoneNumber" xml:space="preserve">
+    <value>Phone Number</value>
+  </data>
+  <data name="Mission_DestinationColumn" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="TouristAdmin_CompletedAt" xml:space="preserve">
+    <value>Completed At</value>
+  </data>
+  <data name="SponsorReward_TableActions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Destination_StatusInactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="RewardAdmin_PointsRequired" xml:space="preserve">
+    <value>Points Required</value>
+  </data>
+  <data name="SponsorNotification_BackToSupport" xml:space="preserve">
+    <value>Back to Support</value>
+  </data>
+  <data name="TouristAdmin_TripPlans" xml:space="preserve">
+    <value>Trip Plans</value>
+  </data>
+  <data name="SponsorBranch_CreateHeading" xml:space="preserve">
+    <value>Create Branch</value>
+  </data>
+  <data name="SponsorNotification_NotificationsTitle" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="SponsorPortal_Support" xml:space="preserve">
+    <value>Support</value>
+  </data>
+  <data name="TripPlan_EndDate" xml:space="preserve">
+    <value>End Date</value>
+  </data>
+  <data name="Mission_GuestsOnly" xml:space="preserve">
+    <value>Guests only view</value>
+  </data>
+  <data name="SponsorNotification_SupportTitle" xml:space="preserve">
+    <value>Support</value>
+  </data>
+  <data name="SponsorNotification_Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="TripDetails_Budget" xml:space="preserve">
+    <value>Budget</value>
+  </data>
+  <data name="SponsorReward_MyRewards" xml:space="preserve">
+    <value>My Rewards</value>
+  </data>
+  <data name="Destination_Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="SponsorBranch_DeleteTip" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="RoleAdmin_SelectRoleOption" xml:space="preserve">
+    <value>-- Select a Role --</value>
+  </data>
+  <data name="SponsorApproval_ColEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Sponsor_ColRequiredPoints" xml:space="preserve">
+    <value>Required Points</value>
+  </data>
+  <data name="TripPlan_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TripPlan_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="RoleAdmin_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="SponsorNotification_SelectCategory" xml:space="preserve">
+    <value>Select a category…</value>
+  </data>
+  <data name="RewardAdmin_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="RoleAdmin_DeleteConfirmPrefix" xml:space="preserve">
+    <value>This will permanently remove the login account for</value>
+  </data>
+  <data name="TripPlan_Departure" xml:space="preserve">
+    <value>Departure</value>
+  </data>
+  <data name="Sponsor_DeleteTitle" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="TripDetails_ArrivalLabel" xml:space="preserve">
+    <value>Arrival</value>
+  </data>
+  <data name="SponsorRedemption_ColTourist" xml:space="preserve">
+    <value>Tourist</value>
+  </data>
+  <data name="RewardAdmin_AllTypes" xml:space="preserve">
+    <value>All Types</value>
+  </data>
+  <data name="TouristAdmin_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="TouristAdmin_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Mission_Label_Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="SponsorPortal_RedemptionsHeader" xml:space="preserve">
+    <value>Redemptions</value>
+  </data>
+  <data name="RoleAdmin_AssignRoleToUser" xml:space="preserve">
+    <value>Assign Role to User</value>
+  </data>
+  <data name="SponsorRedemption_ColDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="SponsorPortal_RewardViews" xml:space="preserve">
+    <value>Reward Views</value>
+  </data>
+  <data name="TripPlan_Days" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="TripPlan_TripDetails" xml:space="preserve">
+    <value>Trip Details</value>
+  </data>
+  <data name="RoleAdmin_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="SponsorRedemption_IndexHeading" xml:space="preserve">
+    <value>Redemption History</value>
+  </data>
+  <data name="SponsorBranch_ColHash" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="TripPlan_Destination" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="Reviews_CommentOptional" xml:space="preserve">
+    <value>Comment (optional)</value>
+  </data>
+  <data name="Mission_Label_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Destination_OpeningHours" xml:space="preserve">
+    <value>Opening Hours</value>
+  </data>
+  <data name="RewardAdmin_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Mission_AllTypes" xml:space="preserve">
+    <value>All Types</value>
+  </data>
+  <data name="Destination_Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="SponsorPortal_RedemptionHistory" xml:space="preserve">
+    <value>Redemption History</value>
+  </data>
+  <data name="SponsorReward_Pts" xml:space="preserve">
+    <value>pts</value>
+  </data>
+  <data name="RoleAdmin_User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="SponsorBranch_ColCoordinates" xml:space="preserve">
+    <value>Coordinates</value>
+  </data>
+  <data name="TripPlan_Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="TripPlan_Add" xml:space="preserve">
+    <value>+ Add</value>
+  </data>
+  <data name="SponsorRedemption_AllRewards" xml:space="preserve">
+    <value>All Rewards</value>
+  </data>
+  <data name="RewardAdmin_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="SponsorReward_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TripPlan_Arrival" xml:space="preserve">
+    <value>Arrival</value>
+  </data>
+  <data name="RoleAdmin_AssignRole" xml:space="preserve">
+    <value>Assign Role</value>
+  </data>
+  <data name="SponsorReward_DeleteTitle" xml:space="preserve">
+    <value>Delete Reward</value>
+  </data>
+  <data name="TouristAdmin_AddTourist" xml:space="preserve">
+    <value>Add Tourist</value>
+  </data>
+  <data name="Destination_CreateTitle" xml:space="preserve">
+    <value>Add Destination</value>
+  </data>
+  <data name="TouristAdmin_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SponsorReview_EmptyMessage" xml:space="preserve">
+    <value>No reviews to display.</value>
+  </data>
+  <data name="RewardAdmin_Quantity" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="TripPlan_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Sponsor_IndexTitle" xml:space="preserve">
+    <value>Sponsors</value>
+  </data>
+  <data name="RewardAdmin_CreateTitle" xml:space="preserve">
+    <value>Add Reward</value>
+  </data>
+  <data name="Sponsor_ColName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SponsorNotification_AlertsInfo" xml:space="preserve">
+    <value>Alerts are generated automatically for expired or out-of-stock rewards and recent redemptions. Click a notification to open what it refers to.</value>
+  </data>
+  <data name="TripPlan_DeleteTitle" xml:space="preserve">
+    <value>Delete Trip Plan</value>
+  </data>
+  <data name="RewardAdmin_Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="SponsorReward_TableStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TouristAdmin_Days" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="Reviews_ShareExperience" xml:space="preserve">
+    <value>Share your experience...</value>
+  </data>
+  <data name="TouristAdmin_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TripPlan_TripStatus" xml:space="preserve">
+    <value>Trip Status</value>
+  </data>
+  <data name="RewardAdmin_NoRewards" xml:space="preserve">
+    <value>No rewards found.</value>
+  </data>
+  <data name="Sponsor_CreateBtn" xml:space="preserve">
+    <value>+ Add</value>
+  </data>
+  <data name="RewardAdmin_Available" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="Destination_AddBtn" xml:space="preserve">
+    <value>+ Add</value>
+  </data>
+  <data name="SponsorRedemption_DashboardBtn" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Destination_City" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="RewardAdmin_YesDelete" xml:space="preserve">
+    <value>Yes, Delete</value>
+  </data>
+  <data name="Mission_Label_Points" xml:space="preserve">
+    <value>Points</value>
+  </data>
+  <data name="SponsorNotification_NotificationsPageTitle" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="SponsorPortal_Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Destination_StatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="AdminSupport_AllStatuses" xml:space="preserve">
+    <value>All Statuses</value>
+  </data>
+  <data name="AdminSupport_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="RoleAdmin_You" xml:space="preserve">
+    <value>You</value>
+  </data>
+  <data name="Sponsor_AllRewardsHeading" xml:space="preserve">
+    <value>All Rewards Provided</value>
+  </data>
+  <data name="SponsorReview_NoReviewsInfo" xml:space="preserve">
+    <value>No reviews have been submitted yet.</value>
+  </data>
+  <data name="SponsorPortal_Reviews" xml:space="preserve">
+    <value>Reviews</value>
+  </data>
+  <data name="SponsorReward_DeleteNote" xml:space="preserve">
+    <value>Soft-delete will be performed: the reward status will be set to "Removed" instead of being permanently deleted.</value>
+  </data>
+  <data name="TouristAdmin_TotalMissions" xml:space="preserve">
+    <value>Total Missions</value>
+  </data>
+  <data name="SponsorRedemption_Status_Used" xml:space="preserve">
+    <value>Used</value>
+  </data>
+  <data name="SponsorReview_FilterByRating" xml:space="preserve">
+    <value>Filter by rating</value>
+  </data>
+  <data name="Mission_Button_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Destination_EditTitle" xml:space="preserve">
+    <value>Edit Destination</value>
+  </data>
+  <data name="RewardAdmin_PageTitle" xml:space="preserve">
+    <value>Rewards</value>
+  </data>
+  <data name="SponsorNotification_YourTickets" xml:space="preserve">
+    <value>Your Tickets</value>
+  </data>
+  <data name="TouristSupport_NewTicket" xml:space="preserve">
+    <value>New Ticket</value>
+  </data>
+  <data name="AdminSupport_Submitted" xml:space="preserve">
+    <value>Submitted</value>
+  </data>
+  <data name="SponsorBranch_DeleteBtn" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Mission_TypeColumn" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Destination_FilterInactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="Sponsor_GuestsOnly" xml:space="preserve">
+    <value>Guests only view</value>
+  </data>
+  <data name="SponsorApproval_Status_Approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="Account_ResetSend" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Destination_FilterPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="SponsorApproval_IndexTitle" xml:space="preserve">
+    <value>Sponsor Approvals</value>
+  </data>
+  <data name="Sponsor_EmptyMessage" xml:space="preserve">
+    <value>No sponsors found.</value>
+  </data>
+  <data name="SponsorNotification_MarkAllRead" xml:space="preserve">
+    <value>Mark All Read</value>
+  </data>
+  <data name="Destination_TableCategory" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="SponsorReward_SoftDelete" xml:space="preserve">
+    <value>Soft Delete</value>
+  </data>
+  <data name="SponsorNotification_Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Sponsor_DeleteConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete</value>
+  </data>
+  <data name="SponsorRedemption_AllStatuses" xml:space="preserve">
+    <value>All Statuses</value>
+  </data>
+  <data name="TouristAdmin_StatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="SponsorPortal_NotificationsDesc" xml:space="preserve">
+    <value>Alerts and updates</value>
+  </data>
+  <data name="Destination_DetailsTitle" xml:space="preserve">
+    <value>Destination Details</value>
+  </data>
+  <data name="Destination_FilterAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Mission_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Destination_DeleteConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete</value>
+  </data>
+  <data name="SponsorPortal_CompleteProfileIntro" xml:space="preserve">
+    <value>Your account is assigned to the Sponsor role, but no sponsor profile is linked yet. Please fill in your business details below to continue.</value>
+  </data>
+  <data name="TouristAdmin_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Mission_Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="SponsorReview_ColHash" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="SponsorRedemption_Status_Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="RewardAdmin_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Reviews_ShowMore" xml:space="preserve">
+    <value>Show more reviews</value>
+  </data>
+  <data name="SponsorRedemption_ColVoucherCode" xml:space="preserve">
+    <value>Voucher Code</value>
+  </data>
+  <data name="SponsorNotification_NoNewNotifications" xml:space="preserve">
+    <value>No new notifications.</value>
+  </data>
+  <data name="SponsorBranch_IndexHeading" xml:space="preserve">
+    <value>Branches</value>
+  </data>
+  <data name="Destination_NoDestinations" xml:space="preserve">
+    <value>No destinations found.</value>
+  </data>
+  <data name="RoleAdmin_DeleteHelp" xml:space="preserve">
+    <value>Deleting an account removes the login only — the linked Tourist/Sponsor profile and all historical data are preserved.</value>
+  </data>
+  <data name="SponsorPortal_DashboardPageTitle" xml:space="preserve">
+    <value>Sponsor Dashboard</value>
+  </data>
+  <data name="SponsorNotification_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="SponsorPortal_DashboardDesc" xml:space="preserve">
+    <value>Redemptions, views &amp; ratings</value>
+  </data>
+  <data name="Reviews_WriteReview" xml:space="preserve">
+    <value>Write a Review</value>
+  </data>
+  <data name="Reviews_Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Sponsor_PtsUnit" xml:space="preserve">
+    <value>pts</value>
+  </data>
+  <data name="TripPlan_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="TouristAdmin_NoTourists" xml:space="preserve">
+    <value>No tourists found.</value>
+  </data>
+  <data name="Mission_Delete_Confirm" xml:space="preserve">
+    <value>Are you sure you want to delete</value>
+  </data>
+  <data name="SponsorReward_TablePoints" xml:space="preserve">
+    <value>Points</value>
+  </data>
+  <data name="Destination_TicketPrice" xml:space="preserve">
+    <value>Ticket Price</value>
+  </data>
+  <data name="Mission_Pts" xml:space="preserve">
+    <value>pts</value>
+  </data>
+  <data name="RewardAdmin_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="SponsorApproval_IndexHeading" xml:space="preserve">
+    <value>Sponsor Approvals</value>
+  </data>
+  <data name="Sponsor_ColAvailable" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="SponsorReward_Paused" xml:space="preserve">
+    <value>Paused</value>
+  </data>
+  <data name="SponsorApproval_ColNationality" xml:space="preserve">
+    <value>Nationality</value>
+  </data>
+  <data name="AdminSupport_SubjectOrDescription" xml:space="preserve">
+    <value>Subject or description…</value>
+  </data>
+  <data name="SponsorNotification_SupportPageTitle" xml:space="preserve">
+    <value>Support Tickets</value>
+  </data>
+  <data name="TouristAdmin_PointsBalance" xml:space="preserve">
+    <value>Points Balance</value>
+  </data>
+  <data name="RewardAdmin_FieldType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TouristAdmin_Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="AdminSupport_BackToInbox" xml:space="preserve">
+    <value>Back to Inbox</value>
+  </data>
+  <data name="AdminSupport_AnsweredOn" xml:space="preserve">
+    <value>Answered on</value>
+  </data>
+  <data name="Destination_NotSpecified" xml:space="preserve">
+    <value>Not specified</value>
+  </data>
+  <data name="SponsorApproval_ColRequested" xml:space="preserve">
+    <value>Requested</value>
+  </data>
+  <data name="TouristAdmin_Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="SponsorReward_PointsRequired" xml:space="preserve">
+    <value>Points Required</value>
+  </data>
+  <data name="TouristSupport_AdminRespondedTooltip" xml:space="preserve">
+    <value>Admin has responded</value>
+  </data>
+  <data name="Mission_Status_InProgress" xml:space="preserve">
+    <value>In Progress</value>
+  </data>
+  <data name="SponsorPortal_BusinessNamePlaceholder" xml:space="preserve">
+    <value>Enter your business name</value>
+  </data>
+  <data name="TouristSupport_YourTickets" xml:space="preserve">
+    <value>Your Tickets</value>
+  </data>
+  <data name="SponsorNotification_NewTicket" xml:space="preserve">
+    <value>New Ticket</value>
+  </data>
+  <data name="SponsorReward_Removed" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="RewardAdmin_Number" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="TripPlan_EditTitle" xml:space="preserve">
+    <value>Edit Trip Plan</value>
+  </data>
+  <data name="RewardAdmin_EditTitle" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="SponsorPortal_ContactLabel" xml:space="preserve">
+    <value>Contact:</value>
+  </data>
+  <data name="TripPlan_DetailsTitle" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="TouristSupport_AnsweredOn" xml:space="preserve">
+    <value>Answered on</value>
+  </data>
+  <data name="SponsorPortal_SaveAndContinue" xml:space="preserve">
+    <value>Save and Continue</value>
+  </data>
+  <data name="RoleAdmin_CurrentRole" xml:space="preserve">
+    <value>Current Role</value>
+  </data>
+  <data name="SponsorPortal_ContactNumberPlaceholder" xml:space="preserve">
+    <value>Contact phone number</value>
+  </data>
+  <data name="TouristAdmin_StatusSuspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="SponsorRedemption_ColHash" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="SponsorNotification_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Mission_Label_Destination" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="AdminSupport_AllCategories" xml:space="preserve">
+    <value>All Categories</value>
+  </data>
+  <data name="Account_ResetTitle" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="Sponsor_EditBtn" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="TouristAdmin_ActiveTrips" xml:space="preserve">
+    <value>Active Trips</value>
+  </data>
+  <data name="TouristAdmin_TouristDetails" xml:space="preserve">
+    <value>Tourist Details</value>
+  </data>
+  <data name="TouristSupport_Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="TripDetails_DepartureLabel" xml:space="preserve">
+    <value>Departure</value>
+  </data>
+  <data name="TripPlan_AddNewTripPlan" xml:space="preserve">
+    <value>Add New Trip Plan</value>
+  </data>
+  <data name="Mission_Button_ConfirmDelete" xml:space="preserve">
+    <value>Yes, Delete</value>
+  </data>
+  <data name="TripPlan_GuestsOnlyView" xml:space="preserve">
+    <value>Guests only view</value>
+  </data>
+  <data name="SponsorNotification_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="TouristSupport_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="TouristAdmin_NotSpecified" xml:space="preserve">
+    <value>---</value>
+  </data>
+  <data name="Destination_AddFirst" xml:space="preserve">
+    <value>Add First Destination</value>
+  </data>
+  <data name="Destination_Free" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="Destination_CreateHeading" xml:space="preserve">
+    <value>Add New Destination</value>
+  </data>
+  <data name="TouristAdmin_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="RoleAdmin_Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="TouristSupport_SelectCategory" xml:space="preserve">
+    <value>Select a category…</value>
+  </data>
+  <data name="TripPlan_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TouristAdmin_Pts" xml:space="preserve">
+    <value>pts</value>
+  </data>
+  <data name="AdminSupport_Subject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="TripDetails_NoStops" xml:space="preserve">
+    <value>No stops yet.</value>
+  </data>
+  <data name="Reviews_SubmitReview" xml:space="preserve">
+    <value>Submit Review</value>
+  </data>
+  <data name="Sponsor_AddFirstBtn" xml:space="preserve">
+    <value>Add First Sponsor</value>
+  </data>
+  <data name="AdminSupport_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="TouristAdmin_EditTourist" xml:space="preserve">
+    <value>Edit Tourist</value>
+  </data>
+  <data name="SponsorBranch_DeleteTitle" xml:space="preserve">
+    <value>Delete Branch</value>
+  </data>
+  <data name="RewardAdmin_FieldExpiration" xml:space="preserve">
+    <value>Expiration</value>
+  </data>
+  <data name="Sponsor_CreateTitle" xml:space="preserve">
+    <value>Add Sponsor</value>
+  </data>
+  <data name="TouristSupport_Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="TripPlan_Total" xml:space="preserve">
+    <value>Total:</value>
+  </data>
+  <data name="Destination_Visits" xml:space="preserve">
+    <value>Visits</value>
+  </data>
+  <data name="RewardAdmin_Points" xml:space="preserve">
+    <value>Points</value>
+  </data>
+  <data name="AdminSupport_Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="SponsorNotification_Submitted" xml:space="preserve">
+    <value>Submitted</value>
+  </data>
+  <data name="RewardAdmin_Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="SponsorReward_Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="RoleAdmin_RoleViewModel" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="SponsorNotification_TicketDetailsPageTitle" xml:space="preserve">
+    <value>Ticket Details</value>
+  </data>
+  <data name="Mission_Button_Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="TripPlan_Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="TripDetails_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SponsorBranch_DeleteConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this branch?</value>
+  </data>
+  <data name="SponsorReward_AddReward" xml:space="preserve">
+    <value>Add Reward</value>
+  </data>
+  <data name="RewardAdmin_FieldDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="SponsorPortal_RewardsRedeemed" xml:space="preserve">
+    <value>Rewards Redeemed</value>
+  </data>
+  <data name="TouristSupport_Support" xml:space="preserve">
+    <value>Support</value>
+  </data>
+  <data name="Sponsor_DeleteHeading" xml:space="preserve">
+    <value>Delete Reward</value>
+  </data>
+  <data name="Sponsor_BackBtn" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="TripPlan_EmptyState" xml:space="preserve">
+    <value>No trip plans found.</value>
+  </data>
+  <data name="Sponsor_AllTypes" xml:space="preserve">
+    <value>All Types</value>
+  </data>
+  <data name="Destination_DeleteTitle" xml:space="preserve">
+    <value>Delete Destination</value>
+  </data>
+  <data name="SponsorNotification_AttachmentHeading" xml:space="preserve">
+    <value>Attachment</value>
+  </data>
+  <data name="TripPlan_TouristId" xml:space="preserve">
+    <value>Tourist ID</value>
+  </data>
+  <data name="SponsorPortal_MonthlyActivityFor" xml:space="preserve">
+    <value>Monthly activity for</value>
+  </data>
+  <data name="TripDetails_ItineraryStops" xml:space="preserve">
+    <value>Itinerary Stops</value>
+  </data>
+  <data name="TouristAdmin_End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="SponsorReward_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="RewardAdmin_DetailsTitle" xml:space="preserve">
+    <value>Reward Details</value>
+  </data>
+  <data name="SponsorReward_TableTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="SponsorPortal_SponsorBadge" xml:space="preserve">
+    <value>Sponsor</value>
+  </data>
+  <data name="SponsorReward_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="RewardAdmin_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="TripDetails_StatusCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="TouristSupport_Subject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="SponsorRedemption_RewardLabel" xml:space="preserve">
+    <value>Reward</value>
+  </data>
+  <data name="RewardAdmin_FieldTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TripPlan_Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="AdminSupport_TypeYourReply" xml:space="preserve">
+    <value>Type your reply…</value>
+  </data>
+  <data name="SponsorPortal_AvgRating" xml:space="preserve">
+    <value>Avg. Rating</value>
+  </data>
+  <data name="SponsorPortal_PointsRedeemed" xml:space="preserve">
+    <value>Points Redeemed</value>
+  </data>
+  <data name="SponsorPortal_CompleteProfileTitle" xml:space="preserve">
+    <value>Complete Your Sponsor Profile</value>
+  </data>
+  <data name="Mission_Status_Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="RewardAdmin_TotalLabel" xml:space="preserve">
+    <value>Total:</value>
+  </data>
+  <data name="Destination_AllCategories" xml:space="preserve">
+    <value>All Categories</value>
+  </data>
+  <data name="SponsorApproval_ColPhone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Sponsor_IndexHeading" xml:space="preserve">
+    <value>Sponsors</value>
+  </data>
+  <data name="SponsorRedemption_StatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="SponsorBranch_CreateTitle" xml:space="preserve">
+    <value>Create Branch</value>
+  </data>
+  <data name="Sponsor_ColAddress" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="TripDetails_ReorderNotice" xml:space="preserve">
+    <value>You reordered the stops — please review and adjust each stop's dates if needed.</value>
+  </data>
+  <data name="Mission_ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Reviews_SelectRating" xml:space="preserve">
+    <value>Select rating</value>
+  </data>
+  <data name="TripPlan_Tourist" xml:space="preserve">
+    <value>Tourist</value>
+  </data>
+  <data name="SponsorApproval_ColApplicant" xml:space="preserve">
+    <value>Applicant</value>
+  </data>
+  <data name="SponsorApproval_ApproveBtn" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="SponsorReward_EmptyState" xml:space="preserve">
+    <value>No rewards found. Add your first reward above.</value>
+  </data>
+  <data name="SponsorPortal_ReportsDesc" xml:space="preserve">
+    <value>Monthly redemptions &amp; views</value>
+  </data>
+  <data name="SponsorApproval_ColActions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Sponsor_TotalLabel" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Sponsor_EditHeading" xml:space="preserve">
+    <value>Edit Sponsor</value>
+  </data>
+  <data name="SponsorRedemption_IndexTitle" xml:space="preserve">
+    <value>Redemption History</value>
+  </data>
+  <data name="Mission_Number" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="TouristSupport_BackToSupport" xml:space="preserve">
+    <value>Back to Support</value>
+  </data>
+  <data name="Mission_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="TouristSupport_AttachmentLabel" xml:space="preserve">
+    <value>Attachment (photo or video, optional)</value>
+  </data>
+  <data name="SponsorReward_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="SponsorNotification_Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="SponsorReward_AvailableBranches" xml:space="preserve">
+    <value>Available Branches</value>
+  </data>
+  <data name="SponsorPortal_RewardDetailViews" xml:space="preserve">
+    <value>Reward Detail Views</value>
+  </data>
+  <data name="Sponsor_SearchPlaceholder" xml:space="preserve">
+    <value>Search sponsors...</value>
+  </data>
+  <data name="Destination_TableActions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="SponsorBranch_SaveBtn" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TouristAdmin_Passport" xml:space="preserve">
+    <value>Passport</value>
+  </data>
+  <data name="TouristAdmin_DeleteTourist" xml:space="preserve">
+    <value>Delete Tourist</value>
+  </data>
+  <data name="SponsorBranch_IndexTitle" xml:space="preserve">
+    <value>Branches</value>
+  </data>
+  <data name="Sponsor_CreateHeading" xml:space="preserve">
+    <value>Add New Sponsor</value>
+  </data>
+  <data name="TouristAdmin_AllNationalities" xml:space="preserve">
+    <value>All Nationalities</value>
+  </data>
+  <data name="SponsorRedemption_FromLabel" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="TripPlan_City" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="SponsorReview_IndexTitle" xml:space="preserve">
+    <value>Sponsor Reviews</value>
+  </data>
+  <data name="SponsorReward_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SponsorPortal_AddressLabel" xml:space="preserve">
+    <value>Address:</value>
+  </data>
+  <data name="SponsorReward_QuantityAvailable" xml:space="preserve">
+    <value>Quantity Available</value>
+  </data>
+  <data name="TripPlan_Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="SponsorReward_EditTitle" xml:space="preserve">
+    <value>Edit Reward</value>
+  </data>
+  <data name="RewardAdmin_DeleteConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete</value>
+  </data>
+  <data name="SponsorRedemption_ColStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="RoleAdmin_Change" xml:space="preserve">
+    <value>Change</value>
+  </data>
+  <data name="Sponsor_ColType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="AdminSupport_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TouristAdmin_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="TripDetails_StatusCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="Destination_YesDelete" xml:space="preserve">
+    <value>Yes, Delete</value>
+  </data>
+  <data name="SponsorReward_TableType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="RewardAdmin_DeleteTitle" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="AdminSupport_NoResponseYet" xml:space="preserve">
+    <value>No response yet.</value>
+  </data>
+  <data name="TouristAdmin_Mission" xml:space="preserve">
+    <value>Mission</value>
+  </data>
+  <data name="SponsorPortal_Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="SponsorPortal_MonthlyBreakdown" xml:space="preserve">
+    <value>Monthly Breakdown</value>
+  </data>
+  <data name="SponsorNotification_AnsweredOn" xml:space="preserve">
+    <value>Answered on</value>
+  </data>
+  <data name="TripDetails_Companions" xml:space="preserve">
+    <value>Companions</value>
+  </data>
+  <data name="AdminSupport_Submitter" xml:space="preserve">
+    <value>Submitter</value>
+  </data>
+  <data name="SponsorPortal_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="RewardAdmin_Expires" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="SponsorPortal_MetricsScopeHelp" xml:space="preserve">
+    <value>Metrics are scoped to your own rewards and branches.</value>
+  </data>
+  <data name="TripPlan_SearchPlaceholder" xml:space="preserve">
+    <value>Search trip plans...</value>
+  </data>
+
+</root>

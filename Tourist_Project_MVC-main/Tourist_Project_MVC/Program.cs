@@ -15,7 +15,7 @@ namespace Tourist_Project_MVC
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews().AddViewLocalization();
 
             builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
             builder.Services.Configure<RequestLocalizationOptions>(o =>
@@ -33,6 +33,7 @@ namespace Tourist_Project_MVC
             builder.Services.AddScoped<IRewardRepository, RewardRepository>();
             builder.Services.AddScoped<ISponsorRepository, SponsorRepository>();
             builder.Services.AddScoped<ITripPlanRepository, TripPlanRepository>();
+            builder.Services.AddScoped<ISiteReviewRepository, SiteReviewRepository>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<ISupportTicketService, SupportTicketService>();
             builder.Services.AddDbContext<TouristContext>(options =>

@@ -1,0 +1,2278 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Role_Admin" xml:space="preserve">
+    <value>مدير</value>
+  </data>
+  <data name="Role_Sponsor" xml:space="preserve">
+    <value>راعي</value>
+  </data>
+  <data name="Role_Tourist" xml:space="preserve">
+    <value>سائح</value>
+  </data>
+  <data name="Role_Guest" xml:space="preserve">
+    <value>زائر</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="Lang_English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Lang_Arabic" xml:space="preserve">
+    <value>العربية</value>
+  </data>
+  <data name="Lang_Spanish" xml:space="preserve">
+    <value>Español</value>
+  </data>
+  <data name="Lang_German" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="Lang_Chinese" xml:space="preserve">
+    <value>中文</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="SignUp" xml:space="preserve">
+    <value>إنشاء حساب</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>القائمة</value>
+  </data>
+  <data name="Nav_Home" xml:space="preserve">
+    <value>الرئيسية</value>
+  </data>
+  <data name="Nav_Administration" xml:space="preserve">
+    <value>الإدارة</value>
+  </data>
+  <data name="Nav_Tourists" xml:space="preserve">
+    <value>السائحون</value>
+  </data>
+  <data name="Nav_Destinations" xml:space="preserve">
+    <value>الوجهات</value>
+  </data>
+  <data name="Nav_TripPlans" xml:space="preserve">
+    <value>خطط الرحلات</value>
+  </data>
+  <data name="Nav_Missions" xml:space="preserve">
+    <value>المهام</value>
+  </data>
+  <data name="Nav_AllRewards" xml:space="preserve">
+    <value>جميع المكافآت</value>
+  </data>
+  <data name="Nav_Sponsors" xml:space="preserve">
+    <value>الرعاة</value>
+  </data>
+  <data name="Nav_Accounts" xml:space="preserve">
+    <value>الحسابات</value>
+  </data>
+  <data name="Nav_SupportInbox" xml:space="preserve">
+    <value>صندوق الدعم</value>
+  </data>
+  <data name="Nav_Approvals" xml:space="preserve">
+    <value>الموافقات</value>
+  </data>
+  <data name="Nav_AddRole" xml:space="preserve">
+    <value>إضافة دور</value>
+  </data>
+  <data name="Nav_AssignRoles" xml:space="preserve">
+    <value>تعيين الأدوار</value>
+  </data>
+  <data name="Nav_Logout" xml:space="preserve">
+    <value>تسجيل الخروج</value>
+  </data>
+  <data name="Nav_NearMe" xml:space="preserve">
+    <value>بالقرب مني</value>
+  </data>
+  <data name="Nav_Features" xml:space="preserve">
+    <value>الميزات</value>
+  </data>
+  <data name="Nav_Portal" xml:space="preserve">
+    <value>البوابة</value>
+  </data>
+  <data name="Nav_Branches" xml:space="preserve">
+    <value>الفروع</value>
+  </data>
+  <data name="Nav_Rewards" xml:space="preserve">
+    <value>المكافآت</value>
+  </data>
+  <data name="Nav_Reports" xml:space="preserve">
+    <value>التقارير</value>
+  </data>
+  <data name="Nav_Explore" xml:space="preserve">
+    <value>استكشاف</value>
+  </data>
+  <data name="Nav_Trip" xml:space="preserve">
+    <value>الرحلة</value>
+  </data>
+  <data name="Nav_Profile" xml:space="preserve">
+    <value>الملف الشخصي</value>
+  </data>
+  <data name="Nav_Support" xml:space="preserve">
+    <value>الدعم</value>
+  </data>
+  <data name="Nav_About" xml:space="preserve">
+    <value>عن المنصة</value>
+  </data>
+  <data name="Footer_Copyright" xml:space="preserve">
+    <value>نكشف العجائب المخفية عبر مصر. جميع الحقوق محفوظة.</value>
+  </data>
+  <data name="Ai_Title" xml:space="preserve">
+    <value>مساعد إكسبلور</value>
+  </data>
+  <data name="Ai_ComingSoon" xml:space="preserve">
+    <value>مساعد الذكاء الاصطناعي — قريباً</value>
+  </data>
+  <data name="Ai_Description" xml:space="preserve">
+    <value>رفيق السفر الذكي لإنشاء مسارات مخصصة سيظهر هنا قريباً.</value>
+  </data>
+  <data name="Ai_Placeholder" xml:space="preserve">
+    <value>اسألني أي شيء…</value>
+  </data>
+  <data name="Ai_Send" xml:space="preserve">
+    <value>إرسال</value>
+  </data>
+  <data name="Ai_Open" xml:space="preserve">
+    <value>فتح المساعد</value>
+  </data>
+  <data name="Ai_Close" xml:space="preserve">
+    <value>إغلاق المساعد</value>
+  </data>
+  <data name="Search_Placeholder" xml:space="preserve">
+    <value>ابحث في مصر…</value>
+  </data>
+  <data name="Search_Aria" xml:space="preserve">
+    <value>البحث عن الوجهات</value>
+  </data>
+  <data name="Stats_Title" xml:space="preserve">
+    <value>السياحة في أرقام</value>
+  </data>
+  <data name="Stat_ArchaeologicalSites" xml:space="preserve">
+    <value>المواقع الأثرية</value>
+  </data>
+  <data name="Stat_RegisteredTourists" xml:space="preserve">
+    <value>السائحون المسجلون</value>
+  </data>
+  <data name="Stat_TripPlansCreated" xml:space="preserve">
+    <value>خطط الرحلات المنشأة</value>
+  </data>
+  <data name="Stat_ActiveMissions" xml:space="preserve">
+    <value>المهام النشطة</value>
+  </data>
+  <data name="Hero_Title" xml:space="preserve">
+    <value>إكسبلور</value>
+  </data>
+  <data name="Hero_Subtitle" xml:space="preserve">
+    <value>اكتشف العجائب المخفية في مصر</value>
+  </data>
+  <data name="Hero_ExploreBtn" xml:space="preserve">
+    <value>استكشف الآن</value>
+  </data>
+  <data name="About_Title" xml:space="preserve">
+    <value>منصة السياحة الذكية المدعومة بالذكاء الاصطناعي</value>
+  </data>
+  <data name="About_Text" xml:space="preserve">
+    <value>تجمع إكسبلور بين الذكاء الاصطناعي ونظم المعلومات الجغرافية والألعاب لثورة السياحة في مصر. اكتشف المواقع الأثرية المخفية، واكسب المكافآت، وعيش تجربة مصر كما لم تعشها من قبل.</value>
+  </data>
+  <data name="Feature1_Title" xml:space="preserve">
+    <value>معالم سياحية في مصر</value>
+  </data>
+  <data name="Feature1_Text" xml:space="preserve">
+    <value>بُنيت أهرامات الجيزة العظيمة قبل أكثر من 4500 عام ك مقابر لملوك مصر القديمة. الهرم الأكبر هو الأقدم من عجائب الدنيا السبع القديمة والوحيد الذي لا يزال قائماً حتى اليوم. تعتبر أهرامات الجيزة من أشهر المعالم السياحية في العالم. هناك العديد من الأماكن المثيرة للاهتمام لزيارتها في مصر.</value>
+  </data>
+  <data name="Feature1_Link" xml:space="preserve">
+    <value>عرض جميع الوجهات</value>
+  </data>
+  <data name="Feature2_Title" xml:space="preserve">
+    <value>مخطط الرحلة بالذكاء الاصطناعي</value>
+  </data>
+  <data name="Feature2_Text" xml:space="preserve">
+    <value>يولد ذكاؤنا الاصطناعي مسارات مخصصة بناءً على اهتماماتك وميزانيتك ومدة الرحلة. التوجيه الجغرافي الذكي يجد المسار الأمثل بين الوجهات.</value>
+  </data>
+  <data name="Feature2_Link" xml:space="preserve">
+    <value>خطط رحلتك</value>
+  </data>
+  <data name="Feature3_Title" xml:space="preserve">
+    <value>التلعيب والمكافآت</value>
+  </data>
+  <data name="Feature3_Text" xml:space="preserve">
+    <value>أكمل المهام، واكسب النقاط، واجمع الشارات على جواز التراث الرقمي. استبدل النقاط بخصومات على الفنادق وتذاكر المتاحف وتجارب حصرية.</value>
+  </data>
+  <data name="Feature3_Link" xml:space="preserve">
+    <value>عرض المهام</value>
+  </data>
+  <data name="Contact_GIS" xml:space="preserve">
+    <value>مدعوم بنظم المعلومات الجغرافية</value>
+  </data>
+  <data name="Contact_GIS_Text" xml:space="preserve">
+    <value>تحسين المسار الذكي باستخدام تحليل شبكة ArcGIS</value>
+  </data>
+  <data name="Contact_AI" xml:space="preserve">
+    <value>مدعوم بالذكاء الاصطناعي</value>
+  </data>
+  <data name="Contact_AI_Text" xml:space="preserve">
+    <value>توصيات شخصية مدعومة بـ OpenAI</value>
+  </data>
+  <data name="Contact_Gamified" xml:space="preserve">
+    <value>مبني على الألعاب</value>
+  </data>
+  <data name="Contact_Gamified_Text" xml:space="preserve">
+    <value>مهام، شارات، ومكافآت لكل مستكشف</value>
+  </data>
+  <data name="Explore_Title" xml:space="preserve">
+    <value>استكشاف مصر</value>
+  </data>
+  <data name="Explore_Subtitle" xml:space="preserve">
+    <value>اكتشف الوجهات عبر وادي النيل وما وراءه</value>
+  </data>
+  <data name="Explore_SearchPlaceholder" xml:space="preserve">
+    <value>ابحث عن الوجهات أو المدن...</value>
+  </data>
+  <data name="Explore_All" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="Explore_HiddenGems" xml:space="preserve">
+    <value>الكنوز المخفية</value>
+  </data>
+  <data name="Explore_Temples" xml:space="preserve">
+    <value>المعابد</value>
+  </data>
+  <data name="Explore_Museums" xml:space="preserve">
+    <value>المتاحف</value>
+  </data>
+  <data name="Explore_Nature" xml:space="preserve">
+    <value>الطبيعة</value>
+  </data>
+  <data name="Explore_Adventure" xml:space="preserve">
+    <value>المغامرات</value>
+  </data>
+  <data name="Explore_NotRated" xml:space="preserve">
+    <value>لم يتم التقييم بعد</value>
+  </data>
+  <data name="Explore_New" xml:space="preserve">
+    <value>جديد</value>
+  </data>
+  <data name="Explore_NoDestinations" xml:space="preserve">
+    <value>لم يتم العثور على وجهات.</value>
+  </data>
+  <data name="Explore_Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="Explore_MapPlaceholder" xml:space="preserve">
+    <value>سيظهر الخريطة هنا</value>
+  </data>
+  <data name="Explore_MapNote" xml:space="preserve">
+    <value>كل بطاقة قائمة تحمل بيانات lat/lng/id للعلامات المستقبلية</value>
+  </data>
+  <data name="NearMe_Title" xml:space="preserve">
+    <value>بالقرب مني</value>
+  </data>
+  <data name="NearMe_Subtitle" xml:space="preserve">
+    <value>اكتشف الشركاء القريبين من الموقع الذي ستزوره</value>
+  </data>
+  <data name="NearMe_Reference" xml:space="preserve">
+    <value>وجهة مرجعية</value>
+  </data>
+  <data name="NearMe_SearchPlaceholder" xml:space="preserve">
+    <value>ابحث عن الرعاة...</value>
+  </data>
+  <data name="NearMe_Go" xml:space="preserve">
+    <value>اذهب</value>
+  </data>
+  <data name="NearMe_Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="NearMe_All" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="NearMe_Hotel" xml:space="preserve">
+    <value>فندق</value>
+  </data>
+  <data name="NearMe_Airline" xml:space="preserve">
+    <value>خطوط جوية</value>
+  </data>
+  <data name="NearMe_Agency" xml:space="preserve">
+    <value>وكالة سياحية</value>
+  </data>
+  <data name="NearMe_Rating" xml:space="preserve">
+    <value>التقييم</value>
+  </data>
+  <data name="NearMe_Any" xml:space="preserve">
+    <value>أي</value>
+  </data>
+  <data name="NearMe_Distance" xml:space="preserve">
+    <value>المسافة</value>
+  </data>
+  <data name="NearMe_Sort" xml:space="preserve">
+    <value>ترتيب</value>
+  </data>
+  <data name="NearMe_Nearest" xml:space="preserve">
+    <value>الأقرب</value>
+  </data>
+  <data name="NearMe_TopRated" xml:space="preserve">
+    <value>الأعلى تقييماً</value>
+  </data>
+  <data name="NearMe_DistanceTitle" xml:space="preserve">
+    <value>المسافة من الوجهة</value>
+  </data>
+  <data name="NearMe_NoSponsors" xml:space="preserve">
+    <value>لا يوجد رعاة يطابقون الفلاتر.</value>
+  </data>
+  <data name="About_PageTitle" xml:space="preserve">
+    <value>عن إكسبلور</value>
+  </data>
+  <data name="About_Intro" xml:space="preserve">
+    <value>[مقدمة المؤسسة تظهر هنا — مثلاً من نحن ومهمتنا لجعل تراث مصر متاحاً لكل مسافر.]</value>
+  </data>
+  <data name="About_Story" xml:space="preserve">
+    <value>قصتنا</value>
+  </data>
+  <data name="About_StoryText" xml:space="preserve">
+    <value>[قصة المؤسسة تظهر هنا — التأسيس، ما ألهم المنصة، والمشكلة التي تحلها للسياح والمواقع المحلية.]</value>
+  </data>
+  <data name="About_Values" xml:space="preserve">
+    <value>ما نؤمن به</value>
+  </data>
+  <data name="About_Discovery" xml:space="preserve">
+    <value>الاستكشاف</value>
+  </data>
+  <data name="About_DiscoveryText" xml:space="preserve">
+    <value>[وصف القيمة يظهر هنا]</value>
+  </data>
+  <data name="About_Innovation" xml:space="preserve">
+    <value>الابتكار</value>
+  </data>
+  <data name="About_InnovationText" xml:space="preserve">
+    <value>[وصف القيمة يظهر هنا]</value>
+  </data>
+  <data name="About_Community" xml:space="preserve">
+    <value>المجتمع</value>
+  </data>
+  <data name="About_CommunityText" xml:space="preserve">
+    <value>[وصف القيمة يظهر هنا]</value>
+  </data>
+  <data name="About_Team" xml:space="preserve">
+    <value>الفريق</value>
+  </data>
+  <data name="About_TeamText" xml:space="preserve">
+    <value>[قسم الفريق يظهر هنا — المؤسسون والمساهمون والشركاء. استبدل بنسخة حقيقية لاحقاً.]</value>
+  </data>
+  <data name="Features_Title" xml:space="preserve">
+    <value>تطبيق إكسبلور</value>
+  </data>
+  <data name="Features_Subtitle" xml:space="preserve">
+    <value>رفيقك الذكي لاستكشاف مصر — الخرائط، الألعاب، الذكاء الاصطناعي، والمكافآت، كل ذلك في جيبك.</value>
+  </data>
+  <data name="Features_Feature1_Title" xml:space="preserve">
+    <value>خرائط داخلية</value>
+  </data>
+  <data name="Features_Feature1_Text" xml:space="preserve">
+    <value>لا تضيع داخل المتاحف والمعابد الكبيرة. الخرائط الداخلية عالية التفاصيل ترشدك ممراً بممر عبر مواقع تراث مصر.</value>
+  </data>
+  <data name="Features_Feature2_Title" xml:space="preserve">
+    <value>وضع الملاحة</value>
+  </data>
+  <data name="Features_Feature2_Text" xml:space="preserve">
+    <value>التوجيه خطوة بخطوة بين الوجهات مع تحسين ذكي للمسار يأخذ في الاعتبار ساعات العمل ووقت السفر.</value>
+  </data>
+  <data name="Features_Feature3_Title" xml:space="preserve">
+    <value>ألعاب ممتعة</value>
+  </data>
+  <data name="Features_Feature3_Text" xml:space="preserve">
+    <value>اجعل كل زيارة مغامرة بألعاب مصغرة قائمة على الموقع وفرائس للعائلة بأكملها.</value>
+  </data>
+  <data name="Features_Feature4_Title" xml:space="preserve">
+    <value>ماسح الكاميرا</value>
+  </data>
+  <data name="Features_Feature4_Text" xml:space="preserve">
+    <value>وجه كاميرتك إلى نصب تذكاري لتعرف فوراً تاريخه وعصره والقصص المنحوتة في كل حجر.</value>
+  </data>
+  <data name="Features_Feature5_Title" xml:space="preserve">
+    <value>المساعد الذكي</value>
+  </data>
+  <data name="Features_Feature5_Text" xml:space="preserve">
+    <value>اسأل أي شيء عن عجائب مصر واحصل على مسارات مخصصة ونصائح وإجابات مدعومة بمساعد سفر ذكي.</value>
+  </data>
+  <data name="Features_Feature6_Title" xml:space="preserve">
+    <value>الترجمة بين الأقران</value>
+  </data>
+  <data name="Features_Feature6_Text" xml:space="preserve">
+    <value>اكسر حاجز اللغة مع ترجمة فورية بين الأقران، حتى تتمكن من التواصل مع السكان المحليين أينما كنت.</value>
+  </data>
+  <data name="Features_Feature7_Title" xml:space="preserve">
+    <value>نظام المكافآت</value>
+  </data>
+  <data name="Features_Feature7_Text" xml:space="preserve">
+    <value>اكسب نقاط لكل مهمة واستبدلها بخصومات حصرية على الوجبات والإقامات والتجارب مع شركائنا.</value>
+  </data>
+  <data name="Features_BottomTitle" xml:space="preserve">
+    <value>ابدأ الاستكشاف اليوم</value>
+  </data>
+  <data name="Features_BottomText" xml:space="preserve">
+    <value>حمل التطبيق وافتح العجائب المخفية عبر مصر.</value>
+  </data>
+  <data name="Login_EmailOrUsername" xml:space="preserve">
+    <value>البريد الإلكتروني أو اسم المستخدم</value>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="Login_Submit" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="Login_NeedAccount" xml:space="preserve">
+    <value>تحتاج حساب؟ إنشاء حساب</value>
+  </data>
+  <data name="Login_ForgotPassword" xml:space="preserve">
+    <value>نسيت كلمة المرور</value>
+  </data>
+  <data name="Register_AccountType" xml:space="preserve">
+    <value>أقوم بالتسجيل كـ</value>
+  </data>
+  <data name="Register_Tourist" xml:space="preserve">
+    <value>التسجيل كسائح</value>
+  </data>
+  <data name="Register_Sponsor" xml:space="preserve">
+    <value>التسجيل كراعي</value>
+  </data>
+  <data name="Register_Submit" xml:space="preserve">
+    <value>إنشاء حساب</value>
+  </data>
+  <data name="Register_AlreadyHaveAccount" xml:space="preserve">
+    <value>لديك حساب بالفعل؟ تسجيل الدخول</value>
+  </data>
+  <data name="Trip_Duration" xml:space="preserve">
+    <value>المدة</value>
+  </data>
+  <data name="Trip_Budget" xml:space="preserve">
+    <value>الميزانية</value>
+  </data>
+  <data name="Trip_BudgetPlaceholder" xml:space="preserve">
+    <value>مثال: 1000</value>
+  </data>
+  <data name="Trip_Companions" xml:space="preserve">
+    <value>المرافقون</value>
+  </data>
+  <data name="Trip_CompanionsPlaceholder" xml:space="preserve">
+    <value>مثال: 2</value>
+  </data>
+  <data name="Trip_Interests" xml:space="preserve">
+    <value>الاهتمامات</value>
+  </data>
+  <data name="Trip_HiddenGems" xml:space="preserve">
+    <value>الكنوز المخفية</value>
+  </data>
+  <data name="Trip_Temples" xml:space="preserve">
+    <value>المعابد</value>
+  </data>
+  <data name="Trip_Museums" xml:space="preserve">
+    <value>المتاحف</value>
+  </data>
+  <data name="Trip_Nature" xml:space="preserve">
+    <value>الطبيعة</value>
+  </data>
+  <data name="Trip_Adventure" xml:space="preserve">
+    <value>المغامرات</value>
+  </data>
+  <data name="Trip_Historical" xml:space="preserve">
+    <value>التاريخية</value>
+  </data>
+  <data name="Trip_Religious" xml:space="preserve">
+    <value>الدينية</value>
+  </data>
+  <data name="Trip_Filter" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="Profile_Title" xml:space="preserve">
+    <value>ملفي الشخصي</value>
+  </data>
+  <data name="Profile_FullName" xml:space="preserve">
+    <value>الاسم الكامل</value>
+  </data>
+  <data name="Profile_Nationality" xml:space="preserve">
+    <value>الجنسية</value>
+  </data>
+  <data name="Profile_Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="Profile_Phone" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="Profile_NotProvided" xml:space="preserve">
+    <value>غير متوفر</value>
+  </data>
+  <data name="Profile_RegistrationDate" xml:space="preserve">
+    <value>تاريخ التسجيل</value>
+  </data>
+  <data name="Profile_AccountStatus" xml:space="preserve">
+    <value>حالة الحساب</value>
+  </data>
+  <data name="Profile_PointsBalance" xml:space="preserve">
+    <value>رصيد النقاط</value>
+  </data>
+  <data name="Reward_Title" xml:space="preserve">
+    <value>النقاط والمكافآت</value>
+  </data>
+  <data name="Reward_YourBalance" xml:space="preserve">
+    <value>رصيدك</value>
+  </data>
+  <data name="Reward_Available" xml:space="preserve">
+    <value>المكافآت المتاحة</value>
+  </data>
+  <data name="Reward_NoneAvailable" xml:space="preserve">
+    <value>لا توجد مكافآت متاحة حالياً. تحقق مرة أخرى لاحقاً!</value>
+  </data>
+  <data name="Reward_Redeem" xml:space="preserve">
+    <value>استبدال</value>
+  </data>
+  <data name="Reward_NotEnough" xml:space="preserve">
+    <value>نقاط غير كافية</value>
+  </data>
+  <data name="Reward_MyVouchers" xml:space="preserve">
+    <value>قسائمي</value>
+  </data>
+  <data name="Reward_Code" xml:space="preserve">
+    <value>الكود</value>
+  </data>
+  <data name="Reward_Reward" xml:space="preserve">
+    <value>المكافأة</value>
+  </data>
+  <data name="Reward_Points" xml:space="preserve">
+    <value>النقاط</value>
+  </data>
+  <data name="Reward_Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="Reward_Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="RewardAdmin_EditHeading" xml:space="preserve">
+    <value>تعديل المكافأة</value>
+  </data>
+  <data name="TripDetails_Remove" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="SponsorNotification_Unread" xml:space="preserve">
+    <value>غير مقروء</value>
+  </data>
+  <data name="TripPlan_Destinations" xml:space="preserve">
+    <value>الوجهات</value>
+  </data>
+  <data name="TripPlan_NoDestinations" xml:space="preserve">
+    <value>لا توجد وجهات</value>
+  </data>
+  <data name="TripPlan_SelectTourist" xml:space="preserve">
+    <value>-- اختر سائحًا --</value>
+  </data>
+  <data name="Mission_SearchPlaceholder" xml:space="preserve">
+    <value>ابحث عن المهام...</value>
+  </data>
+  <data name="Sponsor_DetailsTitle" xml:space="preserve">
+    <value>تفاصيل الراعي</value>
+  </data>
+  <data name="TouristAdmin_StatusInactive" xml:space="preserve">
+    <value>غير نشط</value>
+  </data>
+  <data name="TouristAdmin_Total" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="Destination_Latitude" xml:space="preserve">
+    <value>خط العرض</value>
+  </data>
+  <data name="SponsorRedemption_Status_Expired" xml:space="preserve">
+    <value>منتهي الصلاحية</value>
+  </data>
+  <data name="TouristSupport_Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="RewardAdmin_SearchPlaceholder" xml:space="preserve">
+    <value>ابحث عن المكافآت...</value>
+  </data>
+  <data name="Destination_CityGovernorate" xml:space="preserve">
+    <value>المدينة / المحافظة</value>
+  </data>
+  <data name="TouristAdmin_Nationality" xml:space="preserve">
+    <value>الجنسية</value>
+  </data>
+  <data name="SponsorPortal_Month" xml:space="preserve">
+    <value>الشهر</value>
+  </data>
+  <data name="SponsorApproval_Reviewed" xml:space="preserve">
+    <value>تمت المراجعة</value>
+  </data>
+  <data name="AdminSupport_SendResponse" xml:space="preserve">
+    <value>إرسال الرد</value>
+  </data>
+  <data name="Reviews_Rating" xml:space="preserve">
+    <value>التقييم</value>
+  </data>
+  <data name="SponsorPortal_NoReviewsInfo" xml:space="preserve">
+    <value>لا توجد تقييمات بعد لمكانك — ستظهر بطاقة التقييم بمجرد أن يترك السياح تقييماتهم.</value>
+  </data>
+  <data name="Destination_StatusPending" xml:space="preserve">
+    <value>معلق</value>
+  </data>
+  <data name="SponsorPortal_TypeLabel" xml:space="preserve">
+    <value>النوع:</value>
+  </data>
+  <data name="SponsorNotification_AdminResponded" xml:space="preserve">
+    <value>رد المشرف</value>
+  </data>
+  <data name="TouristAdmin_Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="AdminSupport_Open" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="SponsorPortal_NoRewardActivity" xml:space="preserve">
+    <value>لا يوجد نشاط مكافآت بعد.</value>
+  </data>
+  <data name="TouristAdmin_Done" xml:space="preserve">
+    <value>مكتملة</value>
+  </data>
+  <data name="Destination_SearchPlaceholder" xml:space="preserve">
+    <value>ابحث عن الوجهات...</value>
+  </data>
+  <data name="SponsorBranch_ColPhone" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+  <data name="SponsorReview_ColRating" xml:space="preserve">
+    <value>التقييم</value>
+  </data>
+  <data name="SponsorNotification_NoNotifications" xml:space="preserve">
+    <value>لا توجد إشعارات هنا.</value>
+  </data>
+  <data name="SponsorReward_Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="TripPlan_StartDate" xml:space="preserve">
+    <value>تاريخ البداية</value>
+  </data>
+  <data name="SponsorPortal_ViewsHeader" xml:space="preserve">
+    <value>المشاهدات</value>
+  </data>
+  <data name="RewardAdmin_FieldQuantity" xml:space="preserve">
+    <value>الكمية</value>
+  </data>
+  <data name="Sponsor_DeleteTip" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Mission_TitleColumn" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="TouristSupport_NoResponse" xml:space="preserve">
+    <value>لا يوجد رد بعد. سنُعلمك هنا بمجرد رد أحد المسؤولين.</value>
+  </data>
+  <data name="SponsorRedemption_ToLabel" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="SponsorNotification_NoResponseYet" xml:space="preserve">
+    <value>لا يوجد رد حتى الآن. سنخطرك هنا بمجرد رد المشرف.</value>
+  </data>
+  <data name="SponsorReview_AllRatings" xml:space="preserve">
+    <value>جميع التقييمات</value>
+  </data>
+  <data name="SponsorPortal_RedemptionsPerMonth" xml:space="preserve">
+    <value>عمليات الاستبدال شهريًا</value>
+  </data>
+  <data name="AdminSupport_By" xml:space="preserve">
+    <value>بواسطة</value>
+  </data>
+  <data name="RoleAdmin_SelectUserOption" xml:space="preserve">
+    <value>-- اختر مستخدماً --</value>
+  </data>
+  <data name="SponsorApproval_RejectBtn" xml:space="preserve">
+    <value>رفض</value>
+  </data>
+  <data name="SponsorBranch_EditTitle" xml:space="preserve">
+    <value>تعديل فرع</value>
+  </data>
+  <data name="SponsorBranch_CancelBtn" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="SponsorNotification_OpenFullSize" xml:space="preserve">
+    <value>فتح بالحجم الكامل</value>
+  </data>
+  <data name="SponsorApproval_Status_Rejected" xml:space="preserve">
+    <value>مرفوض</value>
+  </data>
+  <data name="TripPlan_Update" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="SponsorReward_ExpirationDate" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="Account_ResetEmail" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="TouristAdmin_AddNewTourist" xml:space="preserve">
+    <value>إضافة سائح جديد</value>
+  </data>
+  <data name="SponsorReward_TableRedemptions" xml:space="preserve">
+    <value>عمليات الاستبدال</value>
+  </data>
+  <data name="Mission_Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="TouristAdmin_IdNumber" xml:space="preserve">
+    <value>رقم الهوية</value>
+  </data>
+  <data name="Sponsor_CancelBtn" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="TripPlan_End" xml:space="preserve">
+    <value>النهاية</value>
+  </data>
+  <data name="Destination_Heading" xml:space="preserve">
+    <value>الوجهات</value>
+  </data>
+  <data name="AdminSupport_MarkResolved" xml:space="preserve">
+    <value>تحديد كمحلول</value>
+  </data>
+  <data name="Destination_Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Destination_Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="TouristAdmin_YesDelete" xml:space="preserve">
+    <value>نعم، حذف</value>
+  </data>
+  <data name="Destination_Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Destination_TableDestination" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="SponsorPortal_RedemptionHistoryDesc" xml:space="preserve">
+    <value>التصفية حسب التاريخ والمكافأة والحالة</value>
+  </data>
+  <data name="RoleAdmin_SelectUser" xml:space="preserve">
+    <value>اختر مستخدماً</value>
+  </data>
+  <data name="SponsorReward_Expired" xml:space="preserve">
+    <value>منتهي</value>
+  </data>
+  <data name="SponsorPortal_ManageHelp" xml:space="preserve">
+    <value>قم بإدارة فروعك ومكافآتك من أقسام البوابة المخصصة.</value>
+  </data>
+  <data name="SponsorBranch_UpdateBtn" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="SponsorNotification_Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="SponsorPortal_Branches" xml:space="preserve">
+    <value>الفروع</value>
+  </data>
+  <data name="Sponsor_ColContact" xml:space="preserve">
+    <value>التواصل</value>
+  </data>
+  <data name="Destination_Longitude" xml:space="preserve">
+    <value>خط الطول</value>
+  </data>
+  <data name="RoleAdmin_AccountProtectedTitle" xml:space="preserve">
+    <value>لا يمكن تغيير أو حذف حسابك الخاص</value>
+  </data>
+  <data name="SponsorPortal_WelcomeMessage" xml:space="preserve">
+    <value>مرحبًا بك في بوابة الراعي الخاصة بك.</value>
+  </data>
+  <data name="Mission_Label_Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="SponsorRedemption_ColBranch" xml:space="preserve">
+    <value>الفرع</value>
+  </data>
+  <data name="TouristSupport_Download" xml:space="preserve">
+    <value>تنزيل</value>
+  </data>
+  <data name="RewardAdmin_GuestsOnlyView" xml:space="preserve">
+    <value>الزائرون يمكنهم المشاهدة فقط</value>
+  </data>
+  <data name="AdminSupport_Filter" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="Mission_Total" xml:space="preserve">
+    <value>الإجمالي:</value>
+  </data>
+  <data name="Destination_Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Mission_AddTitle" xml:space="preserve">
+    <value>إضافة مهمة</value>
+  </data>
+  <data name="SponsorPortal_TopRewards" xml:space="preserve">
+    <value>أفضل المكافآت</value>
+  </data>
+  <data name="Mission_Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="TouristAdmin_TotalTrips" xml:space="preserve">
+    <value>إجمالي الرحلات</value>
+  </data>
+  <data name="SponsorPortal_Notifications" xml:space="preserve">
+    <value>الإشعارات</value>
+  </data>
+  <data name="SponsorRedemption_ColReward" xml:space="preserve">
+    <value>المكافأة</value>
+  </data>
+  <data name="Destination_FilterActive" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="Destination_TableTicketPrice" xml:space="preserve">
+    <value>سعر التذكرة</value>
+  </data>
+  <data name="SponsorNotification_NoTickets" xml:space="preserve">
+    <value>لم يتم تقديم تذاكر بعد.</value>
+  </data>
+  <data name="RewardAdmin_Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Destination_TableGovernorate" xml:space="preserve">
+    <value>المحافظة</value>
+  </data>
+  <data name="SponsorPortal_SponsorAddressPlaceholder" xml:space="preserve">
+    <value>عنوان النشاط التجاري</value>
+  </data>
+  <data name="TouristAdmin_PointBalance" xml:space="preserve">
+    <value>رصيد النقاط</value>
+  </data>
+  <data name="TouristAdmin_TouristStatus" xml:space="preserve">
+    <value>حالة السائح</value>
+  </data>
+  <data name="AdminSupport_Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Mission_Page_Title_Edit" xml:space="preserve">
+    <value>تعديل المهمة</value>
+  </data>
+  <data name="Sponsor_ColActions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="SponsorReview_AverageFrom" xml:space="preserve">
+    <value>متوسط التقييم من</value>
+  </data>
+  <data name="TouristAdmin_Trips" xml:space="preserve">
+    <value>الرحلات</value>
+  </data>
+  <data name="SponsorPortal_PageTitle" xml:space="preserve">
+    <value>بوابة الراعي</value>
+  </data>
+  <data name="Sponsor_ColHash" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="Destination_Coordinates" xml:space="preserve">
+    <value>الإحداثيات</value>
+  </data>
+  <data name="RewardAdmin_FieldPoints" xml:space="preserve">
+    <value>النقاط المطلوبة</value>
+  </data>
+  <data name="TripPlan_TitleColumn" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="SponsorNotification_SubmitTicket" xml:space="preserve">
+    <value>إرسال التذكرة</value>
+  </data>
+  <data name="SponsorBranch_DeleteHeading" xml:space="preserve">
+    <value>حذف فرع</value>
+  </data>
+  <data name="RewardAdmin_Expiration" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="SponsorReward_AddNewReward" xml:space="preserve">
+    <value>إضافة مكافأة جديدة</value>
+  </data>
+  <data name="AdminSupport_SupportInbox" xml:space="preserve">
+    <value>صندوق الوارد للدعم</value>
+  </data>
+  <data name="SponsorReward_TableQty" xml:space="preserve">
+    <value>الكمية</value>
+  </data>
+  <data name="Sponsor_UpdateBtn" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="RoleAdmin_SelectRole" xml:space="preserve">
+    <value>اختر دوراً</value>
+  </data>
+  <data name="Destination_AddToMyTrip" xml:space="preserve">
+    <value>أضف إلى رحلتي</value>
+  </data>
+  <data name="TripDetails_EditDates" xml:space="preserve">
+    <value>تعديل التواريخ</value>
+  </data>
+  <data name="TripPlan_SelectDestinations" xml:space="preserve">
+    <value>اختر الوجهات (بالترتيب)</value>
+  </data>
+  <data name="Reviews_Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="RewardAdmin_Sponsor" xml:space="preserve">
+    <value>الراعي</value>
+  </data>
+  <data name="Destination_TotalVisits" xml:space="preserve">
+    <value>إجمالي الزيارات</value>
+  </data>
+  <data name="RewardAdmin_FieldSponsor" xml:space="preserve">
+    <value>الراعي</value>
+  </data>
+  <data name="RoleAdmin_Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="TouristSupport_Attachment" xml:space="preserve">
+    <value>المرفق</value>
+  </data>
+  <data name="SponsorRedemption_Status_Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="SponsorNotification_AdminResponse" xml:space="preserve">
+    <value>رد المشرف</value>
+  </data>
+  <data name="TripPlan_Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Mission_CreateButton" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="SponsorRedemption_EmptyMessage" xml:space="preserve">
+    <value>لم يتم العثور على عمليات استرداد للمرشحات المحددة.</value>
+  </data>
+  <data name="Sponsor_EditTitle" xml:space="preserve">
+    <value>تعديل الراعي</value>
+  </data>
+  <data name="TouristAdmin_Active" xml:space="preserve">
+    <value>نشطة</value>
+  </data>
+  <data name="TouristAdmin_SearchPlaceholder" xml:space="preserve">
+    <value>بحث عن السائحين...</value>
+  </data>
+  <data name="TouristAdmin_Update" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="SponsorApproval_Status_Pending" xml:space="preserve">
+    <value>معلق</value>
+  </data>
+  <data name="SponsorPortal_RewardHeader" xml:space="preserve">
+    <value>المكافأة</value>
+  </data>
+  <data name="Mission_Button_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="SponsorApproval_ColStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="SponsorReward_Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Mission_Select_Destination" xml:space="preserve">
+    <value>-- اختر الوجهة --</value>
+  </data>
+  <data name="SponsorApproval_EmptyMessage" xml:space="preserve">
+    <value>لا توجد طلبات رعاية معلقة.</value>
+  </data>
+  <data name="SponsorNotification_Subject" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+  <data name="TouristAdmin_Heading" xml:space="preserve">
+    <value>السائحون</value>
+  </data>
+  <data name="TouristAdmin_Points" xml:space="preserve">
+    <value>النقاط</value>
+  </data>
+  <data name="TripPlan_AllTourists" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="SponsorReview_ColDate" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="TripPlan_YesDelete" xml:space="preserve">
+    <value>نعم، حذف</value>
+  </data>
+  <data name="TripPlan_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="SponsorReward_Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Mission_PointsRewardColumn" xml:space="preserve">
+    <value>مكافأة النقاط</value>
+  </data>
+  <data name="Sponsor_DeleteConfirmBtn" xml:space="preserve">
+    <value>نعم، حذف</value>
+  </data>
+  <data name="TouristAdmin_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Account_ResetBackToLogin" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="Destination_GuestsOnly" xml:space="preserve">
+    <value>عرض للزائرين فقط</value>
+  </data>
+  <data name="RewardAdmin_DeleteHeading" xml:space="preserve">
+    <value>حذف المكافأة</value>
+  </data>
+  <data name="SponsorPortal_SponsorTypePlaceholder" xml:space="preserve">
+    <value>مثال: مطعم، فندق، منظم رحلات</value>
+  </data>
+  <data name="TripPlan_ConfirmDelete" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف</value>
+  </data>
+  <data name="TouristAdmin_GuestsOnly" xml:space="preserve">
+    <value>يمكن للزوار فقط العرض</value>
+  </data>
+  <data name="RewardAdmin_AddNew" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="SponsorBranch_CreateBtn" xml:space="preserve">
+    <value>إنشاء جديد</value>
+  </data>
+  <data name="TouristAdmin_Duration" xml:space="preserve">
+    <value>المدة</value>
+  </data>
+  <data name="TripDetails_BackToTrip" xml:space="preserve">
+    <value>العودة إلى الرحلة</value>
+  </data>
+  <data name="TouristSupport_OpenFullSize" xml:space="preserve">
+    <value>فتح بالحجم الكامل</value>
+  </data>
+  <data name="SponsorNotification_Read" xml:space="preserve">
+    <value>مقروء</value>
+  </data>
+  <data name="AdminSupport_Ticket" xml:space="preserve">
+    <value>تذكرة</value>
+  </data>
+  <data name="Mission_Page_Title_Details" xml:space="preserve">
+    <value>تفاصيل المهمة</value>
+  </data>
+  <data name="AdminSupport_Category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="RewardAdmin_CreateHeading" xml:space="preserve">
+    <value>إضافة مكافأة جديدة</value>
+  </data>
+  <data name="TouristAdmin_Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="TouristSupport_AdminResponse" xml:space="preserve">
+    <value>رد المسؤول</value>
+  </data>
+  <data name="SponsorPortal_Profile" xml:space="preserve">
+    <value>الملف الشخصي</value>
+  </data>
+  <data name="RewardAdmin_Title" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="RoleAdmin_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="RoleAdmin_AccountManagement" xml:space="preserve">
+    <value>إدارة الحسابات</value>
+  </data>
+  <data name="TouristAdmin_DeleteConfirm" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف</value>
+  </data>
+  <data name="SponsorPortal_Rewards" xml:space="preserve">
+    <value>المكافآت</value>
+  </data>
+  <data name="Mission_Page_Heading_Delete" xml:space="preserve">
+    <value>حذف خطة الرحلة</value>
+  </data>
+  <data name="SponsorReview_IndexHeading" xml:space="preserve">
+    <value>المراجعات</value>
+  </data>
+  <data name="AdminSupport_AdminResponse" xml:space="preserve">
+    <value>رد الإدارة</value>
+  </data>
+  <data name="SponsorNotification_Number" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="TripDetails_StatusDraft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="RewardAdmin_Heading" xml:space="preserve">
+    <value>المكافآت</value>
+  </data>
+  <data name="Mission_Page_Heading_Edit" xml:space="preserve">
+    <value>تعديل المهمة</value>
+  </data>
+  <data name="Destination_PageTitle" xml:space="preserve">
+    <value>الوجهات</value>
+  </data>
+  <data name="AdminSupport_NoTicketsFound" xml:space="preserve">
+    <value>لا توجد تذاكر دعم.</value>
+  </data>
+  <data name="SponsorPortal_SupportDesc" xml:space="preserve">
+    <value>التذاكر والمساعدة</value>
+  </data>
+  <data name="AdminSupport_Attachment" xml:space="preserve">
+    <value>المرفق</value>
+  </data>
+  <data name="TouristAdmin_RegisterDate" xml:space="preserve">
+    <value>تاريخ التسجيل</value>
+  </data>
+  <data name="Sponsor_EditTip" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Destination_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Sponsor_DetailsTip" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="Mission_NoMissions" xml:space="preserve">
+    <value>لم يتم العثور على مهام.</value>
+  </data>
+  <data name="TripDetails_MapPlaceholder" xml:space="preserve">
+    <value>ستظهر الخريطة هنا</value>
+  </data>
+  <data name="TripPlan_Order" xml:space="preserve">
+    <value>الترتيب</value>
+  </data>
+  <data name="TripDetails_PageTitle" xml:space="preserve">
+    <value>تفاصيل الرحلة</value>
+  </data>
+  <data name="SponsorReview_ColTourist" xml:space="preserve">
+    <value>السائح</value>
+  </data>
+  <data name="SponsorBranch_ColName" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="SponsorBranch_ColActions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="RewardAdmin_Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="TouristAdmin_Add" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="Destination_Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="Mission_Button_Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="SponsorBranch_EmptyMessage" xml:space="preserve">
+    <value>لا توجد فروع.</value>
+  </data>
+  <data name="TripDetails_MapMarkerInfo" xml:space="preserve">
+    <value>تحمل كل محطة بيانات lat/lng/id للعلامات المستقبلية</value>
+  </data>
+  <data name="RoleAdmin_AccountProtected" xml:space="preserve">
+    <value>الحساب محمي</value>
+  </data>
+  <data name="RoleAdmin_Create" xml:space="preserve">
+    <value>إنشاء</value>
+  </data>
+  <data name="AdminSupport_OpenDownload" xml:space="preserve">
+    <value>فتح / تنزيل</value>
+  </data>
+  <data name="Sponsor_ColDescription" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Mission_SelectDestination" xml:space="preserve">
+    <value>-- اختر الوجهة --</value>
+  </data>
+  <data name="SponsorNotification_Attachment" xml:space="preserve">
+    <value>مرفق (صورة أو فيديو، اختياري)</value>
+  </data>
+  <data name="TouristAdmin_Missions" xml:space="preserve">
+    <value>المهام</value>
+  </data>
+  <data name="Sponsor_SaveBtn" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="TouristSupport_NoTickets" xml:space="preserve">
+    <value>لم يتم إرسال أي تذاكر بعد.</value>
+  </data>
+  <data name="TouristSupport_SubmitTicket" xml:space="preserve">
+    <value>إرسال التذكرة</value>
+  </data>
+  <data name="Mission_PageTitle" xml:space="preserve">
+    <value>المهام</value>
+  </data>
+  <data name="Sponsor_NoRewardsMessage" xml:space="preserve">
+    <value>لا توجد مكافآت مقدمة بعد.</value>
+  </data>
+  <data name="Mission_Page_Title_Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="TripPlan_Heading" xml:space="preserve">
+    <value>خطط الرحلات</value>
+  </data>
+  <data name="TouristAdmin_PointsEarned" xml:space="preserve">
+    <value>النقاط المكتسبة</value>
+  </data>
+  <data name="Mission_AddNewTitle" xml:space="preserve">
+    <value>إضافة مهمة جديدة</value>
+  </data>
+  <data name="TouristSupport_Submitted" xml:space="preserve">
+    <value>تم الإرسال</value>
+  </data>
+  <data name="SponsorReview_ColComment" xml:space="preserve">
+    <value>التعليق</value>
+  </data>
+  <data name="SponsorBranch_EditHeading" xml:space="preserve">
+    <value>تعديل فرع</value>
+  </data>
+  <data name="TripPlan_Index" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="Destination_TableStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="TouristAdmin_Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="RewardAdmin_BackToList" xml:space="preserve">
+    <value>العودة إلى القائمة</value>
+  </data>
+  <data name="RewardAdmin_SelectSponsor" xml:space="preserve">
+    <value>--اختر الراعي--</value>
+  </data>
+  <data name="SponsorBranch_ColAddress" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="SponsorBranch_EditTip" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="TripPlan_AddTripPlan" xml:space="preserve">
+    <value>إضافة خطة رحلة</value>
+  </data>
+  <data name="TouristSupport_TicketDetails" xml:space="preserve">
+    <value>تفاصيل التذكرة</value>
+  </data>
+  <data name="Destination_TableVisits" xml:space="preserve">
+    <value>الزيارات</value>
+  </data>
+  <data name="Destination_TableNum" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="SponsorNotification_TableHeaderStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="SponsorPortal_MostWanted" xml:space="preserve">
+    <value>الأكثر طلبًا</value>
+  </data>
+  <data name="TripDetails_StatusActive" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="Sponsor_PhoneNumber" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="Mission_DestinationColumn" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="TouristAdmin_CompletedAt" xml:space="preserve">
+    <value>تاريخ الإكمال</value>
+  </data>
+  <data name="SponsorReward_TableActions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="Destination_StatusInactive" xml:space="preserve">
+    <value>غير نشط</value>
+  </data>
+  <data name="RewardAdmin_PointsRequired" xml:space="preserve">
+    <value>النقاط المطلوبة</value>
+  </data>
+  <data name="SponsorNotification_BackToSupport" xml:space="preserve">
+    <value>العودة إلى الدعم</value>
+  </data>
+  <data name="TouristAdmin_TripPlans" xml:space="preserve">
+    <value>خطط الرحلات</value>
+  </data>
+  <data name="SponsorBranch_CreateHeading" xml:space="preserve">
+    <value>إنشاء فرع</value>
+  </data>
+  <data name="SponsorNotification_NotificationsTitle" xml:space="preserve">
+    <value>الإشعارات</value>
+  </data>
+  <data name="SponsorPortal_Support" xml:space="preserve">
+    <value>الدعم</value>
+  </data>
+  <data name="TripPlan_EndDate" xml:space="preserve">
+    <value>تاريخ النهاية</value>
+  </data>
+  <data name="Mission_GuestsOnly" xml:space="preserve">
+    <value>الزوار يمكنهم المشاهدة فقط</value>
+  </data>
+  <data name="SponsorNotification_SupportTitle" xml:space="preserve">
+    <value>الدعم</value>
+  </data>
+  <data name="SponsorNotification_Download" xml:space="preserve">
+    <value>تنزيل</value>
+  </data>
+  <data name="TripDetails_Budget" xml:space="preserve">
+    <value>الميزانية</value>
+  </data>
+  <data name="SponsorReward_MyRewards" xml:space="preserve">
+    <value>مكافآتي</value>
+  </data>
+  <data name="Destination_Update" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="SponsorBranch_DeleteTip" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="RoleAdmin_SelectRoleOption" xml:space="preserve">
+    <value>-- اختر دوراً --</value>
+  </data>
+  <data name="SponsorApproval_ColEmail" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="Sponsor_ColRequiredPoints" xml:space="preserve">
+    <value>النقاط المطلوبة</value>
+  </data>
+  <data name="TripPlan_Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="TripPlan_Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="RoleAdmin_Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="SponsorNotification_SelectCategory" xml:space="preserve">
+    <value>اختر فئة…</value>
+  </data>
+  <data name="RewardAdmin_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="RoleAdmin_DeleteConfirmPrefix" xml:space="preserve">
+    <value>سيؤدي هذا إلى إزالة حساب الدخول بشكل دائم لـ</value>
+  </data>
+  <data name="TripPlan_Departure" xml:space="preserve">
+    <value>المغادرة</value>
+  </data>
+  <data name="Sponsor_DeleteTitle" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="TripDetails_ArrivalLabel" xml:space="preserve">
+    <value>الوصول</value>
+  </data>
+  <data name="SponsorRedemption_ColTourist" xml:space="preserve">
+    <value>السائح</value>
+  </data>
+  <data name="RewardAdmin_AllTypes" xml:space="preserve">
+    <value>جميع الأنواع</value>
+  </data>
+  <data name="TouristAdmin_Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="TouristAdmin_Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Mission_Label_Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="SponsorPortal_RedemptionsHeader" xml:space="preserve">
+    <value>عمليات الاستبدال</value>
+  </data>
+  <data name="RoleAdmin_AssignRoleToUser" xml:space="preserve">
+    <value>تعيين دور للمستخدم</value>
+  </data>
+  <data name="SponsorRedemption_ColDate" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="SponsorPortal_RewardViews" xml:space="preserve">
+    <value>مشاهدات المكافأة</value>
+  </data>
+  <data name="TripPlan_Days" xml:space="preserve">
+    <value>أيام</value>
+  </data>
+  <data name="TripPlan_TripDetails" xml:space="preserve">
+    <value>تفاصيل الرحلة</value>
+  </data>
+  <data name="RoleAdmin_Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="SponsorRedemption_IndexHeading" xml:space="preserve">
+    <value>سجل الاسترداد</value>
+  </data>
+  <data name="SponsorBranch_ColHash" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="TripPlan_Destination" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="Reviews_CommentOptional" xml:space="preserve">
+    <value>التعليق (اختياري)</value>
+  </data>
+  <data name="Mission_Label_Title" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Destination_OpeningHours" xml:space="preserve">
+    <value>ساعات العمل</value>
+  </data>
+  <data name="RewardAdmin_Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="Mission_AllTypes" xml:space="preserve">
+    <value>جميع الأنواع</value>
+  </data>
+  <data name="Destination_Category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="SponsorPortal_RedemptionHistory" xml:space="preserve">
+    <value>سجل الاستبدال</value>
+  </data>
+  <data name="SponsorReward_Pts" xml:space="preserve">
+    <value>نقاط</value>
+  </data>
+  <data name="RoleAdmin_User" xml:space="preserve">
+    <value>المستخدم</value>
+  </data>
+  <data name="SponsorBranch_ColCoordinates" xml:space="preserve">
+    <value>الإحداثيات</value>
+  </data>
+  <data name="TripPlan_Completed" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="TripPlan_Add" xml:space="preserve">
+    <value>إنشاء</value>
+  </data>
+  <data name="SponsorRedemption_AllRewards" xml:space="preserve">
+    <value>كل المكافآت</value>
+  </data>
+  <data name="RewardAdmin_Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="SponsorReward_Title" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="TripPlan_Arrival" xml:space="preserve">
+    <value>الوصول</value>
+  </data>
+  <data name="RoleAdmin_AssignRole" xml:space="preserve">
+    <value>تعيين الدور</value>
+  </data>
+  <data name="SponsorReward_DeleteTitle" xml:space="preserve">
+    <value>حذف المكافأة</value>
+  </data>
+  <data name="TouristAdmin_AddTourist" xml:space="preserve">
+    <value>إضافة سائح</value>
+  </data>
+  <data name="Destination_CreateTitle" xml:space="preserve">
+    <value>إضافة وجهة</value>
+  </data>
+  <data name="TouristAdmin_Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="SponsorReview_EmptyMessage" xml:space="preserve">
+    <value>لا توجد مراجعات لعرضها.</value>
+  </data>
+  <data name="RewardAdmin_Quantity" xml:space="preserve">
+    <value>الكمية</value>
+  </data>
+  <data name="TripPlan_Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="Sponsor_IndexTitle" xml:space="preserve">
+    <value>الرعاة</value>
+  </data>
+  <data name="RewardAdmin_CreateTitle" xml:space="preserve">
+    <value>إضافة مكافأة</value>
+  </data>
+  <data name="Sponsor_ColName" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="SponsorNotification_AlertsInfo" xml:space="preserve">
+    <value>يتم إنشاء التنبيهات تلقائياً للمكافآت منتهية الصلاحية أو المنخفضة في المخزون والاستردادات الأخيرة. انقر على إشعار لفتح ما يشير إليه.</value>
+  </data>
+  <data name="TripPlan_DeleteTitle" xml:space="preserve">
+    <value>حذف خطة الرحلة</value>
+  </data>
+  <data name="RewardAdmin_Update" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="SponsorReward_TableStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="TouristAdmin_Days" xml:space="preserve">
+    <value>أيام</value>
+  </data>
+  <data name="Reviews_ShareExperience" xml:space="preserve">
+    <value>شارك تجربتك</value>
+  </data>
+  <data name="TouristAdmin_Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="TripPlan_TripStatus" xml:space="preserve">
+    <value>حالة الرحلة</value>
+  </data>
+  <data name="RewardAdmin_NoRewards" xml:space="preserve">
+    <value>لم يتم العثور على مكافآت.</value>
+  </data>
+  <data name="Sponsor_CreateBtn" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="RewardAdmin_Available" xml:space="preserve">
+    <value>متاح</value>
+  </data>
+  <data name="Destination_AddBtn" xml:space="preserve">
+    <value>+ إضافة</value>
+  </data>
+  <data name="SponsorRedemption_DashboardBtn" xml:space="preserve">
+    <value>لوحة التحكم</value>
+  </data>
+  <data name="Destination_City" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="RewardAdmin_YesDelete" xml:space="preserve">
+    <value>نعم، احذف</value>
+  </data>
+  <data name="Mission_Label_Points" xml:space="preserve">
+    <value>النقاط</value>
+  </data>
+  <data name="SponsorNotification_NotificationsPageTitle" xml:space="preserve">
+    <value>الإشعارات</value>
+  </data>
+  <data name="SponsorPortal_Dashboard" xml:space="preserve">
+    <value>لوحة التحكم</value>
+  </data>
+  <data name="Destination_StatusActive" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="AdminSupport_AllStatuses" xml:space="preserve">
+    <value>كل الحالات</value>
+  </data>
+  <data name="AdminSupport_Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="RoleAdmin_You" xml:space="preserve">
+    <value>أنت</value>
+  </data>
+  <data name="Sponsor_AllRewardsHeading" xml:space="preserve">
+    <value>جميع المكافآت المقدمة</value>
+  </data>
+  <data name="SponsorReview_NoReviewsInfo" xml:space="preserve">
+    <value>لم يتم تقديم أي مراجعات بعد.</value>
+  </data>
+  <data name="SponsorPortal_Reviews" xml:space="preserve">
+    <value>التقييمات</value>
+  </data>
+  <data name="SponsorReward_DeleteNote" xml:space="preserve">
+    <value>سيتم إجراء حذف مؤقت: سيتم تعيين حالة المكافأة إلى "مزال" بدلاً من حذفها نهائياً.</value>
+  </data>
+  <data name="TouristAdmin_TotalMissions" xml:space="preserve">
+    <value>إجمالي المهام</value>
+  </data>
+  <data name="SponsorRedemption_Status_Used" xml:space="preserve">
+    <value>مستخدم</value>
+  </data>
+  <data name="SponsorReview_FilterByRating" xml:space="preserve">
+    <value>تصفية حسب التقييم</value>
+  </data>
+  <data name="Mission_Button_Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="Destination_EditTitle" xml:space="preserve">
+    <value>تعديل الوجهة</value>
+  </data>
+  <data name="RewardAdmin_PageTitle" xml:space="preserve">
+    <value>المكافآت</value>
+  </data>
+  <data name="SponsorNotification_YourTickets" xml:space="preserve">
+    <value>تذاكرك</value>
+  </data>
+  <data name="TouristSupport_NewTicket" xml:space="preserve">
+    <value>تذكرة جديدة</value>
+  </data>
+  <data name="AdminSupport_Submitted" xml:space="preserve">
+    <value>تاريخ الإرسال</value>
+  </data>
+  <data name="SponsorBranch_DeleteBtn" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Mission_TypeColumn" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Destination_FilterInactive" xml:space="preserve">
+    <value>غير نشط</value>
+  </data>
+  <data name="Sponsor_GuestsOnly" xml:space="preserve">
+    <value>الزوار فقط يمكنهم العرض</value>
+  </data>
+  <data name="SponsorApproval_Status_Approved" xml:space="preserve">
+    <value>مقبول</value>
+  </data>
+  <data name="Account_ResetSend" xml:space="preserve">
+    <value>إرسال</value>
+  </data>
+  <data name="Destination_FilterPending" xml:space="preserve">
+    <value>معلق</value>
+  </data>
+  <data name="SponsorApproval_IndexTitle" xml:space="preserve">
+    <value>موافقات الرعاة</value>
+  </data>
+  <data name="Sponsor_EmptyMessage" xml:space="preserve">
+    <value>لم يتم العثور على رعاة.</value>
+  </data>
+  <data name="SponsorNotification_MarkAllRead" xml:space="preserve">
+    <value>تحديد الكل كمقروء</value>
+  </data>
+  <data name="Destination_TableCategory" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="SponsorReward_SoftDelete" xml:space="preserve">
+    <value>حذف مؤقت</value>
+  </data>
+  <data name="SponsorNotification_Category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="Sponsor_DeleteConfirm" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف</value>
+  </data>
+  <data name="SponsorRedemption_AllStatuses" xml:space="preserve">
+    <value>كل الحالات</value>
+  </data>
+  <data name="TouristAdmin_StatusActive" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="SponsorPortal_NotificationsDesc" xml:space="preserve">
+    <value>التنبيهات والتحديثات</value>
+  </data>
+  <data name="Destination_DetailsTitle" xml:space="preserve">
+    <value>تفاصيل الوجهة</value>
+  </data>
+  <data name="Destination_FilterAll" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="Mission_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Destination_DeleteConfirm" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف</value>
+  </data>
+  <data name="SponsorPortal_CompleteProfileIntro" xml:space="preserve">
+    <value>تم تعيين حسابك بدور الراعي، ولكن لم يتم ربط أي ملف راعٍ بعد. يرجى إدخال تفاصيل نشاطك التجاري أدناه للمتابعة.</value>
+  </data>
+  <data name="TouristAdmin_Title" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Mission_Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="SponsorReview_ColHash" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="SponsorRedemption_Status_Cancelled" xml:space="preserve">
+    <value>ملغى</value>
+  </data>
+  <data name="RewardAdmin_Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Reviews_ShowMore" xml:space="preserve">
+    <value>عرض المزيد</value>
+  </data>
+  <data name="SponsorRedemption_ColVoucherCode" xml:space="preserve">
+    <value>رمز القسيمة</value>
+  </data>
+  <data name="SponsorNotification_NoNewNotifications" xml:space="preserve">
+    <value>لا توجد إشعارات جديدة.</value>
+  </data>
+  <data name="SponsorBranch_IndexHeading" xml:space="preserve">
+    <value>الفروع</value>
+  </data>
+  <data name="Destination_NoDestinations" xml:space="preserve">
+    <value>لم يتم العثور على وجهات.</value>
+  </data>
+  <data name="RoleAdmin_DeleteHelp" xml:space="preserve">
+    <value>حذف الحساب يزيل بيانات الدخول فقط — يظل ملف السائح/الراعي المرتبط وجميع البيانات التاريخية محفوظة.</value>
+  </data>
+  <data name="SponsorPortal_DashboardPageTitle" xml:space="preserve">
+    <value>لوحة تحكم الراعي</value>
+  </data>
+  <data name="SponsorNotification_All" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="SponsorPortal_DashboardDesc" xml:space="preserve">
+    <value>عمليات الاستبدال والمشاهدات والتقييمات</value>
+  </data>
+  <data name="Reviews_WriteReview" xml:space="preserve">
+    <value>كتابة تقييم</value>
+  </data>
+  <data name="Reviews_Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="Sponsor_PtsUnit" xml:space="preserve">
+    <value>نقطة</value>
+  </data>
+  <data name="TripPlan_Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="TouristAdmin_NoTourists" xml:space="preserve">
+    <value>لم يتم العثور على سائحين.</value>
+  </data>
+  <data name="Mission_Delete_Confirm" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف</value>
+  </data>
+  <data name="SponsorReward_TablePoints" xml:space="preserve">
+    <value>النقاط</value>
+  </data>
+  <data name="Destination_TicketPrice" xml:space="preserve">
+    <value>سعر التذكرة</value>
+  </data>
+  <data name="Mission_Pts" xml:space="preserve">
+    <value>نقاط</value>
+  </data>
+  <data name="RewardAdmin_Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="SponsorApproval_IndexHeading" xml:space="preserve">
+    <value>موافقات الرعاة</value>
+  </data>
+  <data name="Sponsor_ColAvailable" xml:space="preserve">
+    <value>المتاح</value>
+  </data>
+  <data name="SponsorReward_Paused" xml:space="preserve">
+    <value>معلق</value>
+  </data>
+  <data name="SponsorApproval_ColNationality" xml:space="preserve">
+    <value>الجنسية</value>
+  </data>
+  <data name="AdminSupport_SubjectOrDescription" xml:space="preserve">
+    <value>الموضوع أو الوصف…</value>
+  </data>
+  <data name="SponsorNotification_SupportPageTitle" xml:space="preserve">
+    <value>تذاكر الدعم</value>
+  </data>
+  <data name="TouristAdmin_PointsBalance" xml:space="preserve">
+    <value>رصيد النقاط</value>
+  </data>
+  <data name="RewardAdmin_FieldType" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="TouristAdmin_Start" xml:space="preserve">
+    <value>البداية</value>
+  </data>
+  <data name="AdminSupport_BackToInbox" xml:space="preserve">
+    <value>العودة إلى صندوق الوارد</value>
+  </data>
+  <data name="AdminSupport_AnsweredOn" xml:space="preserve">
+    <value>تمت الإجابة في</value>
+  </data>
+  <data name="Destination_NotSpecified" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="SponsorApproval_ColRequested" xml:space="preserve">
+    <value>تاريخ الطلب</value>
+  </data>
+  <data name="TouristAdmin_Completed" xml:space="preserve">
+    <value>مكتملة</value>
+  </data>
+  <data name="SponsorReward_PointsRequired" xml:space="preserve">
+    <value>النقاط المطلوبة</value>
+  </data>
+  <data name="TouristSupport_AdminRespondedTooltip" xml:space="preserve">
+    <value>رد المسؤول</value>
+  </data>
+  <data name="Mission_Status_InProgress" xml:space="preserve">
+    <value>قيد التقدم</value>
+  </data>
+  <data name="SponsorPortal_BusinessNamePlaceholder" xml:space="preserve">
+    <value>أدخل اسم نشاطك التجاري</value>
+  </data>
+  <data name="TouristSupport_YourTickets" xml:space="preserve">
+    <value>تذاكر الدعم الخاصة بك</value>
+  </data>
+  <data name="SponsorNotification_NewTicket" xml:space="preserve">
+    <value>تذكرة جديدة</value>
+  </data>
+  <data name="SponsorReward_Removed" xml:space="preserve">
+    <value>محذوف</value>
+  </data>
+  <data name="RewardAdmin_Number" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="TripPlan_EditTitle" xml:space="preserve">
+    <value>تعديل خطة الرحلة</value>
+  </data>
+  <data name="RewardAdmin_EditTitle" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="SponsorPortal_ContactLabel" xml:space="preserve">
+    <value>جهة الاتصال:</value>
+  </data>
+  <data name="TripPlan_DetailsTitle" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="TouristSupport_AnsweredOn" xml:space="preserve">
+    <value>تم الرد في</value>
+  </data>
+  <data name="SponsorPortal_SaveAndContinue" xml:space="preserve">
+    <value>حفظ ومتابعة</value>
+  </data>
+  <data name="RoleAdmin_CurrentRole" xml:space="preserve">
+    <value>الدور الحالي</value>
+  </data>
+  <data name="SponsorPortal_ContactNumberPlaceholder" xml:space="preserve">
+    <value>رقم هاتف الاتصال</value>
+  </data>
+  <data name="TouristAdmin_StatusSuspended" xml:space="preserve">
+    <value>موقوف</value>
+  </data>
+  <data name="SponsorRedemption_ColHash" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="SponsorNotification_Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Mission_Label_Destination" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="AdminSupport_AllCategories" xml:space="preserve">
+    <value>كل الفئات</value>
+  </data>
+  <data name="Account_ResetTitle" xml:space="preserve">
+    <value>إعادة تعيين</value>
+  </data>
+  <data name="Sponsor_EditBtn" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="TouristAdmin_ActiveTrips" xml:space="preserve">
+    <value>رحلات نشطة</value>
+  </data>
+  <data name="TouristAdmin_TouristDetails" xml:space="preserve">
+    <value>تفاصيل السائح</value>
+  </data>
+  <data name="TouristSupport_Category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="TripDetails_DepartureLabel" xml:space="preserve">
+    <value>المغادرة</value>
+  </data>
+  <data name="TripPlan_AddNewTripPlan" xml:space="preserve">
+    <value>إضافة خطة رحلة جديدة</value>
+  </data>
+  <data name="Mission_Button_ConfirmDelete" xml:space="preserve">
+    <value>نعم، احذف</value>
+  </data>
+  <data name="TripPlan_GuestsOnlyView" xml:space="preserve">
+    <value>الضيوف يمكنهم المشاهدة فقط</value>
+  </data>
+  <data name="SponsorNotification_Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="TouristSupport_Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="TouristAdmin_NotSpecified" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="Destination_AddFirst" xml:space="preserve">
+    <value>إضافة أول وجهة</value>
+  </data>
+  <data name="Destination_Free" xml:space="preserve">
+    <value>مجاني</value>
+  </data>
+  <data name="Destination_CreateHeading" xml:space="preserve">
+    <value>إضافة وجهة جديدة</value>
+  </data>
+  <data name="TouristAdmin_Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="RoleAdmin_Home" xml:space="preserve">
+    <value>الرئيسية</value>
+  </data>
+  <data name="TouristSupport_SelectCategory" xml:space="preserve">
+    <value>اختر فئة…</value>
+  </data>
+  <data name="TripPlan_Title" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="TouristAdmin_Pts" xml:space="preserve">
+    <value>نقاط</value>
+  </data>
+  <data name="AdminSupport_Subject" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+  <data name="TripDetails_NoStops" xml:space="preserve">
+    <value>لا توجد محطات بعد</value>
+  </data>
+  <data name="Reviews_SubmitReview" xml:space="preserve">
+    <value>إرسال التقييم</value>
+  </data>
+  <data name="Sponsor_AddFirstBtn" xml:space="preserve">
+    <value>إضافة أول راعٍ</value>
+  </data>
+  <data name="AdminSupport_All" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="TouristAdmin_EditTourist" xml:space="preserve">
+    <value>تعديل السائح</value>
+  </data>
+  <data name="SponsorBranch_DeleteTitle" xml:space="preserve">
+    <value>حذف فرع</value>
+  </data>
+  <data name="RewardAdmin_FieldExpiration" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="Sponsor_CreateTitle" xml:space="preserve">
+    <value>إضافة راعٍ</value>
+  </data>
+  <data name="TouristSupport_Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="TripPlan_Total" xml:space="preserve">
+    <value>المجموع:</value>
+  </data>
+  <data name="Destination_Visits" xml:space="preserve">
+    <value>الزيارات</value>
+  </data>
+  <data name="RewardAdmin_Points" xml:space="preserve">
+    <value>النقاط</value>
+  </data>
+  <data name="AdminSupport_Message" xml:space="preserve">
+    <value>الرسالة</value>
+  </data>
+  <data name="SponsorNotification_Submitted" xml:space="preserve">
+    <value>تم الإرسال في</value>
+  </data>
+  <data name="RewardAdmin_Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="SponsorReward_Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="RoleAdmin_RoleViewModel" xml:space="preserve">
+    <value>الدور</value>
+  </data>
+  <data name="SponsorNotification_TicketDetailsPageTitle" xml:space="preserve">
+    <value>تفاصيل التذكرة</value>
+  </data>
+  <data name="Mission_Button_Update" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="TripPlan_Cancelled" xml:space="preserve">
+    <value>ملغى</value>
+  </data>
+  <data name="TripDetails_Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="SponsorBranch_DeleteConfirm" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف هذا الفرع؟</value>
+  </data>
+  <data name="SponsorReward_AddReward" xml:space="preserve">
+    <value>إضافة مكافأة</value>
+  </data>
+  <data name="RewardAdmin_FieldDescription" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="SponsorPortal_RewardsRedeemed" xml:space="preserve">
+    <value>المكافآت المستبدلة</value>
+  </data>
+  <data name="TouristSupport_Support" xml:space="preserve">
+    <value>دعم السائح</value>
+  </data>
+  <data name="Sponsor_DeleteHeading" xml:space="preserve">
+    <value>حذف المكافأة</value>
+  </data>
+  <data name="Sponsor_BackBtn" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="TripPlan_EmptyState" xml:space="preserve">
+    <value>لم يتم العثور على خطط رحلات.</value>
+  </data>
+  <data name="Sponsor_AllTypes" xml:space="preserve">
+    <value>كل الأنواع</value>
+  </data>
+  <data name="Destination_DeleteTitle" xml:space="preserve">
+    <value>حذف الوجهة</value>
+  </data>
+  <data name="SponsorNotification_AttachmentHeading" xml:space="preserve">
+    <value>مرفق</value>
+  </data>
+  <data name="TripPlan_TouristId" xml:space="preserve">
+    <value>معرّف السائح</value>
+  </data>
+  <data name="SponsorPortal_MonthlyActivityFor" xml:space="preserve">
+    <value>النشاط الشهري لـ</value>
+  </data>
+  <data name="TripDetails_ItineraryStops" xml:space="preserve">
+    <value>محطات المسار</value>
+  </data>
+  <data name="TouristAdmin_End" xml:space="preserve">
+    <value>النهاية</value>
+  </data>
+  <data name="SponsorReward_Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="RewardAdmin_DetailsTitle" xml:space="preserve">
+    <value>تفاصيل المكافأة</value>
+  </data>
+  <data name="SponsorReward_TableTitle" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="SponsorPortal_SponsorBadge" xml:space="preserve">
+    <value>راعٍ</value>
+  </data>
+  <data name="SponsorReward_Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="RewardAdmin_Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="TripDetails_StatusCompleted" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="TouristSupport_Subject" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+  <data name="SponsorRedemption_RewardLabel" xml:space="preserve">
+    <value>المكافأة</value>
+  </data>
+  <data name="RewardAdmin_FieldTitle" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="TripPlan_Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="AdminSupport_TypeYourReply" xml:space="preserve">
+    <value>اكتب ردك…</value>
+  </data>
+  <data name="SponsorPortal_AvgRating" xml:space="preserve">
+    <value>متوسط التقييم</value>
+  </data>
+  <data name="SponsorPortal_PointsRedeemed" xml:space="preserve">
+    <value>النقاط المستبدلة</value>
+  </data>
+  <data name="SponsorPortal_CompleteProfileTitle" xml:space="preserve">
+    <value>أكمل ملف الراعي الخاص بك</value>
+  </data>
+  <data name="Mission_Status_Completed" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="RewardAdmin_TotalLabel" xml:space="preserve">
+    <value>الإجمالي:</value>
+  </data>
+  <data name="Destination_AllCategories" xml:space="preserve">
+    <value>جميع الفئات</value>
+  </data>
+  <data name="SponsorApproval_ColPhone" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+  <data name="Sponsor_IndexHeading" xml:space="preserve">
+    <value>الرعاة</value>
+  </data>
+  <data name="SponsorRedemption_StatusLabel" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="SponsorBranch_CreateTitle" xml:space="preserve">
+    <value>إنشاء فرع</value>
+  </data>
+  <data name="Sponsor_ColAddress" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="TripDetails_ReorderNotice" xml:space="preserve">
+    <value>لقد قمت بإعادة ترتيب المحطات - يرجى المراجعة وتعديل تواريخ كل محطة إذا لزم الأمر.</value>
+  </data>
+  <data name="Mission_ActionsColumn" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="Reviews_SelectRating" xml:space="preserve">
+    <value>اختر التقييم</value>
+  </data>
+  <data name="TripPlan_Tourist" xml:space="preserve">
+    <value>السائح</value>
+  </data>
+  <data name="SponsorApproval_ColApplicant" xml:space="preserve">
+    <value>مقدم الطلب</value>
+  </data>
+  <data name="SponsorApproval_ApproveBtn" xml:space="preserve">
+    <value>موافقة</value>
+  </data>
+  <data name="SponsorReward_EmptyState" xml:space="preserve">
+    <value>لم يتم العثور على مكافآت. أضف مكافأتك الأولى أعلاه.</value>
+  </data>
+  <data name="SponsorPortal_ReportsDesc" xml:space="preserve">
+    <value>عمليات الاستبدال والمشاهدات الشهرية</value>
+  </data>
+  <data name="SponsorApproval_ColActions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="Sponsor_TotalLabel" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="Sponsor_EditHeading" xml:space="preserve">
+    <value>تعديل الراعي</value>
+  </data>
+  <data name="SponsorRedemption_IndexTitle" xml:space="preserve">
+    <value>سجل الاسترداد</value>
+  </data>
+  <data name="Mission_Number" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="TouristSupport_BackToSupport" xml:space="preserve">
+    <value>العودة إلى الدعم</value>
+  </data>
+  <data name="Mission_Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="TouristSupport_AttachmentLabel" xml:space="preserve">
+    <value>المرفق (صورة أو فيديو، اختياري)</value>
+  </data>
+  <data name="SponsorReward_Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="SponsorNotification_Notifications" xml:space="preserve">
+    <value>الإشعارات</value>
+  </data>
+  <data name="SponsorReward_AvailableBranches" xml:space="preserve">
+    <value>الفروع المتاحة</value>
+  </data>
+  <data name="SponsorPortal_RewardDetailViews" xml:space="preserve">
+    <value>مشاهدات تفاصيل المكافأة</value>
+  </data>
+  <data name="Sponsor_SearchPlaceholder" xml:space="preserve">
+    <value>ابحث عن الرعاة...</value>
+  </data>
+  <data name="Destination_TableActions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="SponsorBranch_SaveBtn" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="TouristAdmin_Passport" xml:space="preserve">
+    <value>جواز السفر</value>
+  </data>
+  <data name="TouristAdmin_DeleteTourist" xml:space="preserve">
+    <value>حذف السائح</value>
+  </data>
+  <data name="SponsorBranch_IndexTitle" xml:space="preserve">
+    <value>الفروع</value>
+  </data>
+  <data name="Sponsor_CreateHeading" xml:space="preserve">
+    <value>إضافة راعٍ جديد</value>
+  </data>
+  <data name="TouristAdmin_AllNationalities" xml:space="preserve">
+    <value>جميع الجنسيات</value>
+  </data>
+  <data name="SponsorRedemption_FromLabel" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="TripPlan_City" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="SponsorReview_IndexTitle" xml:space="preserve">
+    <value>مراجعات الرعاة</value>
+  </data>
+  <data name="SponsorReward_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="SponsorPortal_AddressLabel" xml:space="preserve">
+    <value>العنوان:</value>
+  </data>
+  <data name="SponsorReward_QuantityAvailable" xml:space="preserve">
+    <value>الكمية المتاحة</value>
+  </data>
+  <data name="TripPlan_Start" xml:space="preserve">
+    <value>البداية</value>
+  </data>
+  <data name="SponsorReward_EditTitle" xml:space="preserve">
+    <value>تعديل المكافأة</value>
+  </data>
+  <data name="RewardAdmin_DeleteConfirm" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد الحذف</value>
+  </data>
+  <data name="SponsorRedemption_ColStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="RoleAdmin_Change" xml:space="preserve">
+    <value>تغيير</value>
+  </data>
+  <data name="Sponsor_ColType" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="AdminSupport_Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="TouristAdmin_Back" xml:space="preserve">
+    <value>العودة</value>
+  </data>
+  <data name="TripDetails_StatusCancelled" xml:space="preserve">
+    <value>ملغى</value>
+  </data>
+  <data name="Destination_YesDelete" xml:space="preserve">
+    <value>نعم، احذف</value>
+  </data>
+  <data name="SponsorReward_TableType" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="RewardAdmin_DeleteTitle" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="AdminSupport_NoResponseYet" xml:space="preserve">
+    <value>لا يوجد رد بعد.</value>
+  </data>
+  <data name="TouristAdmin_Mission" xml:space="preserve">
+    <value>المهمة</value>
+  </data>
+  <data name="SponsorPortal_Reports" xml:space="preserve">
+    <value>التقارير</value>
+  </data>
+  <data name="SponsorPortal_MonthlyBreakdown" xml:space="preserve">
+    <value>التفصيل الشهري</value>
+  </data>
+  <data name="SponsorNotification_AnsweredOn" xml:space="preserve">
+    <value>تم الرد في</value>
+  </data>
+  <data name="TripDetails_Companions" xml:space="preserve">
+    <value>الرفاق</value>
+  </data>
+  <data name="AdminSupport_Submitter" xml:space="preserve">
+    <value>مقدّم الطلب</value>
+  </data>
+  <data name="SponsorPortal_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="RewardAdmin_Expires" xml:space="preserve">
+    <value>تنتهي في</value>
+  </data>
+  <data name="SponsorPortal_MetricsScopeHelp" xml:space="preserve">
+    <value>تقتصر المقاييس على مكافآتك وفروعك الخاصة.</value>
+  </data>
+  <data name="TripPlan_SearchPlaceholder" xml:space="preserve">
+    <value>بحث عن خطط الرحلات...</value>
+  </data>
+
+</root>
