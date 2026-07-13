@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Text.Json;
@@ -133,24 +134,22 @@ namespace Tourist_Project_MVC.Services
             var entityType = context.Model.FindEntityType(typeof(TEntity))!;
             var tableName = entityType.GetTableName()!;
             var primaryKey = entityType.FindPrimaryKey()!;
-            var hasIdentity = primaryKey.Properties.Any(p => p.ValueGenerated.HasFlag(ValueGenerated.OnAdd));
+            var identityProperty = primaryKey.Properties.FirstOrDefault(p => p.ValueGenerated.HasFlag(ValueGenerated.OnAdd));
 
             await using var transaction = await context.Database.BeginTransactionAsync();
-
-#pragma warning disable EF1002 // Table name comes from the EF model, not user input.
-            if (hasIdentity)
-            {
-                await context.Database.ExecuteSqlRawAsync($"SET IDENTITY_INSERT [{tableName}] ON");
-            }
 
             set.AddRange(entities);
             await context.SaveChangesAsync();
 
-            if (hasIdentity)
-            {
-                await context.Database.ExecuteSqlRawAsync($"SET IDENTITY_INSERT [{tableName}] OFF");
-            }
-#pragma warning restore EF1002
+            if (identityProperty != null)
+                {
+                     #pragma warning disable EF1002
+                var columnName = identityProperty.GetColumnName();
+                await context.Database.ExecuteSqlRawAsync(
+                $"SELECT setval(pg_get_serial_sequence('\"{tableName}\"', '{columnName}'), " +
+                $"COALESCE((SELECT MAX(\"{columnName}\") FROM \"{tableName}\"), 1))");
+                #pragma warning restore EF1002
+                }
 
             await transaction.CommitAsync();
         }

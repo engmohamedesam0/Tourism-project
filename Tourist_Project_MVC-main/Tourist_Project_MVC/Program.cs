@@ -36,7 +36,7 @@ namespace Tourist_Project_MVC
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<ISupportTicketService, SupportTicketService>();
             builder.Services.AddDbContext<TouristContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("CS")));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("CS")));
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {

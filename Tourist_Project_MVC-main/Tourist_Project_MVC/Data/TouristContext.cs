@@ -171,5 +171,18 @@ namespace Tourist_Project_MVC.Data
             // modelBuilder.HasData(...) calls that previously lived here have
             // been removed in favour of that idempotent, maintainable routine.
         }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            base.ConfigureConventions(configurationBuilder);
+
+            // SQL Server's datetime2 has no timezone concept. Map every DateTime
+            // property to Postgres "timestamp without time zone" to match that
+            // behavior — otherwise Npgsql maps DateTime to "timestamp with time
+            // zone", which strictly requires DateTimeKind.Utc and rejects the
+            // Kind=Unspecified values that come from JSON-deserialized seed data.
+            configurationBuilder.Properties<DateTime>().HaveColumnType("timestamp without time zone");
+            configurationBuilder.Properties<DateTime?>().HaveColumnType("timestamp without time zone");
+        }
     }
 }
