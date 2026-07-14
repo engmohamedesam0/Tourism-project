@@ -396,7 +396,7 @@
 
         function buildPopup(feature) {
             var p = feature.properties || {};
-            var id = _firstDefined(p, tripPropMap.id, []);
+            var id = destId(feature);
             var name = _firstDefined(p, tripPropMap.name, ['Unnamed']);
             var city = _firstDefined(p, tripPropMap.city, ['']);
             var cat = _firstDefined(p, tripPropMap.category, ['']);
@@ -418,6 +418,7 @@
             }
             return fallback[0] || '';
         }
+        function destId(feature) { return String(feature.id || '').split('.').pop(); }
 
         var tripMap = EGYMaps.initWfsMap({
             mapElId: 'tripBuilderMap',
@@ -464,7 +465,7 @@
 
         function tripPredicate(feature) {
             var p = feature.properties || {};
-            var id = _firstDefined(p, tripPropMap.id, []);
+            var id = destId(feature);
             var row = rowById[String(id)];
             return row ? rowMatches(row) : false;
         }

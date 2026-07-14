@@ -1,58 +1,78 @@
-# Fix: AI assistant & Sponsor notification panels don't open
+# Fix: Explore map gone + Trip shows no destination markers (regression from filter↔map sync)
 
-## Actual root cause (verified by static analysis)
-The two toggle `<script>` blocks in `Views/Shared/_Layout.cshtml` execute **during initial HTML parsing, before the FAB buttons and panel containers they target are parsed**, so `getElementById(...)` returns `null` and no `click` listener is ever bound.
+## Root cause (verified)
+The "filter↔map sync" refactor (commit `302736a` "Maps-3") rewired Explore, Trip, and Near Me to share `EGYMaps.filterMarkers(predicate)`. The shared helper is fine and its signature is already consistent across all three pages (`filterMarkers(predicate)`). The bug is in the **local** wiring each page does:
 
-- AI toggle script: ~lines 553–588 → `getElementById('aiAssistantBtn')`, `getElementById('aiAssistantPanel')`.
-- Notification toggle script: ~lines 590–737 → `getElementById('notificationFabBtn')`, `getElementById('notificationPanel')`.
-- But the targets are declared **later** in the same file:
-  - AI button `id="aiAssistantBtn"` ~line 831
-  - AI panel `id="aiAssistantPanel"` ~line 842
-  - NotificationFab button renders `id="notificationFabBtn"` ~line 840 (`@await Component.InvokeAsync("NotificationFab")`)
-  - Notification panel `id="notificationPanel"` / `notificationPanelBody` ~lines 870 / 884
-
-Inline scripts run synchronously at parse time, so the elements don't exist yet → `btn`/`panel` are `null` → the `if (btn && panel)` guards silently skip `addEventListener`. Result: clicking either FAB does nothing. Because **both** panels share this pattern and live in the same layout, they broke together — exactly the reported symptom. This is independent of Leaflet and of z-index: the handler is simply never attached.
-
-## Hypotheses checked and ruled out
-- **Leaflet z-index (visual stacking):** Not the cause. FABs + both panels already use `z-index: 1040` (`.fab-base` ~908, `.ai-widget-panel` ~943, `.notification-widget-panel` ~1063). Leaflet's highest z-index is `.leaflet-top`/`.leaflet-bottom` = **1000** (leaflet.css 1.9.4). 1040 > 1000, so panels already paint above the map. Bumping z-index alone would NOT open the panels (handler still unbound). We still apply the bump as defensive hardening (requested).
-- **`maps.js` global click listener intercepting/closing panels:** Not present. `wwwroot/js/maps.js` only adds `map.on('click', …)` (scoped to the map element) and `window` resize listeners. No `document`-level listener, no "click outside to close" logic.
-- **Leaflet control capturing the click:** Not applicable — the handler is never bound, so the failure happens before any click reaches the button. After the fix, DevTools → Event Listeners should show the `click` listener firing on the FAB.
+- **Explore** — its inline script was rewritten to call `_firstDefined(...)`, `_esc(...)`, and `propMap.id`, but those local definitions were **never added** to Explore (Near Me and Trip each define their own; Explore doesn't). So `initMap()` throws `ReferenceError: propMap is not defined` synchronously while evaluating `EGYMaps.initWfsMap({ propMap: propMap, ... })`. The exception aborts `initMap()` before `L.map(...)` runs → the map never renders at all.
+- **Trip** — it *does* define `propMap`/`_firstDefined`/`_esc` locally, but `tripPropMap.id = ['id','Id','destination_id']` does not match the **destinations** GeoJSON. Live `/Map/GetDestinationsGeoJson` returns features with properties `Name, City, Category, Status, ...` and **no id property** — the only id is the GeoJSON top-level `id` string, e.g. `"Destinations.2"` (confirmed by curling the running app). So `_firstDefined(p, tripPropMap.id, [])` → `''`, `tripPredicate` resolves to no `.picker-row` (`rowById[String('')]` undefined) → returns `false` for every feature → `filterMarkers` removes all markers → no destination markers.
+- **Near Me works** because the **branches** GeoJSON exposes `SponsorId` inside `properties` (`{"SponsorId":1,...}`, feature id `"Branches.1"`), and `nearMePropMap.id` includes `'SponsorId'`. This confirms the failure is specific to the destinations data/model, not the `filterMarkers` helper.
 
 ## Fixes
 
-### Fix 1 (primary) — bind handlers after the DOM exists
-In `Views/Shared/_Layout.cshtml`, defer both IIFEs so they run after parse. Minimal, low-risk change: wrap each IIFE body in `DOMContentLoaded`.
+### No change to Near Me and no change to `maps.js`
+`filterMarkers`'s signature is already correct and consistent. Only Explore and Trip need local fixes.
 
-- AI toggle script (~line 555): `(function () {` → `document.addEventListener('DOMContentLoaded', function () {`, and closing `})();` → `});`.
-- Notification toggle script (~line 592): same wrapping.
+### Explore — `Views/Explore/Index.cshtml` (`@section Scripts`)
+Add the missing local definitions (mirror Near Me/Trip) and a `destId(feature)` helper, and use it in `buildPopup`:
 
-(Equally valid alternative: move both `<script>` blocks to the end of `<body>`, after the FAB/panel markup and after `@await RenderSectionAsync("Scripts")`. The `DOMContentLoaded` wrap is the smaller diff.)
+1. Inside the IIFE, before `buildPopup`, add:
+   ```js
+   var propMap = {
+       id: ['id', 'Id', 'DestinationId', 'destination_id'],
+       name: ['name', 'Name'],
+       city: ['city', 'City'],
+       category: ['category', 'Category'],
+       status: ['status', 'Status'],
+       detailsUrl: '/Destination/Details/{id}'
+   };
 
-After this, `getElementById` resolves the elements, `addEventListener('click', …)` binds, and both panels open.
+   function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+   function _firstDefined(p, keys, fallback) {
+       for (var i = 0; i < keys.length; i++) {
+           var val = p[keys[i]];
+           if (val !== undefined && val !== null && String(val) !== '') return String(val);
+       }
+       return fallback[0] || '';
+   }
+   // Destinations GeoJSON has NO id in properties; the id is the feature-level
+   // "Destinations.2". Fall back to that so popups/links resolve to a real id.
+   function destId(feature) {
+       var p = feature.properties || {};
+       var id = _firstDefined(p, propMap.id, []);
+       if (!id && feature.id) id = String(feature.id).split('.').pop();
+       return id;
+   }
+   ```
+2. In `buildPopup`, change `var id = _firstDefined(p, propMap.id, []);` → `var id = destId(feature);`
+3. `explorePredicate` is unchanged logically — it already uses `propMap.category` / `propMap.status`, which now exist. No other edits needed.
 
-### Fix 2 (defensive hardening, as requested) — explicit high z-index via shared token
-Add one shared token and apply to the FAB + both panels so they are unambiguously above Leaflet and any future overlay (the "shared CSS, not a one-off patch" requirement).
+### Trip — `Views/Trip/Index.cshtml` (`@section Scripts`)
+Trip already defines `_esc`/`_firstDefined`/`tripPropMap`; only the id resolution is wrong.
 
-- `wwwroot/css/site.css` `:root` (after `--nav-offset`): add `--egy-fab-zindex: 9999;`
-- Inline `<style>` of `_Layout.cshtml`:
-  - `.fab-base` (~908): `z-index: var(--egy-fab-zindex);` (replace `1040`)
-  - `.ai-widget-panel` (~943): `z-index: var(--egy-fab-zindex);`
-  - `.notification-widget-panel` (~1063): `z-index: var(--egy-fab-zindex);`
+1. Add the same `destId(feature)` helper (use `tripPropMap`):
+   ```js
+   function destId(feature) {
+       var p = feature.properties || {};
+       var id = _firstDefined(p, tripPropMap.id, []);
+       if (!id && feature.id) id = String(feature.id).split('.').pop();
+       return id;
+   }
+   ```
+   (Also add `'DestinationId'` to `tripPropMap.id` for forward-compat — harmless.)
+2. In `buildPopup`, change `var id = _firstDefined(p, tripPropMap.id, []);` → `var id = destId(feature);`
+3. In `tripPredicate`, change `var id = _firstDefined(p, tripPropMap.id, []);` → `var id = destId(feature);` so `rowById[String(id)]` matches the picker rows' `data-dest-id="@Model.Stops[i].DestinationId"`.
+
+## Why this is safe
+- `feature.id` is preserved by `L.geoJSON` and is passed to both `buildPopup(feature, propMap)` and `filterMarkers`'s `predicate(entry.feature, entry.layer)` (see `maps.js` `onEachFeature`/`filterMarkers`). So `destId` works in both places.
+- `String(feature.id).split('.').pop()` yields `"2"` from `"Destinations.2"` and is a no-op if a bare id is ever present.
+- Near Me is untouched; its `SponsorId`-in-properties lookup already works.
 
 ## Validation
 1. `dotnet build` → 0 errors.
-2. DevTools → Elements → select `#aiAssistantBtn` → Event Listeners pane → confirm a `click` listener is now present (absent before the fix).
-3. Non-map page `/` (Home): click AI FAB → panel opens; close works.
-4. Map page `/Explore`: click AI FAB → panel opens above the Leaflet map, no overlap.
-5. Signed in as **Sponsor**:
-   - Non-map sponsor page (e.g. `/SponsorPortal`): click notification bell → panel opens, loads notifications; mark-all-read + delete work.
-   - Any sponsor map page: same — panel opens above the map.
-6. Non-sponsor (Tourist / Admin / guest): notification FAB shows with no badge; opening shows empty state "You're all caught up 🏺"; AI FAB still opens.
-7. Regression: Leaflet maps on `/Explore` and `/NearMe` still pan/zoom and show popups normally.
-
-## Risks / notes
-- `DOMContentLoaded` fires after the full document (including each page's `@section Scripts`), so no ordering regression with page scripts.
-- z-index `9999` places the FAB panels above Bootstrap modals/toasts (modal = 1055). Acceptable for always-on global widgets; if FAB-below-modal is ever wanted, use a value between 1000 and 1055 (e.g. 1100).
+2. **Explore** (`/Explore`): map renders; category chips (Temples/Museums/Nature/Adventure/Hidden Gems) filter both the list and the map markers; "All" shows all; each marker popup "Details" link is `/Destination/Details/{realId}` (not `//Details/`). No console errors.
+3. **Trip** (`/Trip`): map shows the full destinations layer at rest; checking Interest checkboxes and/or setting Budget filters both the picker rows and the map markers (markers whose matching row is hidden are removed by `filterMarkers`); selected-stop blue markers still render and `fitBounds` works. No console errors.
+4. **Near Me** (`/NearMe`): unchanged and still works.
+5. Cross-check DevTools console on all three pages for zero JS errors.
 
 ## Open question
-- None blocking. Confirm whether FAB panels should sit above Bootstrap modals (9999) or only above Leaflet (≈1100).
+- The destinations GeoJSON exposes no integer `DestinationId` property (only the `"Destinations.N"` feature id). If the GeoServer layer can be configured to publish `DestinationId` in `properties`, the client could read it directly — but the `destId(feature)` fallback above already covers the current data, so no server change is required to fix the regression.

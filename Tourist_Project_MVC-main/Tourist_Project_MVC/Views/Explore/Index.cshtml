@@ -308,19 +308,36 @@
         var chips = document.querySelectorAll('#categoryChips .chip');
         var cards = Array.from(document.querySelectorAll('#exploreList .explore-card'));
         var mapInstance = null;
+        var explorePropMap = {
+            id: ['id', 'Id', 'destination_id'],
+            name: ['name', 'Name', 'destination_name'],
+            city: ['city', 'City'],
+            category: ['category', 'Category'],
+            status: ['status', 'Status'],
+            detailsUrl: '/Destination/Details/{id}'
+        };
+
+        function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function _firstDefined(p, keys, fallback) {
+            for (var i = 0; i < keys.length; i++) {
+                var val = p[keys[i]];
+                if (val !== undefined && val !== null && String(val) !== '') return String(val);
+            }
+            return fallback[0] || '';
+        }
 
         function buildPopup(feature) {
             var p = feature.properties || {};
-            var id = _firstDefined(p, propMap.id, []);
-            var name = _firstDefined(p, propMap.name, ['Unnamed']);
-            var city = _firstDefined(p, propMap.city, ['']);
-            var cat = _firstDefined(p, propMap.category, ['']);
+            var id = _firstDefined(p, explorePropMap.id, []);
+            var name = _firstDefined(p, explorePropMap.name, ['Unnamed']);
+            var city = _firstDefined(p, explorePropMap.city, ['']);
+            var cat = _firstDefined(p, explorePropMap.category, ['']);
             var html = '';
             if (name) html += '<strong>' + _esc(name) + '</strong>';
             if (city) html += '<br><span style="color:#666">' + _esc(city) + '</span>';
             if (cat) html += '<br><span class="badge bg-secondary">' + _esc(cat) + '</span>';
-            if (id && propMap.detailsUrl) {
-                html += '<br><a href="' + propMap.detailsUrl.replace('{id}', encodeURIComponent(id)) + '" class="btn btn-sm btn-outline-primary mt-1">Details</a>';
+            if (id && explorePropMap.detailsUrl) {
+                html += '<br><a href="' + explorePropMap.detailsUrl.replace('{id}', encodeURIComponent(id)) + '" class="btn btn-sm btn-outline-primary mt-1">Details</a>';
             }
             return html;
         }
@@ -331,8 +348,8 @@
             var isAll = activeFilter && activeFilter.getAttribute('data-filter') === 'all';
             var activeCat = isAll ? null : (activeFilter ? activeFilter.getAttribute('data-category') : null);
             var activeStatus = isAll ? null : (activeFilter ? activeFilter.getAttribute('data-status') : null);
-            var propCat = _firstDefined(p, propMap.category, ['']);
-            var propStatus = _firstDefined(p, propMap.status, ['']);
+            var propCat = _firstDefined(p, explorePropMap.category, ['']);
+            var propStatus = _firstDefined(p, explorePropMap.status, ['']);
             return isAll || (activeCat && propCat === activeCat) || (activeStatus && propStatus === activeStatus);
         }
 
@@ -404,7 +421,7 @@
             mapInstance = EGYMaps.initWfsMap({
                 mapElId: 'exploreMap',
                 proxyUrl: '/Map/GetDestinationsGeoJson',
-                propMap: propMap,
+                propMap: explorePropMap,
                 popupHtml: buildPopup,
                 markerStyle: { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
                 onLayerReady: function () {
