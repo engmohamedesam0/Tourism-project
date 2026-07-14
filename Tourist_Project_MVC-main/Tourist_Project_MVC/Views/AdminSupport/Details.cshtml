@@ -1,7 +1,7 @@
-@model Tourist_Project_MVC.View_Model.AdminSupportDetailsVM
+﻿@model Tourist_Project_MVC.View_Model.AdminSupportDetailsVM
 
 @{
-    ViewData["Title"] = "Ticket";
+    ViewData["Title"] = @Localizer["AdminSupport_Ticket"].Value;
     ViewData["IsHomePage"] = false;
 }
 
@@ -12,7 +12,7 @@
             <i class="bi bi-ticket-perforated me-2"></i> @Model.Ticket.Subject
         </h1>
         <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left me-1"></i> Back to Inbox
+            <i class="bi bi-arrow-left me-1"></i> @Localizer["AdminSupport_BackToInbox"].Value
         </a>
     </div>
 
@@ -31,26 +31,26 @@
                         <i class="bi bi-@(Model.SubmitterType == "Tourist" ? "person" : "building") me-1"></i>
                         @Model.SubmitterType: <strong>@Model.SubmitterName</strong>
                     </p>
-                    <p class="text-muted small mb-3"><i class="bi bi-calendar me-1"></i> Submitted @Model.Ticket.CreatedDate.ToString("yyyy-MM-dd HH:mm")</p>
-                    <h6 class="text-muted small text-uppercase">Message</h6>
+                    <p class="text-muted small mb-3"><i class="bi bi-calendar me-1"></i> @Localizer["AdminSupport_Submitted"].Value @Model.Ticket.CreatedDate.ToString("yyyy-MM-dd HH:mm")</p>
+                    <h6 class="text-muted small text-uppercase">@Localizer["AdminSupport_Message"].Value</h6>
                     <p class="mb-0">@Model.Ticket.Description</p>
 
                     @if (!string.IsNullOrEmpty(Model.Ticket.AttachmentPath))
                     {
                         var isVideo = System.IO.Path.GetExtension(Model.Ticket.AttachmentPath).ToLowerInvariant() is ".mp4" or ".webm" or ".mov" or ".mkv" or ".avi";
                         <hr />
-                        <h6 class="text-muted small text-uppercase">Attachment</h6>
+                        <h6 class="text-muted small text-uppercase">@Localizer["AdminSupport_Attachment"].Value</h6>
                         if (isVideo)
                         {
                             <video src="@Model.Ticket.AttachmentPath" controls class="img-fluid rounded-3" style="max-height: 360px;"></video>
                         }
                         else
                         {
-                            <img src="@Model.Ticket.AttachmentPath" alt="Attachment" class="img-fluid rounded-3" style="max-height: 360px;" />
+                            <img src="@Model.Ticket.AttachmentPath" alt="@Localizer["AdminSupport_Attachment"].Value" class="img-fluid rounded-3" style="max-height: 360px;" />
                         }
                         <div class="mt-2">
                             <a href="@Model.Ticket.AttachmentPath" target="_blank" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-download me-1"></i> Open / Download
+                                <i class="bi bi-download me-1"></i> @Localizer["AdminSupport_OpenDownload"].Value
                             </a>
                         </div>
                     }
@@ -61,7 +61,7 @@
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm rounded-4 h-100">
                 <div class="card-body">
-                    <h6 class="fw-bold mb-3"><i class="bi bi-reply-fill me-1 text-primary"></i> Admin Response</h6>
+                    <h6 class="fw-bold mb-3"><i class="bi bi-reply-fill me-1 text-primary"></i> @Localizer["AdminSupport_AdminResponse"].Value</h6>
 
                     @if (!string.IsNullOrEmpty(Model.Ticket.AdminResponse))
                     {
@@ -70,11 +70,11 @@
                             <small class="text-muted">
                                 @if (Model.Ticket.RespondedDate.HasValue)
                                 {
-                                    <text>Answered on @Model.Ticket.RespondedDate.Value.ToString("yyyy-MM-dd HH:mm")</text>
+                                    <text>@Localizer["AdminSupport_AnsweredOn"].Value @Model.Ticket.RespondedDate.Value.ToString("yyyy-MM-dd HH:mm")</text>
                                 }
                                 @if (!string.IsNullOrEmpty(Model.RespondedByAdminName))
                                 {
-                                    <text> by @Model.RespondedByAdminName</text>
+                                    <text>@Localizer["AdminSupport_By"].Value @Model.RespondedByAdminName</text>
                                 }
                             </small>
                         </div>
@@ -83,24 +83,24 @@
                     {
                         <div class="text-center py-3 text-muted mb-3">
                             <i class="bi bi-hourglass-split" style="font-size:1.8rem;"></i>
-                            <p class="mb-0 mt-2 small">No response yet.</p>
+                            <p class="mb-0 mt-2 small">@Localizer["AdminSupport_NoResponseYet"].Value</p>
                         </div>
                     }
 
                     <form asp-action="Respond" method="post" asp-route-id="@Model.Ticket.Id">
                         <div class="mb-2">
                             <textarea name="adminResponse" class="form-control" rows="4"
-                                      placeholder="Type your reply…">@Model.Ticket.AdminResponse</textarea>
+                                      placeholder="@Localizer["AdminSupport_TypeYourReply"].Value">@Model.Ticket.AdminResponse</textarea>
                         </div>
                         <div class="d-grid gap-2">
                             <button class="btn btn-success btn-sm" type="submit">
-                                <i class="bi bi-send me-1"></i> Send Response
+                                <i class="bi bi-send me-1"></i> @Localizer["AdminSupport_SendResponse"].Value
                             </button>
                             @if (Model.Ticket.Status != "Resolved")
                             {
                                 <button formaction="@Url.Action("Resolve", new { id = Model.Ticket.Id })"
                                         formmethod="post" class="btn btn-outline-secondary btn-sm" type="submit">
-                                    <i class="bi bi-check2-circle me-1"></i> Mark Resolved
+                                    <i class="bi bi-check2-circle me-1"></i> @Localizer["AdminSupport_MarkResolved"].Value
                                 </button>
                             }
                         </div>

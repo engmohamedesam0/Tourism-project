@@ -1,14 +1,14 @@
 ﻿@model Tourist_Project_MVC.Models.TripPlan
 
 @{
-    ViewData["Title"] = "Trip Details";
+    ViewData["Title"] = @Localizer["TripPlan_TripDetails"].Value;
 }
 
 <div class="container mt-4" style="max-width: 900px;">
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
 
         <div class="card-header py-3"
-             style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+             style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="text-white mb-0">
                     <i class="bi bi-map-fill me-2"></i> @Model.Title
@@ -25,7 +25,7 @@
                     }
                     <span class="badge-status @statusClass">@Model.Status</span>
                     <span class="badge bg-warning text-dark">
-                        @((Model.EndDate - Model.StartDate).Days) days
+                        @((Model.EndDate - Model.StartDate).Days) @Localizer["TripPlan_Days"].Value
                     </span>
                 </div>
             </div>
@@ -38,21 +38,21 @@
                     <div class="stat-mini-card">
                         <i class="bi bi-person-fill text-primary"></i>
                         <div class="stat-mini-number">@Model.Tourist?.Name</div>
-                        <div class="stat-mini-label">Tourist</div>
+                        <div class="stat-mini-label">@Localizer["TripPlan_Tourist"].Value</div>
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="stat-mini-card">
                         <i class="bi bi-calendar-check-fill text-success"></i>
                         <div class="stat-mini-number">@Model.StartDate.ToShortDateString()</div>
-                        <div class="stat-mini-label">Start Date</div>
+                        <div class="stat-mini-label">@Localizer["TripPlan_StartDate"].Value</div>
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="stat-mini-card">
                         <i class="bi bi-calendar-x-fill text-danger"></i>
                         <div class="stat-mini-number">@Model.EndDate.ToShortDateString()</div>
-                        <div class="stat-mini-label">End Date</div>
+                        <div class="stat-mini-label">@Localizer["TripPlan_EndDate"].Value</div>
                     </div>
                 </div>
             </div>
@@ -61,18 +61,18 @@
 
             <h5 class="mb-3">
                 <i class="bi bi-geo-alt-fill me-2" style="color: var(--egy-primary);"></i>
-                Destinations
+                @Localizer["TripPlan_Destinations"].Value
             </h5>
 
             <div class="table-responsive">
                 <table class="table table-hover align-middle destinations-table">
                     <thead>
                         <tr>
-                            <th>Order</th>
-                            <th>Destination</th>
-                            <th>City</th>
-                            <th>Arrival</th>
-                            <th>Departure</th>
+                            <th>@Localizer["TripPlan_Order"].Value</th>
+                            <th>@Localizer["TripPlan_Destination"].Value</th>
+                            <th>@Localizer["TripPlan_City"].Value</th>
+                            <th>@Localizer["TripPlan_Arrival"].Value</th>
+                            <th>@Localizer["TripPlan_Departure"].Value</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,11 +97,11 @@
           @if (User.IsInRole("Admin"))
               {
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-                <i class="bi bi-pencil-fill me-1"></i> Edit
+                <i class="bi bi-pencil-fill me-1"></i> @Localizer["TripPlan_Edit"].Value
             </a>
               }
             <a asp-action="Index" class="btn-back">
-                <i class="bi bi-arrow-left me-1"></i> Back
+                <i class="bi bi-arrow-left me-1"></i> @Localizer["TripPlan_Back"].Value
             </a>
         </div>
     </div>
@@ -120,7 +120,7 @@
             font-family: 'Cinzel',sans-serif;
             font-size: 1rem;
             font-weight: 700;
-            color: #2C1A0E;
+            color: var(--egy-dark);
             margin: 6px 0 2px;
         }
 

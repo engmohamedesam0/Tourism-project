@@ -59,6 +59,30 @@ namespace Tourist_Project_MVC.Controllers
                 MyRedemptions = myRedemptions
             };
 
+            var rewardReviews = _context.SiteReviews
+                .Include(r => r.Tourist)
+                .Where(r => r.RewardId != null)
+                .OrderByDescending(r => r.CreatedDate)
+                .Take(5)
+                .ToList();
+
+            ViewBag.RewardsCarousel = new Tourist_Project_MVC.View_Model.ReviewsCarouselVM
+            {
+                Title = "Reward Reviews",
+                TargetTitle = "Points & Rewards",
+                Items = rewardReviews.Select(r => new Tourist_Project_MVC.View_Model.ReviewsCarouselItemVM
+                {
+                    TouristName = r.Tourist?.Name ?? "Tourist",
+                    TouristPhotoPath = r.Tourist?.ApplicationUser != null ? r.Tourist.ApplicationUser.ProfilePicturePath : null,
+                    Rating = r.Rating,
+                    Comment = r.Comment,
+                    CreatedDate = r.CreatedDate
+                }).ToList(),
+                CanAddReview = true,
+                TargetId = 0,
+                TargetType = "Reward"
+            };
+
             return View(vm);
         }
 
@@ -142,6 +166,35 @@ namespace Tourist_Project_MVC.Controllers
                 : reward.Title.ToUpperInvariant();
             var guid = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpperInvariant();
             return $"{prefix}-{guid}";
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddReview(int id, [Bind("Rating,Comment")] SiteReview vm)
+        {
+            var reward = _context.Rewards.FirstOrDefault(r => r.Id == id);
+            if (reward == null) return NotFound();
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            var tourist = _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId);
+            if (tourist == null) return RedirectToAction(nameof(Index));
+
+            if (ModelState.IsValid)
+            {
+                var review = new SiteReview
+                {
+                    Rating = vm.Rating,
+                    Comment = vm.Comment,
+                    RewardId = id,
+                    TouristId = tourist.Id,
+                    CreatedDate = DateTime.Now
+                };
+
+                _context.SiteReviews.Add(review);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

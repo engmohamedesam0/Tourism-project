@@ -1,7 +1,7 @@
-@model Tourist_Project_MVC.Models.TripPlan
+﻿@model Tourist_Project_MVC.Models.TripPlan
 
 @{
-    ViewData["Title"] = "Trip Details";
+    ViewData["Title"] = @Localizer["TripDetails_PageTitle"].Value;
     var tourist = ViewBag.Tourist as Tourist_Project_MVC.Models.Tourist;
 }
 
@@ -12,7 +12,7 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
         <h2 class="page-title mb-0">🧳 @Model.Title</h2>
         <a asp-action="Index" class="btn-back">
-            <i class="bi bi-arrow-left me-1"></i> Back to Trip
+            <i class="bi bi-arrow-left me-1"></i> @Localizer["TripDetails_BackToTrip"].Value
         </a>
     </div>
 
@@ -30,16 +30,24 @@
                 "Draft" => "badge-status-draft",
                 _ => "badge-status-active"
             };
+            var statusLabel = Model.Status switch
+            {
+                "Active" => @Localizer["TripDetails_StatusActive"].Value,
+                "Completed" => @Localizer["TripDetails_StatusCompleted"].Value,
+                "Cancelled" => @Localizer["TripDetails_StatusCancelled"].Value,
+                "Draft" => @Localizer["TripDetails_StatusDraft"].Value,
+                _ => Model.Status
+            };
         }
-        <span class="badge-status @statusBadge">@Model.Status</span>
+        <span class="badge-status @statusBadge">@statusLabel</span>
 
         @if (Model.Budget.HasValue)
         {
-            <span class="text-muted"><i class="bi bi-cash-coin me-1"></i> Budget: @Model.Budget.Value.ToString("C")</span>
+            <span class="text-muted"><i class="bi bi-cash-coin me-1"></i> @Localizer["TripDetails_Budget"].Value: @Model.Budget.Value.ToString("C")</span>
         }
         @if (Model.Companions.HasValue)
         {
-            <span class="text-muted"><i class="bi bi-people-fill me-1"></i> Companions: @Model.Companions</span>
+            <span class="text-muted"><i class="bi bi-people-fill me-1"></i> @Localizer["TripDetails_Companions"].Value: @Model.Companions</span>
         }
     </div>
 
@@ -49,19 +57,19 @@
             <div id="tripDetailsMap" class="trip-details-map">
                 <div class="map-watermark">
                     <i class="bi bi-map" style="font-size: 3rem;"></i>
-                    <p class="mb-0 mt-2">Map will render here</p>
-                    <small class="text-muted">Each stop carries data-lat / data-lng / data-id for future markers</small>
+                    <p class="mb-0 mt-2">@Localizer["TripDetails_MapPlaceholder"].Value</p>
+                    <small class="text-muted">@Localizer["TripDetails_MapMarkerInfo"].Value</small>
                 </div>
             </div>
         </div>
 
         <!-- RIGHT: sortable stop list -->
         <div class="col-lg-7">
-            <h4 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">Itinerary Stops</h4>
+            <h4 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">@Localizer["TripDetails_ItineraryStops"].Value</h4>
 
             <div id="reorderNotice" class="alert alert-warning d-none small py-2 mb-3">
                 <i class="bi bi-info-circle-fill me-1"></i>
-                You reordered the stops — please review and adjust each stop's dates if needed.
+                @Localizer["TripDetails_ReorderNotice"].Value
             </div>
 
             <ul id="stopList" class="list-unstyled">
@@ -89,19 +97,19 @@
                         <div class="stop-date-editor d-none mt-2">
                             <div class="row g-2 align-items-end">
                                 <div class="col">
-                                    <label class="form-label small mb-1">Arrival</label>
+                                    <label class="form-label small mb-1">@Localizer["TripDetails_ArrivalLabel"].Value</label>
                                     <input type="date" class="form-control form-control-sm edit-arrival"
                                            value="@td.ArrivalDate.ToString("yyyy-MM-dd")" />
                                 </div>
                                 <div class="col">
-                                    <label class="form-label small mb-1">Departure</label>
+                                    <label class="form-label small mb-1">@Localizer["TripDetails_DepartureLabel"].Value</label>
                                     <input type="date" class="form-control form-control-sm edit-departure"
                                            value="@td.DepartureDate.ToString("yyyy-MM-dd")" />
                                 </div>
                                 <div class="col-auto">
                                     <button type="button" class="btn btn-sm btn-primary btn-save-dates"
                                             data-stop-id="@td.Id">
-                                        <i class="bi bi-check-lg"></i> Save
+                                        <i class="bi bi-check-lg"></i> @Localizer["TripDetails_Save"].Value
                                     </button>
                                 </div>
                             </div>
@@ -109,11 +117,11 @@
 
                         <div class="stop-actions mt-2">
                             <button type="button" class="btn btn-sm btn-outline-secondary btn-edit-dates">
-                                <i class="bi bi-pencil-fill me-1"></i> Edit dates
+                                <i class="bi bi-pencil-fill me-1"></i> @Localizer["TripDetails_EditDates"].Value
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-danger btn-remove-stop"
                                     data-stop-id="@td.Id">
-                                <i class="bi bi-trash-fill me-1"></i> Remove
+                                <i class="bi bi-trash-fill me-1"></i> @Localizer["TripDetails_Remove"].Value
                             </button>
                         </div>
                     </li>
@@ -122,11 +130,16 @@
 
             @if (!Model.TripDestinations.Any())
             {
-                <p class="text-muted">No stops yet.</p>
+                <p class="text-muted">@Localizer["TripDetails_NoStops"].Value</p>
             }
         </div>
     </div>
 </div>
+
+@if (ViewBag.ReviewsCarousel is Tourist_Project_MVC.View_Model.ReviewsCarouselVM reviewsVm && reviewsVm.Items != null && reviewsVm.Items.Any())
+{
+    @await Html.PartialAsync("_ReviewsCarousel", reviewsVm)
+}
 
 @section Scripts {
 <style>

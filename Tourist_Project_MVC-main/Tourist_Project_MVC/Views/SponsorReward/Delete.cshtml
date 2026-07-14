@@ -1,42 +1,42 @@
 @model Tourist_Project_MVC.Models.Reward
 
 @{
-    ViewData["Title"] = "Delete Reward";
+    ViewData["Title"] = Localizer["SponsorReward_DeleteTitle"].Value;
 }
 
 <div class="inner-page-wrapper">
     <div class="container">
-        <h2>🗑️ Delete Reward</h2>
+        <h2>🗑️ @Localizer["SponsorReward_DeleteTitle"].Value</h2>
         <hr />
         <div class="alert alert-warning">
-            <strong>Soft-delete will be performed: the reward status will be set to "Removed" instead of being permanently deleted.</strong>
+            <strong>@Localizer["SponsorReward_DeleteNote"].Value</strong>
         </div>
 
         <dl class="row">
-            <dt class="col-sm-3">Title</dt>
+            <dt class="col-sm-3">@Localizer["SponsorReward_Title"].Value</dt>
             <dd class="col-sm-9">@Model.Title</dd>
 
-            <dt class="col-sm-3">Type</dt>
+            <dt class="col-sm-3">@Localizer["SponsorReward_Type"].Value</dt>
             <dd class="col-sm-9">@Model.RewardType</dd>
 
-            <dt class="col-sm-3">Points Required</dt>
+            <dt class="col-sm-3">@Localizer["SponsorReward_PointsRequired"].Value</dt>
             <dd class="col-sm-9">@Model.PointsRequired</dd>
 
-            <dt class="col-sm-3">Quantity Available</dt>
+            <dt class="col-sm-3">@Localizer["SponsorReward_QuantityAvailable"].Value</dt>
             <dd class="col-sm-9">@Model.QuantityAvailable</dd>
 
-            <dt class="col-sm-3">Expiration</dt>
+            <dt class="col-sm-3">@Localizer["SponsorReward_ExpirationDate"].Value</dt>
             <dd class="col-sm-9">@Model.ExpirationDate.ToShortDateString()</dd>
 
-            <dt class="col-sm-3">Current Status</dt>
+            <dt class="col-sm-3">@Localizer["SponsorReward_Status"].Value</dt>
             <dd class="col-sm-9">@Model.Status</dd>
         </dl>
 
         <form asp-action="DeleteConfirmed" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
-            <button type="submit" class="btn btn-danger">Soft Delete</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-danger">@Localizer["SponsorReward_SoftDelete"].Value</button>
+            <a asp-action="Index" class="btn btn-secondary">@Localizer["SponsorReward_Cancel"].Value</a>
         </form>
     </div>
 </div>

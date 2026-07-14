@@ -1,0 +1,180 @@
+﻿@model Tourist_Project_MVC.View_Model.ReviewsCarouselVM
+
+@if (Model.Items != null && Model.Items.Any())
+{
+    <div class="reviews-carousel-section mt-5">
+        <h4 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">
+            <i class="bi bi-chat-square-quote-fill me-2" style="color:var(--egy-primary);"></i>
+            @Model.Title @(!string.IsNullOrEmpty(Model.TargetTitle) ? $"— {Model.TargetTitle}" : "")
+        </h4>
+
+        <div id="reviewsCarousel-@Model.TargetId" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @for (int i = 0; i < Model.Items.Count; i++)
+                {
+                    var item = Model.Items[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="card border-0 shadow-sm rounded-4 mx-auto" style="max-width: 700px;">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-3" style="font-size: 2.5rem; color: var(--egy-primary); opacity: 0.3;">
+                                    <i class="bi bi-quote"></i>
+                                </div>
+                                <div class="mb-3">
+                                    @for (int star = 1; star <= 5; star++)
+                                    {
+                                        <i class="bi @(star <= item.Rating ? "bi-star-fill text-warning" : "bi-star text-muted")"></i>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrEmpty(item.Comment))
+                                {
+                                    <p class="mb-3" style="font-size: 1.05rem; font-style: italic; color: var(--egy-dark);">
+                                        "@item.Comment"
+                                    </p>
+                                }
+                                <div class="d-flex align-items-center justify-content-center gap-3">
+                                    @if (!string.IsNullOrEmpty(item.TouristPhotoPath))
+                                    {
+                                        <img src="@item.TouristPhotoPath" alt="@item.TouristName"
+                                             class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid var(--egy-primary);" />
+                                    }
+                                    else
+                                    {
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                             style="width: 48px; height: 48px; background: var(--egy-light); border: 2px solid var(--egy-primary); color: var(--egy-muted-gold);">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+                                    }
+                                    <div class="text-start">
+                                        <div class="fw-semibold mb-0">@item.TouristName</div>
+                                        <small class="text-muted">@item.CreatedDate.ToString("MMM dd, yyyy")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @if (Model.Items.Count > 1)
+            {
+                <button class="carousel-control-prev" type="button" data-bs-target="#reviewsCarousel-@Model.TargetId" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">@Localizer["Reviews_Previous"].Value</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#reviewsCarousel-@Model.TargetId" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">@Localizer["Reviews_Next"].Value</span>
+                </button>
+            }
+
+            <div class="carousel-indicators-wrapper mt-3">
+                <ol class="carousel-indicators">
+                    @for (int i = 0; i < Model.Items.Count; i++)
+                    {
+                        <li data-bs-target="#reviewsCarousel-@Model.TargetId" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></li>
+                    }
+                </ol>
+            </div>
+        </div>
+
+        <div id="reviewsMore-@Model.TargetId" class="reviews-more-grid mt-4" style="display: none;">
+            <div class="row g-3">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    @for (int star = 1; star <= 5; star++)
+                                    {
+                                        <i class="bi @(star <= item.Rating ? "bi-star-fill text-warning" : "bi-star text-muted")"></i>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrEmpty(item.Comment))
+                                {
+                                    <p class="small mb-2">@item.Comment</p>
+                                }
+                                <div class="d-flex align-items-center gap-2">
+                                    @if (!string.IsNullOrEmpty(item.TouristPhotoPath))
+                                    {
+                                        <img src="@item.TouristPhotoPath" alt="@item.TouristName"
+                                             class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                             style="width: 32px; height: 32px; background: var(--egy-light); color: var(--egy-muted-gold);">
+                                            <i class="bi bi-person-fill" style="font-size: 0.9rem;"></i>
+                                        </div>
+                                    }
+                                    <div>
+                                        <div class="fw-semibold small">@item.TouristName</div>
+                                        <small class="text-muted">@item.CreatedDate.ToString("MMM dd, yyyy")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @if (Model.Items.Count > 3)
+        {
+            <div class="text-center mt-3">
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleReviewsMore('@Model.TargetId')">
+                    <i class="bi bi-chevron-down me-1"></i> @Localizer["Reviews_ShowMore"].Value
+                </button>
+            </div>
+        }
+
+        @if (Model.CanAddReview)
+        {
+            <div class="card border-0 shadow-sm rounded-4 mt-4">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">
+                        <i class="bi bi-pencil-square me-1"></i> @Localizer["Reviews_WriteReview"].Value
+                    </h6>
+                    <form asp-controller="@(Model.TargetType == "Destination" ? "Destination" : Model.TargetType == "TripPlan" ? "Trip" : Model.TargetType == "Reward" ? "TouristReward" : "Destination")"
+                          asp-action="AddReview" asp-route-id="@Model.TargetId" method="post" class="row g-3 align-items-end">
+                        @Html.AntiForgeryToken()
+                        <div class="col-sm-6">
+                            <label class="form-label small text-muted">@Localizer["Reviews_Rating"].Value</label>
+                            <select name="Rating" class="form-select form-select-sm" required>
+                                <option value="">@Localizer["Reviews_SelectRating"].Value</option>
+                                @for (int r = 5; r >= 1; r--)
+                                {
+                                    <option value="@r">@r ★</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small text-muted">@Localizer["Reviews_CommentOptional"].Value</label>
+                            <input type="text" name="Comment" class="form-control form-control-sm" placeholder="@Localizer["Reviews_ShareExperience"].Value" />
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-send me-1"></i> @Localizer["Reviews_SubmitReview"].Value
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    <script>
+        function toggleReviewsMore(targetId) {
+            var grid = document.getElementById('reviewsMore-' + targetId);
+            var btn = grid ? grid.previousElementSibling.querySelector('button') : null;
+            if (!grid) return;
+            if (grid.style.display === 'none') {
+                grid.style.display = 'block';
+                if (btn) btn.innerHTML = '<i class="bi bi-chevron-up me-1"></i> Show fewer reviews';
+            } else {
+                grid.style.display = 'none';
+                if (btn) btn.innerHTML = '<i class="bi bi-chevron-down me-1"></i> Show more reviews';
+            }
+        }
+    </script>
+}

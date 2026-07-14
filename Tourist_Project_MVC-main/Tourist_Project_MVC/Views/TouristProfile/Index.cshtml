@@ -5,76 +5,311 @@
     ViewData["IsHomePage"] = false;
 }
 
+@if (TempData["ProfileMessage"] != null)
+{
+    var msgType = TempData["ProfileMessageType"] as string ?? "info";
+    <div class="container my-4" style="max-width: 900px;">
+        <div class="alert alert-@msgType alert-dismissible fade show" role="alert">
+            @TempData["ProfileMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
 <div class="container my-4" style="max-width: 900px;">
 
-    <h1 class="page-title mb-4">
-        <i class="bi bi-person-circle me-2"></i> My Profile
-    </h1>
-
-    <div class="row g-3">
-        <!-- Profile picture + main identity -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
-                <div class="card-body">
+    <!-- Top Identity Card -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center gap-4 flex-wrap">
+                <div class="flex-shrink-0">
                     @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
                     {
                         <img src="@Model.ProfilePicturePath" alt="Profile picture"
-                             class="rounded-circle mb-3"
-                             style="width: 140px; height: 140px; object-fit: cover; border: 3px solid var(--egy-primary);" />
+                             class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid var(--egy-primary);" />
                     }
                     else
                     {
-                        <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
-                             style="width: 140px; height: 140px; background: var(--egy-light); border: 3px solid var(--egy-primary); font-size: 3.5rem; color: var(--egy-muted-gold);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center"
+                             style="width: 100px; height: 100px; background: var(--egy-light); border: 3px solid var(--egy-primary); font-size: 2.8rem; color: var(--egy-muted-gold);">
                             <i class="bi bi-person-fill"></i>
                         </div>
                     }
-                    <h5 class="mb-1" style="font-family:'Cinzel',serif;">@($"{Model.FirstName} {Model.LastName}".Trim())</h5>
-                    <p class="text-muted small mb-0">@Model.Email</p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Details -->
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-sm-6">
-                            <label class="form-label small text-muted">Full Name</label>
-                            <p class="fw-semibold mb-0">@Model.Name</p>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label small text-muted">Nationality</label>
-                            <p class="fw-semibold mb-0">@Model.Nationality</p>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label small text-muted">Email</label>
-                            <p class="fw-semibold mb-0">@Model.Email</p>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label small text-muted">Phone Number</label>
-                            <p class="fw-semibold mb-0">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Not provided" : Model.PhoneNumber)</p>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label small text-muted">Registration Date</label>
-                            <p class="fw-semibold mb-0">@Model.RegisterDate.ToString("yyyy-MM-dd")</p>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label small text-muted">Account Status</label>
-                            <p class="mb-0">
-                                <span class="badge bg-@(Model.Status == "Active" ? "success" : "secondary")">@Model.Status</span>
-                            </p>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label small text-muted">Points Balance</label>
-                            <p class="fw-bold mb-0" style="font-size: 1.25rem; color: var(--egy-primary);">
-                                <i class="bi bi-coin me-1"></i> @Model.PointBalance.ToString("N0") pts
-                            </p>
-                        </div>
-                    </div>
+                <div class="flex-grow-1">
+                    <h4 class="mb-1" style="font-family:'Cinzel',serif; color:var(--egy-dark);">
+                        @($"{Model.FirstName} {Model.LastName}".Trim())
+                        <span class="badge ms-2" style="background: var(--egy-accent); color: var(--egy-dark); font-size: 0.75rem;">
+                            @Model.LevelIcon @Model.LevelLabel
+                        </span>
+                    </h4>
+                    <p class="text-muted mb-0">@Model.Email</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Details Card -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            <h5 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">
+                <i class="bi bi-info-circle-fill me-1" style="color:var(--egy-primary);"></i> Profile Details
+            </h5>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label class="form-label small text-muted">Full Name</label>
+                    <p class="fw-semibold mb-0">@Model.Name</p>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small text-muted">Nationality</label>
+                    <p class="fw-semibold mb-0">@Model.Nationality</p>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small text-muted">Email</label>
+                    <p class="fw-semibold mb-0">@Model.Email</p>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small text-muted">Phone Number</label>
+                    <p class="fw-semibold mb-0">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Not provided" : Model.PhoneNumber)</p>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small text-muted">Registration Date</label>
+                    <p class="fw-semibold mb-0">@Model.RegisterDate.ToString("yyyy-MM-dd")</p>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small text-muted">Account Status</label>
+                    <p class="mb-0">
+                        <span class="badge bg-@(Model.Status == "Active" ? "success" : "secondary")">@Model.Status</span>
+                    </p>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small text-muted">Preferred Language</label>
+                    <p class="fw-semibold mb-0">@(string.IsNullOrEmpty(Model.PreferredLanguage) ? "English (default)" : Model.PreferredLanguage)</p>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small text-muted">Travel Interests</label>
+                    <div class="d-flex flex-wrap gap-2 mt-1">
+                        @if (!string.IsNullOrEmpty(Model.TravelInterests))
+                        {
+                            foreach (var tag in Model.TravelInterests.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                            {
+                                <span class="badge rounded-pill" style="background: rgba(200,131,42,0.12); color: var(--egy-muted-gold); border: 1px solid var(--egy-accent);">@tag</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted small">Not set</span>
+                        }
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small text-muted">Notification Preferences</label>
+                    <div class="d-flex flex-wrap gap-3 mt-1">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" checked="@Model.NotifyByEmail" disabled>
+                            <label class="form-check-label small">Email</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" checked="@Model.NotifyInApp" disabled>
+                            <label class="form-check-label small">In-App</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted">Points Balance</label>
+                    <p class="fw-bold mb-0" style="font-size: 1.25rem; color: var(--egy-primary);">
+                        <i class="bi bi-coin me-1"></i> @Model.PointBalance.ToString("N0") pts
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Section -->
+    <h5 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">
+        <i class="bi bi-clock-history me-1" style="color:var(--egy-primary);"></i> Your Journey
+    </h5>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-card h-100 text-center">
+                <i class="bi bi-geo-alt-fill stat-icon" style="color: var(--egy-primary);"></i>
+                <div class="stat-number">@Model.PlacesVisitedCount</div>
+                <div class="stat-label">Places Visited</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card h-100 text-center">
+                <i class="bi bi-gift-fill stat-icon" style="color: var(--egy-accent);"></i>
+                <div class="stat-number">@Model.RewardsRedeemedCount</div>
+                <div class="stat-label">Rewards Redeemed</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card h-100 text-center">
+                <i class="bi bi-trophy-fill stat-icon" style="color: var(--egy-muted-gold);"></i>
+                <div class="stat-number">@Model.MissionsCompletedCount</div>
+                <div class="stat-label">Missions Completed</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card h-100 text-center">
+                <i class="bi bi-heart-fill stat-icon" style="color: #a16468;"></i>
+                <div class="stat-number" style="font-size: 1rem;">@Model.FavoriteDestination</div>
+                <div class="stat-label">Favorite Destination</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            <h5 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">
+                <i class="bi bi-lightning-charge-fill me-1" style="color:var(--egy-primary);"></i> Quick Actions
+            </h5>
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                    <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                </button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                    <i class="bi bi-key-fill me-1"></i> Change Password
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--egy-dark); color: #fff;">
+                <h5 class="modal-title" style="font-family:'Cinzel',serif;">Edit Profile</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Profile Picture</label>
+                            <input type="file" name="ProfilePicture" class="form-control form-control-sm" accept=".jpg,.jpeg,.png,.gif,.webp" />
+                            @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
+                            {
+                                <img src="@Model.ProfilePicturePath" alt="Current" class="rounded-circle mt-2" style="width: 60px; height: 60px; object-fit: cover;" />
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">First Name</label>
+                            <input type="text" name="FirstName" value="@Model.FirstName" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Last Name</label>
+                            <input type="text" name="LastName" value="@Model.LastName" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Email</label>
+                            <input type="email" name="Email" value="@Model.Email" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Phone Number</label>
+                            <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Nationality</label>
+                            <input type="text" name="Nationality" value="@Model.Nationality" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Preferred Language</label>
+                            <select name="PreferredLanguage" class="form-select">
+                                <option value="">Select language</option>
+                                <option value="en" selected="@(Model.PreferredLanguage == "en")">English</option>
+                                <option value="ar" selected="@(Model.PreferredLanguage == "ar")">Arabic</option>
+                                <option value="es" selected="@(Model.PreferredLanguage == "es")">Spanish</option>
+                                <option value="de" selected="@(Model.PreferredLanguage == "de")">German</option>
+                                <option value="zh" selected="@(Model.PreferredLanguage == "zh")">Chinese</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-muted">Travel Interests</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                @{
+                                    var interests = Model.TravelInterests?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet() ?? new HashSet<string>();
+                                    var allInterests = new[] { "Temple", "Museum", "Natural", "Archaeological", "Historical", "Religious" };
+                                    foreach (var tag in allInterests)
+                                    {
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" name="TravelInterests" value="@tag" id="int-@tag.ToLower()" @(interests.Contains(tag) ? "checked" : "") />
+                                            <label class="form-check-label" for="int-@tag.ToLower()">@tag</label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <input type="hidden" name="TravelInterests" id="travelInterestsHidden" value="@Model.TravelInterests" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Notifications</label>
+                            <div class="form-check form-switch">
+                                <input type="hidden" name="NotifyByEmail" value="false" />
+                                <input class="form-check-input" type="checkbox" name="NotifyByEmail" value="true" @(Model.NotifyByEmail ? "checked" : "") />
+                                <label class="form-check-label">Email</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input type="hidden" name="NotifyInApp" value="false" />
+                                <input class="form-check-input" type="checkbox" name="NotifyInApp" value="true" @(Model.NotifyInApp ? "checked" : "") />
+                                <label class="form-check-label">In-App</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--egy-dark); color: #fff;">
+                <h5 class="modal-title" style="font-family:'Cinzel',serif;">Change Password</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="ChangePassword" asp-controller="Account" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Current Password</label>
+                        <input type="password" name="CurrentPassword" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">New Password</label>
+                        <input type="password" name="NewPassword" class="form-control" required minlength="12" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Confirm New Password</label>
+                        <input type="password" name="ConfirmNewPassword" class="form-control" required />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('input[name="TravelInterests"]').forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                var checked = Array.from(document.querySelectorAll('input[name="TravelInterests"]:checked')).map(function(c) { return c.value; });
+                document.getElementById('travelInterestsHidden').value = checked.join(',');
+            });
+        });
+    </script>
+}

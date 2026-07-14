@@ -1,7 +1,7 @@
 @model Tourist_Project_MVC.View_Model.SponsorDashboardVM
 
 @{
-    ViewData["Title"] = "Sponsor Dashboard";
+    ViewData["Title"] = Localizer["SponsorPortal_DashboardPageTitle"].Value;
     ViewData["IsHomePage"] = false;
 }
 
@@ -9,10 +9,10 @@
 
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h1 class="page-title mb-0">
-            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            <i class="bi bi-speedometer2 me-2"></i> @Localizer["SponsorPortal_Dashboard"].Value
         </h1>
         <a asp-controller="SponsorRedemption" asp-action="Index" class="btn btn-outline-primary">
-            <i class="bi bi-receipt me-1"></i> Redemption History
+            <i class="bi bi-receipt me-1"></i> @Localizer["SponsorPortal_RedemptionHistory"].Value
         </a>
     </div>
 
@@ -22,7 +22,7 @@
             <div class="stat-card stat-blue h-100">
                 <i class="bi bi-ticket-perforated-fill stat-icon"></i>
                 <div class="stat-number">@Model.RedeemedCount</div>
-                <div class="stat-label">Rewards Redeemed</div>
+                <div class="stat-label">@Localizer["SponsorPortal_RewardsRedeemed"].Value</div>
             </div>
         </div>
 
@@ -31,7 +31,7 @@
             <div class="stat-card stat-green h-100">
                 <i class="bi bi-eye-fill stat-icon"></i>
                 <div class="stat-number">@Model.RewardViewCount</div>
-                <div class="stat-label">Reward Detail Views</div>
+                <div class="stat-label">@Localizer["SponsorPortal_RewardDetailViews"].Value</div>
             </div>
         </div>
 
@@ -43,7 +43,7 @@
                     @(Model.MostWantedRewardTitle ?? "—")
                 </div>
                 <div class="stat-label">
-                    Most-Wanted
+                    @Localizer["SponsorPortal_MostWanted"].Value
                     @if (Model.MostWantedRewardRedemptions > 0)
                     {
                         @:(@Model.MostWantedRewardRedemptions)
@@ -66,7 +66,7 @@
                     @(Model.RatingAvailable ? $"{Model.AverageRating:F1}" : "—")
                 </div>
                 <div class="stat-label">
-                    Avg. Rating
+                    @Localizer["SponsorPortal_AvgRating"].Value
                     @if (Model.RatingAvailable)
                     {
                         @:(@Model.ReviewCount)
@@ -80,11 +80,11 @@
     {
         <div class="alert alert-info mt-3" role="alert">
             <i class="bi bi-info-circle-fill me-1"></i>
-            No reviews yet for your place — the rating card will populate once tourists leave reviews.
+            @Localizer["SponsorPortal_NoReviewsInfo"].Value
         </div>
     }
 
     <p class="text-muted small mt-4 mb-0">
-        Metrics are scoped to your own rewards and branches.
+        @Localizer["SponsorPortal_MetricsScopeHelp"].Value
     </p>
 </div>

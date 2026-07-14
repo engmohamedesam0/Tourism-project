@@ -1,7 +1,7 @@
-@model Tourist_Project_MVC.View_Model.sponsorViewModel
+﻿@model Tourist_Project_MVC.View_Model.sponsorViewModel
 
 @{
-    ViewData["Title"] = "Edit Sponsor";
+    ViewData["Title"] = Localizer["Sponsor_EditTitle"].Value;
 }
 
 <div class="container mt-4" style="max-width: 700px;">
@@ -9,9 +9,9 @@
 
         <!-- Card Header -->
         <div class="card-header py-3"
-             style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+             style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
             <h4 class="text-white mb-0">
-                <i class="bi bi-pencil-fill me-2"></i> Edit Sponsor
+                <i class="bi bi-pencil-fill me-2"></i> @Localizer["Sponsor_EditHeading"].Value
             </h4>
         </div>
 
@@ -46,10 +46,10 @@
 
                 <div class="d-flex gap-2 mt-4">
                     <button type="submit" class="btn btn-warning px-4">
-                        <i class="bi bi-check-lg me-1"></i> Update
+                        <i class="bi bi-check-lg me-1"></i> @Localizer["Sponsor_UpdateBtn"].Value
                     </button>
                     <a asp-action="Index" class="btn-back">
-                        <i class="bi bi-arrow-left me-1"></i> Back
+                        <i class="bi bi-arrow-left me-1"></i> @Localizer["Sponsor_BackBtn"].Value
                     </a>
                 </div>
             </form>

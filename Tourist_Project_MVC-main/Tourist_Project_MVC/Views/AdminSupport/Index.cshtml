@@ -1,14 +1,14 @@
-@model Tourist_Project_MVC.View_Model.AdminSupportIndexVM
+﻿@model Tourist_Project_MVC.View_Model.AdminSupportIndexVM
 
 @{
-    ViewData["Title"] = "Support Inbox";
+    ViewData["Title"] = @Localizer["AdminSupport_SupportInbox"].Value;
     ViewData["IsHomePage"] = false;
 }
 
 <div class="container my-4" style="max-width: 1200px;">
 
     <h1 class="page-title mb-4">
-        <i class="bi bi-headset me-2"></i> Support Inbox
+        <i class="bi bi-headset me-2"></i> @Localizer["AdminSupport_SupportInbox"].Value
     </h1>
 
     @await Html.PartialAsync("_StatBoxRow", (List<Tourist_Project_MVC.View_Model.StatBoxItem>)ViewBag.StatBoxes)
@@ -18,13 +18,13 @@
         <form method="get" asp-controller="AdminSupport" asp-action="Index">
             <div class="row g-2 align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label small text-muted mb-1">Search</label>
-                    <input type="text" name="search" class="form-control" value="@Model.Search" placeholder="Subject or description…" />
+                    <label class="form-label small text-muted mb-1">@Localizer["AdminSupport_Search"].Value</label>
+                    <input type="text" name="search" class="form-control" value="@Model.Search" placeholder="@Localizer["AdminSupport_SubjectOrDescription"].Value" />
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label small text-muted mb-1">Status</label>
+                    <label class="form-label small text-muted mb-1">@Localizer["AdminSupport_Status"].Value</label>
                     <select name="status" class="form-select">
-                        <option value="">All Statuses</option>
+                        <option value="">@Localizer["AdminSupport_AllStatuses"].Value</option>
                         @foreach (var st in Model.Statuses)
                         {
                             if (Model.StatusFilter == st)
@@ -39,9 +39,9 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label small text-muted mb-1">Category</label>
+                    <label class="form-label small text-muted mb-1">@Localizer["AdminSupport_Category"].Value</label>
                     <select name="category" class="form-select">
-                        <option value="">All Categories</option>
+                        <option value="">@Localizer["AdminSupport_AllCategories"].Value</option>
                         @foreach (var c in Model.Categories)
                         {
                             if (Model.CategoryFilter == c)
@@ -56,9 +56,9 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label small text-muted mb-1">Submitter</label>
+                    <label class="form-label small text-muted mb-1">@Localizer["AdminSupport_Submitter"].Value</label>
                     <select name="submitterType" class="form-select">
-                        <option value="">All</option>
+                        <option value="">@Localizer["AdminSupport_All"].Value</option>
                         @foreach (var st in Model.SubmitterTypes)
                         {
                             if (Model.SubmitterTypeFilter == st)
@@ -74,7 +74,7 @@
                 </div>
                 <div class="col-md-2 d-grid">
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-funnel-fill me-1"></i> Filter
+                        <i class="bi bi-funnel-fill me-1"></i> @Localizer["AdminSupport_Filter"].Value
                     </button>
                 </div>
                 <div class="col-md-1 d-grid">
@@ -92,7 +92,7 @@
             {
                 <div class="text-center py-5 text-muted">
                     <i class="bi bi-inbox" style="font-size:2.5rem;"></i>
-                    <p class="mb-0 mt-2">No support tickets found.</p>
+                    <p class="mb-0 mt-2">@Localizer["AdminSupport_NoTicketsFound"].Value</p>
                 </div>
             }
             else
@@ -101,12 +101,12 @@
                     <table class="table table-hover align-middle destinations-table">
                         <thead>
                             <tr>
-                                <th>Type</th>
-                                <th>Submitter</th>
-                                <th>Category</th>
-                                <th>Subject</th>
-                                <th>Status</th>
-                                <th>Submitted</th>
+                                <th>@Localizer["AdminSupport_Type"].Value</th>
+                                <th>@Localizer["AdminSupport_Submitter"].Value</th>
+                                <th>@Localizer["AdminSupport_Category"].Value</th>
+                                <th>@Localizer["AdminSupport_Subject"].Value</th>
+                                <th>@Localizer["AdminSupport_Status"].Value</th>
+                                <th>@Localizer["AdminSupport_Submitted"].Value</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -128,7 +128,7 @@
                                     <td class="small text-muted">@row.Ticket.CreatedDate.ToString("yyyy-MM-dd")</td>
                                     <td class="text-end">
                                         <a asp-action="Details" asp-route-id="@row.Ticket.Id" class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-box-arrow-in-right me-1"></i> Open
+                                            <i class="bi bi-box-arrow-in-right me-1"></i> @Localizer["AdminSupport_Open"].Value
                                         </a>
                                     </td>
                                 </tr>

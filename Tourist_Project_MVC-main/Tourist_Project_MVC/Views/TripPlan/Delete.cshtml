@@ -1,31 +1,31 @@
 ﻿@model Tourist_Project_MVC.Models.TripPlan
 
 @{
-    ViewData["Title"] = "Delete Trip Plan";
+    ViewData["Title"] = @Localizer["TripPlan_DeleteTitle"].Value;
 }
 @if (User.Identity.IsAuthenticated)
 {
 <div class="container mt-4">
-    <h2 class="text-danger">🗑️ Delete Trip Plan</h2>
+    <h2 class="text-danger">🗑️ @Localizer["TripPlan_DeleteTitle"].Value</h2>
     <hr />
-    <p class="lead">Are you sure you want to delete <strong>@Model.Title</strong>?</p>
+    <p class="lead">@Localizer["TripPlan_ConfirmDelete"].Value <strong>@Model.Title</strong>?</p>
 
     <dl class="row">
-        <dt class="col-sm-3">Start Date</dt>
+        <dt class="col-sm-3">@Localizer["TripPlan_StartDate"].Value</dt>
         <dd class="col-sm-9">@Model.StartDate.ToShortDateString()</dd>
 
-        <dt class="col-sm-3">End Date</dt>
+        <dt class="col-sm-3">@Localizer["TripPlan_EndDate"].Value</dt>
         <dd class="col-sm-9">@Model.EndDate.ToShortDateString()</dd>
 
-        <dt class="col-sm-3">Tourist ID</dt>
+        <dt class="col-sm-3">@Localizer["TripPlan_TouristId"].Value</dt>
         <dd class="col-sm-9">@Model.TouristId</dd>
     </dl>
 
     <form asp-action="Delete" method="post">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">Yes, Delete</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-danger">@Localizer["TripPlan_YesDelete"].Value</button>
+        <a asp-action="Index" class="btn btn-secondary">@Localizer["TripPlan_Cancel"].Value</a>
     </form>
 </div>
 }

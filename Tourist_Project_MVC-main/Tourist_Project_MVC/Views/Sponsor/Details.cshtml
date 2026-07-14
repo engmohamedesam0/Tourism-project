@@ -1,7 +1,7 @@
-@model Tourist_Project_MVC.Models.Sponsor
+﻿@model Tourist_Project_MVC.Models.Sponsor
 
 @{
-    ViewData["Title"] = "Sponsor Details";
+    ViewData["Title"] = Localizer["Sponsor_DetailsTitle"].Value;
 }
 
 <div class="container mt-4" style="max-width: 900px;">
@@ -9,7 +9,7 @@
 
         <!-- Card Header -->
         <div class="card-header py-3"
-             style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+             style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="text-white mb-0">
                     <i class="bi bi-building me-2"></i> @Model.Name
@@ -22,18 +22,18 @@
 
             <!-- Info -->
             <dl class="row mb-4">
-                <dt class="col-sm-3 text-muted">Type</dt>
+                <dt class="col-sm-3 text-muted">@Localizer["Sponsor_ColType"].Value</dt>
                 <dd class="col-sm-9">
                     <span class="badge-category">@Model.Type</span>
                 </dd>
 
-                <dt class="col-sm-3 text-muted">Address</dt>
+                <dt class="col-sm-3 text-muted">@Localizer["Sponsor_ColAddress"].Value</dt>
                 <dd class="col-sm-9">
                     <i class="bi bi-geo-alt-fill text-danger me-1"></i>
                     @Model.Address
                 </dd>
 
-                <dt class="col-sm-3 text-muted">Phone Number</dt>
+                <dt class="col-sm-3 text-muted">@Localizer["Sponsor_PhoneNumber"].Value</dt>
                 <dd class="col-sm-9">
                     <i class="bi bi-telephone-fill text-success me-1"></i>
                     @Model.ContactNumber
@@ -44,7 +44,7 @@
 
             <h5 class="mb-3">
                 <i class="bi bi-gift-fill me-2" style="color: var(--egy-primary);"></i>
-                All Rewards Provided
+                @Localizer["Sponsor_AllRewardsHeading"].Value
             </h5>
 
             @if (Model.Rewards != null && Model.Rewards.Any())
@@ -53,11 +53,11 @@
                     <table class="table table-hover align-middle destinations-table">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Required Points</th>
-                                <th>Available</th>
+                                <th>@Localizer["Sponsor_ColHash"].Value</th>
+                                <th>@Localizer["Sponsor_ColName"].Value</th>
+                                <th>@Localizer["Sponsor_ColDescription"].Value</th>
+                                <th>@Localizer["Sponsor_ColRequiredPoints"].Value</th>
+                                <th>@Localizer["Sponsor_ColAvailable"].Value</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -72,7 +72,7 @@
                                     <td><small class="text-muted">@item.Description</small></td>
                                     <td>
                                         <span class="fw-bold" style="color: var(--egy-primary);">
-                                            @item.PointsRequired pts
+                                            @item.PointsRequired @Localizer["Sponsor_PtsUnit"].Value
                                         </span>
                                     </td>
                                     <td>@item.QuantityAvailable</td>
@@ -87,7 +87,7 @@
             {
                 <div class="text-center py-3">
                     <i class="bi bi-gift" style="font-size: 2rem; color: var(--egy-primary);"></i>
-                    <p class="text-muted mt-2">No rewards provided yet.</p>
+                    <p class="text-muted mt-2">@Localizer["Sponsor_NoRewardsMessage"].Value</p>
                 </div>
             }
         </div>
@@ -97,11 +97,11 @@
             {
                 <a asp-action="Edit" asp-controller="Sponsor"
                    asp-route-id="@Model.Id" class="btn btn-warning">
-                    <i class="bi bi-pencil-fill me-1"></i> Edit
+                    <i class="bi bi-pencil-fill me-1"></i> @Localizer["Sponsor_EditBtn"].Value
                 </a>
             }
             <a asp-action="Index" asp-controller="Sponsor" class="btn-back">
-                <i class="bi bi-arrow-left me-1"></i> Back
+                <i class="bi bi-arrow-left me-1"></i> @Localizer["Sponsor_BackBtn"].Value
             </a>
         </div>
     </div>

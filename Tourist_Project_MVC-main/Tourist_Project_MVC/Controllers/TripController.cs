@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.View_Model;
@@ -16,17 +18,20 @@ namespace Tourist_Project_MVC.Controllers
         private readonly ITouristRepository _touristRepo;
         private readonly IDestinationRepository _destinationRepo;
         private readonly ITripPlanRepository _tripPlanRepo;
+        private readonly TouristContext _context;
 
         public TripController(
             UserManager<ApplicationUser> userManager,
             ITouristRepository touristRepo,
             IDestinationRepository destinationRepo,
-            ITripPlanRepository tripPlanRepo)
+            ITripPlanRepository tripPlanRepo,
+            TouristContext context)
         {
             _userManager = userManager;
             _touristRepo = touristRepo;
             _destinationRepo = destinationRepo;
             _tripPlanRepo = tripPlanRepo;
+            _context = context;
         }
 
         // Resolve the signed-in ApplicationUser to a Tourist record.
@@ -227,6 +232,30 @@ namespace Tourist_Project_MVC.Controllers
             if (trip == null || trip.TouristId != tourist.Id)
                 return Forbid();
 
+            var reviews = _context.SiteReviews
+                .Include(r => r.Tourist)
+                .Where(r => r.TripPlanId == id)
+                .OrderByDescending(r => r.CreatedDate)
+                .Take(5)
+                .ToList();
+
+            ViewBag.ReviewsCarousel = new Tourist_Project_MVC.View_Model.ReviewsCarouselVM
+            {
+                Title = "Traveler Reviews",
+                TargetTitle = trip.Title,
+                Items = reviews.Select(r => new Tourist_Project_MVC.View_Model.ReviewsCarouselItemVM
+                {
+                    TouristName = r.Tourist?.Name ?? "Tourist",
+                    TouristPhotoPath = r.Tourist?.ApplicationUser != null ? r.Tourist.ApplicationUser.ProfilePicturePath : null,
+                    Rating = r.Rating,
+                    Comment = r.Comment,
+                    CreatedDate = r.CreatedDate
+                }).ToList(),
+                CanAddReview = true,
+                TargetId = trip.Id,
+                TargetType = "TripPlan"
+            };
+
             return View(trip);
         }
 
@@ -304,6 +333,35 @@ namespace Tourist_Project_MVC.Controllers
             _tripPlanRepo.Save();
 
             return Json(new { success = true });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddReview(int id, [Bind("Rating,Comment")] SiteReview vm)
+        {
+            var trip = _tripPlanRepo.GetById(id);
+            if (trip == null) return NotFound();
+
+            var tourist = ResolveTourist();
+            if (trip.TouristId != tourist.Id)
+                return Forbid();
+
+            if (ModelState.IsValid)
+            {
+                var review = new SiteReview
+                {
+                    Rating = vm.Rating,
+                    Comment = vm.Comment,
+                    TripPlanId = id,
+                    TouristId = tourist.Id,
+                    CreatedDate = DateTime.Now
+                };
+
+                _context.SiteReviews.Add(review);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Details", new { id });
         }
     }
 }

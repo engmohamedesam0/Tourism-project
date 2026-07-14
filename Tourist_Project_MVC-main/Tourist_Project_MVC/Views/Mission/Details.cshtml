@@ -1,7 +1,7 @@
-@model Tourist_Project_MVC.Models.Mission
+﻿@model Tourist_Project_MVC.Models.Mission
 
 @{
-    ViewData["Title"] = "Mission Details";
+    ViewData["Title"] = @Localizer["Mission_Page_Title_Details"].Value;
 }
 
 @if (User.Identity.IsAuthenticated)
@@ -10,7 +10,7 @@
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
 
             <div class="card-header py-3"
-                 style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+                 style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
                 <div class="d-flex justify-content-between align-items-center">
                     <h4 class="text-white mb-0">
                         <i class="bi bi-trophy-fill me-2"></i> @Model.Title
@@ -28,14 +28,14 @@
                         <div class="stat-mini-card">
                             <i class="bi bi-star-fill text-warning"></i>
                             <div class="stat-mini-number">@Model.PointsReward</div>
-                            <div class="stat-mini-label">Points</div>
+                            <div class="stat-mini-label">@Localizer["Mission_Label_Points"].Value</div>
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="stat-mini-card">
                             <i class="bi bi-geo-alt-fill text-danger"></i>
                             <div class="stat-mini-number">@Model.Destination?.Name</div>
-                            <div class="stat-mini-label">Destination</div>
+                            <div class="stat-mini-label">@Localizer["Mission_Label_Destination"].Value</div>
                         </div>
                     </div>
                     <div class="col-3">
@@ -44,7 +44,7 @@
                             <div class="stat-mini-number">
                                 @(Model.UserMissions?.Count(um => um.Status == "In Progress") ?? 0)
                             </div>
-                            <div class="stat-mini-label">In Progress</div>
+                            <div class="stat-mini-label">@Localizer["Mission_Status_InProgress"].Value</div>
                         </div>
                     </div>
                     <div class="col-3">
@@ -53,7 +53,7 @@
                             <div class="stat-mini-number">
                                 @(Model.UserMissions?.Count(um => um.Status == "Completed") ?? 0)
                             </div>
-                            <div class="stat-mini-label">Completed</div>
+                            <div class="stat-mini-label">@Localizer["Mission_Status_Completed"].Value</div>
                         </div>
                     </div>
                 </div>
@@ -61,12 +61,12 @@
                 <hr />
 
                 <dl class="row">
-                    <dt class="col-sm-3 text-muted">Type</dt>
+                    <dt class="col-sm-3 text-muted">@Localizer["Mission_Label_Type"].Value</dt>
                     <dd class="col-sm-9">
                         <span class="badge-category">@Model.MissionType</span>
                     </dd>
 
-                    <dt class="col-sm-3 text-muted">Description</dt>
+                    <dt class="col-sm-3 text-muted">@Localizer["Mission_Label_Description"].Value</dt>
                     <dd class="col-sm-9">@Model.Description</dd>
                 </dl>
             </div>
@@ -75,11 +75,11 @@
                 @if (User.IsInRole("Admin"))
                 {
                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-                    <i class="bi bi-pencil-fill me-1"></i> Edit
+                    <i class="bi bi-pencil-fill me-1"></i> @Localizer["Mission_Button_Edit"].Value
                 </a>
                 }
                 <a asp-action="Index" class="btn-back">
-                    <i class="bi bi-arrow-left me-1"></i> Back
+                    <i class="bi bi-arrow-left me-1"></i> @Localizer["Mission_Button_Back"].Value
                 </a>
             </div>
         </div>
@@ -99,7 +99,7 @@
             font-family: 'Cinzel',sans-serif;
             font-size: 1rem;
             font-weight: 700;
-            color: #2C1A0E;
+            color: var(--egy-dark);
             margin: 6px 0 2px;
         }
 

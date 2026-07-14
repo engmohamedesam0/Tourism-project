@@ -1,7 +1,7 @@
-﻿@model Tourist_Project_MVC.Models.Tourist
+@model Tourist_Project_MVC.Models.Tourist
 
 @{
-    ViewData["Title"] = "Add Tourist";
+    ViewData["Title"] = @Localizer["TouristAdmin_AddTourist"].Value;
 }
 
 @if (User.Identity.IsAuthenticated)
@@ -10,9 +10,9 @@
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
 
             <div class="card-header py-3"
-                 style="background: linear-gradient(135deg, #2C1A0E, #C8832A);">
+                 style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
                 <h4 class="text-white mb-0">
-                    <i class="bi bi-plus-circle-fill me-2"></i> Add New Tourist
+                    <i class="bi bi-plus-circle-fill me-2"></i> @Localizer["TouristAdmin_AddNewTourist"].Value
                 </h4>
             </div>
 
@@ -45,7 +45,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="IdNumber" class="form-label fw-bold">ID Number</label>
+                        <label asp-for="IdNumber" class="form-label fw-bold">@Localizer["TouristAdmin_IdNumber"].Value</label>
                         <input asp-for="IdNumber" class="form-control" />
                     </div>
 
@@ -56,10 +56,10 @@
 
                     <div class="d-flex gap-2 mt-4">
                         <button type="submit" class="btn btn-success px-4">
-                            <i class="bi bi-check-lg me-1"></i> Save
+                            <i class="bi bi-check-lg me-1"></i> @Localizer["TouristAdmin_Save"].Value
                         </button>
                         <a asp-action="Index" class="btn btn-secondary">
-                            <i class="bi bi-x-lg me-1"></i> Cancel
+                            <i class="bi bi-x-lg me-1"></i> @Localizer["TouristAdmin_Cancel"].Value
                         </a>
                     </div>
                 </form>

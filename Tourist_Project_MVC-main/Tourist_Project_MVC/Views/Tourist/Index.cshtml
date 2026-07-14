@@ -1,15 +1,15 @@
 ﻿@model IEnumerable<Tourist_Project_MVC.Models.Tourist>
 @{
-    ViewData["Title"] = "Tourists";
+    ViewData["Title"] = @Localizer["TouristAdmin_Title"].Value;
 }
 
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="page-title mb-0">🧳 Tourists</h2>
+        <h2 class="page-title mb-0">🧳 @Localizer["TouristAdmin_Heading"].Value</h2>
         @if (User.IsInRole("Admin"))
         {
             <a asp-action="Create" class="btn btn-success px-4">
-                <i class="bi bi-plus-lg me-1"></i> + Add
+                <i class="bi bi-plus-lg me-1"></i> + @Localizer["TouristAdmin_Add"].Value
             </a>
         }
 
@@ -28,7 +28,7 @@
                         </span>
                         <input type="text" name="search"
                                class="form-control border-start-0"
-                               placeholder="Search tourists..."
+                               placeholder="@Localizer["TouristAdmin_SearchPlaceholder"].Value"
                                value="@ViewBag.Search" />
                         <input type="hidden" name="nationality" value="@ViewBag.Nationality" />
                     </div>
@@ -37,7 +37,7 @@
             <div class="col-md-4">
                 <select class="form-select" onchange="window.location.href=this.value">
                     <option value="@Url.Action("Index", new { search = ViewBag.Search })">
-                        All Nationalities
+                        @Localizer["TouristAdmin_AllNationalities"].Value
                     </option>
                     @foreach (var nat in ViewBag.Nationalities as List<string> ?? new List<string>())
                     {
@@ -54,7 +54,7 @@
                 </select>
             </div>
             <div class="col-md-3 text-muted small">
-                Total: <strong>@ViewBag.AllCount</strong> tourists
+                @Localizer["TouristAdmin_Total"].Value: <strong>@ViewBag.AllCount</strong> @Localizer["TouristAdmin_TotalTourists"].Value
             </div>
         </div>
     </div>
@@ -64,13 +64,13 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Name</th>
-                    <th>Nationality</th>
-                    <th>Points</th>
-                    <th>Missions</th>
-                    <th>Trips</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>@Localizer["TouristAdmin_Name"].Value</th>
+                    <th>@Localizer["TouristAdmin_Nationality"].Value</th>
+                    <th>@Localizer["TouristAdmin_Points"].Value</th>
+                    <th>@Localizer["TouristAdmin_Missions"].Value</th>
+                    <th>@Localizer["TouristAdmin_Trips"].Value</th>
+                    <th>@Localizer["TouristAdmin_Status"].Value</th>
+                    <th>@Localizer["TouristAdmin_Actions"].Value</th>
                 </tr>
             </thead>
             <tbody>
@@ -101,18 +101,18 @@
                         <td><span class="badge-category">@item.Nationality</span></td>
                         <td>
                             <span class="fw-bold" style="color: var(--egy-primary);">
-                                @item.point_Balance pts
+                                @item.point_Balance @Localizer["TouristAdmin_Pts"].Value
                             </span>
                         </td>
                         <td>
                             <i class="bi bi-trophy-fill text-warning me-1"></i>
                             <strong>@missionCount</strong>
-                            <small class="text-muted">(@completedMissions done)</small>
+                            <small class="text-muted">(@completedMissions @Localizer["TouristAdmin_Done"].Value)</small>
                         </td>
                         <td>
                             <i class="bi bi-map-fill text-info me-1"></i>
                             <strong>@tripCount</strong>
-                            <small class="text-muted">(@activeTrips active)</small>
+                            <small class="text-muted">(@activeTrips @Localizer["TouristAdmin_Active"].Value)</small>
                         </td>
                         <td>
                             <span class="badge-status @statusClass">@item.Status</span>
@@ -123,17 +123,17 @@
 
                                 <div class="d-flex gap-2">
                                     <a asp-action="Details" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-info" title="Details">
+                                       class="btn btn-sm btn-outline-info" title="@Localizer["TouristAdmin_Details"].Value">
                                         <i class="bi bi-eye-fill"></i>
                                     </a>
                                     @if (User.IsInRole("Admin"))
                                     {
                                         <a asp-action="Edit" asp-route-id="@item.Id"
-                                           class="btn btn-sm btn-outline-warning" title="Edit">
+                                           class="btn btn-sm btn-outline-warning" title="@Localizer["TouristAdmin_Edit"].Value">
                                             <i class="bi bi-pencil-fill"></i>
                                         </a>
                                         <a asp-action="Delete" asp-route-id="@item.Id"
-                                           class="btn btn-sm btn-outline-danger" title="Delete">
+                                           class="btn btn-sm btn-outline-danger" title="@Localizer["TouristAdmin_Delete"].Value">
                                             <i class="bi bi-trash-fill"></i>
                                         </a>
                                     }
@@ -141,7 +141,7 @@
                             }
                             else
                             {
-                                <span class="text-muted small">Guests only view</span>
+                                <span class="text-muted small">@Localizer["TouristAdmin_GuestsOnly"].Value</span>
                             }
                         </td>
                     </tr>
@@ -155,7 +155,7 @@
     {
         <div class="text-center py-5">
             <i class="bi bi-people" style="font-size:3rem; color:var(--egy-primary);"></i>
-            <p class="text-muted mt-2">No tourists found.</p>
+            <p class="text-muted mt-2">@Localizer["TouristAdmin_NoTourists"].Value</p>
         </div>
     }
 </div>

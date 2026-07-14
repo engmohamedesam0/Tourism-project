@@ -15,19 +15,19 @@
                     <form asp-action="Register" enctype="multipart/form-data" class="auth-form">
                         <div asp-validation-summary="All" class="text-danger"></div>
 
-                        <!-- Account type choice -->
-                        <div class="form-group mb-3 text-center">
-                            <label class="control-label fw-bold d-block">I am registering as a</label>
-                            <div class="form-check form-check-inline mt-1">
-                                <input class="form-check-input" type="radio" asp-for="AccountType" value="Tourist" id="typeTourist" checked />
-                                <label class="form-check-label" for="typeTourist">Sign up as Tourist</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" asp-for="AccountType" value="Sponsor" id="typeSponsor" />
-                                <label class="form-check-label" for="typeSponsor">Sign up as Sponsor</label>
-                            </div>
-                            <span asp-validation-for="AccountType" class="text-danger"></span>
-                        </div>
+                         <!-- Account type choice -->
+                         <div class="form-group mb-3 text-center">
+                             <label class="control-label fw-bold d-block">@Localizer["Register_AccountType"].Value</label>
+                             <div class="form-check form-check-inline mt-1">
+                                 <input class="form-check-input" type="radio" asp-for="AccountType" value="Tourist" id="typeTourist" checked />
+                                 <label class="form-check-label" for="typeTourist">@Localizer["Register_Tourist"].Value</label>
+                             </div>
+                             <div class="form-check form-check-inline">
+                                 <input class="form-check-input" type="radio" asp-for="AccountType" value="Sponsor" id="typeSponsor" />
+                                 <label class="form-check-label" for="typeSponsor">@Localizer["Register_Sponsor"].Value</label>
+                             </div>
+                             <span asp-validation-for="AccountType" class="text-danger"></span>
+                         </div>
 
                         <div class="row justify-content-center">
                             <div class="col-12 col-sm-6">
@@ -78,12 +78,12 @@
                             <span asp-validation-for="ProfilePicture" class="text-danger"></span>
                         </div>
                         <div class="form-group mt-3 text-center">
-                            <input type="submit" value="Register" class="btn btn-primary px-5" />
+                            <input type="submit" value="@Localizer["Register_Submit"].Value" class="btn btn-primary px-5" />
                         </div>
                     </form>
 
                     <div class="auth-links">
-                        <a asp-action="Login">Already have an account? Login</a>
+                        <a asp-action="Login">@Localizer["Register_AlreadyHaveAccount"].Value</a>
                     </div>
                 </div>
             </div>

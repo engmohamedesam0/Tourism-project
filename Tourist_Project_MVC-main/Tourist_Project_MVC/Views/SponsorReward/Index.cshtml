@@ -1,15 +1,15 @@
-@model IEnumerable<Tourist_Project_MVC.Models.Reward>
+﻿@model IEnumerable<Tourist_Project_MVC.Models.Reward>
 
 @{
-    ViewData["Title"] = "My Rewards";
+    ViewData["Title"] = @Localizer["SponsorReward_MyRewards"].Value;
 }
 
 <div class="inner-page-wrapper">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="page-title mb-0">🎁 My Rewards</h2>
+            <h2 class="page-title mb-0">🎁 @Localizer["SponsorReward_MyRewards"].Value</h2>
             <a asp-action="Create" class="btn btn-success px-4">
-                <i class="bi bi-plus-lg me-1"></i> + Add Reward
+                <i class="bi bi-plus-lg me-1"></i> @Localizer["SponsorReward_AddReward"].Value
             </a>
         </div>
 
@@ -20,13 +20,13 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Title</th>
-                        <th>Type</th>
-                        <th>Points</th>
-                        <th>Qty</th>
-                        <th>Redemptions</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>@Localizer["SponsorReward_TableTitle"].Value</th>
+                        <th>@Localizer["SponsorReward_TableType"].Value</th>
+                        <th>@Localizer["SponsorReward_TablePoints"].Value</th>
+                        <th>@Localizer["SponsorReward_TableQty"].Value</th>
+                        <th>@Localizer["SponsorReward_TableRedemptions"].Value</th>
+                        <th>@Localizer["SponsorReward_TableStatus"].Value</th>
+                        <th>@Localizer["SponsorReward_TableActions"].Value</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,7 +43,7 @@
                             <td class="fw-bold text-muted">@i.ToString("D2")</td>
                             <td><div class="fw-bold">@item.Title</div></td>
                             <td><span class="badge-category">@item.RewardType</span></td>
-                            <td>@item.PointsRequired pts</td>
+                            <td>@item.PointsRequired @Localizer["SponsorReward_Pts"].Value</td>
                             <td>@item.QuantityAvailable</td>
                             <td>
                                 <span class="fw-bold" style="color: var(--egy-primary);">@redemptionRate%</span>
@@ -53,16 +53,16 @@
                                 @switch (item.Status)
                                 {
                                     case "Active":
-                                        <span class="badge bg-success">Active</span>
+                                        <span class="badge bg-success">@Localizer["SponsorReward_Active"].Value</span>
                                         break;
                                     case "Paused":
-                                        <span class="badge bg-warning text-dark">Paused</span>
+                                        <span class="badge bg-warning text-dark">@Localizer["SponsorReward_Paused"].Value</span>
                                         break;
                                     case "Expired":
-                                        <span class="badge bg-secondary">Expired</span>
+                                        <span class="badge bg-secondary">@Localizer["SponsorReward_Expired"].Value</span>
                                         break;
                                     case "Removed":
-                                        <span class="badge bg-danger">Removed</span>
+                                        <span class="badge bg-danger">@Localizer["SponsorReward_Removed"].Value</span>
                                         break;
                                     default:
                                         <span class="badge bg-light text-dark">@item.Status</span>
@@ -72,11 +72,11 @@
                             <td>
                                 <div class="d-flex gap-2">
                                     <a asp-action="Edit" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-warning" title="Edit">
+                                       class="btn btn-sm btn-outline-warning" title="@Localizer["SponsorReward_Edit"].Value">
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
                                     <a asp-action="Delete" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-danger" title="Delete">
+                                       class="btn btn-sm btn-outline-danger" title="@Localizer["SponsorReward_Delete"].Value">
                                         <i class="bi bi-trash-fill"></i>
                                     </a>
                                 </div>
@@ -92,7 +92,7 @@
         {
             <div class="text-center py-5">
                 <i class="bi bi-gift" style="font-size:3rem; color:var(--egy-primary);"></i>
-                <p class="text-muted mt-2">No rewards found. Add your first reward above.</p>
+                <p class="text-muted mt-2">@Localizer["SponsorReward_EmptyState"].Value</p>
             </div>
         }
     </div>

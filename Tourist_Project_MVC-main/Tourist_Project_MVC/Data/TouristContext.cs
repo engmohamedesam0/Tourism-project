@@ -20,6 +20,7 @@ namespace Tourist_Project_MVC.Data
         public DbSet<Mission> Missions { get; set; }
         public DbSet<UserMission> UserMissions { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<SiteReview> SiteReviews { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<SupportTicket> SupportTickets { get; set; }
         public DbSet<SponsorApprovalRequest> SponsorApprovalRequests { get; set; }
@@ -56,7 +57,7 @@ namespace Tourist_Project_MVC.Data
                 .HasMaxLength(450);
 
             modelBuilder.Entity<Tourist>()
-                .HasOne<ApplicationUser>()
+                .HasOne(t => t.ApplicationUser)
                 .WithMany()
                 .HasForeignKey(t => t.ApplicationUserId)
                 .OnDelete(DeleteBehavior.NoAction);

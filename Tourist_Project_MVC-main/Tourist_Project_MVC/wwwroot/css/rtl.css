@@ -1,0 +1,181 @@
+/* RTL overrides for Arabic (ar) UI culture */
+[dir="rtl"] {
+    /* Text alignment defaults */
+    text-align: right;
+}
+
+/* Navbar */
+[dir="rtl"] #mainNav .navbar-nav {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .nav-spacer {
+    display: none;
+}
+
+[dir="rtl"] .navbar-toggler {
+    margin-right: 0;
+    margin-left: auto;
+}
+
+/* Utility bar */
+[dir="rtl"] .lang-switcher .dropdown-toggle::after {
+    margin-left: 0.3em;
+    margin-right: 0;
+}
+
+[dir="rtl"] .utility-search {
+    margin-right: 0;
+    margin-left: 0.5rem;
+}
+
+[dir="rtl"] .utility-search .input-group-text {
+    border-radius: 0 50rem 50rem 0;
+    border-right: 1px solid rgba(200, 131, 42, 0.35);
+    border-left: none;
+}
+
+[dir="rtl"] .utility-search .form-control-sm {
+    border-radius: 50rem 0 0 50rem;
+    padding-left: 1rem;
+    padding-right: 0.5rem;
+}
+
+/* Explore page */
+[dir="rtl"] .explore-list-panel {
+    border-right: none;
+    border-left: 1px solid rgba(200, 131, 42, 0.2);
+}
+
+[dir="rtl"] .explore-search .input-group-text {
+    border-right: 1px solid rgba(200, 131, 42, 0.35);
+    border-left: none;
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+[dir="rtl"] .explore-search .form-control {
+    border-right: none;
+    border-left: 1px solid rgba(200, 131, 42, 0.35);
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+
+/* Near Me page */
+[dir="rtl"] .nearme-list-panel {
+    border-right: none;
+    border-left: 1px solid rgba(200, 131, 42, 0.2);
+}
+
+[dir="rtl"] .nearme-filter-form .input-group-text {
+    border-right: 1px solid rgba(200, 131, 42, 0.35);
+    border-left: none;
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+[dir="rtl"] .nearme-filter-form .form-control {
+    border-right: none;
+    border-left: 1px solid rgba(200, 131, 42, 0.35);
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+
+/* Trip page timeline */
+[dir="rtl"] .trip-timeline {
+    border-left: none;
+    border-right: 2px solid var(--egy-primary);
+    padding-left: 0;
+    padding-right: 22px;
+    margin-right: 8px;
+    margin-left: 0;
+}
+
+[dir="rtl"] .trip-timeline-dot {
+    left: auto;
+    right: -30px;
+}
+
+[dir="rtl"] .filter-bar .filter-actions {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* General layout adjustments */
+[dir="rtl"] .container,
+[dir="rtl"] .container-fluid {
+    direction: rtl;
+}
+
+[dir="rtl"] .dropdown-menu-end {
+    right: auto;
+    left: 0;
+}
+
+[dir="rtl"] .dropdown-menu-dark.dropdown-menu-end {
+    right: auto;
+    left: 0;
+}
+
+/* Cards and forms */
+[dir="rtl"] .form-check {
+    padding-right: 0;
+    padding-left: 1.5rem;
+}
+
+[dir="rtl"] .form-check-input {
+    margin-right: -1.5rem;
+    margin-left: 0;
+}
+
+[dir="rtl"] .input-group > .input-group-text:not(:first-child) {
+    border-right: 1px solid rgba(200, 131, 42, 0.35);
+    border-left: none;
+}
+
+[dir="rtl"] .input-group > .form-control:not(:first-child) {
+    border-right: none;
+    border-left: 1px solid rgba(200, 131, 42, 0.35);
+}
+
+/* Stat cards */
+[dir="rtl"] .stat-suffix {
+    margin-left: 0;
+    margin-right: 2px;
+}
+
+/* AI widget */
+[dir="rtl"] .ai-widget-panel {
+    right: 22px;
+    left: auto;
+}
+
+[dir="rtl"] .ai-widget-footer {
+    flex-direction: row-reverse;
+}
+
+/* Footer */
+[dir="rtl"] .main-footer {
+    text-align: right;
+}
+
+/* Explore chips and badges */
+[dir="rtl"] .category-chips {
+    justify-content: flex-end;
+}
+
+[dir="rtl"] .nearme-chips {
+    justify-content: flex-end;
+}
+
+/* Mobile adjustments */
+@media (max-width: 575.98px) {
+    [dir="rtl"] .ai-widget-panel {
+        right: 10px;
+        left: 10px;
+    }
+
+    [dir="rtl"] .trip-timeline {
+        padding-right: 16px;
+    }
+
+    [dir="rtl"] .trip-timeline-dot {
+        right: -22px;
+    }
+}

@@ -1,11 +1,11 @@
-@model Tourist_Project_MVC.View_Model.UserRoleViewModel
+﻿@model Tourist_Project_MVC.View_Model.UserRoleViewModel
 
 @{
-    ViewData["Title"] = "Assign Role to User";
+    ViewData["Title"] = Localizer["RoleAdmin_AssignRoleToUser"].Value;
 }
 
 <div class="container mt-5">
-    <h2>Assign Role to User</h2>
+    <h2>@Localizer["RoleAdmin_AssignRoleToUser"].Value</h2>
     <hr />
 
     <div class="row">
@@ -14,9 +14,9 @@
                 <div asp-validation-summary="All" class="text-danger"></div>
 
                 <div class="form-group mb-3">
-                    <label asp-for="UserId" class="control-label">Select User</label>
+                    <label asp-for="UserId" class="control-label">@Localizer["RoleAdmin_SelectUser"].Value</label>
                     <select asp-for="UserId" class="form-select" required>
-                        <option value="">-- Select a User --</option>
+                        <option value="">@Localizer["RoleAdmin_SelectUserOption"].Value</option>
                         @if (Model.Users != null)
                         {
                             foreach (var user in Model.Users)
@@ -28,9 +28,9 @@
                 </div>
 
                 <div class="form-group mb-3">
-                    <label asp-for="RoleName" class="control-label">Select Role</label>
+                    <label asp-for="RoleName" class="control-label">@Localizer["RoleAdmin_SelectRole"].Value</label>
                     <select asp-for="RoleName" class="form-select" required>
-                        <option value="">-- Select a Role --</option>
+                        <option value="">@Localizer["RoleAdmin_SelectRoleOption"].Value</option>
                         @if (Model.Roles != null)
                         {
                             foreach (var role in Model.Roles)
@@ -42,8 +42,8 @@
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Assign Role</button>
-                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">@Localizer["RoleAdmin_AssignRole"].Value</button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">@Localizer["RoleAdmin_Cancel"].Value</a>
                 </div>
             </form>
         </div>

@@ -10,10 +10,10 @@
             <div class="text-center">
                 <h1 class="mx-auto my-0 text-uppercase">EGYXPLORE</h1>
                 <h2 class="text-white-50 mx-auto mt-2 mb-5">
-                    Unlock Hidden Wonders Across Egypt
+                    @Localizer["Hero_Subtitle"].Value
                 </h2>
                 <a class="btn btn-primary" asp-controller="Explore" asp-action="Index">
-                    <i class="fas fa-map-marker-alt me-2"></i> Explore Now
+                    <i class="fas fa-map-marker-alt me-2"></i> @Localizer["Hero_ExploreBtn"].Value
                 </a>
             </div>
         </div>
@@ -25,11 +25,9 @@
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-lg-8">
-                <h2 class="text-white mb-4">AI-Powered Smart Tourism Platform</h2>
+                <h2 class="text-white mb-4">@Localizer["About_Title"].Value</h2>
                 <p class="text-white-50">
-                    EGYXPLORE combines Artificial Intelligence, GIS, and Gamification
-                    to revolutionize tourism in Egypt. Discover hidden archaeological sites,
-                    earn rewards, and experience Egypt like never before.
+                    @Localizer["About_Text"].Value
                 </p>
             </div>
         </div>
@@ -45,10 +43,10 @@
         <div class="row gx-4 gx-lg-5 justify-content-center text-center">
 
             <div class="col-12 mb-5">
-                <h2 class="text-white text-uppercase"
-                    style="letter-spacing: 3px; font-family: 'Varela Round', sans-serif;">
-                    Tourism in Numbers
-                </h2>
+                    <h2 class="text-white text-uppercase"
+                        style="letter-spacing: 3px; font-family: 'Varela Round', sans-serif;">
+                        @Localizer["Stats_Title"].Value
+                    </h2>
                 <hr style="border-color: #C8832A; width: 60px; border-width: 2px; margin: auto;" />
             </div>
             <div class="col-md-3 col-sm-6 mb-4">
@@ -56,7 +54,7 @@
                     <i class="bi bi-geo-alt-fill stat-icon"></i>
                     <div class="stat-number" data-target="@ViewBag.DestinationCount">0</div>
                     <div class="stat-suffix"></div>
-                    <div class="stat-label">Archaeological Sites</div>
+                    <div class="stat-label">@Localizer["Stat_ArchaeologicalSites"].Value</div>
                 </div>
             </div>
 
@@ -65,7 +63,7 @@
                     <i class="bi bi-people-fill stat-icon"></i>
                     <div class="stat-number" data-target="@ViewBag.TouristCount">0</div>
                     <div class="stat-suffix">+</div>
-                    <div class="stat-label">Registered Tourists</div>
+                    <div class="stat-label">@Localizer["Stat_RegisteredTourists"].Value</div>
                 </div>
             </div>
 
@@ -74,7 +72,7 @@
                     <i class="bi bi-signpost-split stat-icon"></i>
                     <div class="stat-number" data-target="@ViewBag.TripPlanCount">0</div>
                     <div class="stat-suffix">+</div>
-                    <div class="stat-label">Trip Plans Created</div>
+                    <div class="stat-label">@Localizer["Stat_TripPlansCreated"].Value</div>
                 </div>
             </div>
 
@@ -83,39 +81,12 @@
                     <i class="bi bi-trophy-fill stat-icon"></i>
                     <div class="stat-number" data-target="@ViewBag.MissionCount">0</div>
                     <div class="stat-suffix"></div>
-                    <div class="stat-label">Active Missions</div>
+                    <div class="stat-label">@Localizer["Stat_ActiveMissions"].Value</div>
                 </div>
             </div>
             </div>
-
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="stat-card">
-                    <i class="fas fa-users stat-icon"></i>
-                    <div class="stat-number" data-target="@ViewBag.TouristCount">0</div>
-                    <div class="stat-suffix">+</div>
-                    <div class="stat-label">Registered Tourists</div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="stat-card">
-                    <i class="fas fa-route stat-icon"></i>
-                    <div class="stat-number" data-target="@ViewBag.TripPlanCount">0</div>
-                    <div class="stat-suffix">+</div>
-                    <div class="stat-label">Trip Plans Created</div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="stat-card">
-                    <i class="fas fa-trophy stat-icon"></i>
-                    <div class="stat-number" data-target="@ViewBag.MissionCount">0</div>
-                    <div class="stat-suffix"></div>
-                    <div class="stat-label">Active Missions</div>
-                </div>
-            </div>
-
         </div>
+    </div>
     </div>
 </section>
 
@@ -132,16 +103,13 @@
             </div>
             <div class="col-xl-4 col-lg-5">
                 <div class="featured-text text-center text-lg-left">
-                    <h4>Tourist Attractions in Egypt</h4>
+                    <h4>@Localizer["Feature1_Title"].Value</h4>
                     <p class="text-black-50 mb-0">
-                        The Great Pyramids of Giza were built more than 4,500 years ago as tombs for the ancient Egyptian pharaohs.
-                        The Great Pyramid is the oldest of the Seven Wonders of the Ancient World and the only one still standing today.
-                        The Pyramids of Giza are one of the most famous tourist attractions in the world.
-                        There are many interesting places to visit in Egypt. 
+                        @Localizer["Feature1_Text"].Value
                     </p>
                     <a asp-controller="Explore" asp-action="Index"
                        class="btn btn-primary mt-3 btn-sm">
-                        <i class="fas fa-compass me-1"></i> View All Destinations
+                        <i class="fas fa-compass me-1"></i> @Localizer["Feature1_Link"].Value
                     </a>
                 </div>
             </div>
@@ -159,16 +127,14 @@
                     <div class="d-flex h-100">
                         <div class="project-text w-100 my-auto text-center text-lg-left">
                             <h4 class="text-white">
-                                <i class="fas fa-robot me-2"></i> AI Trip Planner
+                                <i class="fas fa-robot me-2"></i> @Localizer["Feature2_Title"].Value
                             </h4>
                             <p class="mb-0 text-white-50">
-                                Our AI generates personalized itineraries based on your
-                                interests, budget, and trip duration. Smart GIS routing
-                                finds the optimal path between destinations.
+                                @Localizer["Feature2_Text"].Value
                             </p>
                             <a asp-controller="Trip" asp-action="Index"
                                class="btn btn-outline-light mt-3 btn-sm">
-                                <i class="fas fa-plane me-1"></i> Plan Your Trip
+                                <i class="fas fa-plane me-1"></i> @Localizer["Feature2_Link"].Value
                             </a>
                         </div>
                     </div>
@@ -188,16 +154,14 @@
                     <div class="d-flex h-100">
                         <div class="project-text w-100 my-auto text-center text-lg-right">
                             <h4 class="text-white">
-                                <i class="fas fa-trophy me-2"></i> Gamification & Rewards
+                                <i class="fas fa-trophy me-2"></i> @Localizer["Feature3_Title"].Value
                             </h4>
                             <p class="mb-0 text-white-50">
-                                Complete missions, earn points, and collect badges on
-                                your Digital Heritage Passport. Redeem points for hotel
-                                discounts, museum tickets, and exclusive experiences.
+                                @Localizer["Feature3_Text"].Value
                             </p>
                             <a asp-controller="Mission" asp-action="Index"
                                class="btn btn-outline-light mt-3 btn-sm">
-                                <i class="fas fa-star me-1"></i> View Missions
+                                <i class="fas fa-star me-1"></i> @Localizer["Feature3_Link"].Value
                             </a>
                         </div>
                     </div>
@@ -217,10 +181,10 @@
                 <div class="card py-4 h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-map-marked-alt text-primary mb-2"></i>
-                        <h4 class="text-uppercase m-0">GIS Powered</h4>
+                        <h4 class="text-uppercase m-0">@Localizer["Contact_GIS"].Value</h4>
                         <hr class="my-4 mx-auto" />
                         <div class="small text-black-50">
-                            Smart route optimization using ArcGIS Network Analysis
+                            @Localizer["Contact_GIS_Text"].Value
                         </div>
                     </div>
                 </div>
@@ -230,10 +194,10 @@
                 <div class="card py-4 h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-robot text-primary mb-2"></i>
-                        <h4 class="text-uppercase m-0">AI Driven</h4>
+                        <h4 class="text-uppercase m-0">@Localizer["Contact_AI"].Value</h4>
                         <hr class="my-4 mx-auto" />
                         <div class="small text-black-50">
-                            Personalized recommendations powered by OpenAI
+                            @Localizer["Contact_AI_Text"].Value
                         </div>
                     </div>
                 </div>
@@ -243,10 +207,10 @@
                 <div class="card py-4 h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-trophy text-primary mb-2"></i>
-                        <h4 class="text-uppercase m-0">Gamified</h4>
+                        <h4 class="text-uppercase m-0">@Localizer["Contact_Gamified"].Value</h4>
                         <hr class="my-4 mx-auto" />
                         <div class="small text-black-50">
-                            Missions, badges, and rewards for every explorer
+                            @Localizer["Contact_Gamified_Text"].Value
                         </div>
                     </div>
                 </div>
@@ -266,7 +230,7 @@
     <style>
         /* Stats Section */
         .stats-section {
-            background: linear-gradient(135deg, #1a0f00 0%, #2C1A0E 50%, #1a0f00 100%);
+            background: linear-gradient(135deg, #1a0f00 0%, var(--egy-dark) 50%, #1a0f00 100%);
             padding: 100px 0;
             border-top: 2px solid #C8832A;
             border-bottom: 2px solid #C8832A;

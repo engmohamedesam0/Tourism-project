@@ -1,12 +1,12 @@
-@model Tourist_Project_MVC.View_Model.SponsorBranchVM
+﻿@model Tourist_Project_MVC.View_Model.SponsorBranchVM
 
 @{
-    ViewData["Title"] = "Add Branch";
+    ViewData["Title"] = Localizer["SponsorBranch_CreateTitle"].Value;
 }
 
 <div class="inner-page-wrapper">
     <div class="container">
-        <h2>➕ Add New Branch</h2>
+        <h2>➕ @Localizer["SponsorBranch_CreateHeading"].Value</h2>
         <hr />
         <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()
@@ -43,8 +43,8 @@
                 <span asp-validation-for="ContactNumber" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-success">Save</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success">@Localizer["SponsorBranch_SaveBtn"].Value</button>
+            <a asp-action="Index" class="btn btn-secondary">@Localizer["SponsorBranch_CancelBtn"].Value</a>
         </form>
     </div>
 </div>

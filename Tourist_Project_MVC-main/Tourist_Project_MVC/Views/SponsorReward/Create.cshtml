@@ -1,60 +1,60 @@
-@model Tourist_Project_MVC.View_Model.SponsorRewardVM
+﻿@model Tourist_Project_MVC.View_Model.SponsorRewardVM
 
 @{
-    ViewData["Title"] = "Add Reward";
+    ViewData["Title"] = @Localizer["SponsorReward_AddReward"].Value;
 }
 
 <div class="inner-page-wrapper">
     <div class="container">
-        <h2>➕ Add New Reward</h2>
+        <h2>➕ @Localizer["SponsorReward_AddNewReward"].Value</h2>
         <hr />
         <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="SponsorId" />
 
             <div class="mb-3">
-                <label asp-for="Title" class="form-label"></label>
+                <label asp-for="Title" class="form-label">@Localizer["SponsorReward_Title"].Value</label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="RewardType" class="form-label"></label>
+                <label asp-for="RewardType" class="form-label">@Localizer["SponsorReward_Type"].Value</label>
                 <input asp-for="RewardType" class="form-control" />
                 <span asp-validation-for="RewardType" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Description" class="form-label"></label>
+                <label asp-for="Description" class="form-label">@Localizer["SponsorReward_Description"].Value</label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label asp-for="PointsRequired" class="form-label"></label>
+                    <label asp-for="PointsRequired" class="form-label">@Localizer["SponsorReward_PointsRequired"].Value</label>
                     <input asp-for="PointsRequired" class="form-control" type="number" />
                     <span asp-validation-for="PointsRequired" class="text-danger"></span>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label asp-for="QuantityAvailable" class="form-label"></label>
+                    <label asp-for="QuantityAvailable" class="form-label">@Localizer["SponsorReward_QuantityAvailable"].Value</label>
                     <input asp-for="QuantityAvailable" class="form-control" type="number" />
                     <span asp-validation-for="QuantityAvailable" class="text-danger"></span>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label asp-for="ExpirationDate" class="form-label"></label>
+                    <label asp-for="ExpirationDate" class="form-label">@Localizer["SponsorReward_ExpirationDate"].Value</label>
                     <input asp-for="ExpirationDate" class="form-control" value="" type="date" />
                     <span asp-validation-for="ExpirationDate" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Status" class="form-label"></label>
+                <label asp-for="Status" class="form-label">@Localizer["SponsorReward_Status"].Value</label>
                 <select asp-for="Status" class="form-select">
-                    <option value="Active">Active</option>
-                    <option value="Paused">Paused</option>
-                    <option value="Expired">Expired</option>
-                    <option value="Removed">Removed</option>
+                    <option value="Active">@Localizer["SponsorReward_Active"].Value</option>
+                    <option value="Paused">@Localizer["SponsorReward_Paused"].Value</option>
+                    <option value="Expired">@Localizer["SponsorReward_Expired"].Value</option>
+                    <option value="Removed">@Localizer["SponsorReward_Removed"].Value</option>
                 </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
@@ -62,7 +62,7 @@
             @if (Model.AvailableBranches != null && Model.AvailableBranches.Any())
             {
                 <div class="mb-3">
-                    <label class="form-label">Available Branches</label>
+                    <label class="form-label">@Localizer["SponsorReward_AvailableBranches"].Value</label>
                     @foreach (var branch in Model.AvailableBranches)
                     {
                         <div class="form-check">
@@ -75,8 +75,8 @@
                 </div>
             }
 
-            <button type="submit" class="btn btn-success">Save</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success">@Localizer["SponsorReward_Save"].Value</button>
+            <a asp-action="Index" class="btn btn-secondary">@Localizer["SponsorReward_Cancel"].Value</a>
         </form>
     </div>
 </div>

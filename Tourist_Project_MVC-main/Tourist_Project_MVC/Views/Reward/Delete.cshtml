@@ -1,32 +1,32 @@
 ﻿@model Reward
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = @Localizer["RewardAdmin_DeleteTitle"].Value;
 }
 @if (User.Identity.IsAuthenticated)
 {
     <div class="container mt-4">
-        <h2 class="text-danger">🗑️ Delete Reward</h2>
+        <h2 class="text-danger">🗑️ @Localizer["RewardAdmin_DeleteHeading"].Value</h2>
         <hr />
-        <p class="lead">Are you sure you want to delete <strong>@Model.Title</strong>?</p>
+        <p class="lead">@Localizer["RewardAdmin_DeleteConfirm"].Value <strong>@Model.Title</strong>?</p>
 
         <dl class="row">
-            <dt class="col-sm-3">Title</dt>
+            <dt class="col-sm-3">@Localizer["RewardAdmin_Title"].Value</dt>
             <dd class="col-sm-9">@Model.Title</dd>
 
-            <dt class="col-sm-3">Type</dt>
+            <dt class="col-sm-3">@Localizer["RewardAdmin_Type"].Value</dt>
             <dd class="col-sm-9">@Model.Description</dd>
 
 
-            <dt class="col-sm-3">Points</dt>
+            <dt class="col-sm-3">@Localizer["RewardAdmin_Points"].Value</dt>
             <dd class="col-sm-9">@Model.QuantityAvailable</dd>
         </dl>
 
         <form asp-action="DeleteConfirmed" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
-            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-danger">@Localizer["RewardAdmin_YesDelete"].Value</button>
+            <a asp-action="Index" class="btn btn-secondary">@Localizer["RewardAdmin_Cancel"].Value</a>
         </form>
     </div>
 

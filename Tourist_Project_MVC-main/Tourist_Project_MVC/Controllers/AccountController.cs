@@ -182,6 +182,44 @@ namespace Tourist_Project_MVC.Controllers
             return View("Reset");
         }
 
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View("ChangePassword");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ChangePassword", model);
+            }
+
+            var user = await userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var result = await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                await signInManager.RefreshSignInAsync(user);
+                TempData["PasswordMessage"] = "Your password has been changed successfully.";
+                TempData["PasswordMessageType"] = "success";
+                return RedirectToAction("Index", "TouristProfile");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View("ChangePassword", model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Reset(ResetPasswordViewModel resetFromReq)
         {

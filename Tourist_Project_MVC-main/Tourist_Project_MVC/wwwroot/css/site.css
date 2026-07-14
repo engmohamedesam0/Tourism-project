@@ -1,10 +1,30 @@
 /* Custom Global Variables matching an Elegant Egyptian Palette */
 :root {
-    --egy-primary: #C8832A; /* Rich Ochre / Antique Gold */
-    --egy-dark: #1E120A; /* Dark Pharaoh Brown */
-    --egy-light: #FDF9F3; /* Soft Papyrus Alabaster */
-    --egy-accent: #E8A045; /* Radiant Sun Amber */
-    --egy-muted-gold: #b37424;
+    /* Color */
+    --egy-primary: #C8832A; /* Rich Ochre / Antique Gold — ONLY primary/brand color */
+    --egy-dark: #1E120A; /* Dark Pharaoh Brown — canonical dark surface */
+    --egy-light: #FDF9F3; /* Soft Papyrus Alabaster — canonical light surface */
+    --egy-accent: #E8A045; /* Radiant Sun Amber — hover/active state */
+    --egy-muted-gold: #b37424; /* Muted gold — links, secondary emphasis */
+    --egy-success: #2E7D32; /* Add / Create action */
+    --egy-success-hover: #1B5E20; /* Add / Create hover */
+    --egy-danger: #a16468; /* Destructive / Delete action */
+    --egy-text-body: #333333; /* Default paragraph text */
+    --egy-text-muted: #6b7280; /* Muted secondary text */
+
+    /* Radius */
+    --radius-sm: 4px; /* buttons, tables, dropdowns */
+    --radius-md: 10px; /* auth card */
+    --radius-lg: 14px; /* stat card */
+    --radius-pill: 50rem; /* back button, badges */
+
+    /* Shadow */
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.05); /* table */
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.06); /* stat card resting */
+    --shadow-large: 0 10px 30px rgba(30, 18, 10, 0.12); /* auth card, stat card hover */
+    --shadow-glow-gold: 0 8px 20px rgba(200, 131, 42, 0.4); /* primary button hover */
+
+    /* Layout */
     --nav-offset: 80px; /* live navbar height; synced by scripts.js (#mainNav.offsetHeight) */
 }
 
@@ -115,30 +135,55 @@ h1, h2, h3, h4, h5, h6,
     text-decoration: none;
     font-size: 0.78rem;
     font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--egy-primary);
     transition: all 0.2s ease;
 }
 
     .utility-link:hover,
     .utility-link:focus {
-        color: var(--egy-accent);
+        color: var(--egy-dark);
+        background-color: var(--egy-accent);
+        border-color: var(--egy-accent);
     }
 
 .utility-register {
-    border: 1px solid var(--egy-primary);
-    color: #fff !important;
+    background-color: var(--egy-accent);
+    color: var(--egy-dark) !important;
+    border: none;
+    font-weight: 700;
 }
 
-    .utility-register:hover {
-        background-color: var(--egy-accent);
-        border-color: var(--egy-accent);
+    .utility-register:hover,
+    .utility-register:focus {
+        background-color: var(--egy-primary);
         color: var(--egy-dark) !important;
     }
 
+.utility-search .input-group-text {
+    background-color: rgba(255, 255, 255, 0.92);
+    border-color: rgba(200, 131, 42, 0.35);
+    color: var(--egy-muted-gold);
+    border-radius: 50rem 0 0 50rem;
+}
+
 .utility-search .form-control-sm {
     background-color: rgba(255, 255, 255, 0.92);
-    border-color: transparent;
+    border-color: rgba(200, 131, 42, 0.35);
+    border-radius: 0 50rem 50rem 0;
+    color: var(--egy-dark);
+    padding-left: 0.5rem;
+    padding-right: 1rem;
+}
+
+.utility-search .form-control-sm::placeholder {
+    color: rgba(30, 18, 10, 0.45);
+}
+
+.utility-search .form-control-sm:focus {
+    border-color: var(--egy-primary);
+    box-shadow: 0 0 0 0.25rem rgba(200, 131, 42, 0.15);
 }
 
 .lang-switcher .dropdown-toggle::after {
@@ -153,6 +198,7 @@ h1, h2, h3, h4, h5, h6,
     font-weight: 900;
     letter-spacing: 2px;
     font-size: 1.3rem;
+    margin-right: 1.5rem;
 }
 
     #mainNav .navbar-brand .brand-gold {
@@ -168,8 +214,8 @@ h1, h2, h3, h4, h5, h6,
     font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 8px 16px !important;
+    letter-spacing: 1.5px;
+    padding: 10px 22px !important;
     transition: all 0.2s ease;
 }
 
@@ -271,8 +317,8 @@ h1, h2, h3, h4, h5, h6,
    + ADD Button (btn-success)
    ============================================= */
 .btn-success {
-    background-color: #2E7D32 !important;
-    border-color: #2E7D32 !important;
+    background-color: var(--egy-success) !important;
+    border-color: var(--egy-success) !important;
     color: white !important;
     font-family: 'Cinzel', serif;
     text-transform: uppercase;
@@ -283,53 +329,36 @@ h1, h2, h3, h4, h5, h6,
 
     .btn-success:hover,
     .btn-success:focus {
-        background-color: #1B5E20 !important;
-        border-color: #1B5E20 !important;
+        background-color: var(--egy-success-hover) !important;
+        border-color: var(--egy-success-hover) !important;
         color: white !important;
         box-shadow: 0 4px 12px rgba(46, 125, 50, 0.35);
         transform: translateY(-1px);
     }
 
 /* =============================================
-   EXPLORE NOW - Override btn-primary in Hero
-   ============================================= */
-.masthead .btn-primary {
-    background-color: var(--egy-primary) !important;
-    border-color: var(--egy-primary) !important;
-    color: white !important;
-}
-
-    .masthead .btn-primary:hover,
-    .masthead .btn-primary:focus {
-        background-color: var(--egy-accent) !important;
-        border-color: var(--egy-accent) !important;
-        color: var(--egy-dark) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(200, 131, 42, 0.4);
-    }
-/* =============================================
-   EXPLORE NOW Button (btn-primary في الـ Hero)
+   EXPLORE NOW - Hero primary CTA (gold, Cinzel)
    ============================================= */
 .masthead .btn-primary {
     background-color: var(--egy-primary);
     border-color: var(--egy-primary);
-    color: white;
+    color: #fff;
     font-family: 'Cinzel', serif;
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 2px;
     padding: 14px 40px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     transition: all 0.3s ease;
 }
 
     .masthead .btn-primary:hover,
     .masthead .btn-primary:focus {
-        background-color: #E8A045;
-        border-color: #E8A045;
-        color: #2C1A0E;
+        background-color: var(--egy-accent);
+        border-color: var(--egy-accent);
+        color: var(--egy-dark);
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(200, 131, 42, 0.4);
+        box-shadow: var(--shadow-glow-gold);
     }
 /* Filter Bar - Active Status Button */
 .btn-group .btn-primary {
@@ -360,7 +389,7 @@ h1, h2, h3, h4, h5, h6,
 .main-footer {
     background-color: var(--egy-dark);
     border-top: 3px solid var(--egy-primary);
-    padding: 25px 0;
+    padding: 40px 0 25px;
     color: #FFFFFF;
     margin-top: auto;
 }
@@ -370,6 +399,33 @@ h1, h2, h3, h4, h5, h6,
         color: var(--egy-accent);
         font-weight: 700;
     }
+
+.footer-col-header {
+    font-family: 'Cinzel', serif;
+    color: var(--egy-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.main-footer a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s ease;
+}
+
+    .main-footer a:hover {
+        color: var(--egy-accent);
+    }
+
+.footer-divider {
+    border-color: rgba(200, 131, 42, 0.25);
+    opacity: 1;
+    margin: 1.5rem 0 1.25rem;
+}
 #mainNav.navbar-shrink,
 #mainNav.navbar-scrolled {
     border-bottom: 2px solid var(--egy-primary) !important;
