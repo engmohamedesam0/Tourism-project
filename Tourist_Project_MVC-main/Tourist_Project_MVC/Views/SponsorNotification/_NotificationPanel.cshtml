@@ -2,7 +2,7 @@
 
 @if (!Model.Any())
 {
-    <div class="text-center py-4 text-white-50 w-100">
+    <div class="text-center py-4 text-muted w-100">
         <i class="bi bi-bell-slash" style="font-size:2rem;"></i>
         <p class="mb-0 mt-2">@Localizer["SponsorNotification_NoNewNotifications"].Value</p>
     </div>
@@ -20,10 +20,10 @@ else
                 <div class="d-flex justify-content-between align-items-start gap-2">
                     <div class="flex-grow-1">
                         <span class="badge bg-@(n.Type == "RewardExpired" ? "danger" : n.Type == "RewardLowStock" ? "warning" : "info") me-1" style="font-size:0.65rem;">@n.Type</span>
-                        <p class="mb-1 mt-1 small @(n.IsRead ? "text-white-50" : "fw-semibold")">@n.Message</p>
-                        <small class="text-white-50">@n.CreatedDate.ToString("MMM dd, HH:mm")</small>
+                        <p class="mb-1 mt-1 small @(n.IsRead ? "text-muted" : "fw-semibold")">@n.Message</p>
+                        <small class="text-muted">@n.CreatedDate.ToString("MMM dd, HH:mm")</small>
                     </div>
-                    <button type="button" class="btn btn-sm btn-link text-white-50 notif-delete p-0 ms-1" title="@Localizer["SponsorNotification_Delete"].Value" data-notif-id="@n.Id">
+                    <button type="button" class="btn btn-sm btn-link text-muted notif-delete p-0 ms-1" title="@Localizer["SponsorNotification_Delete"].Value" data-notif-id="@n.Id">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>

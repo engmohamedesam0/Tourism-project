@@ -1,0 +1,14 @@
+@model Tourist_Project_MVC.View_Model.NotificationBellVM
+
+<button type="button"
+        id="notificationFabBtn"
+        class="notification-fab"
+        aria-label="Notifications"
+        aria-expanded="false"
+        aria-controls="notificationPanel">
+    <i class="bi bi-bell-fill"></i>
+    @if (Model.UnreadCount > 0)
+    {
+        <span class="notification-fab-badge" id="notifFabBadge">@Model.UnreadCount</span>
+    }
+</button>
