@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -7,15 +8,14 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Tourist_Project_MVC.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:Tourist_Project_MVC-main/Tourist_Project_MVC/Migrations/20260713111703_InitialPostgres.cs
     public partial class InitialPostgres : Migration
-========
-    public partial class mig3 : Migration
->>>>>>>> f140e6d5114f1b2fcd023b23907eed1ae01c1bca:Tourist_Project_MVC-main/Tourist_Project_MVC/Migrations/20260714070423_mig3.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:postgis", ",,");
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -69,8 +69,7 @@ namespace Tourist_Project_MVC.Migrations
                     City = table.Column<string>(type: "text", nullable: false),
                     OpeningHours = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Category = table.Column<string>(type: "text", nullable: true),
-                    Lat = table.Column<float>(type: "real", nullable: false),
-                    Long = table.Column<float>(type: "real", nullable: false),
+                    Location = table.Column<Point>(type: "geometry", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     TicketPrice = table.Column<decimal>(type: "numeric(10,2)", nullable: true),
                     Rating = table.Column<decimal>(type: "numeric(18,2)", nullable: true),
@@ -239,7 +238,6 @@ namespace Tourist_Project_MVC.Migrations
                 name: "Tourists",
                 columns: table => new
                 {
-<<<<<<<< HEAD:Tourist_Project_MVC-main/Tourist_Project_MVC/Migrations/20260713111703_InitialPostgres.cs
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
@@ -251,25 +249,11 @@ namespace Tourist_Project_MVC.Migrations
                     point_Balance = table.Column<int>(type: "integer", nullable: false),
                     RegisterDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: true),
+                    PreferredLanguage = table.Column<string>(type: "text", nullable: true),
+                    TravelInterests = table.Column<string>(type: "text", nullable: true),
+                    NotifyByEmail = table.Column<bool>(type: "boolean", nullable: false),
+                    NotifyInApp = table.Column<bool>(type: "boolean", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: true)
-========
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IdNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Passport = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    point_Balance = table.Column<int>(type: "int", nullable: false),
-                    RegisterDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PreferredLanguage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TravelInterests = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NotifyByEmail = table.Column<bool>(type: "bit", nullable: false),
-                    NotifyInApp = table.Column<bool>(type: "bit", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true)
->>>>>>>> f140e6d5114f1b2fcd023b23907eed1ae01c1bca:Tourist_Project_MVC-main/Tourist_Project_MVC/Migrations/20260714070423_mig3.cs
                 },
                 constraints: table =>
                 {
@@ -313,8 +297,7 @@ namespace Tourist_Project_MVC.Migrations
                     SponsorId = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
-                    Lat = table.Column<float>(type: "real", nullable: false),
-                    Long = table.Column<float>(type: "real", nullable: false),
+                    Location = table.Column<Point>(type: "geometry", nullable: false),
                     ContactNumber = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -602,16 +585,16 @@ namespace Tourist_Project_MVC.Migrations
                 name: "SiteReviews",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Rating = table.Column<int>(type: "int", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TouristId = table.Column<int>(type: "int", nullable: false),
-                    DestinationId = table.Column<int>(type: "int", nullable: true),
-                    TripPlanId = table.Column<int>(type: "int", nullable: true),
-                    RewardId = table.Column<int>(type: "int", nullable: true),
-                    BranchId = table.Column<int>(type: "int", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Rating = table.Column<int>(type: "integer", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    TouristId = table.Column<int>(type: "integer", nullable: false),
+                    DestinationId = table.Column<int>(type: "integer", nullable: true),
+                    TripPlanId = table.Column<int>(type: "integer", nullable: true),
+                    RewardId = table.Column<int>(type: "integer", nullable: true),
+                    BranchId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {

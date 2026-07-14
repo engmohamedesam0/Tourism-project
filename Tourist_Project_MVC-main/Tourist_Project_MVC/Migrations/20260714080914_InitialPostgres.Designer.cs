@@ -13,8 +13,8 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    [Migration("20260713160944_SpatialLocation")]
-    partial class SpatialLocation
+    [Migration("20260714080914_InitialPostgres")]
+    partial class InitialPostgres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -580,6 +580,53 @@ namespace Tourist_Project_MVC.Migrations
                     b.ToTable("RewardViews");
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.SiteReview", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("DestinationId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("RewardId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TouristId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TripPlanId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("DestinationId");
+
+                    b.HasIndex("RewardId");
+
+                    b.HasIndex("TouristId");
+
+                    b.HasIndex("TripPlanId");
+
+                    b.ToTable("SiteReviews");
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.Sponsor", b =>
                 {
                     b.Property<int>("Id")
@@ -733,6 +780,12 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("NotifyByEmail")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("NotifyInApp")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Passport")
                         .HasColumnType("text");
 
@@ -740,10 +793,16 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PreferredLanguage")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("RegisterDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TravelInterests")
                         .HasColumnType("text");
 
                     b.Property<int>("point_Balance")
@@ -1037,6 +1096,41 @@ namespace Tourist_Project_MVC.Migrations
                     b.Navigation("Reward");
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.SiteReview", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.HasOne("Tourist_Project_MVC.Models.Destination", "Destination")
+                        .WithMany()
+                        .HasForeignKey("DestinationId");
+
+                    b.HasOne("Tourist_Project_MVC.Models.Reward", "Reward")
+                        .WithMany()
+                        .HasForeignKey("RewardId");
+
+                    b.HasOne("Tourist_Project_MVC.Models.Tourist", "Tourist")
+                        .WithMany()
+                        .HasForeignKey("TouristId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tourist_Project_MVC.Models.TripPlan", "TripPlan")
+                        .WithMany()
+                        .HasForeignKey("TripPlanId");
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Destination");
+
+                    b.Navigation("Reward");
+
+                    b.Navigation("Tourist");
+
+                    b.Navigation("TripPlan");
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.Sponsor", b =>
                 {
                     b.HasOne("Tourist_Project_MVC.Models.ApplicationUser", null)
@@ -1070,10 +1164,12 @@ namespace Tourist_Project_MVC.Migrations
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.Tourist", b =>
                 {
-                    b.HasOne("Tourist_Project_MVC.Models.ApplicationUser", null)
+                    b.HasOne("Tourist_Project_MVC.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.TripDestination", b =>
