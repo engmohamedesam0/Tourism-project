@@ -204,6 +204,71 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js"></script>
 <script>
     (function () {
+        var detailsPropMap = {
+            id: ['id', 'Id', 'destination_id'],
+            name: ['name', 'Name', 'destination_name'],
+            city: ['city', 'City'],
+            category: ['category', 'Category'],
+            detailsUrl: '/Destination/Details/{id}'
+        };
+
+        function buildPopup(feature) {
+            var p = feature.properties || {};
+            var id = _firstDefined(p, detailsPropMap.id, []);
+            var name = _firstDefined(p, detailsPropMap.name, ['Unnamed']);
+            var city = _firstDefined(p, detailsPropMap.city, ['']);
+            var cat = _firstDefined(p, detailsPropMap.category, ['']);
+            var html = '';
+            if (name) html += '<strong>' + _esc(name) + '</strong>';
+            if (city) html += '<br><span style="color:#666">' + _esc(city) + '</span>';
+            if (cat) html += '<br><span class="badge bg-secondary">' + _esc(cat) + '</span>';
+            if (id && detailsPropMap.detailsUrl) {
+                html += '<br><a href="' + detailsPropMap.detailsUrl.replace('{id}', encodeURIComponent(id)) + '" class="btn btn-sm btn-outline-primary mt-1">Details</a>';
+            }
+            return html;
+        }
+
+        function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function _firstDefined(p, keys, fallback) {
+            for (var i = 0; i < keys.length; i++) {
+                var val = p[keys[i]];
+                if (val !== undefined && val !== null && String(val) !== '') return String(val);
+            }
+            return fallback[0] || '';
+        }
+
+        var detailsMap = EGYMaps.initWfsMap({
+            mapElId: 'tripDetailsMap',
+            proxyUrl: '/Map/GetDestinationsGeoJson',
+            propMap: detailsPropMap,
+            popupHtml: buildPopup,
+            markerStyle: { radius: 6, fillColor: '#888', color: '#555', weight: 1, opacity: 0.6, fillOpacity: 0.3 },
+            onLayerReady: function () {
+                var latlngs = [];
+                document.querySelectorAll('#stopList li.trip-stop-card').forEach(function (li) {
+                    var lat = parseFloat(li.getAttribute('data-lat'));
+                    var lng = parseFloat(li.getAttribute('data-lng'));
+                    var id = li.getAttribute('data-id');
+                    var badge = li.querySelector('.stop-order-badge');
+                    var order = badge ? badge.textContent.trim() : '?';
+                    var nameEl = li.querySelector('strong');
+                    var name = nameEl ? nameEl.textContent.trim() : 'Stop ' + order;
+
+                    if (!isNaN(lat) && !isNaN(lng) && detailsMap && detailsMap.map) {
+                        var m = L.circleMarker([lat, lng], {
+                            radius: 14, fillColor: '#0d6efd', color: '#fff', weight: 3, opacity: 1, fillOpacity: 0.9
+                        }).addTo(detailsMap.map);
+                        m.bindPopup('<strong>' + _esc(name) + '</strong><br>Stop #' + _esc(order));
+                        m.bindTooltip('#' + order, { permanent: true, direction: 'center', className: 'stop-tooltip' });
+                        latlngs.push([lat, lng]);
+                    }
+                });
+                if (latlngs.length > 0 && detailsMap && detailsMap.map) {
+                    detailsMap.map.fitBounds(latlngs, { padding: [40, 40] });
+                }
+            }
+        });
+
         var token = $('input[name=__RequestVerificationToken]').val();
 
         function getStopIds() {
@@ -230,7 +295,6 @@
                         headers: { 'RequestVerificationToken': token },
                         data: JSON.stringify(orderedIds),
                         success: function () {
-                            // Refresh visible order badges
                             $('#stopList li').each(function (idx) {
                                 $(this).find('.stop-order-badge').text(idx + 1);
                             });

@@ -41,16 +41,36 @@
             <div class="row">
                 <div class="col mb-3">
                     <label class="form-label">Latitude</label>
-                    <input name="Lat" class="form-control" type="number" step="any" />
+                    <input name="Lat" id="Lat" class="form-control" type="number" step="any" />
                 </div>
                 <div class="col mb-3">
                     <label class="form-label">Longitude</label>
-                    <input name="Long" class="form-control" type="number" step="any" />
+                    <input name="Long" id="Long" class="form-control" type="number" step="any" />
                 </div>
+            </div>
+
+            <div class="mb-3">
+                <div id="destinationMap" style="height:360px;border-radius:14px;border:1px solid rgba(200,131,42,0.25);background:#ece6db;"></div>
             </div>
 
             <button type="submit" class="btn btn-success">@Localizer["Destination_Save"].Value</button>
             <a asp-action="Index" class="btn btn-secondary">@Localizer["Destination_Cancel"].Value</a>
         </form>
     </div>
+
+    @section Scripts {
+    <script>
+        (function () {
+            EGYMaps.initLocationPicker({
+                mapElId: 'destinationMap',
+                latInputId: 'Lat',
+                lngInputId: 'Long',
+                contextProxyUrl: '/Map/GetDestinationsGeoJson',
+                contextStyle: { radius: 6, fillColor: '#888', color: '#555', weight: 1, opacity: 0.5, fillOpacity: 0.2 },
+                initialLat: 30.0444,
+                initialLng: 31.2357
+            });
+        })();
+    </script>
+}
 }

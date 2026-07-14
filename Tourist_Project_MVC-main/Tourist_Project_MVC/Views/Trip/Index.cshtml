@@ -384,14 +384,62 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script>
     (function () {
+        var tripPropMap = {
+            id: ['id', 'Id', 'destination_id'],
+            name: ['name', 'Name', 'destination_name'],
+            city: ['city', 'City'],
+            category: ['category', 'Category'],
+            detailsUrl: '/Destination/Details/{id}'
+        };
+
+        function buildPopup(feature) {
+            var p = feature.properties || {};
+            var id = _firstDefined(p, tripPropMap.id, []);
+            var name = _firstDefined(p, tripPropMap.name, ['Unnamed']);
+            var city = _firstDefined(p, tripPropMap.city, ['']);
+            var cat = _firstDefined(p, tripPropMap.category, ['']);
+            var html = '';
+            if (name) html += '<strong>' + _esc(name) + '</strong>';
+            if (city) html += '<br><span style="color:#666">' + _esc(city) + '</span>';
+            if (cat) html += '<br><span class="badge bg-secondary">' + _esc(cat) + '</span>';
+            if (id && tripPropMap.detailsUrl) {
+                html += '<br><a href="' + tripPropMap.detailsUrl.replace('{id}', encodeURIComponent(id)) + '" class="btn btn-sm btn-outline-primary mt-1">Details</a>';
+            }
+            return html;
+        }
+
+        function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function _firstDefined(p, keys, fallback) {
+            for (var i = 0; i < keys.length; i++) {
+                var val = p[keys[i]];
+                if (val !== undefined && val !== null && String(val) !== '') return String(val);
+            }
+            return fallback[0] || '';
+        }
+
+        var tripMap = EGYMaps.initWfsMap({
+            mapElId: 'tripBuilderMap',
+            proxyUrl: '/Map/GetDestinationsGeoJson',
+            propMap: tripPropMap,
+            popupHtml: buildPopup,
+            markerStyle: { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 }
+        });
+
         var $checks = $('.stop-select');
         var $board = $('#itineraryBoard');
         var $empty = $('#emptyHint');
         var $preview = $('#itineraryPreview');
+        var stopOverlays = [];
+
+        function clearStopOverlays() {
+            stopOverlays.forEach(function (m) { if (tripMap && tripMap.map && tripMap.map.hasLayer(m)) tripMap.map.removeLayer(m); });
+            stopOverlays = [];
+        }
 
         function refresh() {
             var selected = $checks.filter(':checked');
             $preview.empty();
+            clearStopOverlays();
 
             if (selected.length === 0) {
                 $empty.show();
@@ -401,14 +449,16 @@
 
             $empty.hide();
             $board.find('.itinerary-stop').remove();
+            var latlngs = [];
 
             selected.each(function (idx) {
                 var $row = $(this).closest('.picker-row');
                 var name = $row.find('label strong').text();
                 var arr = $row.find('input[type=date]').eq(0).val();
                 var dep = $row.find('input[type=date]').eq(1).val();
+                var lat = parseFloat($row.attr('data-lat'));
+                var lng = parseFloat($row.attr('data-lng'));
 
-                // board
                 var $stop = $('<div class="itinerary-stop"></div>');
                 $stop.append('<div class="itinerary-order">' + (idx + 1) + '</div>');
                 $stop.append('<div><strong>' + name + '</strong>' +
@@ -417,9 +467,21 @@
                     (dep ? ' &middot; Depart ' + dep : '') + '</div></div>');
                 $board.append($stop);
 
-                // preview list
                 $preview.append('<li>' + name + '</li>');
+
+                if (!isNaN(lat) && !isNaN(lng) && tripMap && tripMap.map) {
+                    var numMarker = L.circleMarker([lat, lng], {
+                        radius: 12, fillColor: '#0d6efd', color: '#fff', weight: 3, opacity: 1, fillOpacity: 0.9
+                    }).bindPopup('<strong>' + _esc(name) + '</strong>').addTo(tripMap.map);
+                    numMarker.bindTooltip(String(idx + 1), { permanent: true, direction: 'center', className: 'stop-tooltip' });
+                    stopOverlays.push(numMarker);
+                    latlngs.push([lat, lng]);
+                }
             });
+
+            if (latlngs.length > 1 && tripMap && tripMap.map) {
+                tripMap.map.fitBounds(latlngs, { padding: [40, 40] });
+            }
         }
 
         $checks.on('change', function () {

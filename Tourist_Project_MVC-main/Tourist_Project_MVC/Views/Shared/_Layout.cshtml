@@ -19,6 +19,9 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
 
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+
     <!-- Base Stylesheet -->
     <link href="~/css/styles.css" rel="stylesheet" />
     <!-- Custom Egyptian Theme -->
@@ -857,15 +860,19 @@
         </div>
     </div>
 
-    @await RenderSectionAsync("Scripts", required: false)
-
+    <!-- Leaflet JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <!-- Global anti-forgery token for AJAX POSTs (read by JS helpers). -->
     <form id="antiforgeryForm" style="display:none">@Html.AntiForgeryToken()</form>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Maps JS (EGYMaps) — must load BEFORE per-page Scripts section -->
+    <script src="~/js/maps.js"></script>
     <!-- Grayscale Script -->
     <script src="~/js/scripts.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
 
     <style>
         /* Floating AI assistant button */

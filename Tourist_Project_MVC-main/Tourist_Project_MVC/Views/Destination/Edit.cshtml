@@ -54,16 +54,38 @@
             <div class="row">
                 <div class="col mb-3">
                     <label class="form-label">Latitude</label>
-                    <input name="Lat" class="form-control" type="number" step="any" value="@Model.Location.Y" />
+                    <input name="Lat" id="Lat" class="form-control" type="number" step="any" value="@Model.Location.Y" />
                 </div>
                 <div class="col mb-3">
                     <label class="form-label">Longitude</label>
-                    <input name="Long" class="form-control" type="number" step="any" value="@Model.Location.X" />
+                    <input name="Long" id="Long" class="form-control" type="number" step="any" value="@Model.Location.X" />
                 </div>
+            </div>
+
+            <div class="mb-3">
+                <div id="destinationMap" style="height:360px;border-radius:14px;border:1px solid rgba(200,131,42,0.25);background:#ece6db;"></div>
             </div>
 
             <button type="submit" class="btn btn-warning">@Localizer["Destination_Update"].Value</button>
             <a asp-action="Index" class="btn btn-secondary">@Localizer["Destination_Cancel"].Value</a>
         </form>
     </div>
+
+    @section Scripts {
+    <script>
+        (function () {
+            var latVal = parseFloat(document.getElementById('Lat').value);
+            var lngVal = parseFloat(document.getElementById('Long').value);
+            EGYMaps.initLocationPicker({
+                mapElId: 'destinationMap',
+                latInputId: 'Lat',
+                lngInputId: 'Long',
+                contextProxyUrl: '/Map/GetDestinationsGeoJson',
+                contextStyle: { radius: 6, fillColor: '#888', color: '#555', weight: 1, opacity: 0.5, fillOpacity: 0.2 },
+                initialLat: isNaN(latVal) ? 30.0444 : latVal,
+                initialLng: isNaN(lngVal) ? 31.2357 : lngVal
+            });
+        })();
+    </script>
+}
 }

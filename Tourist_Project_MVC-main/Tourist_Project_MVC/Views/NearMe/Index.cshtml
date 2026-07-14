@@ -148,9 +148,11 @@
             <!-- RIGHT PANEL: map placeholder -->
             <div class="col-lg-7 col-xl-8 nearme-map-panel">
                 <div id="nearbyMap" class="nearme-map-container">
-                    <iframe src="https://arcg.is/0aurTi1" width="100%" height="100%" style="border:0;"
-                            allowfullscreen="" loading="lazy">
-                    </iframe>
+                    <div class="map-watermark">
+                        <i class="bi bi-map" style="font-size: 3rem;"></i>
+                        <p class="mb-0 mt-2">@Localizer["Explore_MapPlaceholder"].Value</p>
+                        <small class="text-muted">@Localizer["Explore_MapNote"].Value</small>
+                    </div>
                 </div>
             </div>
 
@@ -311,5 +313,47 @@
             input.value = (value === null) ? '' : value;
             form.submit();
         }
+
+        (function () {
+            var nearMePropMap = {
+                id: ['id', 'Id', 'sponsor_id', 'SponsorId'],
+                name: ['name', 'Name', 'sponsor_name'],
+                city: ['city', 'City'],
+                category: ['category', 'Category', 'type', 'Type'],
+                detailsUrl: '/NearMe/Details/{id}'
+            };
+
+            function buildPopup(feature) {
+                var p = feature.properties || {};
+                var id = _firstDefined(p, nearMePropMap.id, []);
+                var name = _firstDefined(p, nearMePropMap.name, ['Sponsor']);
+                var city = _firstDefined(p, nearMePropMap.city, ['']);
+                var cat = _firstDefined(p, nearMePropMap.category, ['']);
+                var html = '';
+                if (name) html += '<strong>' + _esc(name) + '</strong>';
+                if (cat) html += '<br><span class="badge bg-secondary">' + _esc(cat) + '</span>';
+                if (id && nearMePropMap.detailsUrl) {
+                    html += '<br><a href="' + nearMePropMap.detailsUrl.replace('{id}', encodeURIComponent(id)) + '" class="btn btn-sm btn-outline-primary mt-1">View Details</a>';
+                }
+                return html;
+            }
+
+            function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+            function _firstDefined(p, keys, fallback) {
+                for (var i = 0; i < keys.length; i++) {
+                    var val = p[keys[i]];
+                    if (val !== undefined && val !== null && String(val) !== '') return String(val);
+                }
+                return fallback[0] || '';
+            }
+
+            EGYMaps.initWfsMap({
+                mapElId: 'nearbyMap',
+                proxyUrl: '/Map/GetBranchesGeoJson',
+                propMap: nearMePropMap,
+                popupHtml: buildPopup,
+                markerStyle: { radius: 9, fillColor: '#2e9e5b', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 }
+            });
+        })();
     </script>
 }

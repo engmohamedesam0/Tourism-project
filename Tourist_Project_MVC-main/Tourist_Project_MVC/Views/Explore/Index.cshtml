@@ -306,6 +306,102 @@
     (function () {
         var chips = document.querySelectorAll('#categoryChips .chip');
         var cards = Array.from(document.querySelectorAll('#exploreList .explore-card'));
+        var mapInstance = null;
+        var geoLayer = null;
+        var markerMap = {};
+
+        var propMap = {
+            id: ['id', 'Id', 'destination_id', 'DestinationId'],
+            name: ['name', 'Name', 'destination_name'],
+            city: ['city', 'City'],
+            category: ['category', 'Category'],
+            detailsUrl: '/Destination/Details/{id}'
+        };
+
+        function buildPopup(feature) {
+            var p = feature.properties || {};
+            var id = _firstDefined(p, propMap.id, []);
+            var name = _firstDefined(p, propMap.name, ['Unnamed']);
+            var city = _firstDefined(p, propMap.city, ['']);
+            var cat = _firstDefined(p, propMap.category, ['']);
+            var html = '';
+            if (name) html += '<strong>' + _esc(name) + '</strong>';
+            if (city) html += '<br><span style="color:#666">' + _esc(city) + '</span>';
+            if (cat) html += '<br><span class="badge bg-secondary">' + _esc(cat) + '</span>';
+            if (id && propMap.detailsUrl) {
+                html += '<br><a href="' + propMap.detailsUrl.replace('{id}', encodeURIComponent(id)) + '" class="btn btn-sm btn-outline-primary mt-1">Details</a>';
+            }
+            return html;
+        }
+
+        function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function _firstDefined(p, keys, fallback) {
+            for (var i = 0; i < keys.length; i++) {
+                var val = p[keys[i]];
+                if (val !== undefined && val !== null && String(val) !== '') return String(val);
+            }
+            return fallback[0] || '';
+        }
+
+        function initMap() {
+            if (mapInstance) return;
+            mapInstance = EGYMaps.initWfsMap({
+                mapElId: 'exploreMap',
+                proxyUrl: '/Map/GetDestinationsGeoJson',
+                propMap: propMap,
+                popupHtml: buildPopup,
+                markerStyle: { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
+                onLayerReady: function (layer) {
+                    geoLayer = layer;
+                    syncMarkersFromLayer(layer);
+                    syncMarkersFromChips();
+                }
+            });
+        }
+
+        function syncMarkersFromLayer(layer) {
+            if (!layer) return;
+            markerMap = {};
+            layer.eachLayer(function (l) {
+                var latlng = l.getLatLng();
+                var key = latlng.lat + '_' + latlng.lng;
+                markerMap[key] = l;
+            });
+        }
+
+        function syncMarkersFromChips() {
+            var activeCat = null;
+            var activeStatus = null;
+            chips.forEach(function (chip) {
+                if (chip.classList.contains('chip-active')) {
+                    activeCat = chip.getAttribute('data-category');
+                    activeStatus = chip.getAttribute('data-status');
+                }
+            });
+
+            var activeFilter = document.querySelector('#categoryChips .chip-active');
+            var isAll = activeFilter && activeFilter.getAttribute('data-filter') === 'all';
+
+            cards.forEach(function (card) {
+                var cLat = parseFloat(card.getAttribute('data-lat'));
+                var cLng = parseFloat(card.getAttribute('data-lng'));
+                var cCat = card.getAttribute('data-category');
+                var cStatus = card.getAttribute('data-status');
+
+                var key = cLat + '_' + cLng;
+                var marker = markerMap[key];
+
+                if (marker) {
+                    var show = isAll || (activeCat && cCat === activeCat) || (activeStatus && cStatus === activeStatus);
+                    if (show) {
+                        if (!mapInstance.hasLayer(marker)) marker.addTo(mapInstance);
+                        marker.setOpacity(1);
+                    } else {
+                        if (mapInstance.hasLayer(marker)) mapInstance.removeLayer(marker);
+                    }
+                }
+            });
+        }
 
         function applyFilter(chip) {
             var category = chip.getAttribute('data-category');
@@ -320,6 +416,8 @@
                 }
                 card.style.display = match ? '' : 'none';
             });
+
+            syncMarkersFromChips();
         }
 
         chips.forEach(function (chip) {
@@ -342,8 +440,10 @@
                 cards.forEach(function (card) {
                     var name = (card.getAttribute('data-name') || '').toLowerCase();
                     var cat = (card.getAttribute('data-category') || '').toLowerCase();
-                    card.style.display = (!q || name.indexOf(q) > -1 || cat.indexOf(q) > -1) ? '' : 'none';
+                    var show = (!q || name.indexOf(q) > -1 || cat.indexOf(q) > -1);
+                    card.style.display = show ? '' : 'none';
                 });
+                syncMarkersFromChips();
             });
             searchInput.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
@@ -351,6 +451,8 @@
                 }
             });
         }
+
+        initMap();
     })();
 </script>
 }
