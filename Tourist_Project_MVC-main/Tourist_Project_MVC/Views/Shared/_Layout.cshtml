@@ -552,7 +552,7 @@
 
     <!-- AI Assistant widget toggle -->
     <script>
-        (function () {
+        document.addEventListener('DOMContentLoaded', function () {
             var btn = document.getElementById('aiAssistantBtn');
             var panel = document.getElementById('aiAssistantPanel');
             var closeBtn = panel ? panel.querySelector('.ai-widget-close') : null;
@@ -584,12 +584,12 @@
                     closeWidget();
                 });
             }
-        })();
+        });
     </script>
 
     <!-- Notification widget toggle (sponsor-only FAB) -->
     <script>
-        (function () {
+        document.addEventListener('DOMContentLoaded', function () {
             var btn = document.getElementById('notificationFabBtn');
             var panel = document.getElementById('notificationPanel');
             var panelBody = document.getElementById('notificationPanelBody');
@@ -760,7 +760,7 @@
                     });
                 }
             });
-        })();
+        });
     </script>
 
     <!-- MAIN CONTENT -->
@@ -907,7 +907,7 @@
         .fab-base {
             position: fixed;
             right: 22px;
-            z-index: 1040;
+            z-index: var(--egy-fab-zindex);
             width: 58px;
             height: 58px;
             border-radius: 50%;
@@ -940,7 +940,7 @@
             position: fixed;
             right: 22px;
             bottom: 90px;
-            z-index: 1040;
+            z-index: var(--egy-fab-zindex);
             width: calc(100% - 44px);
             max-width: 360px;
             background: #fff;
@@ -1082,7 +1082,7 @@
             position: fixed;
             right: 22px;
             bottom: 166px;
-            z-index: 1040;
+            z-index: var(--egy-fab-zindex);
             width: calc(100% - 44px);
             max-width: 360px;
             background: #fff;

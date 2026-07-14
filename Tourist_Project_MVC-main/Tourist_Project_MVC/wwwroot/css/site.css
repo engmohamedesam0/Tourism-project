@@ -26,6 +26,10 @@
 
     /* Layout */
     --nav-offset: 80px; /* live navbar height; synced by scripts.js (#mainNav.offsetHeight) */
+
+    /* Floating AI + Notification FABs and their panels sit above Leaflet
+       (max z-index 1000) and other overlays. */
+    --egy-fab-zindex: 9999;
 }
 
 /* Global Font Schemes */
