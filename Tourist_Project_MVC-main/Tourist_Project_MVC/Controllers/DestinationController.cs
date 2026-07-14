@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using NetTopologySuite.Geometries;
 using System.Security.Claims;
 using Tourist_Project_MVC.Data;
@@ -123,16 +124,23 @@ namespace Tourist_Project_MVC.Controllers
         // POST: /Destination/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Destination destination, double Lat, double Long)
+        public IActionResult Create(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
         {
+            // Build the spatial point from the separate Lat/Long inputs BEFORE validation,
+            // otherwise the implicit [Required] on the non-nullable Location property
+            // ("The Location field is required") blocks every submit.
+            destination.Location = new Point(Long, Lat) { SRID = 4326 };
+            ModelState.Remove("Location");
+
             if (ModelState.IsValid)
             {
-                destination.Location = new Point(Long, Lat) { SRID = 4326 };
                 destination.Visits = 0;
                 _repo.Add(destination);
                 _repo.Save();
                 return RedirectToAction("Index");
             }
+            ViewBag.Lat = Lat;
+            ViewBag.Long = Long;
             return View(destination);
         }
 
@@ -147,11 +155,16 @@ namespace Tourist_Project_MVC.Controllers
         // POST: /Destination/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Destination destination, double Lat, double Long)
+        public IActionResult Edit(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
         {
+            // Build the spatial point from the separate Lat/Long inputs BEFORE validation,
+            // otherwise the implicit [Required] on the non-nullable Location property
+            // ("The Location field is required") blocks every submit.
+            destination.Location = new Point(Long, Lat) { SRID = 4326 };
+            ModelState.Remove("Location");
+
             if (ModelState.IsValid)
             {
-                destination.Location = new Point(Long, Lat) { SRID = 4326 };
                 _repo.Update(destination);
                 _repo.Save();
                 return RedirectToAction("Index");

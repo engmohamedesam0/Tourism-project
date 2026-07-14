@@ -10,6 +10,7 @@
         <hr />
         <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
 
             <div class="mb-3">
                 <label asp-for="Name" class="form-label"></label>
@@ -26,26 +27,31 @@
             <div class="mb-3">
                 <label asp-for="Category" class="form-label"></label>
                 <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="Description" class="form-label">@Localizer["Destination_Description"].Value</label>
                 <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="TicketPrice" class="form-label"></label>
                 <input asp-for="TicketPrice" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="TicketPrice" class="text-danger"></span>
             </div>
 
             <div class="row">
                 <div class="col mb-3">
                     <label class="form-label">Latitude</label>
-                    <input name="Lat" id="Lat" class="form-control" type="number" step="any" />
+                    <input name="Lat" id="Lat" class="form-control" type="number" step="any"
+                           value="@(ViewBag.Lat ?? string.Empty)" />
                 </div>
                 <div class="col mb-3">
                     <label class="form-label">Longitude</label>
-                    <input name="Long" id="Long" class="form-control" type="number" step="any" />
+                    <input name="Long" id="Long" class="form-control" type="number" step="any"
+                           value="@(ViewBag.Long ?? string.Empty)" />
                 </div>
             </div>
 
@@ -61,14 +67,16 @@
     @section Scripts {
     <script>
         (function () {
+            var latVal = parseFloat(document.getElementById('Lat').value);
+            var lngVal = parseFloat(document.getElementById('Long').value);
             EGYMaps.initLocationPicker({
                 mapElId: 'destinationMap',
                 latInputId: 'Lat',
                 lngInputId: 'Long',
                 contextProxyUrl: '/Map/GetDestinationsGeoJson',
                 contextStyle: { radius: 6, fillColor: '#888', color: '#555', weight: 1, opacity: 0.5, fillOpacity: 0.2 },
-                initialLat: 30.0444,
-                initialLng: 31.2357
+                initialLat: isNaN(latVal) ? 30.0444 : latVal,
+                initialLng: isNaN(lngVal) ? 31.2357 : lngVal
             });
         })();
     </script>
