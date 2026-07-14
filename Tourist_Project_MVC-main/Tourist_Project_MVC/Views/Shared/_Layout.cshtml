@@ -8,9 +8,6 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="~/assets/favicon.ico" />
 
-    <!-- Font Awesome -->
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -356,7 +353,7 @@
                         aria-expanded="false"
                         aria-label="Toggle navigation">
                     <span class="me-2 text-uppercase small tracking-wide">@Localizer["Menu"].Value</span>
-                    <i class="fas fa-bars"></i>
+                    <i class="bi bi-list"></i>
                 </button>
 
                 <!-- Links -->
@@ -600,20 +597,33 @@
             var markAllBtn = document.getElementById('markAllReadBtn');
             var loaded = false;
 
+            var notifEmptyHtml =
+                '<div class="text-center py-4 text-muted w-100">' +
+                    '<i class="bi bi-bell-slash" style="font-size:2rem;"></i>' +
+                    '<p class="mb-0 mt-2">You\'re all caught up 🏺</p>' +
+                '</div>';
+
             function openNotif() {
                 panel.classList.add('notification-widget-open');
                 panel.setAttribute('aria-hidden', 'false');
                 btn.setAttribute('aria-expanded', 'true');
-                if (!loaded && panelBody) {
-                    loaded = true;
+                if (loaded || !panelBody) return;
+                loaded = true;
+                var role = btn.getAttribute('data-user-role');
+                if (role === 'Sponsor') {
                     fetch('/SponsorNotification/Panel')
                         .then(function (r) { return r.text(); })
                         .then(function (html) {
                             panelBody.innerHTML = html;
+                            formatRelativeTimes(panelBody);
                         })
                         .catch(function () {
                             panelBody.innerHTML = '<div class="alert alert-danger m-3">Failed to load.</div>';
                         });
+                } else {
+                    panelBody.innerHTML = notifEmptyHtml;
+                    var markAll = document.getElementById('markAllReadBtn');
+                    if (markAll) markAll.style.display = 'none';
                 }
             }
 
@@ -657,7 +667,7 @@
                             if (panelBody) {
                                 fetch('/SponsorNotification/Panel')
                                     .then(function (r) { return r.text(); })
-                                    .then(function (html) { panelBody.innerHTML = html; });
+                                    .then(function (html) { panelBody.innerHTML = html; formatRelativeTimes(panelBody); });
                             }
                         }
                     })
@@ -670,6 +680,23 @@
                 if (!badge) return;
                 if (count == null || count <= 0) badge.remove();
                 else badge.textContent = count;
+            }
+
+            function relativeTime(date) {
+                var seconds = (Date.now() - date.getTime()) / 1000;
+                if (seconds < 60) return 'just now';
+                if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+                if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+                if (seconds < 604800) return Math.floor(seconds / 86400) + 'd ago';
+                return date.toLocaleDateString();
+            }
+
+            function formatRelativeTimes(container) {
+                if (!container) return;
+                container.querySelectorAll('[data-time]').forEach(function (el) {
+                    var d = new Date(el.getAttribute('data-time'));
+                    if (!isNaN(d)) el.textContent = relativeTime(d);
+                });
             }
 
             function getToken() {
@@ -803,7 +830,7 @@
          ============================================================ -->
     <button type="button"
             id="aiAssistantBtn"
-            class="ai-fab"
+            class="fab-base ai-fab"
             aria-label="@Localizer["Ai_Open"].Value"
             aria-expanded="false"
             aria-controls="aiAssistantPanel">
@@ -837,7 +864,8 @@
     </div>
 
     <!-- ============================================================
-         FLOATING NOTIFICATION PANEL (sponsor-only, slide-out like AI widget)
+         FLOATING NOTIFICATION PANEL (slide-out like AI widget; sponsors
+         load live notifications, other roles see an empty state)
          ============================================================ -->
     <div class="notification-widget-panel" id="notificationPanel" aria-hidden="true">
         <div class="notification-widget-header">
@@ -875,22 +903,29 @@
     @await RenderSectionAsync("Scripts", required: false)
 
     <style>
-        /* Floating AI assistant button */
-        .ai-fab {
+        /* Shared floating action button base (AI + Notification FABs) */
+        .fab-base {
             position: fixed;
             right: 22px;
-            bottom: 22px;
             z-index: 1040;
             width: 58px;
             height: 58px;
             border-radius: 50%;
             border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+        }
+
+        /* Floating AI assistant button */
+        .ai-fab {
+            bottom: 22px;
             background: var(--egy-primary);
             color: #fff;
-            font-size: 1.5rem;
             box-shadow: 0 8px 22px rgba(200, 131, 42, 0.45);
-            cursor: pointer;
-            transition: all 0.25s ease;
         }
 
             .ai-fab:hover,
@@ -1011,23 +1046,10 @@
 
         /* Notification FAB — stacked above AI FAB */
         .notification-fab {
-            position: fixed;
-            right: 22px;
             bottom: 94px;
-            z-index: 1040;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            border: none;
             background: var(--egy-dark);
             color: var(--egy-light);
-            font-size: 1.5rem;
             box-shadow: 0 8px 22px rgba(30, 18, 10, 0.35);
-            cursor: pointer;
-            transition: all 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .notification-fab:hover,
@@ -1135,9 +1157,10 @@
 
         .notification-item {
             transition: all 0.2s ease;
+            width: 100%;
         }
         .notification-unread {
-            background-color: rgba(200, 131, 42, 0.08);
+            background-color: rgba(200, 131, 42, 0.05);
             border-left: 3px solid var(--egy-primary);
         }
         .notification-read {
@@ -1146,6 +1169,40 @@
         .notification-list {
             max-height: 55vh;
             overflow-y: auto;
+        }
+
+        /* Notification row: icon-in-tint + message + relative time */
+        .notif-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+        }
+        .notif-icon {
+            flex: 0 0 auto;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(200, 131, 42, 0.08);
+            color: var(--egy-primary);
+            font-size: 1.1rem;
+        }
+        .notif-content {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .notif-msg {
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.875rem;
+            margin: 0 0 2px;
+            line-height: 1.35;
+        }
+        .notif-time {
+            font-size: 0.75rem;
+            color: #6b7280;
         }
 
         .notification-widget-body {
@@ -1160,14 +1217,14 @@
             .notification-widget-panel {
                 right: 10px;
                 left: 10px;
-                bottom: 146px;
+                bottom: 144px;
                 width: auto;
                 max-width: none;
             }
 
             .notification-fab {
                 right: 14px;
-                bottom: 80px;
+                bottom: 78px;
                 width: 52px;
                 height: 52px;
                 font-size: 1.3rem;

@@ -18,21 +18,41 @@ namespace Tourist_Project_MVC.ViewComponents
 
         public IViewComponentResult Invoke()
         {
-            if (!User!.Identity!.IsAuthenticated || !User.IsInRole("Sponsor"))
+            if (!User!.Identity!.IsAuthenticated)
                 return Content(string.Empty);
 
             var userId = ((System.Security.Claims.ClaimsPrincipal)User).FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
 
-            var sponsorId = _sponsorRepo.GetAll()
-                .Where(s => s.ApplicationUserId == userId)
-                .Select(s => s.Id)
-                .FirstOrDefault();
+            string role;
+            int unreadCount = 0;
+            int sponsorId = 0;
 
-            if (sponsorId == 0)
-                return Content(string.Empty);
+            if (User.IsInRole("Sponsor"))
+            {
+                role = "Sponsor";
+                sponsorId = _sponsorRepo.GetAll()
+                    .Where(s => s.ApplicationUserId == userId)
+                    .Select(s => s.Id)
+                    .FirstOrDefault();
 
-            var unreadCount = _notificationService.GetUnreadCount(sponsorId);
-            return View("Default", new NotificationBellVM { UnreadCount = unreadCount, SponsorId = sponsorId });
+                if (sponsorId != 0)
+                    unreadCount = _notificationService.GetUnreadCount(sponsorId);
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                role = "Admin";
+            }
+            else
+            {
+                role = "Tourist";
+            }
+
+            return View("Default", new NotificationBellVM
+            {
+                UnreadCount = unreadCount,
+                SponsorId = sponsorId,
+                UserRole = role
+            });
         }
     }
 }

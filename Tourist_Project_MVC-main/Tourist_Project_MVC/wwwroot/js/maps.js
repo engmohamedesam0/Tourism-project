@@ -77,6 +77,7 @@ var EGYMaps = (function () {
         var onLayerReady = opts.onLayerReady || null;
 
         var geojsonLayer = null;
+        var markerEntries = [];
 
         function loadWfs() {
             if (!proxyUrl) return;
@@ -88,11 +89,13 @@ var EGYMaps = (function () {
                         return;
                     }
                     if (geojsonLayer) map.removeLayer(geojsonLayer);
+                    markerEntries = [];
                     geojsonLayer = L.geoJSON(data, {
                         pointToLayer: function (feature, latlng) {
                             return L.circleMarker(latlng, markerStyle);
                         },
                         onEachFeature: function (feature, layer) {
+                            markerEntries.push({ layer: layer, feature: feature });
                             var html = popupHtml(feature, propMap);
                             if (html) layer.bindPopup(html);
                         }
@@ -115,7 +118,18 @@ var EGYMaps = (function () {
         map.invalidateSize();
         window.addEventListener('resize', _debounce(function () { map.invalidateSize(); }, 150));
 
-        return { map: map, layer: function () { return geojsonLayer; } };
+        return {
+            map: map,
+            layer: function () { return geojsonLayer; },
+            filterMarkers: function (predicate) {
+                if (!markerEntries.length) return;
+                markerEntries.forEach(function (entry) {
+                    var show = (typeof predicate !== 'function') ? true : predicate(entry.feature, entry.layer);
+                    if (show) { if (!map.hasLayer(entry.layer)) entry.layer.addTo(map); }
+                    else { if (map.hasLayer(entry.layer)) map.removeLayer(entry.layer); }
+                });
+            }
+        };
     }
 
     function initLocationPicker(opts) {

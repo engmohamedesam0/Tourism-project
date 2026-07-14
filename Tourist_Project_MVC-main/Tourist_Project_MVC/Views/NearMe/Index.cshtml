@@ -347,12 +347,21 @@
                 return fallback[0] || '';
             }
 
-            EGYMaps.initWfsMap({
+            var nearMeMap = EGYMaps.initWfsMap({
                 mapElId: 'nearbyMap',
                 proxyUrl: '/Map/GetBranchesGeoJson',
                 propMap: nearMePropMap,
                 popupHtml: buildPopup,
-                markerStyle: { radius: 9, fillColor: '#2e9e5b', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 }
+                markerStyle: { radius: 9, fillColor: '#2e9e5b', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
+                onLayerReady: function () {
+                    var visibleSponsorIds = Array.prototype.slice
+                        .call(document.querySelectorAll('#nearMeList .nearme-card[data-id]'))
+                        .map(function (el) { return el.getAttribute('data-id'); });
+                    nearMeMap.filterMarkers(function (f) {
+                        var sid = _firstDefined(f.properties, ['sponsor_id', 'SponsorId', 'sponsorId']);
+                        return visibleSponsorIds.indexOf(String(sid)) > -1;
+                    });
+                }
             });
         })();
     </script>

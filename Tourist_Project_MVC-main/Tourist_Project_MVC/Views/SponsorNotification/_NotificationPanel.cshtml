@@ -1,29 +1,41 @@
 ﻿@model List<Tourist_Project_MVC.Models.Notification>
 
+@{
+    string IconFor(string type) => type switch
+    {
+        "RewardExpired" => "bi-calendar-x-fill",
+        "RewardLowStock" => "bi-box-seam-fill",
+        "RewardRedeemed" => "bi-gift-fill",
+        _ => "bi-bell-fill"
+    };
+}
+
 @if (!Model.Any())
 {
     <div class="text-center py-4 text-muted w-100">
         <i class="bi bi-bell-slash" style="font-size:2rem;"></i>
-        <p class="mb-0 mt-2">@Localizer["SponsorNotification_NoNewNotifications"].Value</p>
+        <p class="mb-0 mt-2">You're all caught up 🏺</p>
     </div>
 }
 else
 {
-    <div class="list-group list-group-flush notification-list w-100">
+    <div class="notification-list w-100" data-notif-list>
         @foreach (var n in Model)
         {
-            <div class="list-group-item notification-item @(n.IsRead ? "notification-read" : "notification-unread") w-100"
+            <div class="notification-item @(n.IsRead ? "notification-read" : "notification-unread") w-100"
                  data-notif-id="@n.Id"
                  data-related-type="@n.RelatedEntityType"
                  data-related-id="@n.RelatedEntityId"
                  style="cursor: pointer; background: transparent; color: inherit;">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                    <div class="flex-grow-1">
-                        <span class="badge bg-@(n.Type == "RewardExpired" ? "danger" : n.Type == "RewardLowStock" ? "warning" : "info") me-1" style="font-size:0.65rem;">@n.Type</span>
-                        <p class="mb-1 mt-1 small @(n.IsRead ? "text-muted" : "fw-semibold")">@n.Message</p>
-                        <small class="text-muted">@n.CreatedDate.ToString("MMM dd, HH:mm")</small>
+                <div class="notif-row">
+                    <span class="notif-icon">
+                        <i class="bi @IconFor(n.Type)"></i>
+                    </span>
+                    <div class="notif-content">
+                        <p class="notif-msg @(n.IsRead ? "" : "fw-semibold")">@n.Message</p>
+                        <small class="notif-time" data-time="@n.CreatedDate.ToString("o")"></small>
                     </div>
-                    <button type="button" class="btn btn-sm btn-link text-muted notif-delete p-0 ms-1" title="@Localizer["SponsorNotification_Delete"].Value" data-notif-id="@n.Id">
+                    <button type="button" class="btn btn-sm btn-link text-muted notif-delete p-0 ms-1" title="Delete" data-notif-id="@n.Id">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>

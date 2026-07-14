@@ -166,9 +166,11 @@
                     </div>
 
                     <div class="destination-picker">
+                        <div id="tripEmptyFilter" class="text-muted small py-2" style="display:none">No destinations match your filters.</div>
                         @for (int i = 0; i < Model.Stops.Count; i++)
                         {
                             <div class="picker-row"
+                                 data-dest-id="@Model.Stops[i].DestinationId"
                                  data-category="@Model.Stops[i].Category"
                                  data-status="@Model.Stops[i].Status"
                                  data-price="@(Model.Stops[i].TicketPrice?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")">
@@ -422,7 +424,10 @@
             proxyUrl: '/Map/GetDestinationsGeoJson',
             propMap: tripPropMap,
             popupHtml: buildPopup,
-            markerStyle: { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 }
+            markerStyle: { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
+            onLayerReady: function () {
+                applyTripFilter();
+            }
         });
 
         var $checks = $('.stop-select');
@@ -430,6 +435,39 @@
         var $empty = $('#emptyHint');
         var $preview = $('#itineraryPreview');
         var stopOverlays = [];
+        var rowById = {};
+
+        $('.picker-row').each(function () {
+            var id = $(this).attr('data-dest-id');
+            if (id) rowById[String(id)] = $(this);
+        });
+
+        function rowMatches($row) {
+            var cat = $row.data('category');
+            var st = $row.data('status');
+            var price = parseFloat($row.data('price')) || 0;
+            var interests = [];
+            $('#tripInterests input:checked').each(function () {
+                interests.push({ cat: $(this).data('category'), st: $(this).data('status') });
+            });
+            var budget = parseFloat($('#Budget').val());
+            var budgetSet = !isNaN(budget);
+
+            var interestMatch = interests.length === 0;
+            for (var j = 0; j < interests.length; j++) {
+                if (interests[j].cat && cat === interests[j].cat) { interestMatch = true; break; }
+                if (interests[j].st && st === interests[j].st) { interestMatch = true; break; }
+            }
+            var budgetMatch = !budgetSet || price <= budget;
+            return interestMatch && budgetMatch;
+        }
+
+        function tripPredicate(feature) {
+            var p = feature.properties || {};
+            var id = _firstDefined(p, tripPropMap.id, []);
+            var row = rowById[String(id)];
+            return row ? rowMatches(row) : false;
+        }
 
         function clearStopOverlays() {
             stopOverlays.forEach(function (m) { if (tripMap && tripMap.map && tripMap.map.hasLayer(m)) tripMap.map.removeLayer(m); });
@@ -537,6 +575,15 @@
                     $(this).removeClass('match-highlight');
                 }
             });
+
+            if (tripMap && tripMap.filterMarkers) tripMap.filterMarkers(tripPredicate);
+            toggleTripEmpty();
+        }
+
+        function toggleTripEmpty() {
+            var visible = $('.picker-row:visible');
+            var empty = document.getElementById('tripEmptyFilter');
+            if (empty) empty.style.display = visible.length === 0 ? '' : 'none';
         }
 
         $('#StartDate, #EndDate').on('change', updateDuration);
