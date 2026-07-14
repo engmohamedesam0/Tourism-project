@@ -9,25 +9,25 @@
     <div class="container-fluid">
         <div class="row g-0">
 
-            <!-- LEFT PANEL: list + filters -->
+            <!-- LEFT PANEL: Navigation, list + filters -->
             <div class="col-lg-5 col-xl-4 explore-list-panel">
 
                 <div class="explore-header">
-                    <h2 class="page-title mb-0">🧭 @Localizer["Explore_Title"].Value</h2>
+                    <h2 class="page-title mb-1">🧭 @Localizer["Explore_Title"].Value</h2>
                     <p class="text-muted small mb-0">@Localizer["Explore_Subtitle"].Value</p>
                 </div>
 
                 <!-- Search box (reuses Destination admin search pattern) -->
                 <div class="explore-search">
                     <form method="get" asp-action="Index" id="exploreSearchForm">
-                        <div class="input-group">
+                        <div class="input-group search-input-group">
                             <span class="input-group-text bg-white border-end-0">
                                 <i class="bi bi-search text-muted"></i>
                             </span>
                             <input type="text"
                                    name="search"
                                    id="exploreSearch"
-                                   class="form-control border-start-0"
+                                   class="form-control border-start-0 ps-1"
                                    placeholder="@Localizer["Explore_SearchPlaceholder"].Value"
                                    value="@ViewBag.Search" />
                         </div>
@@ -35,17 +35,6 @@
                 </div>
 
                 <!-- Category filter chips -->
-                <!-- NOTE: The requested chip labels do not map 1:1 to the Category
-                     values that actually exist in the data. Existing Category values are:
-                     Archaeological, Temple, Museum, Natural, Historical, Religious.
-                     Mapping used here (clearly documented for review):
-                       • Temples  -> Category "Temple"
-                       • Museums  -> Category "Museum"
-                       • Nature   -> Category "Natural"
-                       • Hidden Gems -> destinations with Status "Pending" (lesser-known/upcoming)
-                       • Adventure -> no matching Category in data; mapped to "Archaeological"
-                                     (closest adventurous/excavation vibe). CONFIRM / adjust.
-                -->
                 <div class="category-chips" id="categoryChips">
                     <button type="button" class="chip chip-active" data-filter="all">@Localizer["Explore_All"].Value</button>
                     <button type="button" class="chip" data-filter="Hidden Gems" data-status="Pending">@Localizer["Explore_HiddenGems"].Value</button>
@@ -58,21 +47,23 @@
                 <!-- Scrollable destination list -->
                 <div class="explore-list" id="exploreList">
                     <div id="exploreEmptyFilter" class="text-muted small py-3" style="display:none">No results match your filters.</div>
+                    
                     @foreach (var item in Model)
                     {
-                        <div class="explore-card stat-card"
+                        <div class="explore-card"
                              data-id="@item.Id"
                              data-lat="@item.Location.Y"
                              data-lng="@item.Location.X"
                              data-category="@item.Category"
                              data-status="@item.Status"
                              data-name="@item.Name">
-                            <div class="d-flex justify-content-between align-items-start mb-1">
+                             
+                            <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="explore-card-title mb-0">@item.Name</h5>
                                 @if (item.Rating.HasValue)
                                 {
                                     <span class="rating-badge" title="Average rating">
-                                        <i class="bi bi-star-fill"></i> @item.Rating.Value.ToString("0.0")
+                                        <i class="bi bi-star-fill me-1"></i>@item.Rating.Value.ToString("0.0")
                                     </span>
                                 }
                                 else
@@ -81,19 +72,19 @@
                                 }
                             </div>
 
-                            <div class="explore-card-city text-muted small mb-2">
-                                <i class="bi bi-geo-alt-fill"></i> @item.City
+                            <div class="explore-card-city text-muted small mb-3">
+                                <i class="bi bi-geo-alt-fill text-primary-gold me-1"></i>@item.City
                             </div>
 
                             <span class="badge-category">@item.Category</span>
 
-                            <p class="explore-card-desc small mt-2 mb-2">
+                            <p class="explore-card-desc small mt-3 mb-3 text-secondary-dark">
                                 @(item.Description?.Length > 90 ? item.Description.Substring(0, 90) + "…" : item.Description)
                             </p>
 
                             @if (!string.IsNullOrWhiteSpace(item.Tags))
                             {
-                                <div class="explore-tags">
+                                <div class="explore-tags mb-3">
                                     @foreach (var tag in item.Tags.Split(','))
                                     {
                                         <span class="tag-pill">@tag.Trim()</span>
@@ -101,9 +92,9 @@
                                 </div>
                             }
 
-                            <div class="mt-2">
+                            <div class="explore-card-actions">
                                  <a asp-controller="Destination" asp-action="Details" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-outline-secondary">
+                                   class="btn btn-sm btn-explore-action">
                                     <i class="bi bi-eye-fill me-1"></i> @Localizer["Explore_Details"].Value
                                 </a>
                             </div>
@@ -137,110 +128,203 @@
 
 @section Scripts {
 <style>
+    /* --- Main Layout --- */
     .explore-page {
         padding-top: var(--nav-offset);
     }
 
     .explore-list-panel {
         background: var(--egy-light);
-        border-right: 1px solid rgba(200, 131, 42, 0.2);
+        border-right: 1px solid rgba(200, 131, 42, 0.15);
         height: calc(100vh - var(--nav-offset));
         display: flex;
         flex-direction: column;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+        z-index: 10;
     }
 
     .explore-header {
-        padding: 20px 20px 0;
+        padding: 24px 24px 12px;
     }
 
+    .explore-header .page-title {
+        color: var(--egy-dark);
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+
+    /* --- Search Input --- */
     .explore-search {
-        padding: 12px 20px;
+        padding: 0 24px 16px;
     }
 
+    .search-input-group {
+        border-radius: 30px;
+        overflow: hidden;
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        background: #fff;
+        box-shadow: var(--shadow-soft);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .search-input-group:focus-within {
+        border-color: var(--egy-primary);
+        box-shadow: 0 0 0 3px rgba(200, 131, 42, 0.15), var(--shadow-soft);
+        transform: translateY(-1px);
+    }
+
+    .search-input-group .form-control {
+        border: none;
+        box-shadow: none;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        font-family: 'Nunito', sans-serif;
+        font-size: 0.9rem;
+    }
+
+    .search-input-group .input-group-text {
+        border: none;
+        padding-left: 18px;
+    }
+
+    /* --- Filter Chips --- */
     .category-chips {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-        padding: 0 20px 14px;
-        border-bottom: 1px solid rgba(200, 131, 42, 0.15);
+        padding: 0 24px 20px;
+        border-bottom: 1px solid rgba(200, 131, 42, 0.1);
     }
 
     .chip {
-        border: 1px solid var(--egy-primary);
-        background: #fff;
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        background: rgba(253, 249, 243, 0.6);
         color: var(--egy-muted-gold);
-        border-radius: 20px;
-        padding: 5px 14px;
-        font-size: 0.8rem;
-        font-weight: 600;
+        border-radius: 25px;
+        padding: 6px 14px;
+        font-size: 0.78rem;
+        font-weight: 700;
         font-family: 'Nunito', sans-serif;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
     }
 
-        .chip:hover {
-            background: var(--egy-accent);
-            color: var(--egy-dark);
-            border-color: var(--egy-accent);
-        }
+    .chip:hover {
+        background: var(--egy-accent);
+        color: var(--egy-dark);
+        border-color: var(--egy-accent);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(200, 131, 42, 0.15);
+    }
 
-        .chip-active {
-            background: var(--egy-primary);
-            color: #fff;
-            border-color: var(--egy-primary);
-        }
+    .chip-active {
+        background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%);
+        color: #fff !important;
+        border-color: transparent;
+        box-shadow: var(--shadow-glow-gold);
+    }
 
+    /* --- Scrollable List --- */
     .explore-list {
         flex: 1;
         overflow-y: auto;
-        padding: 16px 20px 40px;
+        padding: 20px 24px 40px;
     }
 
+    /* Custom scrollbar for list panel */
+    .explore-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .explore-list::-webkit-scrollbar-track {
+        background: rgba(200, 131, 42, 0.03);
+    }
+
+    .explore-list::-webkit-scrollbar-thumb {
+        background: rgba(200, 131, 42, 0.2);
+        border-radius: 3px;
+    }
+
+    .explore-list::-webkit-scrollbar-thumb:hover {
+        background: var(--egy-primary);
+    }
+
+    /* --- Destination Cards --- */
     .explore-card {
         background: #fff;
-        border: 1px solid rgba(200, 131, 42, 0.25) !important;
-        border-radius: 14px;
-        padding: 16px 18px;
-        margin-bottom: 14px;
-        transition: all 0.3s ease;
+        border: 1px solid rgba(200, 131, 42, 0.12) !important;
+        border-radius: 16px;
+        padding: 20px 22px;
+        margin-bottom: 18px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        box-shadow: var(--shadow-soft);
     }
 
-        .explore-card:hover {
-            background: #fff !important;
-            border-color: var(--egy-primary) !important;
-            transform: translateY(-4px);
-            box-shadow: 0 14px 30px rgba(200, 131, 42, 0.18);
-        }
+    .explore-card:hover {
+        border-color: var(--egy-primary) !important;
+        transform: translateY(-5px);
+        box-shadow: 0 12px 26px rgba(200, 131, 42, 0.14);
+    }
 
-        .explore-card::before {
-            display: none;
-        }
+    .explore-card.active-card {
+        border: 2px solid var(--egy-primary) !important;
+        background: rgba(200, 131, 42, 0.02) !important;
+        box-shadow: 0 8px 20px rgba(200, 131, 42, 0.08);
+    }
 
     .explore-card-title {
         font-family: 'Cinzel', serif;
         color: var(--egy-dark);
-        font-size: 1.05rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .text-primary-gold {
+        color: var(--egy-primary);
     }
 
     .rating-badge {
-        background: rgba(200, 131, 42, 0.12);
+        background: rgba(200, 131, 42, 0.08);
         color: var(--egy-muted-gold);
-        border: 1px solid var(--egy-accent);
+        border: 1px solid rgba(200, 131, 42, 0.2);
         border-radius: 20px;
-        padding: 2px 10px;
-        font-size: 0.8rem;
+        padding: 3px 10px;
+        font-size: 0.78rem;
         font-weight: 700;
         white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
     }
 
-        .rating-badge i {
-            color: var(--egy-primary);
-        }
+    .rating-badge i {
+        color: var(--egy-primary);
+    }
 
     .rating-new {
-        background: rgba(30, 18, 10, 0.06);
-        color: #888;
-        border-color: #ccc;
+        background: rgba(30, 18, 10, 0.04);
+        color: #777;
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .badge-category {
+        display: inline-block;
+        background: rgba(200, 131, 42, 0.06);
+        color: var(--egy-muted-gold);
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 3px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(200, 131, 42, 0.15);
+    }
+
+    .text-secondary-dark {
+        color: #4a4a4a;
+        line-height: 1.5;
     }
 
     .explore-tags {
@@ -250,15 +334,35 @@
     }
 
     .tag-pill {
-        background: var(--egy-light);
-        border: 1px solid rgba(200, 131, 42, 0.35);
+        background: rgba(200, 131, 42, 0.04);
+        border: 1px solid rgba(200, 131, 42, 0.15);
         color: var(--egy-muted-gold);
-        border-radius: 12px;
-        padding: 2px 9px;
+        border-radius: 10px;
+        padding: 2px 8px;
         font-size: 0.72rem;
         font-weight: 600;
     }
 
+    /* --- Action Buttons --- */
+    .btn-explore-action {
+        border: 1px solid rgba(200, 131, 42, 0.4);
+        color: var(--egy-muted-gold);
+        border-radius: 20px;
+        padding: 5px 16px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        background: transparent;
+        transition: all 0.25s ease;
+    }
+
+    .btn-explore-action:hover {
+        background: var(--egy-primary);
+        border-color: var(--egy-primary);
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(200, 131, 42, 0.2);
+    }
+
+    /* --- Map Panel --- */
     .explore-map-panel {
         height: calc(100vh - var(--nav-offset));
         background: #ece6db;
@@ -271,16 +375,16 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background:
-            repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
+        background: repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
     }
 
     .map-watermark {
         text-align: center;
         color: var(--egy-muted-gold);
-        opacity: 0.75;
+        opacity: 0.65;
     }
 
+    /* --- Responsive Styling --- */
     @@media (max-width: 991.98px) {
         .explore-list-panel,
         .explore-map-panel {
@@ -288,17 +392,18 @@
         }
 
         .explore-map-panel {
-            min-height: 320px;
+            min-height: 360px;
             position: relative;
         }
 
         .explore-map-container {
             position: relative;
             inset: auto;
+            height: 360px;
         }
 
         .explore-list {
-            max-height: 60vh;
+            max-height: 55vh;
         }
     }
 </style>
@@ -318,6 +423,7 @@
         };
 
         function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        
         function _firstDefined(p, keys, fallback) {
             for (var i = 0; i < keys.length; i++) {
                 var val = p[keys[i]];
@@ -415,6 +521,39 @@
                 }
             });
         }
+
+        // Bind card click event to pan map and open Leaflet marker popup
+        cards.forEach(function (card) {
+            card.addEventListener('click', function (e) {
+                // Do not trigger map pan if they clicked detail button links directly
+                if (e.target.closest('.btn-explore-action')) return;
+
+                cards.forEach(function (c) { c.classList.remove('active-card'); });
+                card.classList.add('active-card');
+
+                var lat = parseFloat(card.getAttribute('data-lat'));
+                var lng = parseFloat(card.getAttribute('data-lng'));
+                var cardId = card.getAttribute('data-id');
+
+                var markerFound = false;
+                if (mapInstance && mapInstance.layer()) {
+                    mapInstance.layer().eachLayer(function (layer) {
+                        var p = layer.feature.properties || {};
+                        var id = _firstDefined(p, explorePropMap.id, []);
+                        if (String(id) === String(cardId)) {
+                            layer.openPopup();
+                            mapInstance.map.setView(layer.getLatLng(), 15, { animate: true, duration: 1.0 });
+                            markerFound = true;
+                        }
+                    });
+                }
+
+                // Fallback to manual setView if marker not found or loaded yet
+                if (!markerFound && mapInstance && mapInstance.map && !isNaN(lat) && !isNaN(lng)) {
+                    mapInstance.map.setView([lat, lng], 15, { animate: true, duration: 1.0 });
+                }
+            });
+        });
 
         function initMap() {
             if (mapInstance) return;
