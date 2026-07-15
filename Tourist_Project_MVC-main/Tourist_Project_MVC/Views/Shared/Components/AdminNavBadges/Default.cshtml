@@ -1,0 +1,16 @@
+@model Tourist_Project_MVC.View_Model.AdminNavBadgesVM
+@{
+    var badge = ViewData["Badge"] as string;
+}
+@if (badge == "approvals" && Model.PendingApprovalsCount > 0)
+{
+    <span class="badge rounded-pill text-bg-danger ms-auto">@Model.PendingApprovalsCount</span>
+}
+else if (badge == "support" && Model.UnresolvedSupportCount > 0)
+{
+    <span class="badge rounded-pill text-bg-danger ms-auto">@Model.UnresolvedSupportCount</span>
+}
+else if (string.IsNullOrEmpty(badge) && Model.TotalCount > 0)
+{
+    <span class="badge rounded-pill text-bg-danger ms-1 admin-approval-badge">@Model.TotalCount</span>
+}

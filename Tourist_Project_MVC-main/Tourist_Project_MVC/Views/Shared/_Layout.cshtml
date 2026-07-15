@@ -377,7 +377,7 @@
                                    id="adminDropdown" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-shield-lock-fill me-1"></i> @Localizer["Nav_Administration"].Value
-                                    @await Component.InvokeAsync("AdminApprovalBell")
+                                    @await Component.InvokeAsync("AdminNavBadges")
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
                                     aria-labelledby="adminDropdown">
@@ -420,11 +420,13 @@
                                     <li>
                                         <a class="dropdown-item" asp-controller="AdminSupport" asp-action="Index">
                                             <i class="bi bi-headset me-2"></i> @Localizer["Nav_SupportInbox"].Value
+                                            @await Component.InvokeAsync("AdminNavBadges", new { badge = "support" })
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="SponsorApproval" asp-action="Index">
                                             <i class="bi bi-bell-fill me-2"></i> @Localizer["Nav_Approvals"].Value
+                                            @await Component.InvokeAsync("AdminNavBadges", new { badge = "approvals" })
                                         </a>
                                     </li>
                                 </ul>
