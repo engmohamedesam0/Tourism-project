@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -16,12 +19,14 @@ namespace Tourist_Project_MVC.Controllers
         private readonly ISponsorRepository _sponsorRepo;
         private readonly IBranchRepository _branchRepo;
         private readonly TouristContext _context;
+        private readonly IArcGISSyncService _arcgisSync;
 
-        public SponsorBranchController(ISponsorRepository sponsorRepo, IBranchRepository branchRepo, TouristContext context)
+        public SponsorBranchController(ISponsorRepository sponsorRepo, IBranchRepository branchRepo, TouristContext context, IArcGISSyncService arcgisSync)
         {
             _sponsorRepo = sponsorRepo;
             _branchRepo = branchRepo;
             _context = context;
+            _arcgisSync = arcgisSync;
         }
 
         private Sponsor? ResolveCurrentSponsor()
@@ -90,6 +95,7 @@ namespace Tourist_Project_MVC.Controllers
                 };
                 _branchRepo.Add(branch);
                 _branchRepo.Save();
+                _ = _arcgisSync.SyncBranchesAsync(new[] { branch });
                 return RedirectToAction("Index");
             }
 
@@ -138,6 +144,7 @@ namespace Tourist_Project_MVC.Controllers
                 branch.ContactNumber = vm.ContactNumber;
                 _branchRepo.Update(branch);
                 _branchRepo.Save();
+                _ = _arcgisSync.SyncBranchesAsync(new[] { branch });
                 return RedirectToAction("Index");
             }
 

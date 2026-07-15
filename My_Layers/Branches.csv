@@ -1,0 +1,13 @@
+"Id","SponsorId","Name","Address","latitude","longitude","ContactNumber"
+1,1,"Cairo Marriott Hotel — Main","16 Saray El Gezira St, Zamalek, Cairo",30.0669,31.2243,223456789
+2,1,"Cairo Marriott — Garden Pavilion","16 Saray El Gezira St, Zamalek, Cairo",30.0675,31.2251,223456790
+3,2,"EgyptAir — HQ","Cairo International Airport, Cairo",30.1118,31.4056,290777000
+4,3,"Emeco Travel — Downtown","26 Tahrir Square, Downtown Cairo",30.0444,31.2358,222756000
+5,4,"Sofitel Luxor Winter Palace — Main","Corniche El Nile, Luxor",25.6989,32.6394,953580422
+6,5,"Hilton Aswan — Main","Elephantine Island, Aswan",24.0822,32.8872,972780222
+7,6,"El Fishawy — Khan El Khalili","Al-Hussein Square, Khan El Khalili, Cairo",30.0463,31.2631,25902836
+8,7,"Abou El Sid — Zamalek","157 26th of July St, Zamalek, Cairo",30.0589,31.2201,27359595
+9,8,"Mena House — Giza","Pyramids Road, Giza",29.9772,31.1256,23332222
+10,9,"Nile Cruise Co — Aswan Dock","Aswan River Dock, Aswan",24.0908,32.8998,97345678
+11,10,"Cilantro — Maadi","9 Road 9, Maadi, Cairo",29.9622,31.2489,27582525
+12,11,"ccccccccccc","Elzlazel",30.046510696411133,30.994491577148438,1128424446

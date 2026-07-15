@@ -422,7 +422,7 @@
 
         var tripMap = EGYMaps.initWfsMap({
             mapElId: 'tripBuilderMap',
-            proxyUrl: '/Map/GetDestinationsGeoJson',
+            layer: '/Map/GetDestinationsGeoJson',
             propMap: tripPropMap,
             popupHtml: buildPopup,
             markerStyle: { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
@@ -464,7 +464,7 @@
         }
 
         function tripPredicate(feature) {
-            var p = feature.properties || {};
+            var p = feature.attributes || {};
             var id = destId(feature);
             var row = rowById[String(id)];
             return row ? rowMatches(row) : false;
@@ -508,18 +508,14 @@
 
                 $preview.append('<li>' + name + '</li>');
 
-                if (!isNaN(lat) && !isNaN(lng) && tripMap && tripMap.map) {
-                    var numMarker = L.circleMarker([lat, lng], {
-                        radius: 12, fillColor: '#0d6efd', color: '#fff', weight: 3, opacity: 1, fillOpacity: 0.9
-                    }).bindPopup('<strong>' + _esc(name) + '</strong>').addTo(tripMap.map);
-                    numMarker.bindTooltip(String(idx + 1), { permanent: true, direction: 'center', className: 'stop-tooltip' });
-                    stopOverlays.push(numMarker);
+                if (!isNaN(lat) && !isNaN(lng) && tripMap && tripMap.addStopOverlay) {
+                    var overlay = tripMap.addStopOverlay(lat, lng, idx + 1);
                     latlngs.push([lat, lng]);
                 }
             });
 
-            if (latlngs.length > 1 && tripMap && tripMap.map) {
-                tripMap.map.fitBounds(latlngs, { padding: [40, 40] });
+            if (latlngs.length > 1 && tripMap && tripMap.fitBounds) {
+                tripMap.fitBounds(latlngs);
             }
         }
 

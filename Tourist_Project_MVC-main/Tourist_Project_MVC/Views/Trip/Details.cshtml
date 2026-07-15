@@ -239,7 +239,7 @@
 
         var detailsMap = EGYMaps.initWfsMap({
             mapElId: 'tripDetailsMap',
-            proxyUrl: '/Map/GetDestinationsGeoJson',
+            layer: '/Map/GetDestinationsGeoJson',
             propMap: detailsPropMap,
             popupHtml: buildPopup,
             markerStyle: { radius: 6, fillColor: '#888', color: '#555', weight: 1, opacity: 0.6, fillOpacity: 0.3 },
@@ -254,17 +254,13 @@
                     var nameEl = li.querySelector('strong');
                     var name = nameEl ? nameEl.textContent.trim() : 'Stop ' + order;
 
-                    if (!isNaN(lat) && !isNaN(lng) && detailsMap && detailsMap.map) {
-                        var m = L.circleMarker([lat, lng], {
-                            radius: 14, fillColor: '#0d6efd', color: '#fff', weight: 3, opacity: 1, fillOpacity: 0.9
-                        }).addTo(detailsMap.map);
-                        m.bindPopup('<strong>' + _esc(name) + '</strong><br>Stop #' + _esc(order));
-                        m.bindTooltip('#' + order, { permanent: true, direction: 'center', className: 'stop-tooltip' });
+                    if (!isNaN(lat) && !isNaN(lng) && detailsMap && detailsMap.addStopOverlay) {
+                        detailsMap.addStopOverlay(lat, lng, '#' + order);
                         latlngs.push([lat, lng]);
                     }
                 });
-                if (latlngs.length > 0 && detailsMap && detailsMap.map) {
-                    detailsMap.map.fitBounds(latlngs, { padding: [40, 40] });
+                if (latlngs.length > 0 && detailsMap && detailsMap.fitBounds) {
+                    detailsMap.fitBounds(latlngs);
                 }
             }
         });

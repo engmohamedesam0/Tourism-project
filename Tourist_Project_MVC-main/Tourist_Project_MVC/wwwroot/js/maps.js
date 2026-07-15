@@ -2,6 +2,7 @@ var EGYMaps = (function () {
     'use strict';
 
     var _maps = {};
+    var _mapConfig = null;
 
     function _debounce(fn, delay) {
         var timer;
@@ -30,7 +31,7 @@ var EGYMaps = (function () {
     }
 
     function _buildPopupHtml(feature, propMap) {
-        var p = feature.properties || {};
+        var p = feature.attributes || {};
         var id = _firstDefined(p, propMap.id, []);
         var name = _firstDefined(p, propMap.name, ['Unnamed']);
         var city = _firstDefined(p, propMap.city, ['']);
@@ -57,77 +58,219 @@ var EGYMaps = (function () {
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    function initWfsMap(opts) {
+    function _ensureConfig() {
+        if (_mapConfig) return Promise.resolve(_mapConfig);
+        return fetch('/Map/GetMapConfig')
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+            .then(function (cfg) {
+                _mapConfig = cfg;
+                return cfg;
+            })
+            .catch(function (err) {
+                console.warn('Failed to load ArcGIS map config', err);
+                return {};
+            });
+    }
+
+    function _ensureApiKey(cfg) {
+        var key = cfg.apiKey || '';
+        if (key && window.esriConfig && window.esriConfig.apiKey !== key) {
+            window.esriConfig.apiKey = key;
+        }
+    }
+
+    async function initWfsMap(opts) {
         opts = opts || {};
         var mapEl = document.getElementById(opts.mapElId);
         if (!mapEl || _maps[opts.mapElId]) return;
 
-        var map = L.map(mapEl, { zoomControl: true, scrollWheelZoom: true }).setView(opts.center || [30.0444, 31.2357], 7);
-        _maps[opts.mapElId] = map;
+        var cfg = await _ensureConfig();
+        _ensureApiKey(cfg);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            maxZoom: 19
-        }).addTo(map);
+        var Map = (await $arcgis.import('esri/Map')).default;
+        var MapView = (await $arcgis.import('esri/views/MapView')).default;
+        var FeatureLayer = (await $arcgis.import('esri/layers/FeatureLayer')).default;
+        var GraphicsLayer = (await $arcgis.import('esri/layers/GraphicsLayer')).default;
+        var Graphic = (await $arcgis.import('esri/Graphic')).default;
+        var Point = (await $arcgis.import('esri/geometry/Point')).default;
+        var PopupTemplate = (await $arcgis.import('esri/PopupTemplate')).default;
+        var TextSymbol = (await $arcgis.import('esri/symbols/TextSymbol')).default;
 
-        var proxyUrl = opts.proxyUrl || '';
+        var map = new Map({
+            basemap: 'topo-vector'
+        });
+
+        var view = new MapView({
+            container: mapEl,
+            map: map,
+            center: [opts.center ? opts.center[1] : 31.2357, opts.center ? opts.center[0] : 30.0444],
+            zoom: opts.zoom || 7
+        });
+
+        _maps[opts.mapElId] = view;
+
         var propMap = opts.propMap || {};
         var popupHtml = opts.popupHtml || _buildPopupHtml;
         var markerStyle = opts.markerStyle || { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 };
         var onLayerReady = opts.onLayerReady || null;
 
-        var geojsonLayer = null;
-        var markerEntries = [];
+        var sourceLayer = null;
+        var overlayGraphicsLayer = new GraphicsLayer({ title: 'overlays' });
+        map.add(overlayGraphicsLayer);
 
-        function loadWfs() {
-            if (!proxyUrl) return;
-            fetch(proxyUrl)
-                .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
-                .then(function (data) {
-                    if (!data || data.type !== 'FeatureCollection' || !Array.isArray(data.features)) {
-                        _showNotice(mapEl);
-                        return;
-                    }
-                    if (geojsonLayer) map.removeLayer(geojsonLayer);
-                    markerEntries = [];
-                    geojsonLayer = L.geoJSON(data, {
-                        pointToLayer: function (feature, latlng) {
-                            return L.circleMarker(latlng, markerStyle);
-                        },
-                        onEachFeature: function (feature, layer) {
-                            markerEntries.push({ layer: layer, feature: feature });
-                            var html = popupHtml(feature, propMap);
-                            if (html) layer.bindPopup(html);
-                        }
-                    }).addTo(map);
+        var graphicsByFeature = new Map();
 
-                    if (data.features.length > 0) {
-                        var group = L.featureGroup([geojsonLayer]);
-                        map.fitBounds(group.getBounds().pad(0.15));
-                    }
-
-                    if (typeof onLayerReady === 'function') onLayerReady(geojsonLayer, data.features);
-                })
-                .catch(function () {
-                    _showNotice(mapEl);
-                });
+        function layerUrlFor(optsLayer) {
+            if (!optsLayer) return null;
+            if (typeof optsLayer === 'string') return optsLayer;
+            return null;
         }
 
-        loadWfs();
+        async function loadLayer() {
+            var layerUrl = layerUrlFor(opts.layer || opts.proxyUrl);
+            if (!layerUrl) {
+                view.watch('stationary', function () {
+                    view.resize();
+                });
+                return;
+            }
 
-        map.invalidateSize();
-        window.addEventListener('resize', _debounce(function () { map.invalidateSize(); }, 150));
+            sourceLayer = new FeatureLayer({
+                url: layerUrl,
+                outFields: ['*'],
+                popupTemplate: new PopupTemplate({
+                    title: '{name}',
+                    content: function (event) {
+                        var feature = event.graphic;
+                        var html = popupHtml({ attributes: feature.attributes, properties: feature.attributes }, propMap);
+                        return html || '';
+                    }
+                })
+            });
+
+            map.add(sourceLayer);
+
+            try {
+                await view.whenLayerView(sourceLayer).ready;
+                var query = sourceLayer.createQuery();
+                query.where = '1=1';
+                query.outFields = ['*'];
+                query.returnGeometry = true;
+                var result = await sourceLayer.queryFeatures(query);
+                if (result && result.features) {
+                    graphicsByFeature.clear();
+                    result.features.forEach(function (f) {
+                        var graphic = new Graphic({
+                            geometry: f.geometry,
+                            symbol: {
+                                type: 'simple-marker',
+                                style: 'circle',
+                                color: markerStyle.fillColor || '#C8832A',
+                                size: (markerStyle.radius || 8) * 2,
+                                outline: {
+                                    color: markerStyle.color || '#fff',
+                                    width: markerStyle.weight || 2
+                                }
+                            },
+                            attributes: f.attributes,
+                            popupTemplate: sourceLayer.popupTemplate
+                        });
+                        overlayGraphicsLayer.add(graphic);
+                        graphicsByFeature.set(f.attributes[Object.keys(propMap.id || ['id'])[0] || 'id'], graphic);
+                    });
+                }
+
+                if (typeof onLayerReady === 'function') {
+                    onLayerReady({
+                        layer: function () { return overlayGraphicsLayer; },
+                        features: result ? result.features.map(function (f) { return { attributes: f.attributes, geometry: f.geometry }; }) : []
+                    });
+                }
+            } catch (e) {
+                console.warn('ArcGIS layer query failed', e);
+                _showNotice(mapEl);
+                if (typeof onLayerReady === 'function') {
+                    onLayerReady({ layer: function () { return overlayGraphicsLayer; }, features: [] });
+                }
+            }
+        }
+
+        loadLayer();
+
+        view.watch('stationary', function () {
+            view.resize();
+        });
 
         return {
             map: map,
-            layer: function () { return geojsonLayer; },
+            view: view,
+            layer: function () { return sourceLayer; },
+            overlayLayer: function () { return overlayGraphicsLayer; },
             filterMarkers: function (predicate) {
-                if (!markerEntries.length) return;
-                markerEntries.forEach(function (entry) {
-                    var show = (typeof predicate !== 'function') ? true : predicate(entry.feature, entry.layer);
-                    if (show) { if (!map.hasLayer(entry.layer)) entry.layer.addTo(map); }
-                    else { if (map.hasLayer(entry.layer)) map.removeLayer(entry.layer); }
+                if (!graphicsByFeature.size) return;
+                graphicsByFeature.forEach(function (graphic, key) {
+                    var show = true;
+                    if (typeof predicate === 'function') {
+                        var attrs = graphic.attributes || {};
+                        show = predicate({ attributes: attrs, properties: attrs }, graphic);
+                    }
+                    graphic.visible = show;
                 });
+            },
+            addStopOverlay: function (lat, lng, label) {
+                var point = new Point({ longitude: lng, latitude: lat, spatialReference: { wkid: 4326 } });
+                var circle = new Graphic({
+                    geometry: point,
+                    symbol: {
+                        type: 'simple-marker',
+                        style: 'circle',
+                        color: '#0d6efd',
+                        size: 24,
+                        outline: { color: '#fff', width: 3 }
+                    }
+                });
+                var text = new Graphic({
+                    geometry: point,
+                    symbol: new TextSymbol({
+                        text: String(label),
+                        color: '#fff',
+                        font: { size: 12, weight: 'bold' },
+                        yoffset: 0,
+                        haloColor: '#000',
+                        haloSize: 1.5
+                    }).toJSON()
+                });
+                overlayGraphicsLayer.addMany([circle, text]);
+                return { marker: circle, label: text };
+            },
+            clearOverlays: function () {
+                overlayGraphicsLayer.removeAll();
+                graphicsByFeature.clear();
+            },
+            fitBounds: function (latlngs) {
+                if (!latlngs || !latlngs.length) return;
+                var extent = latlngs.reduce(function (acc, ll) {
+                    acc[0] = Math.min(acc[0], ll[1]);
+                    acc[1] = Math.min(acc[1], ll[0]);
+                    acc[2] = Math.max(acc[2], ll[1]);
+                    acc[3] = Math.max(acc[3], ll[0]);
+                    return acc;
+                }, [Infinity, Infinity, -Infinity, -Infinity]);
+                view.goTo({
+                    target: new Extent({
+                        xmin: extent[0], ymin: extent[1], xmax: extent[2], ymax: extent[3],
+                        spatialReference: { wkid: 4326 }
+                    })
+                }, { duration: 1000, padding: { top: 40, bottom: 40, left: 40, right: 40 } });
+            },
+            openPopupAt: function (lat, lng, title) {
+                var point = new Point({ longitude: lng, latitude: lat, spatialReference: { wkid: 4326 } });
+                view.popup = {
+                    location: point,
+                    title: title || '',
+                    content: ''
+                };
+                view.openPopup();
             }
         };
     }
@@ -143,61 +286,137 @@ var EGYMaps = (function () {
         var initialLat = (opts.initialLat !== undefined && opts.initialLat !== null) ? opts.initialLat : 30.0444;
         var initialLng = (opts.initialLng !== undefined && opts.initialLng !== null) ? opts.initialLng : 31.2357;
 
-        var map = L.map(mapEl).setView([initialLat, initialLng], 13);
-        _maps[opts.mapElId] = map;
+        (async function () {
+            var cfg = await _ensureConfig();
+            _ensureApiKey(cfg);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            maxZoom: 19
-        }).addTo(map);
+            var Map = (await $arcgis.import('esri/Map')).default;
+            var MapView = (await $arcgis.import('esri/views/MapView')).default;
+            var FeatureLayer = (await $arcgis.import('esri/layers/FeatureLayer')).default;
+            var GraphicsLayer = (await $arcgis.import('esri/layers/GraphicsLayer')).default;
+            var Graphic = (await $arcgis.import('esri/Graphic')).default;
+            var Point = (await $arcgis.import('esri/geometry/Point')).default;
+            var SimpleMarkerSymbol = (await $arcgis.import('esri/symbols/SimpleMarkerSymbol')).default;
+            var TextSymbol = (await $arcgis.import('esri/symbols/TextSymbol')).default;
 
-        var marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
-
-        function syncFromLatLng(latlng) {
-            var lat = _round6(latlng.lat);
-            var lng = _round6(latlng.lng);
-            if (latInput) latInput.value = lat;
-            if (lngInput) lngInput.value = lng;
-        }
-
-        marker.on('dragend', function () { syncFromLatLng(marker.getLatLng()); });
-
-        map.on('click', function (e) {
-            marker.setLatLng(e.latlng);
-            syncFromLatLng(e.latlng);
-        });
-
-        if (latInput) {
-            latInput.addEventListener('input', function () {
-                var lat = parseFloat(latInput.value);
-                if (!isNaN(lat)) { marker.setLatLng([lat, marker.getLatLng().lng]); map.panTo([lat, marker.getLatLng().lng]); }
+            var map = new Map({
+                basemap: 'topo-vector'
             });
-        }
-        if (lngInput) {
-            lngInput.addEventListener('input', function () {
-                var lng = parseFloat(lngInput.value);
-                if (!isNaN(lng)) { marker.setLatLng([marker.getLatLng().lat, lng]); map.panTo([marker.getLatLng().lat, lng]); }
+
+            var view = new MapView({
+                container: mapEl,
+                map: map,
+                center: [initialLng, initialLat],
+                zoom: 13
             });
-        }
 
-        var proxyUrl = opts.contextProxyUrl || '';
-        if (proxyUrl) {
-            fetch(proxyUrl)
-                .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-                .then(function (data) {
-                    if (!data || data.type !== 'FeatureCollection') return;
-                    var ctxStyle = opts.contextStyle || { radius: 6, fillColor: '#888', color: '#555', weight: 1, opacity: 0.6, fillOpacity: 0.35 };
-                    L.geoJSON(data, {
-                        pointToLayer: function (f, ll) { return L.circleMarker(ll, ctxStyle); }
-                    }).addTo(map);
-                })
-                .catch(function () { _showNotice(mapEl); });
-        }
+            _maps[opts.mapElId] = view;
 
-        map.invalidateSize();
-        window.addEventListener('resize', _debounce(function () { map.invalidateSize(); }, 150));
+            var overlayLayer = new GraphicsLayer();
+            map.add(overlayLayer);
 
-        return { map: map, marker: marker };
+            var pickerPoint = new Point({ longitude: initialLng, latitude: initialLat, spatialReference: { wkid: 4326 } });
+            var pickerGraphic = new Graphic({
+                geometry: pickerPoint,
+                symbol: new SimpleMarkerSymbol({
+                    style: 'circle',
+                    color: '#C8832A',
+                    size: 16,
+                    outline: { color: '#fff', width: 3 }
+                }).toJSON()
+            });
+            overlayLayer.add(pickerGraphic);
+
+            function syncFromLatLng(lng, lat) {
+                if (latInput) latInput.value = _round6(lat);
+                if (lngInput) lngInput.value = _round6(lng);
+            }
+
+            view.on('pointer-down', function (event) {
+                view.hitTest(event).then(function (response) {
+                    if (response.results.length) {
+                        view._dragging = true;
+                        event.stopPropagation();
+                    }
+                });
+            });
+
+            view.on('pointer-move', function (event) {
+                if (!view._dragging) return;
+                view.hitTest(event).then(function (response) {
+                    if (response.results.length) {
+                        var pt = response.results[0].graphic.geometry;
+                        if (pt && pt.longitude !== undefined && pt.latitude !== undefined) {
+                            pickerGraphic.geometry = new Point({ longitude: pt.longitude, latitude: pt.latitude, spatialReference: { wkid: 4326 } });
+                            syncFromLatLng(pt.longitude, pt.latitude);
+                        }
+                    }
+                });
+            });
+
+            view.on('pointer-up', function () {
+                view._dragging = false;
+                var geo = pickerGraphic.geometry;
+                if (geo) syncFromLatLng(geo.longitude, geo.latitude);
+            });
+
+            view.on('click', function (event) {
+                if (view._dragging) return;
+                pickerGraphic.geometry = new Point({ longitude: event.mapPoint.longitude, latitude: event.mapPoint.latitude, spatialReference: { wkid: 4326 } });
+                syncFromLatLng(event.mapPoint.longitude, event.mapPoint.latitude);
+            });
+
+            var proxyUrl = opts.contextLayer || '';
+            if (proxyUrl) {
+                fetch(proxyUrl)
+                    .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+                    .then(function (data) {
+                        if (!data || !data.features) return;
+                        var ctxStyle = opts.contextStyle || { radius: 6, fillColor: '#888', color: '#555', weight: 1, opacity: 0.6, fillOpacity: 0.35 };
+                        data.features.forEach(function (f) {
+                            if (!f.geometry || !f.geometry.x) return;
+                            var g = new Graphic({
+                                geometry: new Point({ longitude: f.geometry.x, latitude: f.geometry.y, spatialReference: { wkid: 4326 } }),
+                                symbol: new SimpleMarkerSymbol({
+                                    style: 'circle',
+                                    color: ctxStyle.fillColor || '#888',
+                                    size: (ctxStyle.radius || 6) * 2,
+                                    outline: { color: ctxStyle.color || '#555', width: ctxStyle.weight || 1 }
+                                }).toJSON()
+                            });
+                            overlayLayer.add(g);
+                        });
+                    })
+                    .catch(function () { _showNotice(mapEl); });
+            }
+
+            if (latInput) {
+                latInput.addEventListener('input', function () {
+                    var lat = parseFloat(latInput.value);
+                    var lng = parseFloat(lngInput ? lngInput.value : pickerGraphic.geometry.longitude);
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        pickerGraphic.geometry = new Point({ longitude: lng, latitude: lat, spatialReference: { wkid: 4326 } });
+                        view.goTo({ center: [lng, lat], zoom: 13 }, { duration: 500 });
+                    }
+                });
+            }
+            if (lngInput) {
+                lngInput.addEventListener('input', function () {
+                    var lng = parseFloat(lngInput.value);
+                    var lat = parseFloat(latInput ? latInput.value : pickerGraphic.geometry.latitude);
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        pickerGraphic.geometry = new Point({ longitude: lng, latitude: lat, spatialReference: { wkid: 4326 } });
+                        view.goTo({ center: [lng, lat], zoom: 13 }, { duration: 500 });
+                    }
+                });
+            }
+
+            view.watch('stationary', function () {
+                view.resize();
+            });
+
+            return { map: map, view: view, marker: pickerGraphic };
+        })();
     }
 
     return { initWfsMap: initWfsMap, initLocationPicker: initLocationPicker };

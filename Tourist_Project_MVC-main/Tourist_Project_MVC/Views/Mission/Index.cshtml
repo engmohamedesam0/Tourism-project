@@ -131,10 +131,42 @@
                                                class="btn btn-action-edit" title="@Localizer["Mission_Edit"].Value">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <a asp-action="Delete" asp-route-id="@item.Id"
-                                               class="btn btn-action-delete" title="@Localizer["Mission_Delete"].Value">
+                                            <button type="button"
+                                                    class="btn btn-action-delete"
+                                                    title="@Localizer["Mission_Delete"].Value"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteMissionModal-@item.Id">
                                                 <i class="bi bi-trash"></i>
-                                            </a>
+                                            </button>
+
+                                            <div class="modal fade" id="deleteMissionModal-@item.Id" tabindex="-1" aria-labelledby="deleteMissionModalLabel-@item.Id" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content border-0 shadow">
+                                                        <div class="modal-header border-0">
+                                                            <h5 class="modal-title fw-bold" id="deleteMissionModalLabel-@item.Id">
+                                                                @Localizer["Mission_Delete"].Value
+                                                            </h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="mb-0">
+                                                                @Localizer["Mission_Delete_Confirm"].Value <strong>@item.Title</strong>?
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer border-0">
+                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                                <i class="bi bi-x-lg me-1"></i> @Localizer["Mission_Button_Cancel"].Value
+                                                            </button>
+                                                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-danger">
+                                                                    <i class="bi bi-trash-fill me-1"></i> @Localizer["Mission_Button_ConfirmDelete"].Value
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         }
                                     </div>
                                 }

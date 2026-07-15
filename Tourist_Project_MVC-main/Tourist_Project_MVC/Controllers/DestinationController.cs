@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using NetTopologySuite.Geometries;
 using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -15,11 +18,13 @@ namespace Tourist_Project_MVC.Controllers
     {
         private readonly IDestinationRepository _repo;
         private readonly TouristContext _context;
+        private readonly IArcGISSyncService _arcgisSync;
 
-        public DestinationController(IDestinationRepository repo, TouristContext context)
+        public DestinationController(IDestinationRepository repo, TouristContext context, IArcGISSyncService arcgisSync)
         {
             _repo = repo;
             _context = context;
+            _arcgisSync = arcgisSync;
         }
 
         // GET: /Destination/Index
@@ -137,6 +142,7 @@ namespace Tourist_Project_MVC.Controllers
                 destination.Visits = 0;
                 _repo.Add(destination);
                 _repo.Save();
+                _ = _arcgisSync.SyncDestinationsAsync(new[] { destination });
                 return RedirectToAction("Index");
             }
             ViewBag.Lat = Lat;
@@ -167,6 +173,7 @@ namespace Tourist_Project_MVC.Controllers
             {
                 _repo.Update(destination);
                 _repo.Save();
+                _ = _arcgisSync.SyncDestinationsAsync(new[] { destination });
                 return RedirectToAction("Index");
             }
             return View(destination);

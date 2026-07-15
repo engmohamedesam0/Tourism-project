@@ -551,7 +551,7 @@
 
             var nearMeMap = EGYMaps.initWfsMap({
                 mapElId: 'nearbyMap',
-                proxyUrl: '/Map/GetBranchesGeoJson',
+                layer: '/Map/GetBranchesGeoJson',
                 propMap: nearMePropMap,
                 popupHtml: buildPopup,
                 markerStyle: { radius: 9, fillColor: '#2e9e5b', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
@@ -560,7 +560,7 @@
                         .call(document.querySelectorAll('#nearMeList .nearme-card[data-id]'))
                         .map(function (el) { return el.getAttribute('data-id'); });
                     nearMeMap.filterMarkers(function (f) {
-                        var sid = _firstDefined(f.properties, ['sponsor_id', 'SponsorId', 'sponsorId']);
+                        var sid = _firstDefined(f.attributes, ['sponsor_id', 'SponsorId', 'sponsorId']);
                         return visibleSponsorIds.indexOf(String(sid)) > -1;
                     });
                 }
@@ -581,21 +581,25 @@
                     var cardId = card.getAttribute('data-id');
 
                     var markerFound = false;
-                    if (nearMeMap && nearMeMap.layer()) {
-                        nearMeMap.layer().eachLayer(function (layer) {
-                            var p = layer.feature.properties || {};
+                    if (nearMeMap && nearMeMap.overlayLayer) {
+                        nearMeMap.overlayLayer().graphics.forEach(function (graphic) {
+                            var p = graphic.attributes || {};
                             var id = _firstDefined(p, nearMePropMap.id, []);
                             if (String(id) === String(cardId)) {
-                                layer.openPopup();
-                                nearMeMap.map.setView(layer.getLatLng(), 15, { animate: true, duration: 1.0 });
+                                nearMeMap.view.goTo({ center: [graphic.geometry.x, graphic.geometry.y], zoom: 15 }, { duration: 1000 });
+                                nearMeMap.view.popup = {
+                                    location: graphic.geometry,
+                                    title: _firstDefined(p, nearMePropMap.name, ['']),
+                                    content: buildPopup({ attributes: p })
+                                };
+                                nearMeMap.view.openPopup();
                                 markerFound = true;
                             }
                         });
                     }
 
-                    // Fallback to manual setView
-                    if (!markerFound && nearMeMap && nearMeMap.map && !isNaN(lat) && !isNaN(lng)) {
-                        nearMeMap.map.setView([lat, lng], 15, { animate: true, duration: 1.0 });
+                    if (!markerFound && nearMeMap && nearMeMap.view && !isNaN(lat) && !isNaN(lng)) {
+                        nearMeMap.view.goTo({ center: [lng, lat], zoom: 15 }, { duration: 1000 });
                     }
                 });
             });
