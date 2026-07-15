@@ -63,12 +63,6 @@
   <data name="Lang_Spanish" xml:space="preserve">
     <value>Español</value>
   </data>
-  <data name="Lang_German" xml:space="preserve">
-    <value>Deutsch</value>
-  </data>
-  <data name="Lang_Chinese" xml:space="preserve">
-    <value>中文</value>
-  </data>
   <data name="SignIn" xml:space="preserve">
     <value>تسجيل الدخول</value>
   </data>

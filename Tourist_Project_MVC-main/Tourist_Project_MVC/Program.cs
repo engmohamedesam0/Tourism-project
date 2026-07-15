@@ -22,8 +22,8 @@ namespace Tourist_Project_MVC
             builder.Services.Configure<RequestLocalizationOptions>(o =>
             {
                 o.SetDefaultCulture("en");
-                o.AddSupportedCultures("en", "ar", "es", "de", "zh");
-                o.AddSupportedUICultures("en", "ar", "es", "de", "zh");
+                o.AddSupportedCultures("en", "ar", "es");
+                o.AddSupportedUICultures("en", "ar", "es");
                 o.RequestCultureProviders = new[] { new CookieRequestCultureProvider() };
             });
 
