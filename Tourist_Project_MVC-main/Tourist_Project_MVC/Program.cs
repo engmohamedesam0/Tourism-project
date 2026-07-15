@@ -14,6 +14,8 @@ namespace Tourist_Project_MVC
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.AddUserSecrets<Program>();
+
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddViewLocalization();
             builder.Services.AddHttpClient<IArcGISSyncService, ArcGISSyncService>();

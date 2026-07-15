@@ -1,249 +1,104 @@
-# Plan: Migrate Tourist_Project_MVC from Leaflet to ArcGIS Maps SDK for JavaScript
+# Plan: Fix 5 confirmed map-rendering bugs after Leaflet → ArcGIS migration
 
-## 1. Critical blockers that MUST be resolved before implementation
+Commit under test: `4773a13`. No maps render. Root causes identified from code inspection.
 
-### 1.1 ArcGIS API key is invalid for REST calls
-The key provided in the task description returns `{"error":{"code":498,"message":"Invalid token."}}` when used against the FeatureServer REST endpoints. The JS SDK may still accept it (keys can be scoped differently), but **server-side sync will fail** if the key is invalid for REST API calls.
-- **Action**: Regenerate a new API key in ArcGIS Online (Agol → My Content → API Keys), ensure it has permissions for the Destinations and Branches feature services, and update `dotnet user-secrets` before wiring the sync service.
-- **Risk**: If the key is also invalid for the JS SDK, all maps will fail at runtime with auth errors.
+---
 
-### 1.2 ArcGIS Online layer field schema is unknown
-Because the token is invalid, I cannot query `?f=json` to inspect the actual field names. The sync service depends on exact field mappings.
-- **Assumption until verified**: Layers were CSV-published and likely have fields `id`, `name`, `city`, `category`, `description`, `ticket_price`, `rating`, `tags`, `visits`, `status`, `opening_hours` (Destinations) and `id`, `name`, `address`, `contact_number`, `sponsor_id` (Branches). Geometry is likely `SHAPE`.
-- **Action**: Once a valid token is available, run:
-  ```
-  curl "https://services8.arcgis.com/Jewkc6qDBXpn2lCJ/arcgis/rest/services/Destinations/FeatureServer/0?f=json&token=YOUR_KEY"
-  curl "https://services8.arcgis.com/Jewkc6qDBXpn2lCJ/arcgis/rest/services/Branches/FeatureServer/0?f=json&token=YOUR_KEY"
-  ```
-  Confirm exact field names, especially the Postgres-Id field name and the geometry field name.
+## Bug 1 — `appsettings.json` placeholders + missing user-secrets wiring
 
-### 1.3 `.gitignore` is broken (merge conflict markers)
-Lines 1 and 373-374 contain unresolved git merge markers. This means `appsettings.Development.json` may already be tracked or not properly ignored.
-- **Action**: Fix `.gitignore` by removing the conflict markers and ensuring `appsettings.Development.json` is ignored (standard ASP.NET Core template includes it). If `appsettings.Development.json` already contains committed secrets, scrub them from git history or move to user-secrets.
+**Current state**: `appsettings.json` has `REPLACE_WITH_*` text (not valid JSON empty strings). `Program.cs` does **not** call `AddUserSecrets`, so even if the developer runs `dotnet user-secrets set ...`, the values will never be loaded into config. `appsettings.Development.json` is tracked in git despite `.gitignore` listing it.
 
-## 2. Phase 1 — Backend
+**Fixes**:
+1. `appsettings.json`: change `"ApiKey": "REPLACE_WITH_VALID_KEY"` → `"ApiKey": ""`, same for the two URLs → `""`. These are safe-to-commit empty placeholders.
+2. `Program.cs`: add `builder.AddUserSecrets<Program>();` right after `var builder = WebApplication.CreateBuilder(args);` (unconditional call; it only activates in Development environment automatically).
+3. Git: from repo root, run `git rm --cached Tourist_Project_MVC/appsettings.Development.json`. Leave the file on disk (it only has a DB connection string, no ArcGIS key). Commit the removal so it stops being tracked.
+4. Developer runs locally:
+   ```
+   cd Tourist_Project_MVC
+   dotnet user-secrets init
+   dotnet user-secrets set "ArcGIS:ApiKey" "<real key>"
+   dotnet user-secrets set "ArcGIS:DestinationsLayerUrl" "<real Destinations FeatureServer URL>"
+   dotnet user-secrets set "ArcGIS:BranchesLayerUrl" "<real Branches FeatureServer URL>"
+   ```
 
-### 2.1 `appsettings.json`
-- Remove the entire `"GeoServer"` section.
-- Add the `"ArcGIS"` section with empty placeholder values:
-  ```json
-  "ArcGIS": {
-    "ApiKey": "",
-    "DestinationsLayerUrl": "https://services8.arcgis.com/Jewkc6qDBXpn2lCJ/arcgis/rest/services/Destinations/FeatureServer",
-    "BranchesLayerUrl": "https://services8.arcgis.com/Jewkc6qDBXpn2lCJ/arcgis/rest/services/Branches/FeatureServer"
-  }
-  ```
+---
 
-### 2.2 `MapController.cs`
-- Remove `GetDestinationsGeoJson`, `GetBranchesGeoJson`, and `FetchWfsAsync`.
-- Add:
-  ```csharp
-  [HttpGet]
-  public IActionResult GetMapConfig()
-  {
-      return Json(new {
-          apiKey = _config["ArcGIS:ApiKey"],
-          destinationsLayerUrl = _config["ArcGIS:DestinationsLayerUrl"],
-          branchesLayerUrl = _config["ArcGIS:BranchesLayerUrl"]
-      });
-  }
-  ```
-- Keep `IConfiguration` injection. Remove `IHttpClientFactory` from this controller unless needed elsewhere (the sync service will have its own typed client).
+## Bug 2 — Views pass dead WFS proxy URLs as `layer`/`contextLayer`
 
-### 2.3 New `Services/ArcGISSyncService.cs`
-- Interface `IArcGISSyncService` with:
-  ```csharp
-  Task SyncDestinationAsync(Destination destination, CancellationToken ct = default);
-  Task SyncBranchAsync(Branch branch, CancellationToken ct = default);
-  ```
-- Implementation details:
-  - Injected `IHttpClientFactory` + `IConfiguration`.
-  - Auth: pass API key as `?token={apiKey}` on every REST call.
-  - For each sync:
-    1. Query the layer: `GET {layerUrl}/0/query?where={sourceIdField}={id}&f=json&token={apiKey}` to find existing feature by Postgres Id.
-    2. If not found → `POST {layerUrl}/0/applyEdits` with `adds: [{ attributes: {...}, geometry: { x, y, spatialReference: { wkid: 4326 } } }]`.
-    3. If found → `POST {layerUrl}/0/applyEdits` with `updates: [{ attributes: { OBJECTID: existingObjectId, ... }, geometry: {...} }]`.
-  - Field mapping: map Postgres fields to the layer's actual field names (to be confirmed in step 1.2).
-  - **Fail soft**: catch all exceptions, log warning, swallow. Never block or roll back the Postgres save.
-- Registration in `Program.cs`:
-  ```csharp
-  builder.Services.AddHttpClient<IArcGISSyncService, ArcGISSyncService>();
-  ```
+**Current state**: All 8 view call sites still pass `/Map/GetDestinationsGeoJson` or `/Map/GetBranchesGeoJson`. That endpoint was removed. `maps.js` `layerUrlFor()` treats the string as a literal URL, so it tries to fetch a dead proxy.
 
-### 2.4 Wire sync into existing save flows
-- `DestinationController.cs`:
-  - Inject `IArcGISSyncService`.
-  - In `Create` POST, after `_repo.Save()` and successful redirect, `await _arcGISSyncService.SyncDestinationAsync(destination);`.
-  - Same in `Edit` POST.
-- `SponsorBranchController.cs`:
-  - Same pattern in `Create` POST and `Edit` POST.
-- **Important**: Call sync AFTER the Postgres save succeeds. Do NOT let sync failure change the HTTP response/redirect. Use `_ = Task.Run(() => _arcGISSyncService.SyncDestinationAsync(destination));` or `await` inside a try/catch that only logs.
+**Fixes**:
+1. `wwwroot/js/maps.js` — `layerUrlFor()` in `initWfsMap` and the equivalent in `initLocationPicker`:
+   - Treat `'destinations'` → `cfg.destinationsLayerUrl + '/0'`
+   - Treat `'branches'` → `cfg.branchesLayerUrl + '/0'`
+   - Reject any other bare string (return `null` so the layer silently doesn't load rather than 404-spamming).
+   - `/0` is the hosted-feature-service layer index (single CSV publish → always layer 0; confirmed by standard AGOL behavior).
+2. Update all 8 view call sites:
+   - `Explore/Index.cshtml`: `layer: '/Map/GetDestinationsGeoJson'` → `layer: 'destinations'`
+   - `Trip/Index.cshtml`: same
+   - `Trip/Details.cshtml`: same
+   - `NearMe/Index.cshtml`: `layer: '/Map/GetBranchesGeoJson'` → `layer: 'branches'`
+   - `Destination/Create.cshtml`: `contextLayer: '/Map/GetDestinationsGeoJson'` → `contextLayer: 'destinations'`
+   - `Destination/Edit.cshtml`: same
+   - `SponsorBranch/Create.cshtml`: `contextLayer: '/Map/GetBranchesGeoJson'` → `contextLayer: 'branches'`
+   - `SponsorBranch/Edit.cshtml`: same
 
-## 3. Phase 2 — Frontend `wwwroot/js/maps.js`
+---
 
-### 3.1 Architecture
-- Keep the IIFE pattern: `var EGYMaps = (function(){...})();`
-- Keep the same public API names: `initWfsMap` and `initLocationPicker`.
-- Add a module-level config cache:
-  ```js
-  var _arcgisConfig = null;
-  var _arcgisConfigPromise = null;
-  function getMapConfig() {
-      if (!_arcgisConfigPromise) {
-          _arcgisConfigPromise = fetch('/Map/GetMapConfig')
-              .then(r => r.ok ? r.json() : Promise.reject(r.status))
-              .then(cfg => { _arcgisConfig = cfg; return cfg; })
-              .catch(err => { _arcgisConfigPromise = null; throw err; });
-      }
-      return _arcgisConfigPromise;
-  }
-  ```
-- All map init functions `await getMapConfig()` first, then set `esriConfig.apiKey`.
+## Bug 3 — `var Map = (await $arcgis.import('esri/Map')).default` shadows native `Map`
 
-### 3.2 `initWfsMap(opts)` rewrite
-- **New option**: `opts.layer` — `'destinations'` or `'branches'`. Drop `proxyUrl`.
-- Map `layer` value to the corresponding URL from config.
-- Inside an async IIFE or async function:
-  ```js
-  const [Map, MapView, FeatureLayer, Graphic, GraphicsLayer, PopupTemplate, SimpleMarkerSymbol, TextSymbol, FeatureFilter] = await $arcgis.import([
-      "@arcgis/core/Map.js",
-      "@arcgis/core/views/MapView.js",
-      "@arcgis/core/layers/FeatureLayer.js",
-      "@arcgis/core/Graphic.js",
-      "@arcgis/core/layers/GraphicsLayer.js",
-      "@arcgis/core/PopupTemplate.js",
-      "@arcgis/core/symbols/SimpleMarkerSymbol.js",
-      "@arcgis/core/symbols/TextSymbol.js",
-      "@arcgis/core/layers/support/FeatureFilter.js"
-  ]);
-  ```
-- Build the `FeatureLayer` with:
-  - `url`: from config based on `opts.layer`
-  - `popupTemplate`: built from `opts.propMap` using the same `_buildPopupHtml` logic
-  - `outFields`: `["*"]`
-- Basemap: `"topo-vector"` (closest to current OSM look, consistent across all maps).
-- Construct `Map` + `MapView`, attach to `mapEl`.
-- On `view.when()`, query features: `layer.queryFeatures({ where: "1=1", outFields: ["*"] })`.
-- Store queried features in an array for client-side operations.
-- Return shape: `{ map: MapView, layer: () => featureLayer, filterMarkers: function(predicate) { ... } }`.
-  - `filterMarkers` implementation: iterate stored graphics, set `graphic.visible = predicate ? predicate(graphic.attributes) : true`. Use a `GraphicsLayer` overlay for visible markers, or toggle `featureLayerView.filter` with a SQL where clause when the predicate can be translated.
-  - **Actually**: to keep exact behavior compatibility, maintain a `GraphicsLayer` with all features and toggle `graphic.visible`. This is the safest drop-in replacement for the current Leaflet behavior where `filterMarkers` takes an arbitrary predicate.
+**Current state**: In `maps.js`, both `initWfsMap` (line 90) and `initLocationPicker` (line 293) declare `var Map = (await $arcgis.import('esri/Map')).default`. This shadows the built-in `Map` constructor. Later, `var graphicsByFeature = new Map()` on line 121 constructs an ArcGIS `Map` instance instead of a native JS `Map` dictionary. All subsequent calls (`graphicsByFeature.clear()`, `.set()`, `.forEach()`, `.size`) throw because ArcGIS `Map` doesn't implement that interface. The errors are swallowed by the surrounding `try/catch`, so `onLayerReady` fires with an empty feature set and every map shows the "couldn't load live layer" notice.
 
-Wait — but `featureLayer.queryFeatures()` returns `Feature` objects. We can add them to a `GraphicsLayer` for display, or display them directly via the `FeatureLayer`. The `FeatureLayer` itself renders features. If we want to toggle visibility per feature, we need either:
-  a) A `GraphicsLayer` where we control `graphic.visible`
-  b) `FeatureLayerView.filter` with a where clause
+**Fix**: Rename the imported class everywhere to `EsriMap` to eliminate shadowing:
+- `var EsriMap = (await $arcgis.import('esri/Map')).default;`
+- `var map = new EsriMap({ basemap: 'topo-vector' });`
+- Do this in **both** `initWfsMap` and `initLocationPicker` so the pattern can't recur.
 
-For arbitrary predicates, option (a) is the only generic solution. So:
-- Create a `FeatureLayer` for data source (used for queries).
-- Create a `GraphicsLayer` for display.
-- On load, copy features from FeatureLayer to GraphicsLayer.
-- `filterMarkers(predicate)` iterates GraphicsLayer graphics and sets `visible`.
-- `layer()` returns the `FeatureLayer` (for any callers doing `.queryFeatures()` on it).
+After this fix, `var graphicsByFeature = new Map()` correctly creates a native JS `Map`.
 
-Actually, looking at current callers:
-- Explore: `mapInstance.layer().eachLayer(...)` — this expects a Leaflet GeoJSON layer. It iterates layers to find a matching feature. In ArcGIS, we can instead keep a `Map` of `id → graphic` and look up by id. But the spec says to update Explore's direct Leaflet calls anyway.
-- NearMe: `nearMeMap.layer().eachLayer(...)` — same, updated in spec.
-- Trip: `tripMap.filterMarkers(tripPredicate)` — keeps `filterMarkers`.
-- Trip Details: uses `onLayerReady` only, doesn't use `layer()` or `filterMarkers`.
+---
 
-So the only real `layer()` caller is Explore and NearMe, both of which are being updated. We can simplify `layer()` to return the `FeatureLayer` or the `GraphicsLayer` — doesn't matter much since both callers are getting rewritten.
+## Bug 4 — `initLocationPicker` context-layer fetch uses dead GeoJSON shape
 
-Let me reconsider: for `filterMarkers`, the cleanest compatible approach is:
-- Keep an array `allGraphics` 
-- `filterMarkers(predicate)` sets `graphic.visible = predicate(graphic)` for each graphic in a `GraphicsLayer`
-- Return `{ map, layer: () => featureLayer, filterMarkers }`
+**Current state**: Lines 369–391 of `maps.js` do `fetch(proxyUrl)` expecting a GeoJSON FeatureCollection with `f.geometry.x`/`.y`. After Bug 2's fix, `proxyUrl` resolves to a FeatureServer layer URL which:
+- Doesn't return features from a plain GET (needs `?f=json&token=...`)
+- Would need the API key even if it did return data
 
-### 3.3 `initLocationPicker(opts)` rewrite
-- New option: `opts.contextLayer` — `'destinations'` or `'branches'`. Drop `contextProxyUrl`.
-- Load context layer as a second `FeatureLayer` with `opacity: 0.5` and simple `SimpleMarkerSymbol` styling.
-- Place a single draggable point graphic:
-  - Use `view.on("pointer-down", ...)` to detect if user clicked the marker
-  - If yes, set `_dragging = true`, prevent view from panning for that gesture
-  - On `view.on("pointer-move", ...)`, if `_dragging`, update graphic geometry: `graphic.geometry = view.toMap(event.x, event.y)` (or `screenPoint`)
-  - On `view.on("pointer-up", ...)`, clear `_dragging`, update inputs
-  - On `view.on("click", ...)`, if not a drag, move marker to clicked point
-- Two-way binding with inputs: same `_round6` logic.
-- Return `{ map: MapView, marker: graphic }` (even though callers don't currently use the return value beyond construction).
+**Fix**: Replace the fetch block with the same `FeatureLayer` + `queryFeatures()` pattern already used in `initWfsMap`. Reuse the `FeatureLayer`, `Graphic`, `Point`, and `SimpleMarkerSymbol` imports already present at the top of the async IIFE. Query `where: '1=1', outFields: ['*'], returnGeometry: true`, then draw each result as a faint graphic using `ctxStyle`. This gives the same visual outcome (faded context markers) but works correctly with the ArcGIS Online backend.
 
-### 3.4 Error handling and resize
-- `_showNotice` stays the same (DOM-based banner).
-- Remove manual `invalidateSize` / resize listener — `MapView` auto-resizes via container observers. If Bootstrap tab switches cause issues, call `view.resize()` when the tab becomes visible.
+---
 
-## 4. Phase 3 — `Views/Shared/_Layout.cshtml`
+## Bug 5 — `ArcGISSyncService` field names don't match layer schema + missing update logic
 
-- Remove Leaflet CSS `<link>` (line 20) and Leaflet JS `<script>` (line 892).
-- Add ArcGIS CDN in `<head>` (replacing where Leaflet CSS was):
-  ```html
-  <script type="module" src="https://js.arcgis.com/5.1/"></script>
-  ```
-- Keep `<script src="~/js/maps.js"></script>` loading AFTER the ArcGIS CDN script and BEFORE any `@section Scripts`.
-- No API key embedded in this file.
+**Current state**: `ArcGISSyncService` sends attributes with snake_case keys (`ticket_price`, `contact_number`, `sponsor_id`) and includes non-existent fields (`description`, `tags`). The published layer schema uses PascalCase CSV headers: `Id, Name, City, Category, latitude, longitude, TicketPrice, Rating, Visits, Status` (Destinations) and `Id, SponsorId, Name, Address, latitude, longitude, ContactNumber` (Branches). Additionally, the service only sends `adds` — it never queries for an existing feature by `Id`, so edits to existing Postgres rows never sync to ArcGIS, and re-saving a destination would attempt a duplicate add.
 
-## 5. Phase 4 — View-specific fixes
+**Fixes**:
+1. Rewrite both `SyncDestinationsAsync` and `SyncBranchesAsync` to use the correct field names:
+   - Destinations attributes: `Id`, `Name`, `City`, `Category`, `TicketPrice`, `Rating`, `Visits`, `Status` (omit `Description`, `Tags` — they have no corresponding layer field).
+   - Branches attributes: `Id`, `SponsorId`, `Name`, `Address`, `ContactNumber`.
+2. Add query-then-upsert logic:
+   - `GET {layerUrl}/0/query?where=Id={id}&f=json&token={key}` to find existing feature.
+   - If found → `applyEdits` with `updates: [{ attributes: { OBJECTID: <existing>, Id: <id>, ... }, geometry: {...} }]`.
+   - If not found → `applyEdits` with `adds: [{ attributes: { Id: <id>, ... }, geometry: {...} }]`.
+3. Auth: the service currently sets both `X-ESRI-Authorization` header AND `?token=` query param. Remove the header — token-in-query-string is the documented pattern for API-key-authenticated FeatureService REST calls; the header is redundant and could confuse debugging.
+4. Keep fail-soft: wrap in try/catch, log warning, return without throwing.
 
-### 5.1 `Views/Explore/Index.cshtml`
-- Change `proxyUrl: '/Map/GetDestinationsGeoJson'` → `layer: 'destinations'`.
-- Replace direct Leaflet internals:
-  - `mapInstance.layer().eachLayer(...)` → maintain a client-side `Map` of `id → graphic` (populated from `onLayerReady` features).
-  - `layer.openPopup()` → `view.openPopup({ features: [graphic], location: graphic.geometry })`.
-  - `mapInstance.map.setView(...)` → `view.goTo({ target: graphic.geometry, zoom: 15 }, { duration: 1000 })`.
-  - Keep the fallback to manual `data-lat`/`data-lng` panning.
+**Note on geometry field names**: The layer has separate `latitude`/`longitude` attribute columns (from the CSV), but ArcGIS `applyEdits` geometry is passed in the `geometry` object (`x`, `y`, `spatialReference.wkid: 4326`). The attribute columns and the geometry are independent — we set both: populate `latitude`/`longitude` attributes for popup display, and pass `geometry` for the actual point position.
 
-### 5.2 `Views/Trip/Index.cshtml`
-- Change `proxyUrl: '/Map/GetDestinationsGeoJson'` → `layer: 'destinations'`.
-- Port `applyTripFilter`/`tripPredicate`/`rowMatches`:
-  - Instead of calling `tripMap.filterMarkers(tripPredicate)`, build a `where` clause from matching destination IDs.
-  - Collect matching IDs from the DOM (`rowById`, `rowMatches`) and apply `featureLayerView.filter = new FeatureFilter({ where: "id IN (1,2,3)" })`.
-  - Rebuild the where clause every time filters change (same trigger points: checkbox change, budget change, filter button click).
+---
 
-### 5.3 `Views/Trip/Details.cshtml`
-- Change `proxyUrl: '/Map/GetDestinationsGeoJson'` → `layer: 'destinations'`.
-- Replace direct Leaflet calls in `onLayerReady`:
-  - `L.circleMarker(...)` → `Graphic` with `SimpleMarkerSymbol` (size ~28px, blue fill `#0d6efd`, white outline).
-  - `bindPopup(...)` → `PopupTemplate` per graphic (same "Stop #N" content).
-  - `bindTooltip(..., {permanent:true, direction:'center'})` → overlay a `TextSymbol` graphic at the same point showing the stop number, styled centered.
-  - `detailsMap.map.fitBounds(latlngs, {padding:[40,40]})` → `view.goTo(stopGraphics, { padding: { top:40, bottom:40, left:40, right:40 } })`.
+## Verification steps (run after all fixes)
 
-### 5.4 `Views/NearMe/Index.cshtml`
-- Change `proxyUrl: '/Map/GetBranchesGeoJson'` → `layer: 'branches'`.
-- Replace direct Leaflet internals in card-click handler:
-  - `nearMeMap.layer().eachLayer(...)` → client-side lookup by id.
-  - `layer.openPopup()` → `view.openPopup(...)`.
-  - `nearMeMap.map.setView(...)` → `view.goTo(...)`.
-- Keep `filterMarkers` for initial sponsor visibility filtering (build where clause from visible card IDs).
-
-### 5.5 `Views/Destination/Create.cshtml`, `Edit.cshtml`, `SponsorBranch/Create.cshtml`, `Edit.cshtml`
-- Change `contextProxyUrl` → `contextLayer` (`'destinations'` or `'branches'`).
-- No other changes needed.
-
-## 6. Phase 5 — Cleanup
-
-- Verify no remaining Leaflet references:
-  ```bash
-  grep -ri "leaflet\|L\.map\|L\.tileLayer\|L\.geoJSON\|L\.circleMarker\|L\.marker" Tourist_Project_MVC/
-  ```
-- Confirm `/Map/GetDestinationsGeoJson` and `/Map/GetBranchesGeoJson` return 404.
-- Confirm `IHttpClientFactory` is still registered (it is, for the new `ArcGISSyncService` typed client).
-- Confirm `GeoServer` section removed from all `appsettings*.json`.
-- Fix `.gitignore` merge conflict.
-- Add `appsettings.Development.json` to `.gitignore` if not already present.
-
-## 7. Testing checklist (manual, per task spec)
-
-1. Destination Create/Edit: save → verify Postgres save + ArcGIS feature appears/updates.
-2. SponsorBranch Create/Edit: same against Branches layer.
-3. Explore/Index: map loads, chips filter popup, card click pans+opens popup.
-4. NearMe/Index: sponsor markers render, card click pans+opens popup.
-5. Trip/Index: trip-builder map renders, interest/budget filters show/hide markers.
-6. Trip/Details: numbered stop markers with popups, auto-fit to stops, Sortable.js drag still works.
-7. No `L is not defined` console errors.
-8. `/Map/GetDestinationsGeoJson` and `/Map/GetBranchesGeoJson` return 404.
-9. Network tab: API key only sent to `arcgis.com`/`arcgisonline.com` domains.
-
-## 8. Unresolved / Pre-implementation dependencies
-
-| Item | Owner | Blocking |
-|------|-------|----------|
-| Valid ArcGIS API key for REST + JS SDK | User | Yes — entire migration fails without it |
-| Exact ArcGIS layer field schema | User or implementer (after key fix) | Yes — sync service field mappings |
-| `.gitignore` merge conflict resolution | Implementer | No — but should be fixed in same cleanup phase |
+1. Set real user-secrets locally.
+2. Load each map view and confirm markers render with no "couldn't load live layer" notice:
+   - `/Explore`
+   - `/Trip`
+   - `/Trip/Details/{id}` (any trip with stops)
+   - `/NearMe`
+   - `/Destination/Create`
+   - `/SponsorBranch/Create`
+3. Create a Destination → confirm it appears in Postgres **and** in the ArcGIS Online Destinations layer within seconds.
+4. Edit that Destination → confirm the ArcGIS feature updates (same `OBJECTID`, updated attributes).
+5. No `L is not defined` or Leaflet console errors anywhere.
+6. `/Map/GetDestinationsGeoJson` and `/Map/GetBranchesGeoJson` return 404.
+7. Network tab: API key only sent to `arcgis.com`/`arcgisonline.com` domains.

@@ -87,7 +87,7 @@ var EGYMaps = (function () {
         var cfg = await _ensureConfig();
         _ensureApiKey(cfg);
 
-        var Map = (await $arcgis.import('esri/Map')).default;
+        var EsriMap = (await $arcgis.import('esri/Map')).default;
         var MapView = (await $arcgis.import('esri/views/MapView')).default;
         var FeatureLayer = (await $arcgis.import('esri/layers/FeatureLayer')).default;
         var GraphicsLayer = (await $arcgis.import('esri/layers/GraphicsLayer')).default;
@@ -95,8 +95,9 @@ var EGYMaps = (function () {
         var Point = (await $arcgis.import('esri/geometry/Point')).default;
         var PopupTemplate = (await $arcgis.import('esri/PopupTemplate')).default;
         var TextSymbol = (await $arcgis.import('esri/symbols/TextSymbol')).default;
+        var Extent = (await $arcgis.import('esri/geometry/Extent')).default;
 
-        var map = new Map({
+        var map = new EsriMap({
             basemap: 'topo-vector'
         });
 
@@ -122,7 +123,17 @@ var EGYMaps = (function () {
 
         function layerUrlFor(optsLayer) {
             if (!optsLayer) return null;
-            if (typeof optsLayer === 'string') return optsLayer;
+            if (typeof optsLayer === 'string') {
+                if (_mapConfig) {
+                    var lower = optsLayer.toLowerCase();
+                    if (lower === 'destinations' && _mapConfig.destinationsLayerUrl) return _mapConfig.destinationsLayerUrl + '/0';
+                    if (lower === 'branches' && _mapConfig.branchesLayerUrl) return _mapConfig.branchesLayerUrl + '/0';
+                }
+                if (optsLayer.indexOf('/FeatureServer') > -1 && optsLayer.indexOf('/0') === -1) {
+                    return optsLayer + '/0';
+                }
+                return optsLayer;
+            }
             return null;
         }
 
@@ -290,7 +301,7 @@ var EGYMaps = (function () {
             var cfg = await _ensureConfig();
             _ensureApiKey(cfg);
 
-            var Map = (await $arcgis.import('esri/Map')).default;
+            var EsriMap = (await $arcgis.import('esri/Map')).default;
             var MapView = (await $arcgis.import('esri/views/MapView')).default;
             var FeatureLayer = (await $arcgis.import('esri/layers/FeatureLayer')).default;
             var GraphicsLayer = (await $arcgis.import('esri/layers/GraphicsLayer')).default;
@@ -299,7 +310,7 @@ var EGYMaps = (function () {
             var SimpleMarkerSymbol = (await $arcgis.import('esri/symbols/SimpleMarkerSymbol')).default;
             var TextSymbol = (await $arcgis.import('esri/symbols/TextSymbol')).default;
 
-            var map = new Map({
+        var map = new EsriMap({
                 basemap: 'topo-vector'
             });
 
@@ -368,15 +379,21 @@ var EGYMaps = (function () {
 
             var proxyUrl = opts.contextLayer || '';
             if (proxyUrl) {
-                fetch(proxyUrl)
-                    .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-                    .then(function (data) {
-                        if (!data || !data.features) return;
+                var ctxLayerUrl = proxyUrl;
+                if (_mapConfig) {
+                    var ctxKey = proxyUrl.toLowerCase();
+                    if (ctxKey === 'destinations' && _mapConfig.destinationsLayerUrl) ctxLayerUrl = _mapConfig.destinationsLayerUrl + '/0';
+                    else if (ctxKey === 'branches' && _mapConfig.branchesLayerUrl) ctxLayerUrl = _mapConfig.branchesLayerUrl + '/0';
+                }
+                var ctxLayer = new FeatureLayer({ url: ctxLayerUrl, outFields: ['*'] });
+                ctxLayer.queryFeatures({ where: '1=1', outFields: ['*'], returnGeometry: true })
+                    .then(function (result) {
+                        if (!result || !result.features) return;
                         var ctxStyle = opts.contextStyle || { radius: 6, fillColor: '#888', color: '#555', weight: 1, opacity: 0.6, fillOpacity: 0.35 };
-                        data.features.forEach(function (f) {
-                            if (!f.geometry || !f.geometry.x) return;
+                        result.features.forEach(function (f) {
+                            if (!f.geometry) return;
                             var g = new Graphic({
-                                geometry: new Point({ longitude: f.geometry.x, latitude: f.geometry.y, spatialReference: { wkid: 4326 } }),
+                                geometry: f.geometry,
                                 symbol: new SimpleMarkerSymbol({
                                     style: 'circle',
                                     color: ctxStyle.fillColor || '#888',
