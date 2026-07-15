@@ -1,64 +1,88 @@
-﻿@model Tourist_Project_MVC.View_Model.MissionWithDeptListVM
+@model Tourist_Project_MVC.View_Model.MissionWithDeptListVM
 
 @{
-    ViewData["Title"] = @Localizer["Mission_AddTitle"].Value;
+    ViewData["Title"] = Localizer["Mission_AddTitle"].Value;
     SelectList destItems = new SelectList(Model.destinations, "Id", "Name");
 }
 
 @if (User.Identity.IsAuthenticated)
 {
-    <div class="container mt-4" style="max-width: 700px;">
-        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-
-            <div class="card-header py-3"
-                 style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
-                <h4 class="text-white mb-0">
+    <div class="container mt-5 mb-5" style="max-width: 750px;">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden form-card">
+            <!-- Card Header -->
+            <div class="card-header py-4 text-center header-gradient">
+                <h3 class="text-white mb-0 font-cinzel">
                     <i class="bi bi-plus-circle-fill me-2"></i> @Localizer["Mission_AddNewTitle"].Value
-                </h4>
+                </h3>
+                <p class="text-white-50 small mb-0 mt-1">Fill in the details to create a new tourist mission</p>
             </div>
 
-            <div class="card-body p-4">
-                <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <!-- Card Body -->
+            <div class="card-body p-4 p-md-5 bg-white">
+                <form asp-action="Create" class="needs-validation">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 rounded-3 mb-4 shadow-sm" role="alert"></div>
 
-                    <div class="mb-3">
-                        <label asp-for="MissionType" class="form-label fw-bold"></label>
-                        <input asp-for="MissionType" class="form-control" />
-                        <span asp-validation-for="MissionType" class="text-danger"></span>
+                    <div class="row g-4">
+                        <!-- Mission Type -->
+                        <div class="col-12">
+                            <label asp-for="MissionType" class="form-label fw-bold text-dark-egy"></label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-tag"></i></span>
+                                <input asp-for="MissionType" class="form-control-custom" placeholder="e.g. Exploration, Historical, Food" />
+                            </div>
+                            <span asp-validation-for="MissionType" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Title -->
+                        <div class="col-12">
+                            <label asp-for="Title" class="form-label fw-bold text-dark-egy"></label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-journal-bookmark"></i></span>
+                                <input asp-for="Title" class="form-control-custom" placeholder="Enter an engaging title" />
+                            </div>
+                            <span asp-validation-for="Title" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label fw-bold text-dark-egy"></label>
+                            <div class="input-group-custom align-items-start">
+                                <span class="input-icon pt-2.5"><i class="bi bi-file-text"></i></span>
+                                <textarea asp-for="Description" class="form-control-custom" rows="4" placeholder="Describe what travelers need to do..."></textarea>
+                            </div>
+                            <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Points Reward & Destination -->
+                        <div class="col-md-6">
+                            <label asp-for="PointsReward" class="form-label fw-bold text-dark-egy"></label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-star"></i></span>
+                                <input asp-for="PointsReward" class="form-control-custom" type="number" placeholder="e.g. 150" min="0" />
+                            </div>
+                            <span asp-validation-for="PointsReward" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DestinationId" class="form-label fw-bold text-dark-egy"></label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-geo-alt"></i></span>
+                                <select asp-for="DestinationId" asp-items="destItems" class="form-control-custom form-select-custom">
+                                    <option value="">@Localizer["Mission_SelectDestination"].Value</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="DestinationId" class="text-danger small mt-1 d-block"></span>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Title" class="form-label fw-bold"></label>
-                        <input asp-for="Title" class="form-control" />
-                        <span asp-validation-for="Title" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label fw-bold"></label>
-                        <input asp-for="Description" class="form-control" />
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="PointsReward" class="form-label fw-bold"></label>
-                        <input asp-for="PointsReward" class="form-control" type="number" />
-                        <span asp-validation-for="PointsReward" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="DestinationId" class="form-label fw-bold"></label>
-                        <select asp-for="DestinationId" asp-items="destItems" class="form-select">
-                            <option value="">@Localizer["Mission_SelectDestination"].Value</option>
-                        </select>
-                    </div>
-
-                    <div class="d-flex gap-2 mt-4">
-                        <button type="submit" class="btn btn-success px-4">
-                            <i class="bi bi-check-lg me-1"></i> @Localizer["Mission_Save"].Value
-                        </button>
-                        <a asp-action="Index" class="btn btn-secondary">
+                    <!-- Actions -->
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-end mt-5 pt-3 border-top border-light">
+                        <a asp-action="Index" class="btn btn-cancel-custom px-4 py-2.5 order-2 order-sm-1">
                             <i class="bi bi-x-lg me-1"></i> @Localizer["Mission_Cancel"].Value
                         </a>
+                        <button type="submit" class="btn btn-save-custom px-5 py-2.5 order-1 order-sm-2 shadow-sm">
+                            <i class="bi bi-check-lg me-1"></i> @Localizer["Mission_Save"].Value
+                        </button>
                     </div>
                 </form>
             </div>
@@ -70,4 +94,119 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <style>
+        .form-card {
+            border: 1px solid rgba(200, 131, 42, 0.15) !important;
+            box-shadow: 0 15px 35px rgba(30, 18, 10, 0.08) !important;
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, var(--egy-dark) 0%, #3a2212 50%, var(--egy-primary) 100%);
+            border-bottom: 3px solid var(--egy-accent);
+        }
+
+        .text-dark-egy {
+            color: var(--egy-dark);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+        }
+
+        /* Custom Input Styling */
+        .input-group-custom {
+            display: flex;
+            align-items: stretch;
+            background-color: #ffffff;
+            border: 1px solid rgba(200, 131, 42, 0.3);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .input-group-custom:focus-within {
+            border-color: var(--egy-primary);
+            box-shadow: 0 0 0 3.5px rgba(200, 131, 42, 0.15);
+        }
+
+        .input-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            background-color: rgba(200, 131, 42, 0.05);
+            color: var(--egy-muted-gold);
+            border-right: 1px solid rgba(200, 131, 42, 0.15);
+            font-size: 1.1rem;
+        }
+
+        .form-control-custom {
+            flex: 1 1 auto;
+            width: 1%;
+            min-width: 0;
+            border: none;
+            padding: 0.75rem 1rem;
+            color: #333333;
+            outline: none;
+            background-color: transparent;
+            font-size: 0.95rem;
+        }
+
+        .form-control-custom:focus {
+            outline: none;
+        }
+
+        .form-select-custom {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23C8832A' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px 12px;
+            padding-right: 2.5rem;
+        }
+
+        textarea.form-control-custom {
+            resize: vertical;
+        }
+
+        .pt-2.5 {
+            padding-top: 0.9rem !important;
+        }
+
+        /* Buttons Styling */
+        .btn-save-custom {
+            background-color: var(--egy-success);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save-custom:hover {
+            background-color: var(--egy-success-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+            color: #ffffff;
+        }
+
+        .btn-cancel-custom {
+            background-color: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel-custom:hover {
+            background-color: #e9ecef;
+            color: #212529;
+            transform: translateY(-2px);
+        }
+    </style>
 }

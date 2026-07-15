@@ -1,69 +1,204 @@
 @model Tourist_Project_MVC.Models.Tourist
 
 @{
-    ViewData["Title"] = @Localizer["TouristAdmin_AddTourist"].Value;
+    ViewData["Title"] = Localizer["TouristAdmin_AddTourist"].Value;
 }
 
 @if (User.Identity.IsAuthenticated)
 {
-    <div class="container mt-4" style="max-width: 700px;">
-        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-
-            <div class="card-header py-3"
-                 style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
-                <h4 class="text-white mb-0">
-                    <i class="bi bi-plus-circle-fill me-2"></i> @Localizer["TouristAdmin_AddNewTourist"].Value
-                </h4>
+    <div class="container mt-5 mb-5" style="max-width: 750px;">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden form-card">
+            <!-- Card Header -->
+            <div class="card-header py-4 text-center header-gradient">
+                <h3 class="text-white mb-0 font-cinzel">
+                    <i class="bi bi-person-plus-fill me-2"></i> @Localizer["TouristAdmin_AddNewTourist"].Value
+                </h3>
+                <p class="text-white-50 small mb-0 mt-1">Register a new tourist into the system</p>
             </div>
 
-            <div class="card-body p-4">
-                <form asp-action="Create" method="post">
+            <!-- Card Body -->
+            <div class="card-body p-4 p-md-5 bg-white">
+                <form asp-action="Create" method="post" class="needs-validation">
                     @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 rounded-3 mb-4 shadow-sm" role="alert"></div>
 
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label fw-bold"></label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                    <div class="row g-4">
+                        <!-- Name -->
+                        <div class="col-md-6">
+                            <label asp-for="Name" class="form-label fw-bold text-dark-egy"></label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-person"></i></span>
+                                <input asp-for="Name" class="form-control-custom" placeholder="Full name" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Nationality -->
+                        <div class="col-md-6">
+                            <label asp-for="Nationality" class="form-label fw-bold text-dark-egy"></label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-globe"></i></span>
+                                <input asp-for="Nationality" class="form-control-custom" placeholder="e.g. French, British" />
+                            </div>
+                            <span asp-validation-for="Nationality" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-bold text-dark-egy"></label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control-custom" type="email" placeholder="example@domain.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label fw-bold text-dark-egy"></label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-key"></i></span>
+                                <input asp-for="Password" class="form-control-custom" type="password" placeholder="••••••••" />
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- ID Number -->
+                        <div class="col-md-6">
+                            <label asp-for="IdNumber" class="form-label fw-bold text-dark-egy">@Localizer["TouristAdmin_IdNumber"].Value</label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-card-list"></i></span>
+                                <input asp-for="IdNumber" class="form-control-custom" placeholder="National identity number" />
+                            </div>
+                            <span asp-validation-for="IdNumber" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Passport -->
+                        <div class="col-md-6">
+                            <label asp-for="Passport" class="form-label fw-bold text-dark-egy"></label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-file-earmark-person"></i></span>
+                                <input asp-for="Passport" class="form-control-custom" placeholder="Passport number" />
+                            </div>
+                            <span asp-validation-for="Passport" class="text-danger small mt-1 d-block"></span>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Nationality" class="form-label fw-bold"></label>
-                        <input asp-for="Nationality" class="form-control" />
-                        <span asp-validation-for="Nationality" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label fw-bold"></label>
-                        <input asp-for="Email" class="form-control" type="email" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label fw-bold"></label>
-                        <input asp-for="Password" class="form-control" type="password" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="IdNumber" class="form-label fw-bold">@Localizer["TouristAdmin_IdNumber"].Value</label>
-                        <input asp-for="IdNumber" class="form-control" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Passport" class="form-label fw-bold"></label>
-                        <input asp-for="Passport" class="form-control" />
-                    </div>
-
-                    <div class="d-flex gap-2 mt-4">
-                        <button type="submit" class="btn btn-success px-4">
-                            <i class="bi bi-check-lg me-1"></i> @Localizer["TouristAdmin_Save"].Value
-                        </button>
-                        <a asp-action="Index" class="btn btn-secondary">
+                    <!-- Actions -->
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-end mt-5 pt-3 border-top border-light">
+                        <a asp-action="Index" class="btn btn-cancel-custom px-4 py-2.5 order-2 order-sm-1">
                             <i class="bi bi-x-lg me-1"></i> @Localizer["TouristAdmin_Cancel"].Value
                         </a>
+                        <button type="submit" class="btn btn-save-custom px-5 py-2.5 order-1 order-sm-2 shadow-sm">
+                            <i class="bi bi-check-lg me-1"></i> @Localizer["TouristAdmin_Save"].Value
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <style>
+        .form-card {
+            border: 1px solid rgba(200, 131, 42, 0.15) !important;
+            box-shadow: 0 15px 35px rgba(30, 18, 10, 0.08) !important;
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, var(--egy-dark) 0%, #3a2212 50%, var(--egy-primary) 100%);
+            border-bottom: 3px solid var(--egy-accent);
+        }
+
+        .text-dark-egy {
+            color: var(--egy-dark);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+        }
+
+        /* Custom Input Styling */
+        .input-group-custom {
+            display: flex;
+            align-items: stretch;
+            background-color: #ffffff;
+            border: 1px solid rgba(200, 131, 42, 0.3);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .input-group-custom:focus-within {
+            border-color: var(--egy-primary);
+            box-shadow: 0 0 0 3.5px rgba(200, 131, 42, 0.15);
+        }
+
+        .input-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            background-color: rgba(200, 131, 42, 0.05);
+            color: var(--egy-muted-gold);
+            border-right: 1px solid rgba(200, 131, 42, 0.15);
+            font-size: 1.1rem;
+        }
+
+        .form-control-custom {
+            flex: 1 1 auto;
+            width: 1%;
+            min-width: 0;
+            border: none;
+            padding: 0.75rem 1rem;
+            color: #333333;
+            outline: none;
+            background-color: transparent;
+            font-size: 0.95rem;
+        }
+
+        .form-control-custom:focus {
+            outline: none;
+        }
+
+        /* Buttons Styling */
+        .btn-save-custom {
+            background-color: var(--egy-success);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save-custom:hover {
+            background-color: var(--egy-success-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+            color: #ffffff;
+        }
+
+        .btn-cancel-custom {
+            background-color: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel-custom:hover {
+            background-color: #e9ecef;
+            color: #212529;
+            transform: translateY(-2px);
+        }
+    </style>
 }

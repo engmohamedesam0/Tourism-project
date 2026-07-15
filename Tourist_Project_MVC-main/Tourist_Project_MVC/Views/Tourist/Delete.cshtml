@@ -1,31 +1,162 @@
 @model Tourist_Project_MVC.Models.Tourist
 
 @{
-    ViewData["Title"] = @Localizer["TouristAdmin_DeleteTourist"].Value;
+    ViewData["Title"] = Localizer["TouristAdmin_DeleteTourist"].Value;
 }
+
 @if (User.Identity.IsAuthenticated)
 {
-<div class="container mt-4">
-    <h2 class="text-danger">🗑️ @Localizer["TouristAdmin_DeleteTourist"].Value</h2>
-    <hr />
-    <p class="lead">@Localizer["TouristAdmin_DeleteConfirm"].Value <strong>@Model.Name</strong>?</p>
+    <div class="container mt-5 mb-5" style="max-width: 650px;">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden delete-card">
+            <!-- Card Header -->
+            <div class="card-header py-4 text-center header-gradient">
+                <div class="delete-icon-wrapper mb-2">
+                    <i class="bi bi-person-x-fill"></i>
+                </div>
+                <h3 class="text-white mb-0 font-cinzel">
+                    @Localizer["TouristAdmin_DeleteTourist"].Value
+                </h3>
+                <p class="text-white-50 small mb-0 mt-1">This action is irreversible and will remove all associated data.</p>
+            </div>
 
-    <dl class="row">
-        <dt class="col-sm-3">@Localizer["TouristAdmin_Nationality"].Value</dt>
-        <dd class="col-sm-9">@Model.Nationality</dd>
+            <!-- Card Body -->
+            <div class="card-body p-4 p-md-5 bg-white">
+                <div class="alert alert-warning border-0 rounded-3 mb-4 d-flex align-items-center gap-3">
+                    <i class="bi bi-exclamation-triangle-fill fs-4 text-warning flex-shrink-0"></i>
+                    <div>
+                        @Localizer["TouristAdmin_DeleteConfirm"].Value
+                        <strong class="text-dark">@Model.Name</strong>?
+                    </div>
+                </div>
 
-        <dt class="col-sm-3">@Localizer["TouristAdmin_Email"].Value</dt>
-        <dd class="col-sm-9">@Model.Email</dd>
+                <!-- Tourist Summary Box -->
+                <h5 class="section-title mb-3 font-cinzel text-dark-egy">Tourist Summary</h5>
+                <div class="summary-box p-3 rounded-3 mb-4">
+                    <div class="row g-3">
+                        <div class="col-sm-4 fw-bold text-muted-egy">@Localizer["TouristAdmin_Name"].Value:</div>
+                        <div class="col-sm-8 text-dark fw-semibold">@Model.Name</div>
 
-        <dt class="col-sm-3">@Localizer["TouristAdmin_PointBalance"].Value</dt>
-        <dd class="col-sm-9">@Model.point_Balance pts</dd>
-    </dl>
+                        <div class="col-sm-4 fw-bold text-muted-egy">@Localizer["TouristAdmin_Nationality"].Value:</div>
+                        <div class="col-sm-8">
+                            <span class="badge badge-nationality">@Model.Nationality</span>
+                        </div>
 
-    <form asp-action="Delete" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">@Localizer["TouristAdmin_YesDelete"].Value</button>
-        <a asp-action="Index" class="btn btn-secondary">@Localizer["TouristAdmin_Cancel"].Value</a>
-    </form>
-</div>
+                        <div class="col-sm-4 fw-bold text-muted-egy">@Localizer["TouristAdmin_Email"].Value:</div>
+                        <div class="col-sm-8 text-dark">@Model.Email</div>
+
+                        <div class="col-sm-4 fw-bold text-muted-egy">@Localizer["TouristAdmin_PointBalance"].Value:</div>
+                        <div class="col-sm-8 fw-bold text-primary-egy">
+                            <i class="bi bi-star-fill text-warning me-1"></i> @Model.point_Balance pts
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <form asp-action="Delete" method="post" class="mt-4 pt-3 border-top border-light">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-end">
+                        <a asp-action="Index" class="btn btn-cancel-custom px-4 py-2.5 order-2 order-sm-1">
+                            <i class="bi bi-x-lg me-1"></i> @Localizer["TouristAdmin_Cancel"].Value
+                        </a>
+                        <button type="submit" class="btn btn-delete-custom px-4 py-2.5 order-1 order-sm-2 shadow-sm">
+                            <i class="bi bi-trash-fill me-1"></i> @Localizer["TouristAdmin_YesDelete"].Value
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <style>
+        .delete-card {
+            border: 1px solid rgba(220, 53, 69, 0.15) !important;
+            box-shadow: 0 15px 35px rgba(30, 18, 10, 0.08) !important;
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, var(--egy-dark) 0%, #4c1a1e 100%);
+            border-bottom: 3px solid #dc3545;
+        }
+
+        .delete-icon-wrapper {
+            font-size: 2.5rem;
+            color: #dc3545;
+            animation: pulse 2s infinite;
+        }
+
+        @@keyframes pulse {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+        }
+
+        .text-dark-egy {
+            color: var(--egy-dark);
+        }
+
+        .text-primary-egy {
+            color: var(--egy-primary);
+        }
+
+        .text-muted-egy {
+            color: var(--egy-text-muted);
+            font-size: 0.9rem;
+        }
+
+        .summary-box {
+            background-color: #f8f9fa;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .badge-nationality {
+            background-color: rgba(200, 131, 42, 0.1);
+            color: var(--egy-muted-gold);
+            border: 1px solid rgba(200, 131, 42, 0.25);
+            border-radius: var(--radius-pill);
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Buttons Styling */
+        .btn-delete-custom {
+            background-color: #dc3545;
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete-custom:hover {
+            background-color: #bb2d3b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.25);
+            color: #ffffff;
+        }
+
+        .btn-cancel-custom {
+            background-color: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel-custom:hover {
+            background-color: #e9ecef;
+            color: #212529;
+            transform: translateY(-2px);
+        }
+    </style>
 }
