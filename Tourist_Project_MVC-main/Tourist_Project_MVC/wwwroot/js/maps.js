@@ -73,10 +73,6 @@ var EGYMaps = (function () {
     }
 
     function _ensureApiKey(cfg) {
-        var key = cfg.apiKey || '';
-        if (key && window.esriConfig && window.esriConfig.apiKey !== key) {
-            window.esriConfig.apiKey = key;
-        }
     }
 
     async function initWfsMap(opts) {
@@ -87,19 +83,21 @@ var EGYMaps = (function () {
         var cfg = await _ensureConfig();
         _ensureApiKey(cfg);
 
-        var EsriMap = (await $arcgis.import('esri/Map')).default;
-        var MapView = (await $arcgis.import('esri/views/MapView')).default;
-        var FeatureLayer = (await $arcgis.import('esri/layers/FeatureLayer')).default;
-        var GraphicsLayer = (await $arcgis.import('esri/layers/GraphicsLayer')).default;
-        var Graphic = (await $arcgis.import('esri/Graphic')).default;
-        var Point = (await $arcgis.import('esri/geometry/Point')).default;
-        var PopupTemplate = (await $arcgis.import('esri/PopupTemplate')).default;
-        var TextSymbol = (await $arcgis.import('esri/symbols/TextSymbol')).default;
-        var Extent = (await $arcgis.import('esri/geometry/Extent')).default;
+        var EsriMap = await $arcgis.import('@arcgis/core/Map.js');
+        var MapView = await $arcgis.import('@arcgis/core/views/MapView.js');
+        var FeatureLayer = await $arcgis.import('@arcgis/core/layers/FeatureLayer.js');
+        var GraphicsLayer = await $arcgis.import('@arcgis/core/layers/GraphicsLayer.js');
+        var Graphic = await $arcgis.import('@arcgis/core/Graphic.js');
+        var Point = await $arcgis.import('@arcgis/core/geometry/Point.js');
+        var PopupTemplate = await $arcgis.import('@arcgis/core/PopupTemplate.js');
+        var TextSymbol = await $arcgis.import('@arcgis/core/symbols/TextSymbol.js');
+        var Extent = await $arcgis.import('@arcgis/core/geometry/Extent.js');
 
         var map = new EsriMap({
             basemap: 'topo-vector'
         });
+
+        document.getElementById(mapElId).innerHTML = '';
 
         var view = new MapView({
             container: mapEl,
@@ -140,9 +138,6 @@ var EGYMaps = (function () {
         async function loadLayer() {
             var layerUrl = layerUrlFor(opts.layer || opts.proxyUrl);
             if (!layerUrl) {
-                view.watch('stationary', function () {
-                    view.resize();
-                });
                 return;
             }
 
@@ -207,10 +202,6 @@ var EGYMaps = (function () {
         }
 
         loadLayer();
-
-        view.watch('stationary', function () {
-            view.resize();
-        });
 
         return {
             map: map,
@@ -301,18 +292,20 @@ var EGYMaps = (function () {
             var cfg = await _ensureConfig();
             _ensureApiKey(cfg);
 
-            var EsriMap = (await $arcgis.import('esri/Map')).default;
-            var MapView = (await $arcgis.import('esri/views/MapView')).default;
-            var FeatureLayer = (await $arcgis.import('esri/layers/FeatureLayer')).default;
-            var GraphicsLayer = (await $arcgis.import('esri/layers/GraphicsLayer')).default;
-            var Graphic = (await $arcgis.import('esri/Graphic')).default;
-            var Point = (await $arcgis.import('esri/geometry/Point')).default;
-            var SimpleMarkerSymbol = (await $arcgis.import('esri/symbols/SimpleMarkerSymbol')).default;
-            var TextSymbol = (await $arcgis.import('esri/symbols/TextSymbol')).default;
+            var EsriMap = await $arcgis.import('@arcgis/core/Map.js');
+            var MapView = await $arcgis.import('@arcgis/core/views/MapView.js');
+            var FeatureLayer = await $arcgis.import('@arcgis/core/layers/FeatureLayer.js');
+            var GraphicsLayer = await $arcgis.import('@arcgis/core/layers/GraphicsLayer.js');
+            var Graphic = await $arcgis.import('@arcgis/core/Graphic.js');
+            var Point = await $arcgis.import('@arcgis/core/geometry/Point.js');
+            var SimpleMarkerSymbol = await $arcgis.import('@arcgis/core/symbols/SimpleMarkerSymbol.js');
+            var TextSymbol = await $arcgis.import('@arcgis/core/symbols/TextSymbol.js');
 
         var map = new EsriMap({
                 basemap: 'topo-vector'
             });
+
+            document.getElementById(mapElId).innerHTML = '';
 
             var view = new MapView({
                 container: mapEl,
@@ -428,13 +421,10 @@ var EGYMaps = (function () {
                 });
             }
 
-            view.watch('stationary', function () {
-                view.resize();
-            });
-
             return { map: map, view: view, marker: pickerGraphic };
         })();
     }
 
     return { initWfsMap: initWfsMap, initLocationPicker: initLocationPicker };
 })();
+
