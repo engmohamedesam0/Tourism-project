@@ -277,7 +277,7 @@ var EGYMaps = (function () {
             Extent = await $arcgis.import('@arcgis/core/geometry/Extent.js');
 
             map = new EsriMap({
-                basemap: 'topo-vector'
+                basemap: 'osm'
             });
 
             mapEl.innerHTML = '';
@@ -328,7 +328,7 @@ var EGYMaps = (function () {
             var TextSymbol = await $arcgis.import('@arcgis/core/symbols/TextSymbol.js');
 
         var map = new EsriMap({
-                basemap: 'topo-vector'
+                basemap: 'osm'
             });
 
             mapEl.innerHTML = '';

@@ -372,9 +372,16 @@
         border-radius: 14px;
         border: 1px solid rgba(200, 131, 42, 0.25);
         background: repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    }
+
+    .map-watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: var(--egy-muted-gold);
+        opacity: 0.65;
     }
 
     .picker-row.match-highlight {

@@ -563,3 +563,10 @@ h1, h2, h3, h4, h5, h6,
         padding: 1.75rem 1.25rem;
     }
 }
+
+/* ArcGIS view must always fill its container regardless of parent flex context */
+.esri-view-root,
+.esri-view-surface {
+    width: 100% !important;
+    height: 100% !important;
+}

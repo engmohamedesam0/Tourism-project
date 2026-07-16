@@ -18,7 +18,9 @@ namespace Tourist_Project_MVC
 
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddViewLocalization();
-            builder.Services.AddHttpClient<IArcGISSyncService, ArcGISSyncService>();
+
+            builder.Services.AddHttpClient(); // registers IHttpClientFactory generally
+            builder.Services.AddScoped<IArcGISSyncService, ArcGISSyncService>();
 
             builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
             builder.Services.Configure<RequestLocalizationOptions>(o =>
