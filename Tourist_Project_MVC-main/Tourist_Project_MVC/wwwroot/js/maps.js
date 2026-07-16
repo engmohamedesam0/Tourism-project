@@ -87,51 +87,96 @@ var EGYMaps = (function () {
         });
     }
 
-    async function initWfsMap(opts) {
+    function initWfsMap(opts) {
         opts = opts || {};
         var mapEl = document.getElementById(opts.mapElId);
-        if (!mapEl || _maps[opts.mapElId]) return;
+        if (!mapEl || _maps[opts.mapElId]) return null;
 
-        await _waitForArcgisLoader();
-
-        var cfg = await _ensureConfig();
-        _ensureApiKey(cfg);
-
-        var EsriMap = await $arcgis.import('@arcgis/core/Map.js');
-        var MapView = await $arcgis.import('@arcgis/core/views/MapView.js');
-        var FeatureLayer = await $arcgis.import('@arcgis/core/layers/FeatureLayer.js');
-        var GraphicsLayer = await $arcgis.import('@arcgis/core/layers/GraphicsLayer.js');
-        var Graphic = await $arcgis.import('@arcgis/core/Graphic.js');
-        var Point = await $arcgis.import('@arcgis/core/geometry/Point.js');
-        var PopupTemplate = await $arcgis.import('@arcgis/core/PopupTemplate.js');
-        var TextSymbol = await $arcgis.import('@arcgis/core/symbols/TextSymbol.js');
-        var Extent = await $arcgis.import('@arcgis/core/geometry/Extent.js');
-
-        var map = new EsriMap({
-            basemap: 'topo-vector'
-        });
-
-        document.getElementById(mapElId).innerHTML = '';
-
-        var view = new MapView({
-            container: mapEl,
-            map: map,
-            center: [opts.center ? opts.center[1] : 31.2357, opts.center ? opts.center[0] : 30.0444],
-            zoom: opts.zoom || 7
-        });
-
-        _maps[opts.mapElId] = view;
+        var map, view, sourceLayer, overlayGraphicsLayer, graphicsByFeature;
+        var EsriMap, MapView, FeatureLayer, GraphicsLayer, Graphic, Point, PopupTemplate, TextSymbol, Extent;
 
         var propMap = opts.propMap || {};
         var popupHtml = opts.popupHtml || _buildPopupHtml;
         var markerStyle = opts.markerStyle || { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 };
         var onLayerReady = opts.onLayerReady || null;
 
-        var sourceLayer = null;
-        var overlayGraphicsLayer = new GraphicsLayer({ title: 'overlays' });
-        map.add(overlayGraphicsLayer);
+        var handle = {
+            get map() { return map; },
+            get view() { return view; },
+            layer: function () { return sourceLayer; },
+            overlayLayer: function () { return overlayGraphicsLayer; },
+            filterMarkers: function (predicate) {
+                if (!graphicsByFeature || !graphicsByFeature.size) return;
+                graphicsByFeature.forEach(function (graphic) {
+                    var show = true;
+                    if (typeof predicate === 'function') {
+                        var attrs = graphic.attributes || {};
+                        show = predicate({ attributes: attrs, properties: attrs }, graphic);
+                    }
+                    graphic.visible = show;
+                });
+            },
+            addStopOverlay: function (lat, lng, label) {
+                if (!overlayGraphicsLayer || !Point || !Graphic || !TextSymbol) return null;
+                var point = new Point({ longitude: lng, latitude: lat, spatialReference: { wkid: 4326 } });
+                var circle = new Graphic({
+                    geometry: point,
+                    symbol: {
+                        type: 'simple-marker',
+                        style: 'circle',
+                        color: '#0d6efd',
+                        size: 24,
+                        outline: { color: '#fff', width: 3 }
+                    }
+                });
+                var text = new Graphic({
+                    geometry: point,
+                    symbol: new TextSymbol({
+                        text: String(label),
+                        color: '#fff',
+                        font: { size: 12, weight: 'bold' },
+                        yoffset: 0,
+                        haloColor: '#000',
+                        haloSize: 1.5
+                    }).toJSON()
+                });
+                overlayGraphicsLayer.addMany([circle, text]);
+                return { marker: circle, label: text };
+            },
+            clearOverlays: function () {
+                if (overlayGraphicsLayer) overlayGraphicsLayer.removeAll();
+                if (graphicsByFeature) graphicsByFeature.clear();
+            },
+            fitBounds: function (latlngs) {
+                if (!view) return;
+                if (!latlngs || !latlngs.length) return;
+                var extent = latlngs.reduce(function (acc, ll) {
+                    acc[0] = Math.min(acc[0], ll[1]);
+                    acc[1] = Math.min(acc[1], ll[0]);
+                    acc[2] = Math.max(acc[2], ll[1]);
+                    acc[3] = Math.max(acc[3], ll[0]);
+                    return acc;
+                }, [Infinity, Infinity, -Infinity, -Infinity]);
+                view.goTo({
+                    target: new Extent({
+                        xmin: extent[0], ymin: extent[1], xmax: extent[2], ymax: extent[3],
+                        spatialReference: { wkid: 4326 }
+                    })
+                }, { duration: 1000, padding: { top: 40, bottom: 40, left: 40, right: 40 } });
+            },
+            openPopupAt: function (lat, lng, title) {
+                if (!view) return;
+                var point = new Point({ longitude: lng, latitude: lat, spatialReference: { wkid: 4326 } });
+                view.popup = {
+                    location: point,
+                    title: title || '',
+                    content: ''
+                };
+                view.openPopup();
+            }
+        };
 
-        var graphicsByFeature = new Map();
+        _maps[opts.mapElId] = handle;
 
         function layerUrlFor(optsLayer) {
             if (!optsLayer) return null;
@@ -215,80 +260,45 @@ var EGYMaps = (function () {
             }
         }
 
-        loadLayer();
+        (async function () {
+            await _waitForArcgisLoader();
 
-        return {
-            map: map,
-            view: view,
-            layer: function () { return sourceLayer; },
-            overlayLayer: function () { return overlayGraphicsLayer; },
-            filterMarkers: function (predicate) {
-                if (!graphicsByFeature.size) return;
-                graphicsByFeature.forEach(function (graphic, key) {
-                    var show = true;
-                    if (typeof predicate === 'function') {
-                        var attrs = graphic.attributes || {};
-                        show = predicate({ attributes: attrs, properties: attrs }, graphic);
-                    }
-                    graphic.visible = show;
-                });
-            },
-            addStopOverlay: function (lat, lng, label) {
-                var point = new Point({ longitude: lng, latitude: lat, spatialReference: { wkid: 4326 } });
-                var circle = new Graphic({
-                    geometry: point,
-                    symbol: {
-                        type: 'simple-marker',
-                        style: 'circle',
-                        color: '#0d6efd',
-                        size: 24,
-                        outline: { color: '#fff', width: 3 }
-                    }
-                });
-                var text = new Graphic({
-                    geometry: point,
-                    symbol: new TextSymbol({
-                        text: String(label),
-                        color: '#fff',
-                        font: { size: 12, weight: 'bold' },
-                        yoffset: 0,
-                        haloColor: '#000',
-                        haloSize: 1.5
-                    }).toJSON()
-                });
-                overlayGraphicsLayer.addMany([circle, text]);
-                return { marker: circle, label: text };
-            },
-            clearOverlays: function () {
-                overlayGraphicsLayer.removeAll();
-                graphicsByFeature.clear();
-            },
-            fitBounds: function (latlngs) {
-                if (!latlngs || !latlngs.length) return;
-                var extent = latlngs.reduce(function (acc, ll) {
-                    acc[0] = Math.min(acc[0], ll[1]);
-                    acc[1] = Math.min(acc[1], ll[0]);
-                    acc[2] = Math.max(acc[2], ll[1]);
-                    acc[3] = Math.max(acc[3], ll[0]);
-                    return acc;
-                }, [Infinity, Infinity, -Infinity, -Infinity]);
-                view.goTo({
-                    target: new Extent({
-                        xmin: extent[0], ymin: extent[1], xmax: extent[2], ymax: extent[3],
-                        spatialReference: { wkid: 4326 }
-                    })
-                }, { duration: 1000, padding: { top: 40, bottom: 40, left: 40, right: 40 } });
-            },
-            openPopupAt: function (lat, lng, title) {
-                var point = new Point({ longitude: lng, latitude: lat, spatialReference: { wkid: 4326 } });
-                view.popup = {
-                    location: point,
-                    title: title || '',
-                    content: ''
-                };
-                view.openPopup();
-            }
-        };
+            var cfg = await _ensureConfig();
+            _ensureApiKey(cfg);
+
+            EsriMap = await $arcgis.import('@arcgis/core/Map.js');
+            MapView = await $arcgis.import('@arcgis/core/views/MapView.js');
+            FeatureLayer = await $arcgis.import('@arcgis/core/layers/FeatureLayer.js');
+            GraphicsLayer = await $arcgis.import('@arcgis/core/layers/GraphicsLayer.js');
+            Graphic = await $arcgis.import('@arcgis/core/Graphic.js');
+            Point = await $arcgis.import('@arcgis/core/geometry/Point.js');
+            PopupTemplate = await $arcgis.import('@arcgis/core/PopupTemplate.js');
+            TextSymbol = await $arcgis.import('@arcgis/core/symbols/TextSymbol.js');
+            Extent = await $arcgis.import('@arcgis/core/geometry/Extent.js');
+
+            map = new EsriMap({
+                basemap: 'topo-vector'
+            });
+
+            mapEl.innerHTML = '';
+
+            view = new MapView({
+                container: mapEl,
+                map: map,
+                center: [opts.center ? opts.center[1] : 31.2357, opts.center ? opts.center[0] : 30.0444],
+                zoom: opts.zoom || 7
+            });
+
+            sourceLayer = null;
+            overlayGraphicsLayer = new GraphicsLayer({ title: 'overlays' });
+            map.add(overlayGraphicsLayer);
+
+            graphicsByFeature = new Map();
+
+            loadLayer();
+        })();
+
+        return handle;
     }
 
     function initLocationPicker(opts) {
@@ -321,7 +331,7 @@ var EGYMaps = (function () {
                 basemap: 'topo-vector'
             });
 
-            document.getElementById(mapElId).innerHTML = '';
+            mapEl.innerHTML = '';
 
             var view = new MapView({
                 container: mapEl,
@@ -443,7 +453,3 @@ var EGYMaps = (function () {
 
     return { initWfsMap: initWfsMap, initLocationPicker: initLocationPicker };
 })();
-
-
-
-
