@@ -75,10 +75,24 @@ var EGYMaps = (function () {
     function _ensureApiKey(cfg) {
     }
 
+    function _waitForArcgisLoader() {
+        if (window.$arcgis) return Promise.resolve(window.$arcgis);
+        return new Promise(function (resolve) {
+            var interval = setInterval(function () {
+                if (window.$arcgis) {
+                    clearInterval(interval);
+                    resolve(window.$arcgis);
+                }
+            }, 20);
+        });
+    }
+
     async function initWfsMap(opts) {
         opts = opts || {};
         var mapEl = document.getElementById(opts.mapElId);
         if (!mapEl || _maps[opts.mapElId]) return;
+
+        await _waitForArcgisLoader();
 
         var cfg = await _ensureConfig();
         _ensureApiKey(cfg);
@@ -289,6 +303,8 @@ var EGYMaps = (function () {
         var initialLng = (opts.initialLng !== undefined && opts.initialLng !== null) ? opts.initialLng : 31.2357;
 
         (async function () {
+            await _waitForArcgisLoader();
+
             var cfg = await _ensureConfig();
             _ensureApiKey(cfg);
 
@@ -427,4 +443,7 @@ var EGYMaps = (function () {
 
     return { initWfsMap: initWfsMap, initLocationPicker: initLocationPicker };
 })();
+
+
+
 
