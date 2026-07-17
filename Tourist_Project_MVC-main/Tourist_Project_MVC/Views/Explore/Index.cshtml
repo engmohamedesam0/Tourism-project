@@ -414,6 +414,7 @@
         var chips = document.querySelectorAll('#categoryChips .chip');
         var cards = Array.from(document.querySelectorAll('#exploreList .explore-card'));
         var mapInstance = null;
+        var searchFitTimer = null;
         var explorePropMap = {
             id: ['id', 'Id', 'destination_id'],
             name: ['name', 'Name', 'destination_name'],
@@ -554,7 +555,8 @@
                 });
                 syncMarkersFromChips();
                 toggleExploreEmpty();
-                fitExploreBounds();
+                clearTimeout(searchFitTimer);
+                searchFitTimer = setTimeout(fitExploreBounds, 200);
             });
             searchInput.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {

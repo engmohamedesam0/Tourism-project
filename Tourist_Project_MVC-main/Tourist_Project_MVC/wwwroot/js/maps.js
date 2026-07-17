@@ -54,6 +54,13 @@ var EGYMaps = (function () {
         return fallback[0] || '';
     }
 
+    function _firstKey(attrs, keys) {
+        for (var i = 0; i < keys.length; i++) {
+            if (attrs[keys[i]] !== undefined) return keys[i];
+        }
+        return keys[0];
+    }
+
     function _esc(s) {
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
@@ -93,6 +100,7 @@ var EGYMaps = (function () {
         if (!mapEl || _maps[opts.mapElId]) return null;
 
         var map, view, sourceLayer, overlayGraphicsLayer, graphicsByFeature;
+        var _lastFitPromise = null;
         var EsriMap, MapView, FeatureLayer, GraphicsLayer, Graphic, Point, PopupTemplate, TextSymbol, Extent;
 
         var propMap = opts.propMap || {};
@@ -157,12 +165,33 @@ var EGYMaps = (function () {
                     acc[3] = Math.max(acc[3], ll[0]);
                     return acc;
                 }, [Infinity, Infinity, -Infinity, -Infinity]);
-                view.goTo({
+
+                var EPS = 0.001;
+                var xmin = extent[0], ymin = extent[1], xmax = extent[2], ymax = extent[3];
+
+                // Degenerate (zero-size) extent: single point or coincident coords.
+                // Zoom to a sane, consistent level instead of an extreme one.
+                if (xmax - xmin < EPS && ymax - ymin < EPS) {
+                    var goToPoint = view.goTo({ center: [xmin, ymin], zoom: 14 }, { duration: 1000 });
+                    _lastFitPromise = goToPoint;
+                    goToPoint.catch(function () {
+                        if (goToPoint !== _lastFitPromise) return;
+                    });
+                    return;
+                }
+
+                var goToPromise = view.goTo({
                     target: new Extent({
-                        xmin: extent[0], ymin: extent[1], xmax: extent[2], ymax: extent[3],
+                        xmin: xmin, ymin: ymin, xmax: xmax, ymax: ymax,
                         spatialReference: { wkid: 4326 }
                     })
                 }, { duration: 1000, padding: { top: 40, bottom: 40, left: 40, right: 40 } });
+                _lastFitPromise = goToPromise;
+                // A superseded goTo rejects by design; ignore stale rejections so they
+                // never break a subsequent fitBounds call.
+                goToPromise.catch(function () {
+                    if (goToPromise !== _lastFitPromise) return;
+                });
             },
             openPopupAt: function (lat, lng, title) {
                 if (!view) return;
@@ -242,7 +271,8 @@ var EGYMaps = (function () {
                             popupTemplate: sourceLayer.popupTemplate
                         });
                         overlayGraphicsLayer.add(graphic);
-                        graphicsByFeature.set(f.attributes[Object.keys(propMap.id || ['id'])[0] || 'id'], graphic);
+                        var idKey = _firstKey(f.attributes, propMap.id || ['id']);
+                        graphicsByFeature.set(f.attributes[idKey], graphic);
                     });
                 }
 
