@@ -173,7 +173,9 @@
                                  data-dest-id="@Model.Stops[i].DestinationId"
                                  data-category="@Model.Stops[i].Category"
                                  data-status="@Model.Stops[i].Status"
-                                 data-price="@(Model.Stops[i].TicketPrice?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")">
+                                 data-price="@(Model.Stops[i].TicketPrice?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")"
+                                 data-lat="@Model.Stops[i].Lat.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                 data-lng="@Model.Stops[i].Lng.ToString(System.Globalization.CultureInfo.InvariantCulture)">
                                 <div class="form-check">
                                     <input type="hidden" asp-for="Stops[i].DestinationId" />
                                     <input type="hidden" asp-for="Stops[i].DestinationName" />
@@ -582,6 +584,20 @@
 
             if (tripMap && tripMap.filterMarkers) tripMap.filterMarkers(tripPredicate);
             toggleTripEmpty();
+            fitTripBounds();
+        }
+
+        function fitTripBounds() {
+            if (!tripMap || !tripMap.fitBounds) return;
+            var latlngs = [];
+            $('.picker-row').each(function () {
+                if ($(this).css('display') === 'none') return;
+                var lat = parseFloat($(this).attr('data-lat'));
+                var lng = parseFloat($(this).attr('data-lng'));
+                if (!isNaN(lat) && !isNaN(lng)) latlngs.push([lat, lng]);
+            });
+            if (latlngs.length === 0) return;
+            tripMap.fitBounds(latlngs);
         }
 
         function toggleTripEmpty() {

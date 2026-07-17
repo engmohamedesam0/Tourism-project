@@ -88,6 +88,8 @@ namespace Tourist_Project_MVC.Controllers
                     Category = d.Category,
                     Status = d.Status,
                     TicketPrice = d.TicketPrice,
+                    Lat = d.Location != null ? d.Location.Y : 0,
+                    Lng = d.Location != null ? d.Location.X : 0,
                     ArrivalDate = DateTime.Today,
                     DepartureDate = DateTime.Today.AddDays(1)
                 }).ToList()

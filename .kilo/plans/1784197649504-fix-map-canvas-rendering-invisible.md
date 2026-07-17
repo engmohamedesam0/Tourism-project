@@ -119,3 +119,63 @@ No change needed; just verify this remains intact.
 3. Confirm basemap tiles and markers are visible.
 4. Check `NearMe/Details` — same fix applies even though it currently has no JS map init.
 5. Destination and SponsorBranch create/edit pages do not need CSS changes (no flex centering), but verify maps still render there after the global `site.css` override lands.
+
+---
+
+# Fix duplicate markers per point + filter-doesn't-affect-map symptom
+
+## Summary
+`initWfsMap` in `wwwroot/js/maps.js` adds the raw ArcGIS `FeatureLayer` to the map (`map.add(sourceLayer)`) and separately builds custom-styled overlay graphics into `overlayGraphicsLayer`. Both layers render visible markers for the same features, producing duplicate markers. The filter chips (`filterMarkers()`) only toggle visibility on the overlay graphics, so the unfiltered raw `FeatureLayer` markers remain visible — making the filter appear broken.
+
+## Root cause confirmed
+In `maps.js` `initWfsMap` (around line 216):
+```js
+sourceLayer = new FeatureLayer({ url: layerUrl, ... });
+map.add(sourceLayer);           // renders default symbology, unfiltered
+// ...
+var result = await sourceLayer.queryFeatures(query);
+result.features.forEach(function (f) {
+    var graphic = new Graphic({ ... });  // custom styled marker
+    overlayGraphicsLayer.add(graphic);   // second set of markers
+});
+overlayGraphicsLayer is also added to the map → two markers per feature.
+```
+
+`filterMarkers()` (line 108-118) only sets `graphic.visible = show` on overlay graphics. `sourceLayer` markers are untouched.
+
+## Fix
+
+### 1. Hide the raw `FeatureLayer` in `initWfsMap`
+
+In `wwwroot/js/maps.js`, immediately after `map.add(sourceLayer);` (line 216), add:
+
+```js
+sourceLayer.visible = false;
+```
+
+This keeps `sourceLayer` in the map's layer collection (so `queryFeatures`, `whenLayerView`, and `layer()` accessor all continue to work) but prevents its default-rendered markers from appearing on screen.
+
+**Do NOT** remove `map.add(sourceLayer)` — some ArcGIS query/layer-view operations behave more reliably when the layer is part of the map collection even if invisible.
+
+### 2. Check `initLocationPicker` for the same pattern
+
+In `initLocationPicker`, `contextLayer` is created at line 407:
+```js
+var ctxLayer = new FeatureLayer({ url: ctxLayerUrl, outFields: ['*'] });
+ctxLayer.queryFeatures({ ... })
+```
+
+`ctxLayer` is **never** added to the map (`map.add(ctxLayer)` is absent). It is only used for `queryFeatures`, and the resulting graphics are added to `overlayLayer`. Therefore there is **no duplicate-rendering issue** in `initLocationPicker` — no change needed there.
+
+### 3. No other files need changes
+
+This is a single-line fix in one JS file. No CSS, no view changes.
+
+## Verification
+
+1. Reload `/Explore`, `/NearMe`, `/Trip`, `/Trip/Details/{id}`.
+2. Confirm exactly **one** marker per feature (not two).
+3. On `/Explore`, click category chips (Temples, Museums, Nature, Adventure, All) — map markers should visibly filter to match.
+4. On `/NearMe`, confirm TYPE/RATING/DISTANCE page-reload filters still show only matching markers.
+5. Confirm popups still open on marker click (they're bound to overlay graphics, unaffected).
+6. Check `Destination/Create`, `Destination/Edit`, `SponsorBranch/Create`, `SponsorBranch/Edit` — no visual regression; `initLocationPicker` is unaffected.

@@ -449,6 +449,18 @@
             return html;
         }
 
+        function getExploreSearch() {
+            var el = document.getElementById('exploreSearch');
+            return el ? el.value.trim().toLowerCase() : '';
+        }
+
+        function cardMatchesSearch(card, q) {
+            if (!q) return true;
+            var name = (card.getAttribute('data-name') || '').toLowerCase();
+            var cat = (card.getAttribute('data-category') || '').toLowerCase();
+            return name.indexOf(q) > -1 || cat.indexOf(q) > -1;
+        }
+
         function explorePredicate(feature) {
             var p = feature.properties || {};
             var activeFilter = document.querySelector('#categoryChips .chip-active');
@@ -457,7 +469,11 @@
             var activeStatus = isAll ? null : (activeFilter ? activeFilter.getAttribute('data-status') : null);
             var propCat = _firstDefined(p, explorePropMap.category, ['']);
             var propStatus = _firstDefined(p, explorePropMap.status, ['']);
-            return isAll || (activeCat && propCat === activeCat) || (activeStatus && propStatus === activeStatus);
+            var chipMatch = isAll || (activeCat && propCat === activeCat) || (activeStatus && propStatus === activeStatus);
+            var q = getExploreSearch();
+            var name = _firstDefined(p, explorePropMap.name, ['']).toLowerCase();
+            var searchMatch = !q || name.indexOf(q) > -1 || propCat.toLowerCase().indexOf(q) > -1;
+            return chipMatch && searchMatch;
         }
 
         function syncMarkersFromChips() {
@@ -466,22 +482,46 @@
             }
         }
 
-        function applyFilter(chip) {
-            var category = chip.getAttribute('data-category');
-            var status = chip.getAttribute('data-status');
+        function cardMatchesChip(card, activeFilter) {
+            if (!activeFilter) return true;
+            var isAll = activeFilter.getAttribute('data-filter') === 'all';
+            if (isAll) return true;
+            var category = activeFilter.getAttribute('data-category');
+            var status = activeFilter.getAttribute('data-status');
+            if (category) return card.getAttribute('data-category') === category;
+            if (status) return card.getAttribute('data-status') === status;
+            return true;
+        }
 
+        function getActiveChip() {
+            return document.querySelector('#categoryChips .chip-active');
+        }
+
+        function fitExploreBounds() {
+            if (!mapInstance || !mapInstance.fitBounds) return;
+            var q = getExploreSearch();
+            var activeFilter = getActiveChip();
+            var latlngs = [];
             cards.forEach(function (card) {
-                var match = true;
-                if (category) {
-                    match = card.getAttribute('data-category') === category;
-                } else if (status) {
-                    match = card.getAttribute('data-status') === status;
-                }
-                card.style.display = match ? '' : 'none';
+                if (card.style.display === 'none') return;
+                if (!cardMatchesChip(card, activeFilter)) return;
+                if (!cardMatchesSearch(card, q)) return;
+                var lat = parseFloat(card.getAttribute('data-lat'));
+                var lng = parseFloat(card.getAttribute('data-lng'));
+                if (!isNaN(lat) && !isNaN(lng)) latlngs.push([lat, lng]);
+            });
+            if (latlngs.length === 0) return;
+            mapInstance.fitBounds(latlngs);
+        }
+
+        function applyFilter(chip) {
+            cards.forEach(function (card) {
+                card.style.display = cardMatchesChip(card, chip) ? '' : 'none';
             });
 
             syncMarkersFromChips();
             toggleExploreEmpty();
+            fitExploreBounds();
         }
 
         function toggleExploreEmpty() {
@@ -498,6 +538,7 @@
                     cards.forEach(function (c) { c.style.display = ''; });
                     syncMarkersFromChips();
                     toggleExploreEmpty();
+                    fitExploreBounds();
                 } else {
                     applyFilter(chip);
                 }
@@ -507,19 +548,18 @@
         var searchInput = document.getElementById('exploreSearch');
         if (searchInput) {
             searchInput.addEventListener('keyup', function () {
-                var q = searchInput.value.trim().toLowerCase();
+                var q = getExploreSearch();
                 cards.forEach(function (card) {
-                    var name = (card.getAttribute('data-name') || '').toLowerCase();
-                    var cat = (card.getAttribute('data-category') || '').toLowerCase();
-                    var show = (!q || name.indexOf(q) > -1 || cat.indexOf(q) > -1);
-                    card.style.display = show ? '' : 'none';
+                    card.style.display = cardMatchesSearch(card, q) ? '' : 'none';
                 });
                 syncMarkersFromChips();
                 toggleExploreEmpty();
+                fitExploreBounds();
             });
             searchInput.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
-                    document.getElementById('exploreSearchForm').submit();
+                    e.preventDefault();
+                    searchInput.blur();
                 }
             });
         }

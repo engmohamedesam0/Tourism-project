@@ -36,6 +36,10 @@ namespace Tourist_Project_MVC.View_Model
         public string? Status { get; set; }
         public decimal? TicketPrice { get; set; }
 
+        // Map coordinates (Destination.Location is a NetTopologySuite Point: Y = lat, X = lng).
+        public double Lat { get; set; }
+        public double Lng { get; set; }
+
         public bool Selected { get; set; }
 
         [DataType(DataType.Date)]

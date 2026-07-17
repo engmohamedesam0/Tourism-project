@@ -214,6 +214,7 @@ var EGYMaps = (function () {
             });
 
             map.add(sourceLayer);
+            sourceLayer.visible = false;
 
             try {
                 await view.whenLayerView(sourceLayer).ready;

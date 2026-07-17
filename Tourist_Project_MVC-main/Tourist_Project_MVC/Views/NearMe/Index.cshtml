@@ -40,7 +40,7 @@
                             <span class="input-group-text bg-white border-end-0">
                                 <i class="bi bi-search text-muted"></i>
                             </span>
-                            <input type="text" name="search" class="form-control border-start-0 ps-1"
+                            <input type="text" name="search" id="nearMeSearch" class="form-control border-start-0 ps-1"
                                    placeholder="@Localizer["NearMe_SearchPlaceholder"].Value" value="@Model.Search" />
                              <button class="btn btn-search-go" type="submit">@Localizer["NearMe_Go"].Value</button>
                         </div>
@@ -54,13 +54,13 @@
                         <span class="chip-label">@Localizer["NearMe_Type"].Value</span>
                         <div class="chips-group">
                             <button type="button" class="chip @(string.IsNullOrEmpty(Model.Type) ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('type', null)">@Localizer["NearMe_All"].Value</button>
+                                    onclick="setNearMeChip('type', null, this)">@Localizer["NearMe_All"].Value</button>
                             <button type="button" class="chip @(Model.Type == "Hotel" ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('type','Hotel')">@Localizer["NearMe_Hotel"].Value</button>
+                                    onclick="setNearMeChip('type','Hotel', this)">@Localizer["NearMe_Hotel"].Value</button>
                             <button type="button" class="chip @(Model.Type == "Airline" ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('type','Airline')">@Localizer["NearMe_Airline"].Value</button>
+                                    onclick="setNearMeChip('type','Airline', this)">@Localizer["NearMe_Airline"].Value</button>
                             <button type="button" class="chip @(Model.Type == "Tourism Agency" ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('type','Tourism Agency')">@Localizer["NearMe_Agency"].Value</button>
+                                    onclick="setNearMeChip('type','Tourism Agency', this)">@Localizer["NearMe_Agency"].Value</button>
                         </div>
                     </div>
 
@@ -69,11 +69,11 @@
                         <span class="chip-label">@Localizer["NearMe_Rating"].Value</span>
                         <div class="chips-group">
                             <button type="button" class="chip @(string.IsNullOrEmpty(Model.Rating) ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('rating', null)">@Localizer["NearMe_Any"].Value</button>
+                                    onclick="setNearMeChip('rating', null, this)">@Localizer["NearMe_Any"].Value</button>
                             <button type="button" class="chip @(Model.Rating == "4" ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('rating','4')">4★+</button>
+                                    onclick="setNearMeChip('rating','4', this)">4★+</button>
                             <button type="button" class="chip @(Model.Rating == "5" ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('rating','5')">5★</button>
+                                    onclick="setNearMeChip('rating','5', this)">5★</button>
                         </div>
                     </div>
 
@@ -82,13 +82,13 @@
                         <span class="chip-label">@Localizer["NearMe_Distance"].Value</span>
                         <div class="chips-group">
                             <button type="button" class="chip @(string.IsNullOrEmpty(Model.Distance) ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('distance', null)">@Localizer["NearMe_Any"].Value</button>
+                                    onclick="setNearMeChip('distance', null, this)">@Localizer["NearMe_Any"].Value</button>
                             <button type="button" class="chip @(Model.Distance == "5" ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('distance','5')">≤ 5 km</button>
+                                    onclick="setNearMeChip('distance','5', this)">≤ 5 km</button>
                             <button type="button" class="chip @(Model.Distance == "10" ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('distance','10')">≤ 10 km</button>
+                                    onclick="setNearMeChip('distance','10', this)">≤ 10 km</button>
                             <button type="button" class="chip @(Model.Distance == "25" ? "chip-active" : "")"
-                                    onclick="applyNearMeFilter('distance','25')">≤ 25 km</button>
+                                    onclick="setNearMeChip('distance','25', this)">≤ 25 km</button>
                         </div>
                     </div>
 
@@ -106,6 +106,7 @@
 
                 <!-- Sponsor list -->
                 <div class="nearme-list" id="nearMeList">
+                    <div id="nearMeEmptyFilter" class="text-muted small py-3" style="display:none">No results match your filters.</div>
                     @foreach (var card in Model.Cards)
                     {
                         var avg = (int)Math.Round(card.AvgRating);
@@ -113,7 +114,10 @@
                              data-id="@card.Sponsor.Id" 
                              data-lat="@card.Lat"
                              data-lng="@card.Long" 
-                             data-name="@card.Sponsor.Name">
+                             data-name="@card.Sponsor.Name"
+                             data-type="@card.Sponsor.Type"
+                             data-rating="@avg"
+                             data-distance="@card.DistanceKm.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture)">
                              
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="nearme-card-title mb-0">@card.Sponsor.Name</h5>
@@ -503,6 +507,7 @@
     </style>
 
     <script>
+        // Server round-trip path (only for destinationId / "Go" — they change the dataset)
         function applyNearMeFilter(key, value) {
             var form = document.getElementById('nearMeForm');
             var input = form.querySelector('input[name="' + key + '"]');
@@ -514,6 +519,19 @@
             }
             input.value = (value === null) ? '' : value;
             form.submit();
+        }
+
+        var nearMeState = { type: null, rating: null, distance: null, search: '' };
+
+        function setNearMeChip(key, value, chipEl) {
+            nearMeState[key] = (value === null || value === '') ? null : value;
+            // Update chip-active class within the same chip group
+            var group = chipEl.closest('.chips-group');
+            if (group) {
+                group.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('chip-active'); });
+            }
+            chipEl.classList.add('chip-active');
+            applyNearMeClientFilter();
         }
 
         (function () {
@@ -541,13 +559,75 @@
             }
 
             function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-            
+
             function _firstDefined(p, keys, fallback) {
                 for (var i = 0; i < keys.length; i++) {
                     var val = p[keys[i]];
                     if (val !== undefined && val !== null && String(val) !== '') return String(val);
                 }
                 return fallback[0] || '';
+            }
+
+            function cardMatchesState(card) {
+                var type = card.getAttribute('data-type');
+                var rating = parseFloat(card.getAttribute('data-rating')) || 0;
+                var distance = parseFloat(card.getAttribute('data-distance')) || 0;
+                var name = (card.getAttribute('data-name') || '').toLowerCase();
+                var typeLc = (type || '').toLowerCase();
+
+                if (nearMeState.type && type !== nearMeState.type) return false;
+                if (nearMeState.rating && rating < parseFloat(nearMeState.rating)) return false;
+                if (nearMeState.distance && distance > parseFloat(nearMeState.distance)) return false;
+
+                var q = (nearMeState.search || '').trim().toLowerCase();
+                if (q && name.indexOf(q) === -1 && typeLc.indexOf(q) === -1) return false;
+
+                return true;
+            }
+
+            function visibleSponsorIds() {
+                return Array.prototype.slice
+                    .call(document.querySelectorAll('#nearMeList .nearme-card[data-id]'))
+                    .filter(function (el) { return el.style.display !== 'none'; })
+                    .map(function (el) { return el.getAttribute('data-id'); });
+            }
+
+            function fitNearMeBounds() {
+                if (!nearMeMap || !nearMeMap.fitBounds) return;
+                var latlngs = [];
+                Array.prototype.slice
+                    .call(document.querySelectorAll('#nearMeList .nearme-card[data-id]'))
+                    .forEach(function (el) {
+                        if (el.style.display === 'none') return;
+                        var lat = parseFloat(el.getAttribute('data-lat'));
+                        var lng = parseFloat(el.getAttribute('data-lng'));
+                        if (!isNaN(lat) && !isNaN(lng)) latlngs.push([lat, lng]);
+                    });
+                if (latlngs.length === 0) return;
+                nearMeMap.fitBounds(latlngs);
+            }
+
+            function toggleNearMeEmpty() {
+                var visible = document.querySelectorAll('#nearMeList .nearme-card[data-id]');
+                var anyVisible = Array.prototype.slice.call(visible).some(function (el) { return el.style.display !== 'none'; });
+                var empty = document.getElementById('nearMeEmptyFilter');
+                if (empty) empty.style.display = anyVisible ? 'none' : '';
+            }
+
+            function applyNearMeClientFilter() {
+                var cards = document.querySelectorAll('#nearMeList .nearme-card[data-id]');
+                Array.prototype.slice.call(cards).forEach(function (card) {
+                    card.style.display = cardMatchesState(card) ? '' : 'none';
+                });
+                if (nearMeMap && nearMeMap.filterMarkers) {
+                    var ids = visibleSponsorIds();
+                    nearMeMap.filterMarkers(function (f) {
+                        var sid = _firstDefined(f.attributes, ['sponsor_id', 'SponsorId', 'sponsorId']);
+                        return ids.indexOf(String(sid)) > -1;
+                    });
+                }
+                toggleNearMeEmpty();
+                fitNearMeBounds();
             }
 
             var nearMeMap = EGYMaps.initWfsMap({
@@ -557,15 +637,30 @@
                 popupHtml: buildPopup,
                 markerStyle: { radius: 9, fillColor: '#2e9e5b', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
                 onLayerReady: function () {
-                    var visibleSponsorIds = Array.prototype.slice
-                        .call(document.querySelectorAll('#nearMeList .nearme-card[data-id]'))
-                        .map(function (el) { return el.getAttribute('data-id'); });
-                    nearMeMap.filterMarkers(function (f) {
-                        var sid = _firstDefined(f.attributes, ['sponsor_id', 'SponsorId', 'sponsorId']);
-                        return visibleSponsorIds.indexOf(String(sid)) > -1;
-                    });
+                    applyNearMeClientFilter();
                 }
             });
+
+            // Re-apply client-side filters from URL query string after a server reload.
+            // The chip active-classes are already rendered server-side from the model;
+            // here we only restore nearMeState so the live-filter logic stays consistent.
+            // onLayerReady -> applyNearMeClientFilter() then enforces these on first paint.
+            (function reapplyFromQuery() {
+                var params = new URLSearchParams(window.location.search);
+                var type = params.get('type');
+                var rating = params.get('rating');
+                var distance = params.get('distance');
+                var search = params.get('search');
+
+                if (type) nearMeState.type = type;
+                if (rating) nearMeState.rating = rating;
+                if (distance) nearMeState.distance = distance;
+                if (search) {
+                    nearMeState.search = search;
+                    var si = document.getElementById('nearMeSearch');
+                    if (si) si.value = search;
+                }
+            })();
 
             // Bind card clicks to Leaflet map panning and popup trigger
             var cards = Array.from(document.querySelectorAll('#nearMeList .nearme-card'));
@@ -604,6 +699,20 @@
                     }
                 });
             });
+
+            // Live client-side search (mirrors Explore) — independent of the "Go" server reload
+            var searchInput = document.getElementById('nearMeSearch');
+            if (searchInput) {
+                var debounceTimer;
+                searchInput.addEventListener('keyup', function () {
+                    var q = searchInput.value;
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(function () {
+                        nearMeState.search = q;
+                        applyNearMeClientFilter();
+                    }, 200);
+                });
+            }
         })();
     </script>
 }
