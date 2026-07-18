@@ -427,7 +427,10 @@
             }
             return fallback[0] || '';
         }
-        function destId(feature) { return String(feature.id || '').split('.').pop(); }
+        function destId(feature) {
+            var p = feature.attributes || feature.properties || {};
+            return _firstDefined(p, tripPropMap.id, ['']);
+        }
 
         var tripMap = EGYMaps.initWfsMap({
             mapElId: 'tripBuilderMap',
