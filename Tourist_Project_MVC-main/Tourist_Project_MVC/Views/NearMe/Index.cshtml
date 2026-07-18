@@ -676,26 +676,10 @@
                     var lng = parseFloat(card.getAttribute('data-lng'));
                     var cardId = card.getAttribute('data-id');
 
-                    var markerFound = false;
-                    if (nearMeMap && nearMeMap.overlayLayer) {
-                        nearMeMap.overlayLayer().graphics.forEach(function (graphic) {
-                            var p = graphic.attributes || {};
-                            var id = _firstDefined(p, nearMePropMap.id, []);
-                            if (String(id) === String(cardId)) {
-                                nearMeMap.view.goTo({ center: [graphic.geometry.x, graphic.geometry.y], zoom: 15 }, { duration: 1000 });
-                                nearMeMap.view.popup = {
-                                    location: graphic.geometry,
-                                    title: _firstDefined(p, nearMePropMap.name, ['']),
-                                    content: buildPopup({ attributes: p })
-                                };
-                                nearMeMap.view.openPopup();
-                                markerFound = true;
-                            }
-                        });
-                    }
-
-                    if (!markerFound && nearMeMap && nearMeMap.view && !isNaN(lat) && !isNaN(lng)) {
+                    var name = card.getAttribute('data-name') || '';
+                    if (nearMeMap && nearMeMap.view && !isNaN(lat) && !isNaN(lng)) {
                         nearMeMap.view.goTo({ center: [lng, lat], zoom: 15 }, { duration: 1000 });
+                        if (nearMeMap.openPopupAt) nearMeMap.openPopupAt(lat, lng, name);
                     }
                 });
             });

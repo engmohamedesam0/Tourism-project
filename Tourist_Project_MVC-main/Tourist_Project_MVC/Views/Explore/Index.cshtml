@@ -579,27 +579,10 @@
                 var lng = parseFloat(card.getAttribute('data-lng'));
                 var cardId = card.getAttribute('data-id');
 
-                var markerFound = false;
-                if (mapInstance && mapInstance.overlayLayer) {
-                    mapInstance.overlayLayer().graphics.forEach(function (graphic) {
-                        var attrs = graphic.attributes || {};
-                        var id = _firstDefined(attrs, explorePropMap.id, []);
-                        if (String(id) === String(cardId)) {
-                            view = mapInstance.view;
-                            view.goTo({ center: [graphic.geometry.x, graphic.geometry.y], zoom: 15 }, { duration: 1000 });
-                            view.popup = {
-                                location: graphic.geometry,
-                                title: _firstDefined(attrs, explorePropMap.name, ['']),
-                                content: buildPopup({ attributes: attrs })
-                            };
-                            view.openPopup();
-                            markerFound = true;
-                        }
-                    });
-                }
-
-                if (!markerFound && mapInstance && mapInstance.map && !isNaN(lat) && !isNaN(lng)) {
+                var name = card.getAttribute('data-name') || '';
+                if (mapInstance && mapInstance.view && !isNaN(lat) && !isNaN(lng)) {
                     mapInstance.view.goTo({ center: [lng, lat], zoom: 15 }, { duration: 1000 });
+                    if (mapInstance.openPopupAt) mapInstance.openPopupAt(lat, lng, name);
                 }
             });
         });
