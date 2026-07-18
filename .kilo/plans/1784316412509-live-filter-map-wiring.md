@@ -1,45 +1,58 @@
-# Plan: Trip map markers + NearMe closure verification + Egypt zoom check
+# Plan: Wire up the existing ArcGIS API key to the browser
 
-## IMPORTANT: repo-state correction (read first)
-The request states PART B (NearMe) is "confirmed NOT yet applied (repo still on the same commit)." **This contradicts the actual file.** A fresh read of `Views/NearMe/Index.cshtml` shows both NearMe sub-fixes are already present:
-- Lines 620-631: `nearMeState` + `setNearMeChip` are declared **inside** the IIFE, with `window.setNearMeChip = setNearMeChip;` at line 631 (so inline `onclick="setNearMeChip(...)"` resolves it).
-- Line 612: `var sid = _firstDefined(f.attributes, nearMePropMap.id, []);` — already the correct **3-argument** form.
+## Context
+Both maps render fully blank with **zero console errors** — a known symptom of anonymous ArcGIS usage being rate-limited and failing silently. The API key already exists in config (`appsettings.json:13`, `ArcGIS:ApiKey`) but is **never returned to the browser** and **never applied** to the ArcGIS SDK. `_ensureApiKey(cfg)` is an empty no-op, and its two call sites don't `await` it. This plan wires the key end-to-end so authenticated requests are made before any module import.
 
-So PART B does not require further edits. Re-applying it (moving global declarations that are already correctly placed inside the IIFE) would only risk breaking the page. The plan therefore treats PART B as **verification-only**. If, after pulling/cloning on the target machine, the file is found reverted to the broken state (global `setNearMeChip` at lines ~524-535, IIFE starting at ~537), then perform the move described in the "PART B (if reverted)" section.
+Assumption flagged: the blank-map symptom is *likely* caused by missing auth; this fix is correct regardless and is the required first step before re-testing filter interactions.
 
-## PART A — Trip: destinations never appear on the map (REAL FIX)
-File: `Views/Trip/Index.cshtml`
-- Line 430 (buggy): `function destId(feature) { return String(feature.id || '').split('.').pop(); }`
-- `filterMarkers()` (maps.js) calls the predicate with `{ attributes: {...}, properties: {...} }` — there is no top-level `.id`. So `destId` always returns `''`, `rowById['']` misses every row, and `tripPredicate()` (line ~473-478) returns `false` for **all** markers. `applyTripFilter()` runs automatically via `onLayerReady` on load, so every destination marker is hidden from the start.
-- Fix: replace line 430 with:
-  ```js
-  function destId(feature) {
-      var p = feature.attributes || feature.properties || {};
-      return _firstDefined(p, tripPropMap.id, ['']);
-  }
-  ```
-  - `_firstDefined` is defined at line 423 and `tripPropMap.id` at line 399 (`['id','Id','destination_id']`), both in scope at line 430. Mirror of how `buildPopup()` (line 409) already extracts fields.
-- Validation: `rowById` lookups (line 450-453, keyed by `data-dest-id`) now match the feature id; all destination markers appear on initial load with zero filters. Temporary `console.log` of unmatched ids during testing, then remove.
+## Verified state
+- `Controllers/MapController.cs:18-22` — `GetMapConfig()` returns only `destinationsLayerUrl` + `branchesLayerUrl`; no `apiKey`.
+- `wwwroot/js/maps.js:82-83` — `_ensureApiKey(cfg)` is empty `{}`.
+- `wwwroot/js/maps.js:297-298` — main `initWfsMap` flow: `var cfg = await _ensureConfig(); _ensureApiKey(cfg);` (no await), then `EsriMap = await $arcgis.import('@arcgis/core/Map.js')` at line 300.
+- `wwwroot/js/maps.js:349-350` — location-picker flow: same pattern, `$arcgis.import` starts at line 352.
+- `appsettings.json:13` — `ArcGIS:ApiKey` present (non-empty).
 
-## PART B — NearMe (VERIFY, do not re-edit unless reverted)
-File: `Views/NearMe/Index.cshtml`
-- Current good state: IIFE opens at line 524; `nearMeState`/`setNearMeChip` + `window.setNearMeChip` inside (620-631); `applyNearMeClientFilter` at 604; `filterMarkers` predicate uses 3-arg `_firstDefined` at 612.
-- Action: open the page, DevTools console open, click every type/rating/distance chip and type in search → **zero console errors**, list filters, non-matching markers disappear, map zooms to visible set. If errors appear, see fallback below.
+## Changes
 
-### PART B (if reverted to broken state)
-Move the `nearMeState` var + `setNearMeChip` function from global scope into the IIFE, right after `applyNearMeClientFilter` (after line 618), and add `window.setNearMeChip = setNearMeChip;` at the end of the IIFE. Leave `applyNearMeFilter` (lines 510-522) untouched. Also ensure line 612 reads `_firstDefined(f.attributes, nearMePropMap.id, [])` (3 args). Do NOT touch Explore/Index.cshtml or maps.js.
+### 1) Controllers/MapController.cs — return the API key
+Replace the `Json(new { ... })` body (lines 18-22) with:
+```csharp
+return Json(new
+{
+    apiKey = _config["ArcGIS:ApiKey"] ?? string.Empty,
+    destinationsLayerUrl = _config["ArcGIS:DestinationsLayerUrl"] ?? string.Empty,
+    branchesLayerUrl = _config["ArcGIS:BranchesLayerUrl"] ?? string.Empty
+});
+```
+No new usings needed (`IConfiguration` already injected, `string.Empty` already in scope).
 
-## PART C — Egypt default zoom (CONDITIONAL, likely no change)
-File: `wwwroot/js/maps.js`, MapView construction ~line 319:
-- Current default: `center: [opts.center ? opts.center[1] : 31.2357, opts.center ? opts.center[0] : 30.0444]` → resolves to `[31.2357, 30.0444]` = [lon, lat] = **Cairo**, `zoom: 7`. This already frames Egypt; none of the three pages pass `opts.center`, so this default is reached.
-- Action: leave as-is. Only IF, after PART A/B verification, the initial view still looks too wide, tighten to an Egypt-only extent: `center: [30.8, 26.8], zoom: 6`, and verify visually. Make that edit only if needed.
+### 2) wwwroot/js/maps.js — implement _ensureApiKey (lines 82-83)
+Replace the empty no-op with:
+```js
+async function _ensureApiKey(cfg) {
+    if (!cfg || !cfg.apiKey) return;
+    var esriConfig = await $arcgis.import('@arcgis/core/config.js');
+    esriConfig.apiKey = cfg.apiKey;
+}
+```
 
-## Scope
-- Files: `Views/Trip/Index.cshtml` (PART A, definitely edit), `Views/NearMe/Index.cshtml` (PART B, verify only unless reverted), `wwwroot/js/maps.js` (PART C, conditional).
-- Do NOT modify Explore/Index.cshtml, server controllers, or view models.
+### 3) wwwroot/js/maps.js — await at both call sites
+- Line 298 (main flow): change `_ensureApiKey(cfg);` → `await _ensureApiKey(cfg);`
+  (this is already inside an `async (function () {...})()` — confirmed the surrounding loader is async, so `await` is valid here.)
+- Line 350 (location-picker flow): change `_ensureApiKey(cfg);` → `await _ensureApiKey(cfg);`
+  (this loader is also `async (function () {...})()`.)
+
+Both `await`s sit **before** their respective `$arcgis.import('@arcgis/core/Map.js')` calls (lines 300 / 352), so the key is set on `esriConfig` before any request-bearing module import.
+
+## Scope guard
+- Only edit `MapController.cs` and `maps.js`.
+- Do NOT touch Explore/NearMe/Trip `.cshtml`, `filterMarkers`/`fitBounds`, or server filter logic.
 
 ## Validation
-1. Trip: load `Trip/Index` with console open; all destination markers present with no filters; toggling interests/budget filters shows/hides markers like Explore.
-2. NearMe: clean console across all chips + search; markers filter and map zooms.
-3. Egypt zoom: initial views frame Egypt reasonably; tighten only if too wide.
-4. `dotnet build` still passes (Trip/Explore/NearMe are view-only; maps.js is JS).
+1. `dotnet build` passes.
+2. Hard-refresh (cache clear) Explore, NearMe, Trip.
+3. Confirm markers render on initial load with zero filters and **zero console errors**.
+4. Only after confirming blank-map is fixed, re-test the filter interactions (chips/search/bounds) from the prior tasks.
+
+## Risk / open question
+- If maps are still blank after this with a clean console, the cause is something else (layer URL/permissions, basemap token, CORS) and needs a fresh look — but the key wiring is mandatory regardless and is the documented next step.

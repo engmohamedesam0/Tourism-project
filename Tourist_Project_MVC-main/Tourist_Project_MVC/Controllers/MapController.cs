@@ -17,6 +17,7 @@ namespace Tourist_Project_MVC.Controllers
         {
             return Json(new
             {
+                apiKey = _config["ArcGIS:ApiKey"] ?? string.Empty,
                 destinationsLayerUrl = _config["ArcGIS:DestinationsLayerUrl"] ?? string.Empty,
                 branchesLayerUrl = _config["ArcGIS:BranchesLayerUrl"] ?? string.Empty
             });

@@ -79,7 +79,10 @@ var EGYMaps = (function () {
             });
     }
 
-    function _ensureApiKey(cfg) {
+    async function _ensureApiKey(cfg) {
+        if (!cfg || !cfg.apiKey) return;
+        var esriConfig = await $arcgis.import('@arcgis/core/config.js');
+        esriConfig.apiKey = cfg.apiKey;
     }
 
     function _waitForArcgisLoader() {
@@ -295,7 +298,7 @@ var EGYMaps = (function () {
             await _waitForArcgisLoader();
 
             var cfg = await _ensureConfig();
-            _ensureApiKey(cfg);
+            await _ensureApiKey(cfg);
 
             EsriMap = await $arcgis.import('@arcgis/core/Map.js');
             MapView = await $arcgis.import('@arcgis/core/views/MapView.js');
@@ -347,7 +350,7 @@ var EGYMaps = (function () {
             await _waitForArcgisLoader();
 
             var cfg = await _ensureConfig();
-            _ensureApiKey(cfg);
+            await _ensureApiKey(cfg);
 
             var EsriMap = await $arcgis.import('@arcgis/core/Map.js');
             var MapView = await $arcgis.import('@arcgis/core/views/MapView.js');
