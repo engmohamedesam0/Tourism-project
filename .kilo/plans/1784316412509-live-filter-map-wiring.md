@@ -1,96 +1,69 @@
-# Plan: Fix two live-filter-map bugs in maps.js + call sites
+# Plan: Fix NearMe ReferenceError (chip click) + confirm _firstDefined fallback
 
-Scope correction from prior task: **`wwwroot/js/maps.js` IS in scope now.** Both root causes live there. Call-site edits are also required (Explore debounce).
+## Context
+NearMe filter chips throw `Uncaught ReferenceError: applyNearMeClientFilter is not defined at setNearMeChip` the moment any chip is clicked, breaking all client-side filtering on the NearMe map. `applyNearMeFilter` (destinationId dropdown + Go button) is separate and correct — leave it.
 
-## Confirmed root causes (verified in code)
+## Verified state of the file
+`Views/NearMe/Index.cshtml` (718 lines):
+- Lines 524-535: `nearMeState` (var) and `setNearMeChip(key, value, chipEl)` are declared **top-level / global** (outside any IIFE).
+- Line 526-535 `setNearMeChip` calls `applyNearMeClientFilter()`.
+- Lines 537-716: a single `(function () { ... })()` IIFE that defines `applyNearMeClientFilter` (line 617), `nearMeMap` (line 633), `cardMatchesState`, `visibleSponsorIds`, `fitNearMeBounds`, `toggleNearMeEmpty`, and `nearMeState` usage. IIFE closes at line 716.
+- 11 inline `onclick="setNearMeChip('type'|'rating'|'distance', ..., this)"` attributes (lines 57-91) — these resolve identifiers only in **global** scope, so `setNearMeChip` must stay reachable globally.
+- **BUG 2 status:** line 625 already reads `_firstDefined(f.attributes, nearMePropMap.id, [])` (3 args). The 2-arg version described in the request is **not present** — it was fixed in the previous turn. Keep line 625 as-is; do not change it.
 
-### BUG 1 — filterMarkers only affects one marker (filtered items never disappear)
-`wwwroot/js/maps.js:245`
+## Root cause (BUG 1)
+`setNearMeChip` is global but calls `applyNearMeClientFilter`, which is private to the IIFE closure. From a global function, `applyNearMeClientFilter` is undefined → `ReferenceError` before any filtering runs.
+
+## Fix
+Move `nearMeState` and `setNearMeChip` **inside** the IIFE (next to `applyNearMeClientFilter`), then expose `setNearMeChip` on `window` so the inline `onclick` attributes still resolve it.
+
+### Step 1 — remove the global declarations (lines 524-535)
+Delete:
 ```js
-graphicsByFeature.set(f.attributes[Object.keys(propMap.id || ['id'])[0] || 'id'], graphic);
+        var nearMeState = { type: null, rating: null, distance: null, search: '' };
+
+        function setNearMeChip(key, value, chipEl) {
+            nearMeState[key] = (value === null || value === '') ? null : value;
+            // Update chip-active class within the same chip group
+            var group = chipEl.closest('.chips-group');
+            if (group) {
+                group.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('chip-active'); });
+            }
+            chipEl.classList.add('chip-active');
+            applyNearMeClientFilter();
+        }
 ```
-`Object.keys(propMap.id)` returns array **indices** (`'0','1','2'`), so `f.attributes['0']` is `undefined` for every feature. Every graphic is therefore stored under the same `undefined` key → `graphicsByFeature` (a `Map`) collapses to **1** entry. `filterMarkers` (line 108) iterates that map, so it only ever toggles one graphic → nothing else ever hides.
+(but keep `applyNearMeFilter` at lines 510-522 exactly as-is).
 
-### BUG 2 — erratic/jumpy zoom when filtering/typing
-- **2a:** `Views/Explore/Index.cshtml:558` `fitExploreBounds()` is called directly inside the search `keyup` with **no debounce** (NearMe already debounces at ~200ms). Every keystroke fires a `view.goTo` animation.
-- **2b:** `maps.js fitBounds` (line 150-166) computes an `Extent` but has **no degenerate-extent guard**. A single matching marker (or coincident coords) yields `xmin===xmax && ymin===ymax`, making `view.goTo` jump to an extreme/undefined zoom.
-- **2c:** `fitBounds` calls `view.goTo(...)` (line 160) and ignores the returned promise. Rapid successive filters create overlapping animations that fight each other; a superseded `goTo` rejects and the code never accounts for that.
-
----
-
-## Fix 1 — resolve the real ID key (maps.js)
-Add a helper near `_firstDefined` (~line 55, after the `_firstDefined` function):
+### Step 2 — re-declare inside the IIFE, right after `applyNearMeClientFilter` (after line 631)
+Insert:
 ```js
-function _firstKey(attrs, keys) {
-    for (var i = 0; i < keys.length; i++) {
-        if (attrs[keys[i]] !== undefined) return keys[i];
-    }
-    return keys[0];
-}
+            var nearMeState = { type: null, rating: null, distance: null, search: '' };
+
+            function setNearMeChip(key, value, chipEl) {
+                nearMeState[key] = (value === null || value === '') ? null : value;
+                var group = chipEl.closest('.chips-group');
+                if (group) {
+                    group.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('chip-active'); });
+                }
+                chipEl.classList.add('chip-active');
+                applyNearMeClientFilter();
+            }
+            window.setNearMeChip = setNearMeChip;
 ```
-Replace line 245 with:
-```js
-var idKey = _firstKey(f.attributes, propMap.id || ['id']);
-graphicsByFeature.set(f.attributes[idKey], graphic);
-```
-Validation: after this, `graphicsByFeature.size` must equal `result.features.length` for all three layers:
-- Explore → `destinations` layer
-- NearMe → `branches` layer
-- Trip → `destinations` layer
-No longer collapses to 1. `filterMarkers` then toggles every real graphic.
+`nearMeState` is currently first referenced inside the IIFE at `reapplyFromQuery` (line 655) and used by `cardMatchesState` (line 578) etc. Placing this block after `applyNearMeClientFilter` keeps all references in-scope (they're already inside the IIFE). Note `reapplyFromQuery` (line 648) and `cardMatchesState` (line 571) already run inside the IIFE, so they will pick up the moved `nearMeState` with no change.
 
-## Fix 2a — debounce Explore search (Views/Explore/Index.cshtml)
-In the search `keyup` handler (lines 549-558), wrap the **bounds-triggering** work in a ~200ms debounce, mirroring NearMe. Keep DOM/list filtering immediate (cheap), debounce only the map fit:
-```js
-var q = getExploreSearch();
-cards.forEach(...);                 // immediate list update
-syncMarkersFromChips();             // immediate marker hide/show (filterMarkers is cheap)
-toggleExploreEmpty();
-clearTimeout(searchFitTimer);
-searchFitTimer = setTimeout(fitExploreBounds, 200);
-```
-Declare `var searchFitTimer;` near the top of the IIFE. (Do NOT debounce `syncMarkersFromChips` — marker visibility should track the list live per the prior task; only the `goTo` animation is what needs debouncing.)
+### Step 3 — no change to line 625
+Leave `_firstDefined(f.attributes, nearMePropMap.id, [])` as-is (already correct/3-arg).
 
-## Fix 2b — degenerate-extent guard (maps.js fitBounds)
-After computing `extent` (line 159) and before `view.goTo`, add:
-```js
-var EPS = 0.001;
-var xmin = extent[0], ymin = extent[1], xmax = extent[2], ymax = extent[3];
-if (xmax - xmin < EPS && ymax - ymin < EPS) {
-    view.goTo({ center: [xmin, ymin], zoom: 14 }, { duration: 1000 });
-    return;
-}
-```
-This makes a single-result (or coincident-coordinates) filter zoom to a sane, consistent level (zoom 14) instead of an extreme one. Multi-point extents still use the `Extent` target as before.
+## Scope guard
+- Only edit `Views/NearMe/Index.cshtml`.
+- Do NOT touch `Views/Explore/Index.cshtml`, `wwwroot/js/maps.js`, controllers, or VMs.
+- Do NOT modify `applyNearMeFilter` (lines 510-522).
 
-## Fix 2c — clean supersede of in-flight goTo (maps.js fitBounds)
-Store the last `goTo` promise on the closure and let a new call supersede it. ArcGIS cancels a superseded `goTo`; ignore its rejection so it never breaks later calls:
-```js
-var goToPromise = view.goTo({ target: new Extent({...}) }, { duration: 1000, padding: {...} });
-_lastFitPromise = goToPromise;
-goToPromise.catch(function (err) {
-    // Superseded/aborted goTo rejects by design; ignore unless it's our own subsequent call.
-    if (goToPromise !== _lastFitPromise) return;
-});
-```
-Declare `var _lastFitPromise;` in the closure scope (near `var map, view, ...` at line 95). Same pattern applies if the 2b single-point branch is taken (store its promise too). Do **not** touch the card-click `view.goTo` handlers in the views (out of scope; user-initiated pans).
-
----
-
-## Files to edit
-1. `wwwroot/js/maps.js`
-   - add `_firstKey` helper (~line 55)
-   - replace line 245 `graphicsByFeature.set(...)` 
-   - rewrite `fitBounds` (lines 150-166) with 2b guard + 2c promise handling
-2. `Views/Explore/Index.cshtml`
-   - debounce the `fitExploreBounds()` call in the search `keyup` (lines 549-558), add `var searchFitTimer;`
-
-## Out of scope / unchanged
-- `filterMarkers` predicate logic, `onLayerReady` callbacks, card-click pan/popup handlers in the three views, NearMe/Trip debounce (already correct), server controllers, `ViewBag.Search` initial populate.
-
-## Validation (post-fix)
-- All three pages: filter to a single category (Temples on Explore; one sponsor type on NearMe; one interest on Trip) → **every** non-matching marker hides, and the map zooms smoothly to fit only the matching markers.
-- `graphicsByFeature.size === result.features.length` on each page (verify via console / debugger; should be > 1 for real datasets).
-- Typing quickly in Explore search → no oscillation/jump; `goTo` animations supersede cleanly; no uncaught promise rejections in console.
-- Single-result filter → zoom settles at a sane level (not extreme).
-- `dotnet build` still passes (no C# changes here, but confirm nothing else broke).
+## Validation
+1. Reload NearMe page with DevTools console open.
+2. Click each type / rating / distance chip → **zero console errors**.
+3. Confirm the sponsor list filters, non-matching markers disappear from the map, and the map zooms to fit the remaining visible markers.
+4. Confirm the destinationId dropdown + Go button still do a server round-trip and client filters re-apply from the query string afterwards.
+5. (No C# change; `dotnet build` optional but should still pass.)

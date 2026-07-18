@@ -521,19 +521,6 @@
             form.submit();
         }
 
-        var nearMeState = { type: null, rating: null, distance: null, search: '' };
-
-        function setNearMeChip(key, value, chipEl) {
-            nearMeState[key] = (value === null || value === '') ? null : value;
-            // Update chip-active class within the same chip group
-            var group = chipEl.closest('.chips-group');
-            if (group) {
-                group.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('chip-active'); });
-            }
-            chipEl.classList.add('chip-active');
-            applyNearMeClientFilter();
-        }
-
         (function () {
             var nearMePropMap = {
                 id: ['id', 'Id', 'sponsor_id', 'SponsorId', 'sponsorId'],
@@ -622,13 +609,26 @@
                 if (nearMeMap && nearMeMap.filterMarkers) {
                     var ids = visibleSponsorIds();
                     nearMeMap.filterMarkers(function (f) {
-                        var sid = _firstDefined(f.attributes, ['sponsor_id', 'SponsorId', 'sponsorId']);
+                        var sid = _firstDefined(f.attributes, nearMePropMap.id, []);
                         return ids.indexOf(String(sid)) > -1;
                     });
                 }
                 toggleNearMeEmpty();
                 fitNearMeBounds();
             }
+
+            var nearMeState = { type: null, rating: null, distance: null, search: '' };
+
+            function setNearMeChip(key, value, chipEl) {
+                nearMeState[key] = (value === null || value === '') ? null : value;
+                var group = chipEl.closest('.chips-group');
+                if (group) {
+                    group.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('chip-active'); });
+                }
+                chipEl.classList.add('chip-active');
+                applyNearMeClientFilter();
+            }
+            window.setNearMeChip = setNearMeChip;
 
             var nearMeMap = EGYMaps.initWfsMap({
                 mapElId: 'nearbyMap',
