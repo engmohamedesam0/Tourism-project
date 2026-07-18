@@ -129,7 +129,7 @@ namespace Tourist_Project_MVC.Controllers
         // POST: /Destination/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
+        public async Task<IActionResult> Create(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
         {
             // Build the spatial point from the separate Lat/Long inputs BEFORE validation,
             // otherwise the implicit [Required] on the non-nullable Location property
@@ -142,7 +142,7 @@ namespace Tourist_Project_MVC.Controllers
                 destination.Visits = 0;
                 _repo.Add(destination);
                 _repo.Save();
-                _ = _arcgisSync.SyncDestinationsAsync(new[] { destination });
+                await _arcgisSync.SyncDestinationsAsync(new[] { destination });
                 return RedirectToAction("Index");
             }
             ViewBag.Lat = Lat;
@@ -161,7 +161,7 @@ namespace Tourist_Project_MVC.Controllers
         // POST: /Destination/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
+        public async Task<IActionResult> Edit(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
         {
             // Build the spatial point from the separate Lat/Long inputs BEFORE validation,
             // otherwise the implicit [Required] on the non-nullable Location property
@@ -173,7 +173,7 @@ namespace Tourist_Project_MVC.Controllers
             {
                 _repo.Update(destination);
                 _repo.Save();
-                _ = _arcgisSync.SyncDestinationsAsync(new[] { destination });
+                await _arcgisSync.SyncDestinationsAsync(new[] { destination });
                 return RedirectToAction("Index");
             }
             return View(destination);
