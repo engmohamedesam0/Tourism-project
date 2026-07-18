@@ -557,42 +557,8 @@
         })();
     </script>
 
-    <!-- AI Assistant widget toggle -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var btn = document.getElementById('aiAssistantBtn');
-            var panel = document.getElementById('aiAssistantPanel');
-            var closeBtn = panel ? panel.querySelector('.ai-widget-close') : null;
-
-            function openWidget() {
-                panel.classList.add('ai-widget-open');
-                panel.setAttribute('aria-hidden', 'false');
-                btn.setAttribute('aria-expanded', 'true');
-            }
-
-            function closeWidget() {
-                panel.classList.remove('ai-widget-open');
-                panel.setAttribute('aria-hidden', 'true');
-                btn.setAttribute('aria-expanded', 'false');
-            }
-
-            if (btn && panel) {
-                btn.addEventListener('click', function () {
-                    if (panel.classList.contains('ai-widget-open')) {
-                        closeWidget();
-                    } else {
-                        openWidget();
-                    }
-                });
-            }
-
-            if (closeBtn && panel) {
-                closeBtn.addEventListener('click', function () {
-                    closeWidget();
-                });
-            }
-        });
-    </script>
+    <!-- AI Assistant widget: open/close toggle + live chat (see wwwroot/js/aiChat.js) -->
+    <script src="~/js/aiChat.js"></script>
 
     <!-- Notification widget toggle (sponsor-only FAB) -->
     <script>
@@ -832,8 +798,7 @@
     </footer>
 
     <!-- ============================================================
-         FLOATING AI ASSISTANT (global, placeholder UI shell only)
-         Real assistant integration will be wired up later.
+         FLOATING AI ASSISTANT (live — talks to /AiChat/Send)
          ============================================================ -->
     <button type="button"
             id="aiAssistantBtn"
@@ -846,7 +811,12 @@
 
     @await Component.InvokeAsync("NotificationFab")
 
-    <div class="ai-widget-panel" id="aiAssistantPanel" aria-hidden="true">
+    <div class="ai-widget-panel" id="aiAssistantPanel" aria-hidden="true"
+         data-send-url="@Url.Action("Send", "AiChat")"
+         data-trip-url-template="@Url.Action("Details", "Trip", new { id = "__ID__" })"
+         data-thinking-text="@Localizer["Ai_Thinking"].Value"
+         data-error-text="@Localizer["Ai_Error"].Value"
+         data-view-trip-text="@Localizer["Ai_ViewTrip"].Value">
         <div class="ai-widget-header">
             <h5 class="ai-widget-title">
                 <i class="bi bi-stars me-2"></i> @Localizer["Ai_Title"].Value
@@ -855,19 +825,16 @@
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
-        <div class="ai-widget-body">
-            <div class="ai-coming-soon text-center">
-                <i class="bi bi-stars" style="font-size: 2.5rem; color: var(--egy-primary);"></i>
-                <p class="mt-3 mb-1 fw-semibold">@Localizer["Ai_ComingSoon"].Value</p>
-                <p class="text-muted small">
-                    @Localizer["Ai_Description"].Value
-                </p>
+        <div class="ai-widget-body" id="aiChatMessages">
+            <div class="ai-chat-msg ai-chat-msg-assistant">
+                <div class="ai-chat-bubble">@Localizer["Ai_Description"].Value</div>
             </div>
         </div>
-        <div class="ai-widget-footer">
-            <input type="text" class="form-control" placeholder="@Localizer["Ai_Placeholder"].Value" disabled />
-            <button class="btn btn-secondary" disabled>@Localizer["Ai_Send"].Value</button>
-        </div>
+        <form class="ai-widget-footer" id="aiChatForm" autocomplete="off">
+            <input type="text" class="form-control" id="aiChatInput"
+                   placeholder="@Localizer["Ai_Placeholder"].Value" maxlength="1000" />
+            <button type="submit" class="btn btn-secondary" id="aiChatSendBtn">@Localizer["Ai_Send"].Value</button>
+        </form>
     </div>
 
     <!-- ============================================================
@@ -1002,10 +969,62 @@
         .ai-widget-body {
             background: var(--egy-light);
             min-height: 220px;
+            max-height: 420px;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            flex-direction: column;
+            gap: 10px;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .ai-chat-msg {
+            display: flex;
+        }
+
+        .ai-chat-msg-user {
+            justify-content: flex-end;
+        }
+
+        .ai-chat-bubble {
+            max-width: 82%;
+            padding: 8px 12px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .ai-chat-msg-assistant .ai-chat-bubble {
+            background: #fff;
+            border: 1px solid rgba(200, 131, 42, 0.2);
+            border-bottom-left-radius: 4px;
+        }
+
+        .ai-chat-msg-user .ai-chat-bubble {
+            background: var(--egy-primary);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-chat-msg-error .ai-chat-bubble {
+            background: #fdecea;
+            color: #b3261e;
+            border: 1px solid #f5c2c0;
+        }
+
+        .ai-chat-trip-link {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: inherit;
+            text-decoration: underline;
+        }
+
+        .ai-chat-typing .ai-chat-bubble {
+            font-style: italic;
+            opacity: 0.75;
         }
 
         .ai-widget-footer {

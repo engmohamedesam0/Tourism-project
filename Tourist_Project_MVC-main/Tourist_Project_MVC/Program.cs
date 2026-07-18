@@ -22,6 +22,23 @@ namespace Tourist_Project_MVC
             builder.Services.AddHttpClient(); // registers IHttpClientFactory generally
             builder.Services.AddScoped<IArcGISSyncService, ArcGISSyncService>();
 
+            // AI chat widget (Gemini-backed). A typed HttpClient with a sane
+            // timeout — the Gemini call can take a few seconds, especially
+            // with tool calling involved.
+            builder.Services.AddHttpClient<IAiChatService, AiChatService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
+
+            // Explicit header name so [ValidateAntiForgeryToken] accepts the token sent
+            // via the "RequestVerificationToken" header on JSON fetch() calls (used by
+            // the AI chat widget and the notification panel) — without this, only
+            // form-encoded posts would validate.
+            builder.Services.AddAntiforgery(options =>
+            {
+                options.HeaderName = "RequestVerificationToken";
+            });
+
             builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
             builder.Services.Configure<RequestLocalizationOptions>(o =>
             {

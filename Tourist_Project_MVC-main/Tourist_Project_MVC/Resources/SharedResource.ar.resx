@@ -157,7 +157,7 @@
     <value>مساعد الذكاء الاصطناعي — قريباً</value>
   </data>
   <data name="Ai_Description" xml:space="preserve">
-    <value>رفيق السفر الذكي لإنشاء مسارات مخصصة سيظهر هنا قريباً.</value>
+    <value>أهلاً! اسألني عن تاريخ مصر ومعالمها، أو أخبرني بنوع الرحلة التي تحلم بها وسأساعدك على التخطيط لها — وحفظها لك.</value>
   </data>
   <data name="Ai_Placeholder" xml:space="preserve">
     <value>اسألني أي شيء…</value>
@@ -170,6 +170,15 @@
   </data>
   <data name="Ai_Close" xml:space="preserve">
     <value>إغلاق المساعد</value>
+  </data>
+  <data name="Ai_Thinking" xml:space="preserve">
+    <value>جاري التفكير…</value>
+  </data>
+  <data name="Ai_Error" xml:space="preserve">
+    <value>عذراً، حدث خطأ ما. من فضلك حاول مرة أخرى.</value>
+  </data>
+  <data name="Ai_ViewTrip" xml:space="preserve">
+    <value>عرض الرحلة</value>
   </data>
   <data name="Search_Placeholder" xml:space="preserve">
     <value>ابحث في مصر…</value>

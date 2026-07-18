@@ -157,7 +157,7 @@
     <value>AI Assistant — Coming Soon</value>
   </data>
   <data name="Ai_Description" xml:space="preserve">
-    <value>Your smart travel companion for personalized itineraries will live here.</value>
+    <value>Ahlan! Ask me about Egypt's history and sites, or tell me what kind of trip you're dreaming of and I'll help you plan it — and save it for you.</value>
   </data>
   <data name="Ai_Placeholder" xml:space="preserve">
     <value>Ask me anything…</value>
@@ -170,6 +170,15 @@
   </data>
   <data name="Ai_Close" xml:space="preserve">
     <value>Close assistant</value>
+  </data>
+  <data name="Ai_Thinking" xml:space="preserve">
+    <value>Thinking…</value>
+  </data>
+  <data name="Ai_Error" xml:space="preserve">
+    <value>Sorry, something went wrong. Please try again.</value>
+  </data>
+  <data name="Ai_ViewTrip" xml:space="preserve">
+    <value>View trip</value>
   </data>
   <data name="Search_Placeholder" xml:space="preserve">
     <value>Search Egypt…</value>
