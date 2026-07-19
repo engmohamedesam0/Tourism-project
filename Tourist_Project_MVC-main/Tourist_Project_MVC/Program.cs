@@ -1,11 +1,15 @@
-using Microsoft.EntityFrameworkCore;
-using Tourist_Project_MVC.Repositories;
-using Tourist_Project_MVC.Data;
-using Tourist_Project_MVC.Models;
-using Tourist_Project_MVC.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
+using System.Text;
+using Tourist_Project_MVC.Data;
+using Tourist_Project_MVC.Models;
+using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 namespace Tourist_Project_MVC
 {
     public class Program
@@ -67,6 +71,37 @@ namespace Tourist_Project_MVC
                 options.Password.RequiredLength = 12;
                 options.User.RequireUniqueEmail = true;
             }).AddEntityFrameworkStores<TouristContext>();
+
+            // JWT bearer scheme for the React Native mobile app (POST /api/auth/login
+            // issues the token). This is ADDITIVE — AddIdentity above already set the
+            // cookie scheme as the default for the website, and calling
+            // AddAuthentication() again here (with no arguments) does not change that
+            // default; it only registers "Bearer" as an extra scheme that controllers
+            // can authenticate against explicitly (see AiChatController.Send).
+            builder.Services.AddAuthentication()
+                .AddJwtBearer(options =>
+                {
+                    var jwtKey = builder.Configuration["Jwt:Key"];
+                    // If Jwt:Key hasn't been configured yet, use a random throwaway
+                    // key instead of an empty/invalid one — this just means every
+                    // real token fails validation (a clean 401) rather than the
+                    // options binding itself throwing on the first mobile request.
+                    var keyBytes = string.IsNullOrWhiteSpace(jwtKey)
+                        ? RandomNumberGenerator.GetBytes(32)
+                        : Encoding.UTF8.GetBytes(jwtKey);
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidateAudience = true,
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
 
             var app = builder.Build();
 
