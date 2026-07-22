@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using Tourist_Project_MVC.Models;
 
@@ -71,6 +70,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
         try
         {
             var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
             var adds = new List<object>();
             var updates = new List<object>();
 
@@ -127,24 +127,40 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
 
             if (adds.Count == 0 && updates.Count == 0) return;
 
-            var payload = new Dictionary<string, object>();
-            if (adds.Count > 0) payload["adds"] = adds;
-            if (updates.Count > 0) payload["updates"] = updates;
+            var formFields = new Dictionary<string, string>
+            {
+                ["f"] = "json"
+            };
+            if (adds.Count > 0)
+                formFields["adds"] = JsonSerializer.Serialize(adds, _jsonOptions);
+            if (updates.Count > 0)
+                formFields["updates"] = JsonSerializer.Serialize(updates, _jsonOptions);
 
-            var json = JsonSerializer.Serialize(payload, _jsonOptions);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var content = new FormUrlEncodedContent(formFields);
 
-            var url = $"{layerUrl}/applyEdits?f=json&token={Uri.EscapeDataString(ApiKey)}";
+            var url = $"{layerUrl}/applyEdits?token={Uri.EscapeDataString(ApiKey)}";
             var response = await client.PostAsync(url, content, ct);
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning("ArcGIS destinations sync failed with status {Status}", response.StatusCode);
+                _logger.LogWarning("ArcGIS destinations sync failed with HTTP status {Status}", response.StatusCode);
+                var errBody = await response.Content.ReadAsStringAsync(ct);
+                _logger.LogWarning("ArcGIS response body: {Body}", errBody);
                 return;
             }
 
             var body = await response.Content.ReadAsStringAsync(ct);
+            _logger.LogInformation("ArcGIS applyEdits response: {Body}", body);
+
             using var doc = JsonDocument.Parse(body);
+
+            // ArcGIS may return a top-level error even with HTTP 200
+            if (doc.RootElement.TryGetProperty("error", out var error))
+            {
+                _logger.LogWarning("ArcGIS applyEdits returned error: {Error}", error.GetRawText());
+                return;
+            }
+
             if (doc.RootElement.TryGetProperty("addResults", out var addResults))
             {
                 foreach (var result in addResults.EnumerateArray())
@@ -183,6 +199,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
         try
         {
             var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
             var adds = new List<object>();
             var updates = new List<object>();
 
@@ -235,14 +252,18 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
 
             if (adds.Count == 0 && updates.Count == 0) return;
 
-            var payload = new Dictionary<string, object>();
-            if (adds.Count > 0) payload["adds"] = adds;
-            if (updates.Count > 0) payload["updates"] = updates;
+            var formFields = new Dictionary<string, string>
+            {
+                ["f"] = "json"
+            };
+            if (adds.Count > 0)
+                formFields["adds"] = JsonSerializer.Serialize(adds, _jsonOptions);
+            if (updates.Count > 0)
+                formFields["updates"] = JsonSerializer.Serialize(updates, _jsonOptions);
 
-            var json = JsonSerializer.Serialize(payload, _jsonOptions);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var content = new FormUrlEncodedContent(formFields);
 
-            var url = $"{layerUrl}/applyEdits?f=json&token={Uri.EscapeDataString(ApiKey)}";
+            var url = $"{layerUrl}/applyEdits?token={Uri.EscapeDataString(ApiKey)}";
             var response = await client.PostAsync(url, content, ct);
 
             if (!response.IsSuccessStatusCode)
