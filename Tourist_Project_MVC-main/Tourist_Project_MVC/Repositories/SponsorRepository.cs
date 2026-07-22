@@ -57,5 +57,47 @@ namespace Tourist_Project_MVC.Repositories
 
             return null;
         }
+
+        public IEnumerable<Sponsor> GetInteractedSponsors(int touristId)
+        {
+            var sponsorIds = new HashSet<int>();
+
+            var redemptionSponsorIds = _context.Redemptions
+                .Where(r => r.TouristId == touristId && r.Reward != null)
+                .Select(r => r.Reward!.SponsorId)
+                .Distinct()
+                .ToList();
+
+            foreach (var id in redemptionSponsorIds)
+                sponsorIds.Add(id);
+
+            var reviewSponsorIds = _context.Reviews
+                .Where(r => r.TouristId == touristId)
+                .Select(r => r.SponsorId)
+                .Distinct()
+                .ToList();
+
+            foreach (var id in reviewSponsorIds)
+                sponsorIds.Add(id);
+
+            var siteReviewRows = _context.SiteReviews
+                .Include(sr => sr.Reward)
+                .Include(sr => sr.Branch)
+                .Where(sr => sr.TouristId == touristId)
+                .ToList();
+
+            foreach (var sr in siteReviewRows)
+            {
+                if (sr.Reward != null)
+                    sponsorIds.Add(sr.Reward.SponsorId);
+                if (sr.Branch != null)
+                    sponsorIds.Add(sr.Branch.SponsorId);
+            }
+
+            return _context.Sponsors
+                .Where(s => sponsorIds.Contains(s.Id))
+                .OrderBy(s => s.Name)
+                .ToList();
+        }
     }
 }

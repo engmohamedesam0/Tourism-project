@@ -100,26 +100,28 @@
                 <div class="table-responsive">
                     <table class="table table-hover align-middle destinations-table">
                         <thead>
-                            <tr>
-                                <th>@Localizer["AdminSupport_Type"].Value</th>
-                                <th>@Localizer["AdminSupport_Submitter"].Value</th>
-                                <th>@Localizer["AdminSupport_Category"].Value</th>
-                                <th>@Localizer["AdminSupport_Subject"].Value</th>
-                                <th>@Localizer["AdminSupport_Status"].Value</th>
-                                <th>@Localizer["AdminSupport_Submitted"].Value</th>
-                                <th></th>
-                            </tr>
+                                     <tr>
+                                         <th>@Localizer["AdminSupport_Type"].Value</th>
+                                         <th>@Localizer["AdminSupport_Submitter"].Value</th>
+                                         <th>@Localizer["AdminSupport_RoutedTo"].Value</th>
+                                         <th>@Localizer["AdminSupport_Category"].Value</th>
+                                         <th>@Localizer["AdminSupport_Subject"].Value</th>
+                                         <th>@Localizer["AdminSupport_Status"].Value</th>
+                                         <th>@Localizer["AdminSupport_Submitted"].Value</th>
+                                         <th></th>
+                                     </tr>
                         </thead>
                         <tbody>
                             @foreach (var row in Model.Tickets)
                             {
                                 <tr>
                                     <td>
-                                        <span class="badge bg-@(row.SubmitterType == "Tourist" ? "info" : "secondary")">
-                                            <i class="bi bi-@(row.SubmitterType == "Tourist" ? "person" : "building") me-1"></i>@row.SubmitterType
+                                        <span class="badge bg-@(row.SubmitterType == "Tourist -> Sponsor" ? "primary" : row.SubmitterType == "Tourist" ? "info" : "secondary")">
+                                            <i class="bi bi-@(row.SubmitterType == "Tourist -> Sponsor" ? "arrow-right" : row.SubmitterType == "Tourist" ? "person" : "building") me-1"></i>@row.SubmitterType
                                         </span>
                                     </td>
                                     <td class="fw-semibold">@row.SubmitterName</td>
+                                    <td class="fw-semibold text-primary">@(row.RoutedSponsorName ?? "-")</td>
                                     <td><span class="badge-category">@row.Ticket.Category</span></td>
                                     <td>@row.Ticket.Subject</td>
                                     <td>

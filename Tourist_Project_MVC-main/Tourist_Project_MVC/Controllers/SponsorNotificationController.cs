@@ -190,8 +190,6 @@ namespace Tourist_Project_MVC.Controllers
             if (string.IsNullOrEmpty(vm.Category) || !SupportTicketVM.Categories.Contains(vm.Category))
                 ModelState.AddModelError("Category", "Please choose a valid category.");
 
-            // Validate the optional attachment up front so any error is surfaced
-            // before the model-state check below.
             var attachmentPath = SaveAttachment(vm.Attachment);
 
             if (ModelState.IsValid)
@@ -211,6 +209,61 @@ namespace Tourist_Project_MVC.Controllers
 
             vm.Tickets = _supportTicketService.GetBySponsorId(sponsor.Id);
             return View("Support", vm);
+        }
+
+        // GET: Tourist tickets routed to the signed-in sponsor.
+        public IActionResult TouristTickets()
+        {
+            var sponsor = ResolveCurrentSponsor();
+            if (sponsor == null) return RedirectToAction("CompleteProfile", "SponsorPortal");
+
+            var tickets = _supportTicketService.GetTouristTicketsForSponsor(sponsor.Id);
+
+            var vm = new SupportTicketVM
+            {
+                Tickets = tickets,
+                Category = null
+            };
+            return View("TouristTickets", vm);
+        }
+
+        // GET: single tourist ticket detail (for sponsor).
+        public IActionResult TouristTicketDetails(int id)
+        {
+            var sponsor = ResolveCurrentSponsor();
+            if (sponsor == null) return RedirectToAction("CompleteProfile", "SponsorPortal");
+
+            var ticket = _supportTicketService.GetTouristTicketForSponsor(id, sponsor.Id);
+            if (ticket == null) return NotFound();
+
+            return View("TouristTicketDetails", ticket);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RespondToTouristTicket(int id, string sponsorResponse)
+        {
+            var sponsor = ResolveCurrentSponsor();
+            if (sponsor == null) return RedirectToAction("CompleteProfile", "SponsorPortal");
+
+            var ticket = _supportTicketService.GetTouristTicketForSponsor(id, sponsor.Id);
+            if (ticket == null) return NotFound();
+
+            if (string.IsNullOrWhiteSpace(sponsorResponse))
+            {
+                ModelState.AddModelError("sponsorResponse", "A response message is required.");
+                return RedirectToAction("TouristTicketDetails", new { id });
+            }
+
+            ticket.SponsorResponse = sponsorResponse.Trim();
+            ticket.SponsorRespondedDate = DateTime.Now;
+
+            if (ticket.Status == "Open")
+                ticket.Status = "In Progress";
+
+            _supportTicketService.Update(ticket);
+
+            return RedirectToAction("TouristTicketDetails", new { id });
         }
 
         private string? SaveAttachment(IFormFile? file)

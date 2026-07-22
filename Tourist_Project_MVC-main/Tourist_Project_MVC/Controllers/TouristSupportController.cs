@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
@@ -14,17 +15,23 @@ namespace Tourist_Project_MVC.Controllers
     {
         private readonly ITouristRepository _touristRepo;
         private readonly ISupportTicketService _supportTicketService;
+        private readonly INotificationService _notificationService;
+        private readonly ISponsorRepository _sponsorRepo;
         private readonly IWebHostEnvironment _env;
         private readonly TouristContext _context;
 
         public TouristSupportController(
             ITouristRepository touristRepo,
             ISupportTicketService supportTicketService,
+            INotificationService notificationService,
+            ISponsorRepository sponsorRepo,
             IWebHostEnvironment env,
             TouristContext context)
         {
             _touristRepo = touristRepo;
             _supportTicketService = supportTicketService;
+            _notificationService = notificationService;
+            _sponsorRepo = sponsorRepo;
             _env = env;
             _context = context;
         }
@@ -41,11 +48,15 @@ namespace Tourist_Project_MVC.Controllers
         {
             var tourist = ResolveCurrentTourist();
             var tickets = _supportTicketService.GetByTouristId(tourist.Id);
+            var interactedSponsors = _sponsorRepo.GetInteractedSponsors(tourist.Id).ToList();
             var vm = new SupportTicketVM
             {
                 Tickets = tickets,
-                Category = null
+                Category = null,
+                RecipientType = "Admin",
+                AvailableSponsors = new SelectList(interactedSponsors, "Id", "Name")
             };
+            ViewBag.HasInteractedSponsors = interactedSponsors.Any();
             return View("Index", vm);
         }
 
@@ -64,9 +75,27 @@ namespace Tourist_Project_MVC.Controllers
         public IActionResult CreateSupport(SupportTicketVM vm)
         {
             var tourist = ResolveCurrentTourist();
+            var interactedSponsors = _sponsorRepo.GetInteractedSponsors(tourist.Id).ToList();
+            var interactedSponsorIds = interactedSponsors.Select(s => s.Id).ToHashSet();
 
             if (string.IsNullOrEmpty(vm.Category) || !SupportTicketVM.Categories.Contains(vm.Category))
                 ModelState.AddModelError("Category", "Please choose a valid category.");
+
+            if (vm.RecipientType == "Sponsor")
+            {
+                if (!interactedSponsorIds.Any())
+                {
+                    ModelState.AddModelError("RecipientType", "You can only contact a sponsor you've redeemed a reward from or reviewed.");
+                }
+                else if (!vm.SponsorId.HasValue || vm.SponsorId.Value <= 0)
+                {
+                    ModelState.AddModelError("SponsorId", "Please choose a valid sponsor.");
+                }
+                else if (!interactedSponsorIds.Contains(vm.SponsorId.Value))
+                {
+                    ModelState.AddModelError("SponsorId", "You can only contact a sponsor you've interacted with.");
+                }
+            }
 
             var attachmentPath = SaveAttachment(vm.Attachment);
 
@@ -78,14 +107,27 @@ namespace Tourist_Project_MVC.Controllers
                     Subject = vm.Subject!,
                     Description = vm.Description!,
                     Category = vm.Category!,
-                    AttachmentPath = attachmentPath
+                    AttachmentPath = attachmentPath,
+                    SponsorId = vm.RecipientType == "Sponsor" ? vm.SponsorId : null
                 };
+
+                if (vm.RecipientType == "Sponsor" && vm.SponsorId.HasValue)
+                {
+                    _notificationService.Create(
+                        vm.SponsorId.Value,
+                        "TouristTicketRouted",
+                        $"A tourist routed a support ticket to you: \"{ticket.Subject}\".",
+                        "TouristSupportTicket",
+                        ticket.Id);
+                }
 
                 _supportTicketService.Create(ticket);
                 return RedirectToAction(nameof(Index));
             }
 
             vm.Tickets = _supportTicketService.GetByTouristId(tourist.Id);
+            vm.AvailableSponsors = new SelectList(interactedSponsors, "Id", "Name");
+            ViewBag.HasInteractedSponsors = interactedSponsors.Any();
             return View("Index", vm);
         }
 

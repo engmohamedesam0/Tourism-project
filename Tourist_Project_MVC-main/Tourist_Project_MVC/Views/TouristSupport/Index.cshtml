@@ -20,6 +20,27 @@
                     <h6 class="fw-bold mb-3"><i class="bi bi-plus-circle me-1 text-primary"></i> @Localizer["TouristSupport_NewTicket"].Value</h6>
                     <form asp-action="CreateSupport" method="post" enctype="multipart/form-data">
                         <div class="mb-3">
+                            <label class="form-label small text-muted">@Localizer["TouristSupport_RecipientType"].Value</label>
+                            <select class="form-select" asp-for="RecipientType" required id="recipientType">
+                                <option value="Admin">@Localizer["TouristSupport_RecipientAdmin"].Value</option>
+                                @if (ViewBag.HasInteractedSponsors as bool? == true)
+                                {
+                                    <option value="Sponsor">@Localizer["TouristSupport_RecipientSponsor"].Value</option>
+                                }
+                            </select>
+                            @if (!(ViewBag.HasInteractedSponsors as bool? == true))
+                            {
+                                <div class="form-text text-muted small mt-1">@Localizer["TouristSupport_NoInteractedSponsors"].Value</div>
+                            }
+                        </div>
+                        <div class="mb-3" id="sponsorSelect" style="display:none;">
+                            <label class="form-label small text-muted">@Localizer["TouristSupport_SelectSponsor"].Value</label>
+                            <select class="form-select" asp-for="SponsorId" asp-items="Model.AvailableSponsors">
+                                <option value="">@Localizer["TouristSupport_SelectSponsorPlaceholder"].Value</option>
+                            </select>
+                            <span class="text-danger small" asp-validation-for="SponsorId"></span>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label small text-muted">@Localizer["TouristSupport_Subject"].Value</label>
                             <input type="text" class="form-control" asp-for="Subject" required />
                             <span class="text-danger small" asp-validation-for="Subject"></span>
@@ -98,6 +119,10 @@
                                                 {
                                                     <span class="badge bg-success ms-1" title="@Localizer["TouristSupport_AdminRespondedTooltip"].Value"><i class="bi bi-reply-fill"></i></span>
                                                 }
+                                                @if (!string.IsNullOrEmpty(t.SponsorResponse))
+                                                {
+                                                    <span class="badge bg-info ms-1" title="@Localizer["TouristSupport_SponsorRespondedTooltip"].Value"><i class="bi bi-building"></i></span>
+                                                }
                                             </td>
                                             <td><span class="badge-category">@t.Category</span></td>
                                             <td>
@@ -116,3 +141,19 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var recipientSelect = document.querySelector('select[asp-for="RecipientType"]');
+            var sponsorSelect = document.getElementById('sponsorSelect');
+            if (recipientSelect && sponsorSelect) {
+                function toggleSponsor() {
+                    sponsorSelect.style.display = recipientSelect.value === 'Sponsor' ? 'block' : 'none';
+                }
+                toggleSponsor();
+                recipientSelect.addEventListener('change', toggleSponsor);
+            }
+        })();
+    </script>
+}

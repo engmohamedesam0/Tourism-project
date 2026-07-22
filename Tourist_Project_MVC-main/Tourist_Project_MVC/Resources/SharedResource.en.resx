@@ -2277,5 +2277,59 @@
   <data name="TripPlan_SearchPlaceholder" xml:space="preserve">
     <value>Search trip plans...</value>
   </data>
+  <data name="TouristSupport_RecipientType" xml:space="preserve">
+    <value>Send to</value>
+  </data>
+  <data name="TouristSupport_RecipientAdmin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="TouristSupport_RecipientSponsor" xml:space="preserve">
+    <value>Sponsor</value>
+  </data>
+  <data name="TouristSupport_SelectSponsor" xml:space="preserve">
+    <value>Choose a sponsor</value>
+  </data>
+  <data name="TouristSupport_SelectSponsorPlaceholder" xml:space="preserve">
+    <value>Select sponsor...</value>
+  </data>
+  <data name="TouristSupport_SponsorResponse" xml:space="preserve">
+    <value>Sponsor Response</value>
+  </data>
+  <data name="AdminSupport_RoutedTo" xml:space="preserve">
+    <value>Routed to</value>
+  </data>
+  <data name="AdminSupport_SponsorResponseLabel" xml:space="preserve">
+    <value>response</value>
+  </data>
+  <data name="SponsorNotification_TouristTicketsTitle" xml:space="preserve">
+    <value>Tourist Tickets</value>
+  </data>
+  <data name="SponsorNotification_TouristTicketDetailsTitle" xml:space="preserve">
+    <value>Tourist Ticket Details</value>
+  </data>
+  <data name="SponsorNotification_BackToTouristTickets" xml:space="preserve">
+    <value>Back to Tourist Tickets</value>
+  </data>
+  <data name="SponsorNotification_NoTouristTickets" xml:space="preserve">
+    <value>No tourist tickets routed to you yet.</value>
+  </data>
+  <data name="SponsorNotification_MyTickets" xml:space="preserve">
+    <value>My Tickets</value>
+  </data>
+  <data name="SponsorNotification_YourResponse" xml:space="preserve">
+    <value>Your Response</value>
+  </data>
+  <data name="SponsorNotification_TypeYourReply" xml:space="preserve">
+    <value>Type your reply...</value>
+  </data>
+  <data name="SponsorNotification_SendResponse" xml:space="preserve">
+    <value>Send Response</value>
+  </data>
+  <data name="TouristSupport_NoInteractedSponsors" xml:space="preserve">
+    <value>You can only contact a sponsor you've redeemed a reward from or reviewed.</value>
+  </data>
+  <data name="TouristSupport_SponsorRespondedTooltip" xml:space="preserve">
+    <value>Sponsor responded</value>
+  </data>
 
 </root>

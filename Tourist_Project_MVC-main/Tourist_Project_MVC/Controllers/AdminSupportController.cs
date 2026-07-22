@@ -32,7 +32,7 @@ namespace Tourist_Project_MVC.Controllers
         {
             var tickets = _ticketService.GetAll();
 
-            var sponsorIds = tickets.Where(t => t.SponsorId > 0).Select(t => t.SponsorId).Distinct().ToList();
+            var sponsorIds = tickets.Where(t => t.SponsorId.HasValue).Select(t => t.SponsorId.Value).Distinct().ToList();
             var touristIds = tickets.Where(t => t.TouristId.HasValue).Select(t => t.TouristId!.Value).Distinct().ToList();
 
             var sponsorNames = _context.Sponsors
@@ -52,9 +52,11 @@ namespace Tourist_Project_MVC.Controllers
             if (!string.IsNullOrEmpty(submitterType))
             {
                 if (submitterType == "Sponsor")
-                    tickets = tickets.Where(t => t.SponsorId > 0 && !t.TouristId.HasValue).ToList();
+                    tickets = tickets.Where(t => t.SponsorId.HasValue && !t.TouristId.HasValue).ToList();
                 else if (submitterType == "Tourist")
-                    tickets = tickets.Where(t => t.TouristId.HasValue).ToList();
+                    tickets = tickets.Where(t => t.TouristId.HasValue && !t.SponsorId.HasValue).ToList();
+                else if (submitterType == "Tourist -> Sponsor")
+                    tickets = tickets.Where(t => t.TouristId.HasValue && t.SponsorId.HasValue).ToList();
             }
 
             if (!string.IsNullOrEmpty(search))
@@ -66,10 +68,11 @@ namespace Tourist_Project_MVC.Controllers
             var rows = tickets.Select(t => new AdminSupportTicketRow
             {
                 Ticket = t,
-                SubmitterType = t.TouristId.HasValue ? "Tourist" : "Sponsor",
+                SubmitterType = t.TouristId.HasValue ? (t.SponsorId.HasValue ? "Tourist -> Sponsor" : "Tourist") : "Sponsor",
                 SubmitterName = t.TouristId.HasValue
                     ? (touristNames.TryGetValue(t.TouristId.Value, out var tName) ? tName : "Unknown Tourist")
-                    : (sponsorNames.TryGetValue(t.SponsorId, out var sName) ? sName : "Unknown Sponsor")
+                    : (sponsorNames.TryGetValue(t.SponsorId.Value, out var sName) ? sName : "Unknown Sponsor"),
+                RoutedSponsorName = t.SponsorId.HasValue && sponsorNames.TryGetValue(t.SponsorId.Value, out var rName) ? rName : null
             }).ToList();
 
             var vm = new AdminSupportIndexVM
@@ -91,7 +94,7 @@ namespace Tourist_Project_MVC.Controllers
                 t.RespondedDate.HasValue &&
                 t.RespondedDate.Value.Year == now.Year &&
                 t.RespondedDate.Value.Month == now.Month);
-            var sponsorTickets = _context.SupportTickets.Count(t => t.SponsorId > 0 && !t.TouristId.HasValue);
+            var sponsorTickets = _context.SupportTickets.Count(t => t.SponsorId.HasValue && !t.TouristId.HasValue);
 
             ViewBag.StatBoxes = new List<StatBoxItem>
             {
@@ -116,17 +119,21 @@ namespace Tourist_Project_MVC.Controllers
             {
                 var tourist = _context.Tourists.FirstOrDefault(t => t.Id == ticket.TouristId.Value);
                 submitterName = tourist?.Name ?? "Unknown Tourist";
-                submitterType = "Tourist";
+                submitterType = ticket.SponsorId.HasValue ? "Tourist -> Sponsor" : "Tourist";
             }
             else
             {
-                var sponsor = _context.Sponsors.FirstOrDefault(s => s.Id == ticket.SponsorId);
-                submitterName = sponsor?.Name ?? "Unknown Sponsor";
+                var submitterSponsor = _context.Sponsors.FirstOrDefault(s => s.Id == ticket.SponsorId!.Value);
+                submitterName = submitterSponsor?.Name ?? "Unknown Sponsor";
                 submitterType = "Sponsor";
             }
 
             var adminName = ticket.RespondedByAdminId != null
                 ? _context.Users.FirstOrDefault(u => u.Id == ticket.RespondedByAdminId)?.UserName
+                : null;
+
+            var sponsor = ticket.SponsorId.HasValue
+                ? _context.Sponsors.FirstOrDefault(s => s.Id == ticket.SponsorId.Value)
                 : null;
 
             var vm = new AdminSupportDetailsVM
@@ -135,7 +142,10 @@ namespace Tourist_Project_MVC.Controllers
                 SubmitterName = submitterName,
                 SubmitterType = submitterType,
                 RespondedByAdminName = adminName,
-                Categories = SupportTicketVM.Categories
+                Categories = SupportTicketVM.Categories,
+                SponsorResponse = ticket.SponsorResponse,
+                SponsorRespondedDate = ticket.SponsorRespondedDate,
+                SponsorName = sponsor?.Name
             };
 
             return View(vm);
@@ -167,7 +177,7 @@ namespace Tourist_Project_MVC.Controllers
             if (!ticket.TouristId.HasValue)
             {
                 _notificationService.Create(
-                    ticket.SponsorId,
+                    ticket.SponsorId!.Value,
                     "SupportResponse",
                     $"An admin responded to your support ticket: \"{ticket.Subject}\".",
                     "SupportTicket",

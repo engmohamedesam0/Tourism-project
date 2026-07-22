@@ -2277,5 +2277,59 @@
   <data name="TripPlan_SearchPlaceholder" xml:space="preserve">
     <value>بحث عن خطط الرحلات...</value>
   </data>
+  <data name="TouristSupport_RecipientType" xml:space="preserve">
+    <value>إرسال إلى</value>
+  </data>
+  <data name="TouristSupport_RecipientAdmin" xml:space="preserve">
+    <value>المسؤول</value>
+  </data>
+  <data name="TouristSupport_RecipientSponsor" xml:space="preserve">
+    <value>الراعي</value>
+  </data>
+  <data name="TouristSupport_SelectSponsor" xml:space="preserve">
+    <value>اختر راعياً</value>
+  </data>
+  <data name="TouristSupport_SelectSponsorPlaceholder" xml:space="preserve">
+    <value>اختر الراعي...</value>
+  </data>
+  <data name="TouristSupport_SponsorResponse" xml:space="preserve">
+    <value>رد الراعي</value>
+  </data>
+  <data name="AdminSupport_RoutedTo" xml:space="preserve">
+    <value>موجه إلى</value>
+  </data>
+  <data name="AdminSupport_SponsorResponseLabel" xml:space="preserve">
+    <value>الرد</value>
+  </data>
+  <data name="SponsorNotification_TouristTicketsTitle" xml:space="preserve">
+    <value>تذاكر السائحين</value>
+  </data>
+  <data name="SponsorNotification_TouristTicketDetailsTitle" xml:space="preserve">
+    <value>تفاصيل تذكرة السائح</value>
+  </data>
+  <data name="SponsorNotification_BackToTouristTickets" xml:space="preserve">
+    <value>العودة لتذاكر السائحين</value>
+  </data>
+  <data name="SponsorNotification_NoTouristTickets" xml:space="preserve">
+    <value>لا توجد تذاكر سائحين موجهة إليك بعد.</value>
+  </data>
+  <data name="SponsorNotification_MyTickets" xml:space="preserve">
+    <value>تذاكري</value>
+  </data>
+  <data name="SponsorNotification_YourResponse" xml:space="preserve">
+    <value>ردك</value>
+  </data>
+  <data name="SponsorNotification_TypeYourReply" xml:space="preserve">
+    <value>اكتب ردك...</value>
+  </data>
+  <data name="SponsorNotification_SendResponse" xml:space="preserve">
+    <value>إرسال الرد</value>
+  </data>
+  <data name="TouristSupport_NoInteractedSponsors" xml:space="preserve">
+    <value>يمكنك فقط الاتصال براعٍ قمت باستبدال مكافأة منه أو قمت بمراجعته.</value>
+  </data>
+  <data name="TouristSupport_SponsorRespondedTooltip" xml:space="preserve">
+    <value>الراعي رد</value>
+  </data>
 
 </root>

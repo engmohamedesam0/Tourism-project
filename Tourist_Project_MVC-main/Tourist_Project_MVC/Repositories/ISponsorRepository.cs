@@ -8,5 +8,6 @@ namespace Tourist_Project_MVC.Repositories
         Sponsor? GetByIdWithRewars(int id);
 
         Sponsor? GetOrCreateByApplicationUser(string userId, string? email);
+        IEnumerable<Sponsor> GetInteractedSponsors(int touristId);
     }
 }

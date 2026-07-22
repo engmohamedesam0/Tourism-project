@@ -320,6 +320,20 @@
                                     </li>
                                     <li><hr class="dropdown-divider" /></li>
                                 }
+                                @if (!User.IsInRole("Admin") && !User.IsInRole("Sponsor"))
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="TouristProfile" asp-action="Index">
+                                            <i class="bi bi-person-fill me-2"></i> @Localizer["Nav_Profile"].Value
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="TouristSupport" asp-action="Index">
+                                            <i class="bi bi-headset me-2"></i> @Localizer["Nav_Support"].Value
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                }
                                 <li>
                                     <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
                                         <i class="bi bi-box-arrow-right me-2"></i> @Localizer["Nav_Logout"].Value
@@ -487,23 +501,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Features" asp-action="Index">
-                                    <i class="bi bi-phone-fill"></i> @Localizer["Nav_Features"].Value
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" asp-controller="TouristReward" asp-action="Index">
                                     <i class="bi bi-gift-fill"></i> @Localizer["Nav_Rewards"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="TouristProfile" asp-action="Index">
-                                    <i class="bi bi-person-fill"></i> @Localizer["Nav_Profile"].Value
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="TouristSupport" asp-action="Index">
-                                    <i class="bi bi-headset"></i> @Localizer["Nav_Support"].Value
+                                <a class="nav-link" asp-controller="Features" asp-action="Index">
+                                    <i class="bi bi-phone-fill"></i> @Localizer["Nav_Features"].Value
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -682,6 +686,7 @@
                 if (type === 'Reward') return '/SponsorReward/Edit/' + relId;
                 if (type === 'Redemption') return '/SponsorRedemption/Index';
                 if (type === 'SupportTicket') return '/SponsorNotification/Support';
+                if (type === 'TouristSupportTicket') return '/SponsorNotification/TouristTickets';
                 return null;
             }
 

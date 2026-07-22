@@ -7,6 +7,7 @@ namespace Tourist_Project_MVC.View_Model
         public SupportTicket Ticket { get; set; } = new();
         public string SubmitterName { get; set; } = "Unknown";
         public string SubmitterType { get; set; } = "Sponsor";
+        public string? RoutedSponsorName { get; set; }
     }
 
     public class AdminSupportIndexVM
@@ -18,7 +19,7 @@ namespace Tourist_Project_MVC.View_Model
         public string? SubmitterTypeFilter { get; set; }
         public List<string> Categories { get; set; } = new();
         public List<string> Statuses { get; set; } = new() { "Open", "In Progress", "Resolved" };
-        public List<string> SubmitterTypes { get; set; } = new() { "Sponsor", "Tourist" };
+        public List<string> SubmitterTypes { get; set; } = new() { "Sponsor", "Tourist", "Tourist -> Sponsor" };
     }
 
     public class AdminSupportDetailsVM
@@ -28,5 +29,8 @@ namespace Tourist_Project_MVC.View_Model
         public string SubmitterType { get; set; } = "Sponsor";
         public string? RespondedByAdminName { get; set; }
         public List<string> Categories { get; set; } = new();
+        public string? SponsorResponse { get; set; }
+        public DateTime? SponsorRespondedDate { get; set; }
+        public string? SponsorName { get; set; }
     }
 }

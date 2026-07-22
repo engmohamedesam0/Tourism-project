@@ -162,12 +162,12 @@ namespace Tourist_Project_MVC.Data
                 .HasForeignKey(n => n.SponsorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // SupportTicket -> Sponsor (one-to-many).
+            // SupportTicket -> Sponsor (one-to-many, optional for tourist-routed tickets).
             modelBuilder.Entity<SupportTicket>()
                 .HasOne<Sponsor>()
                 .WithMany()
                 .HasForeignKey(st => st.SponsorId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
 
             // SupportTicket -> Tourist (one-to-many, optional).
             modelBuilder.Entity<SupportTicket>()

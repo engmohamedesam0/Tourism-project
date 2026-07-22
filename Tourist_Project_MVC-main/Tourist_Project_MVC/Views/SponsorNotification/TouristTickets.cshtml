@@ -1,0 +1,76 @@
+@model Tourist_Project_MVC.View_Model.SupportTicketVM
+
+@{
+    ViewData["Title"] = Localizer["SponsorNotification_TouristTicketsTitle"].Value;
+    ViewData["IsHomePage"] = false;
+}
+
+<div class="container my-4" style="max-width: 1000px;">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="page-title mb-0">
+            <i class="bi bi-person me-2"></i> @Localizer["SponsorNotification_TouristTicketsTitle"].Value
+        </h1>
+        <a asp-action="Support" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-ticket-perforated me-1"></i> @Localizer["SponsorNotification_MyTickets"].Value
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+            @if (!Model.Tickets.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox" style="font-size:2.5rem;"></i>
+                    <p class="mb-0 mt-2">@Localizer["SponsorNotification_NoTouristTickets"].Value</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle destinations-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>@Localizer["SponsorNotification_Subject"].Value</th>
+                                <th>@Localizer["SponsorNotification_Category"].Value</th>
+                                <th>@Localizer["SponsorNotification_Status"].Value</th>
+                                <th>@Localizer["SponsorNotification_Date"].Value</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int i = 1;
+                            }
+                            @foreach (var t in Model.Tickets)
+                            {
+                                <tr>
+                                    <td class="fw-bold text-muted">@i.ToString("D2")</td>
+                                    <td>
+                                        <a asp-action="TouristTicketDetails" asp-route-id="@t.Id" class="fw-bold text-decoration-none">@t.Subject</a>
+                                        @if (!string.IsNullOrEmpty(t.AdminResponse))
+                                        {
+                                            <span class="badge bg-success ms-1" title="@Localizer["SponsorNotification_AdminResponded"].Value"><i class="bi bi-reply-fill"></i></span>
+                                        }
+                                    </td>
+                                    <td><span class="badge-category">@t.Category</span></td>
+                                    <td>
+                                        <span class="badge bg-@(t.Status == "Open" ? "warning" : t.Status == "Resolved" ? "success" : "info")">@t.Status</span>
+                                    </td>
+                                    <td class="small text-muted">@t.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                    <td class="text-end">
+                                        <a asp-action="TouristTicketDetails" asp-route-id="@t.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-box-arrow-in-right me-1"></i> @Localizer["AdminSupport_Open"].Value
+                                        </a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using Tourist_Project_MVC.Models;
 
@@ -17,8 +18,11 @@ namespace Tourist_Project_MVC.View_Model
         [Required(ErrorMessage = "Please choose a category.")]
         public string? Category { get; set; }
 
-        // Optional photo/video attachment.
         public IFormFile? Attachment { get; set; }
+
+        public string? RecipientType { get; set; }
+        public int? SponsorId { get; set; }
+        public SelectList? AvailableSponsors { get; set; }
 
         public static readonly List<string> Categories = new()
         {

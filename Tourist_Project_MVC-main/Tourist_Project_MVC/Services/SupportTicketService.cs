@@ -13,6 +13,8 @@ namespace Tourist_Project_MVC.Services
         SupportTicket? GetByIdForTourist(int id, int touristId);
         List<SupportTicket> GetAll();
         void Update(SupportTicket ticket);
+        List<SupportTicket> GetTouristTicketsForSponsor(int sponsorId);
+        SupportTicket? GetTouristTicketForSponsor(int id, int sponsorId);
     }
 
     public class SupportTicketService : ISupportTicketService
@@ -77,6 +79,20 @@ namespace Tourist_Project_MVC.Services
         {
             _context.SupportTickets.Update(ticket);
             _context.SaveChanges();
+        }
+
+        public List<SupportTicket> GetTouristTicketsForSponsor(int sponsorId)
+        {
+            return _context.SupportTickets
+                .Where(st => st.SponsorId == sponsorId && st.TouristId.HasValue)
+                .OrderByDescending(st => st.CreatedDate)
+                .ToList();
+        }
+
+        public SupportTicket? GetTouristTicketForSponsor(int id, int sponsorId)
+        {
+            return _context.SupportTickets
+                .FirstOrDefault(st => st.Id == id && st.SponsorId == sponsorId && st.TouristId.HasValue);
         }
     }
 }
