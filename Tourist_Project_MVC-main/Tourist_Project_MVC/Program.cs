@@ -24,6 +24,7 @@ namespace Tourist_Project_MVC
             builder.Services.AddControllersWithViews().AddViewLocalization();
 
             builder.Services.AddHttpClient(); // registers IHttpClientFactory generally
+            builder.Services.AddSingleton<IArcGisAppTokenService, ArcGisAppTokenService>();
             builder.Services.AddScoped<IArcGISSyncService, ArcGISSyncService>();
 
             // AI chat widget (Gemini-backed). A typed HttpClient with a sane

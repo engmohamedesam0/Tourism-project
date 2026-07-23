@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using Tourist_Project_MVC.Models;
+using Tourist_Project_MVC.Services;
 
 namespace Tourist_Project_MVC.Services;
 
@@ -20,16 +21,17 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
     private readonly IConfiguration _config;
     private readonly ILogger<ArcGISSyncService> _logger;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly IArcGisAppTokenService _tokenService;
 
-    public ArcGISSyncService(IHttpClientFactory clientFactory, IConfiguration config, ILogger<ArcGISSyncService> logger)
+    public ArcGISSyncService(IHttpClientFactory clientFactory, IConfiguration config, ILogger<ArcGISSyncService> logger, IArcGisAppTokenService tokenService)
     {
         _clientFactory = clientFactory;
         _config = config;
         _logger = logger;
         _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        _tokenService = tokenService;
     }
 
-    private string? ApiKey => _config["ArcGIS:ApiKey"];
     private string? DestinationsLayerUrl => _config["ArcGIS:DestinationsLayerUrl"];
     private string? BranchesLayerUrl => _config["ArcGIS:BranchesLayerUrl"];
 
@@ -62,10 +64,21 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
     public async Task SyncDestinationsAsync(IEnumerable<Destination> destinations, CancellationToken ct = default)
     {
         var layerUrl = LayerUrl(DestinationsLayerUrl);
-        if (string.IsNullOrWhiteSpace(layerUrl) || string.IsNullOrWhiteSpace(ApiKey)) return;
+        if (string.IsNullOrWhiteSpace(layerUrl)) return;
 
         var list = destinations.ToList();
         if (!list.Any()) return;
+
+        string token;
+        try
+        {
+            token = await _tokenService.GetAccessTokenAsync(ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "ArcGIS destinations sync skipped: unable to acquire access token");
+            return;
+        }
 
         try
         {
@@ -76,7 +89,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
 
             foreach (var d in list.Where(x => x.Location != null))
             {
-                var existingOid = await QueryObjectIdAsync(client, layerUrl, d.Id, ApiKey, ct);
+                var existingOid = await QueryObjectIdAsync(client, layerUrl, d.Id, token, ct);
                 var attrs = new
                 {
                     Id = d.Id,
@@ -138,7 +151,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
 
             var content = new FormUrlEncodedContent(formFields);
 
-            var url = $"{layerUrl}/applyEdits?token={Uri.EscapeDataString(ApiKey)}";
+            var url = $"{layerUrl}/applyEdits?token={Uri.EscapeDataString(token)}";
             var response = await client.PostAsync(url, content, ct);
 
             if (!response.IsSuccessStatusCode)
@@ -191,10 +204,21 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
     public async Task SyncBranchesAsync(IEnumerable<Branch> branches, CancellationToken ct = default)
     {
         var layerUrl = LayerUrl(BranchesLayerUrl);
-        if (string.IsNullOrWhiteSpace(layerUrl) || string.IsNullOrWhiteSpace(ApiKey)) return;
+        if (string.IsNullOrWhiteSpace(layerUrl)) return;
 
         var list = branches.ToList();
         if (!list.Any()) return;
+
+        string token;
+        try
+        {
+            token = await _tokenService.GetAccessTokenAsync(ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "ArcGIS branches sync skipped: unable to acquire access token");
+            return;
+        }
 
         try
         {
@@ -205,7 +229,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
 
             foreach (var b in list.Where(x => x.Location != null))
             {
-                var existingOid = await QueryObjectIdAsync(client, layerUrl, b.Id, ApiKey, ct);
+                var existingOid = await QueryObjectIdAsync(client, layerUrl, b.Id, token, ct);
                 var geometry = new
                 {
                     x = b.Location.X,
@@ -263,7 +287,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
 
             var content = new FormUrlEncodedContent(formFields);
 
-            var url = $"{layerUrl}/applyEdits?token={Uri.EscapeDataString(ApiKey)}";
+            var url = $"{layerUrl}/applyEdits?token={Uri.EscapeDataString(token)}";
             var response = await client.PostAsync(url, content, ct);
 
             if (!response.IsSuccessStatusCode)
