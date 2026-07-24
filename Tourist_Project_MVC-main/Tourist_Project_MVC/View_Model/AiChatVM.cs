@@ -16,9 +16,18 @@ namespace Tourist_Project_MVC.View_Model
     {
         public string Message { get; set; } = string.Empty;
 
-        // Prior turns of the SAME conversation (excluding the new Message).
-        // Kept short client-side (see aiChat.js) so the payload stays small.
-        public List<AiChatMessageVM> History { get; set; } = new();
+        // Arrives as a JSON-serialized string when sent via multipart/form-data.
+        public string History { get; set; } = "[]";
+
+        // Images sent as JSON array of base64 strings.
+        public string ImagesBase64 { get; set; } = "[]";
+
+        // Corresponding MIME types for each image (JSON array).
+        public string ImagesMimeTypes { get; set; } = "[]";
+
+        // Audio sent as a single base64 string.
+        public string? AudioBase64 { get; set; }
+        public string? AudioMimeType { get; set; }
     }
 
     // What the server returns to the browser.
@@ -79,8 +88,20 @@ namespace Tourist_Project_MVC.View_Model
         [JsonPropertyName("text")]
         public string? Text { get; set; }
 
+        [JsonPropertyName("inlineData")]
+        public GeminiInlineData? InlineData { get; set; }
+
         [JsonPropertyName("functionCall")]
         public GeminiFunctionCall? FunctionCall { get; set; }
+    }
+
+    public class GeminiInlineData
+    {
+        [JsonPropertyName("mimeType")]
+        public string MimeType { get; set; } = string.Empty;
+
+        [JsonPropertyName("data")]
+        public string Data { get; set; } = string.Empty;
     }
 
     public class GeminiFunctionCall

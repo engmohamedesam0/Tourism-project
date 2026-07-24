@@ -381,3 +381,7 @@ appsettings.*.local.json
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# macOS
+.DS_Store
+**/.DS_Store

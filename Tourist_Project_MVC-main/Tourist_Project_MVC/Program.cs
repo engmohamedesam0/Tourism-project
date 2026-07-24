@@ -32,7 +32,7 @@ namespace Tourist_Project_MVC
             // with tool calling involved.
             builder.Services.AddHttpClient<IAiChatService, AiChatService>(client =>
             {
-                client.Timeout = TimeSpan.FromSeconds(30);
+                client.Timeout = TimeSpan.FromSeconds(60);
             });
 
             // Explicit header name so [ValidateAntiForgeryToken] accepts the token sent
