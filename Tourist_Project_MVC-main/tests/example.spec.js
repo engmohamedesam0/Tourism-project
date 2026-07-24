@@ -1,28 +1,39 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
-test.describe('Home page', () => {
+test.describe('Explore page', () => {
   test('loads with correct title', async ({ page }) => {
-    await page.goto('/');
-    await expect(page).toHaveTitle(/Home - EGYXPLORE/);
+    await page.goto('/Explore');
+    await expect(page).toHaveTitle(/Explore - EGYXPLORE/);
   });
 
-  test('shows hero heading and explore CTA', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'EGYXPLORE' })).toBeVisible();
+  test('lists destination cards with working detail links', async ({ page }) => {
+    await page.goto('/Explore');
 
-    const exploreCta = page.getByRole('link', { name: /explore/i }).first();
-    await expect(exploreCta).toBeVisible();
-    await exploreCta.click();
+    const cards = page.locator('.explore-card');
+    const count = await cards.count();
 
-    await expect(page).toHaveURL(/\/Explore/);
+    if (count === 0) {
+      // No seeded destinations: page should still render its empty state, not crash.
+      await expect(page.getByText(/no destinations/i)).toBeVisible();
+      return;
+    }
+
+    const firstCard = cards.first();
+    const detailsLink = firstCard.getByRole('link', { name: /details/i });
+    await detailsLink.click();
+
+    await expect(page).toHaveURL(/\/Destination\/Details/);
   });
 
-  test('main nav links point to the right pages', async ({ page }) => {
-    await page.goto('/');
+  test('search box filters the list by query string', async ({ page }) => {
+    await page.goto('/Explore');
 
-    await page.getByRole('link', { name: 'About', exact: true }).click();
-    await expect(page).toHaveURL(/\/About/);
-    await expect(page).toHaveTitle(/About - EGYXPLORE/);
+    const searchBox = page.locator('#exploreSearch');
+    await searchBox.fill('zzz-no-such-destination-zzz');
+    await searchBox.press('Enter');
+
+    await expect(page).toHaveURL(/search=zzz-no-such-destination-zzz/);
+    await expect(page.locator('.explore-card')).toHaveCount(0);
   });
 });

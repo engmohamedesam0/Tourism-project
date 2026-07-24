@@ -78,7 +78,7 @@ namespace Tourist_Project_MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(SponsorBranchVM vm)
+        public async Task<IActionResult> Create(SponsorBranchVM vm)
         {
             var sponsor = ResolveCurrentSponsor();
             if (sponsor == null) return RedirectToAction("CompleteProfile", "SponsorPortal");
@@ -95,7 +95,12 @@ namespace Tourist_Project_MVC.Controllers
                 };
                 _branchRepo.Add(branch);
                 _branchRepo.Save();
-                _ = _arcgisSync.SyncBranchesAsync(new[] { branch });
+                var result = await _arcgisSync.SyncBranchesAsync(new[] { branch });
+                if (!result.Success)
+                {
+                    TempData["BranchMessage"] = $"Branch was saved, but the ArcGIS map sync failed: {result.Error}";
+                    TempData["BranchMessageType"] = "danger";
+                }
                 return RedirectToAction("Index");
             }
 
@@ -127,7 +132,7 @@ namespace Tourist_Project_MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(SponsorBranchVM vm)
+        public async Task<IActionResult> Edit(SponsorBranchVM vm)
         {
             var sponsor = ResolveCurrentSponsor();
             if (sponsor == null) return RedirectToAction("CompleteProfile", "SponsorPortal");
@@ -144,7 +149,12 @@ namespace Tourist_Project_MVC.Controllers
                 branch.ContactNumber = vm.ContactNumber;
                 _branchRepo.Update(branch);
                 _branchRepo.Save();
-                _ = _arcgisSync.SyncBranchesAsync(new[] { branch });
+                var result = await _arcgisSync.SyncBranchesAsync(new[] { branch });
+                if (!result.Success)
+                {
+                    TempData["BranchMessage"] = $"Branch was saved, but the ArcGIS map sync failed: {result.Error}";
+                    TempData["BranchMessageType"] = "danger";
+                }
                 return RedirectToAction("Index");
             }
 

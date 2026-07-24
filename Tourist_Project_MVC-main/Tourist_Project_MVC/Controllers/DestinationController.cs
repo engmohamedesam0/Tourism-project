@@ -142,7 +142,17 @@ namespace Tourist_Project_MVC.Controllers
                 destination.Visits = 0;
                 _repo.Add(destination);
                 _repo.Save();
-                await _arcgisSync.SyncDestinationsAsync(new[] { destination });
+                var syncResult = await _arcgisSync.SyncDestinationsAsync(new[] { destination });
+                if (!syncResult.Success)
+                {
+                    TempData["DestinationMessage"] = $"Destination was saved, but the ArcGIS map sync failed: {syncResult.Error}";
+                    TempData["DestinationMessageType"] = "danger";
+                }
+                else
+                {
+                    TempData["DestinationMessage"] = "Destination saved successfully.";
+                    TempData["DestinationMessageType"] = "success";
+                }
                 return RedirectToAction("Index");
             }
             ViewBag.Lat = Lat;
@@ -173,7 +183,17 @@ namespace Tourist_Project_MVC.Controllers
             {
                 _repo.Update(destination);
                 _repo.Save();
-                await _arcgisSync.SyncDestinationsAsync(new[] { destination });
+                var syncResult = await _arcgisSync.SyncDestinationsAsync(new[] { destination });
+                if (!syncResult.Success)
+                {
+                    TempData["DestinationMessage"] = $"Destination was saved, but the ArcGIS map sync failed: {syncResult.Error}";
+                    TempData["DestinationMessageType"] = "danger";
+                }
+                else
+                {
+                    TempData["DestinationMessage"] = "Destination saved successfully.";
+                    TempData["DestinationMessageType"] = "success";
+                }
                 return RedirectToAction("Index");
             }
             return View(destination);

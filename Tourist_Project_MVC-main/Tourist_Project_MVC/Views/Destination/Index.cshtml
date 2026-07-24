@@ -89,6 +89,15 @@
         }
     </div>
 
+    @if (!string.IsNullOrEmpty(TempData["DestinationMessage"] as string))
+    {
+        var msgType = TempData["DestinationMessageType"] as string ?? "info";
+        <div class="alert alert-@msgType alert-dismissible fade show" role="alert">
+            @Html.Raw(TempData["DestinationMessage"])
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     @await Html.PartialAsync("_StatBoxRow", (List<Tourist_Project_MVC.View_Model.StatBoxItem>)ViewBag.StatBoxes)
 
     <!-- Filter Bar -->

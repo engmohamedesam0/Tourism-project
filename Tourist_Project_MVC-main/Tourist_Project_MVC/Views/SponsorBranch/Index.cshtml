@@ -13,6 +13,15 @@
             </a>
         </div>
 
+        @if (!string.IsNullOrEmpty(TempData["BranchMessage"] as string))
+        {
+            var msgType = TempData["BranchMessageType"] as string ?? "info";
+            <div class="alert alert-@msgType alert-dismissible fade show" role="alert">
+                @Html.Raw(TempData["BranchMessage"])
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
     @await Html.PartialAsync("_StatBoxRow", (List<Tourist_Project_MVC.View_Model.StatBoxItem>)ViewBag.StatBoxes)
 
         <div class="table-responsive">
