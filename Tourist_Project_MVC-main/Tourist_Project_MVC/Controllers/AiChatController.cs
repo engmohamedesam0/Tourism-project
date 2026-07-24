@@ -45,15 +45,19 @@ namespace Tourist_Project_MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Send([FromBody] AiChatRequestVM request, CancellationToken ct)
+        public async Task<IActionResult> Send([FromForm] AiChatRequestVM request, CancellationToken ct)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Message))
+            if (request == null || (string.IsNullOrWhiteSpace(request.Message)
+                && (string.IsNullOrWhiteSpace(request.ImagesBase64) || request.ImagesBase64 == "[]")
+                && string.IsNullOrWhiteSpace(request.AudioBase64)))
             {
-                return BadRequest(new { error = "Message is required." });
+                return BadRequest(new { error = "A message, image, or audio file is required." });
             }
 
             var hasBearerToken = Request.Headers.TryGetValue("Authorization", out var authHeader)
                 && authHeader.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
+
+            var hasIdentityCookie = Request.Cookies.ContainsKey(".AspNetCore.Identity.Application");
 
             System.Security.Claims.ClaimsPrincipal identity;
 
@@ -68,9 +72,9 @@ namespace Tourist_Project_MVC.Controllers
                 }
                 identity = authResult.Principal;
             }
-            else
+            else if (hasIdentityCookie)
             {
-                // Browser request: enforce CSRF protection as usual.
+                // Browser request with a session cookie: enforce CSRF protection as usual.
                 try
                 {
                     await _antiforgery.ValidateRequestAsync(HttpContext);
@@ -80,6 +84,12 @@ namespace Tourist_Project_MVC.Controllers
                     return BadRequest(new { error = "Invalid or missing anti-forgery token." });
                 }
                 identity = User;
+            }
+            else
+            {
+                // Anonymous request (no token, no cookie) — mobile guest or unauthenticated
+                // browser visitor. CSRF doesn't apply: there's no cookie to hijack.
+                identity = User; // will be unauthenticated, tourist stays null below
             }
 
             Tourist? tourist = null;

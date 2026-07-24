@@ -101,18 +101,18 @@
             var typingEl = appendTyping();
             setSending(true);
 
+            var formData = new FormData();
+            formData.append('Message', text);
+            formData.append('History', JSON.stringify(history.slice(0, -1)));
+
             try {
                 var response = await fetch(sendUrl, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'RequestVerificationToken': getAntiforgeryToken(),
                         'X-Requested-With': 'XMLHttpRequest'
                     },
-                    body: JSON.stringify({
-                        message: text,
-                        history: history.slice(0, -1)
-                    })
+                    body: formData
                 });
 
                 typingEl.remove();

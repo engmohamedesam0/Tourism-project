@@ -80,13 +80,66 @@ namespace Tourist_Project_MVC.Services
             // "user" and "model" (not "assistant").
             var contents = new List<GeminiContent>();
 
-            foreach (var turn in request.History.TakeLast(16))
+            // History now arrives as a JSON string — deserialize it back into a list.
+            var historyList = JsonSerializer.Deserialize<List<AiChatMessageVM>>(request.History ?? "[]", _jsonOptions) ?? new();
+            string? lastRole = null;
+            foreach (var turn in historyList.TakeLast(16))
             {
+                // Gemini rejects turns with empty text (e.g. image-only messages).
+                if (string.IsNullOrWhiteSpace(turn.Content)) continue;
+
                 var role = turn.Role == "assistant" ? "model" : "user";
+
+                // Gemini also rejects consecutive same-role turns — skip duplicates.
+                if (role == lastRole) continue;
+
                 contents.Add(new GeminiContent { Role = role, Parts = new List<GeminiPart> { new GeminiPart { Text = turn.Content } } });
+                lastRole = role;
             }
 
-            contents.Add(new GeminiContent { Role = "user", Parts = new List<GeminiPart> { new GeminiPart { Text = request.Message } } });
+            //Edge Case
+            // Gemini requires the first turn in `contents` to be "user".
+            // If history filtering caused it to start with "model", strip those turns.
+            while(contents.Count>0 && contents[0].Role == "model")
+            {
+                contents.RemoveAt(0);
+            }
+            // Build parts for the current message: text + any uploaded images + audio.
+            var currentParts = new List<GeminiPart>();
+
+            if (!string.IsNullOrWhiteSpace(request.Message))
+                currentParts.Add(new GeminiPart { Text = request.Message });
+
+            // Images arrive as two parallel JSON arrays: base64 data and MIME types.
+            var imagesBase64 = JsonSerializer.Deserialize<List<string>>(request.ImagesBase64 ?? "[]", _jsonOptions) ?? new();
+            var imagesMimeTypes = JsonSerializer.Deserialize<List<string>>(request.ImagesMimeTypes ?? "[]", _jsonOptions) ?? new();
+            for (int i = 0; i < imagesBase64.Count; i++)
+            {
+                currentParts.Add(new GeminiPart
+                {
+                    InlineData = new GeminiInlineData
+                    {
+                        MimeType = i < imagesMimeTypes.Count ? imagesMimeTypes[i] : "image/jpeg",
+                        Data = imagesBase64[i]
+                    }
+                });
+            }
+
+            // Audio arrives as a single base64 string.
+            if (!string.IsNullOrWhiteSpace(request.AudioBase64))
+            {
+                currentParts.Add(new GeminiPart
+                {
+                    InlineData = new GeminiInlineData
+                    {
+                        MimeType = request.AudioMimeType ?? "audio/x-m4a",
+                        Data = request.AudioBase64
+                    }
+                });
+            }
+
+            contents.Add(new GeminiContent { Role = "user", Parts = currentParts });
+
 
             var payload = new GeminiRequest
             {
