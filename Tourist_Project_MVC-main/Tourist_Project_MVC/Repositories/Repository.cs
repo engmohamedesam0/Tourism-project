@@ -16,6 +16,8 @@ namespace Tourist_Project_MVC.Repositories
 
         public IEnumerable<T> GetAll() => _dbSet.ToList();
 
+        public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+
         public T? GetById(int id) => _dbSet.Find(id);
 
         public void Add(T entity) => _dbSet.Add(entity);

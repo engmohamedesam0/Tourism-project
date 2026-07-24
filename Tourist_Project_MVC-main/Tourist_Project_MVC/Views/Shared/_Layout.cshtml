@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar" ? "rtl" : "ltr")">
 <head>
     <meta charset="utf-8" />
@@ -260,9 +260,73 @@
             margin-right: 8px;
             vertical-align: middle;
         }
+        /* =============================================
+           GLOBAL LOADER
+           ============================================= */
+        #global-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(26, 15, 0, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-logo-fixed {
+            width: 80px;
+            height: 80px;
+            z-index: 2;
+        }
+
+        .spinner-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 6px dotted #C8832A;
+            border-radius: 50%;
+            animation: spin-ring 2s linear infinite;
+            z-index: 1;
+        }
+
+        @@keyframes spin-ring {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body.loaded #global-loader {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body id="page-top">
+
+    <!-- GLOBAL LOADER -->
+    <div id="global-loader">
+        <div class="loader-container">
+            <img src="~/assets/img/scarab.png" alt="Loading..." class="loader-logo-fixed" />
+            <div class="spinner-ring"></div>
+        </div>
+    </div>
 
     <!-- NAVBAR (two-tier: utility + primary) -->
     <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
@@ -824,27 +888,47 @@
     <div class="ai-widget-panel" id="aiAssistantPanel" aria-hidden="true"
          data-send-url="@Url.Action("Send", "AiChat")"
          data-trip-url-template="@Url.Action("Details", "Trip", new { id = "__ID__" })"
+         data-history-url="@Url.Action("GetHistory", "AiChat")"
+         data-history-session-url-template="@Url.Action("GetHistorySession", "AiChat", new { id = "__ID__" })"
          data-thinking-text="@Localizer["Ai_Thinking"].Value"
          data-error-text="@Localizer["Ai_Error"].Value"
          data-view-trip-text="@Localizer["Ai_ViewTrip"].Value">
-        <div class="ai-widget-header">
-            <h5 class="ai-widget-title">
-                <i class="bi bi-stars me-2"></i> @Localizer["Ai_Title"].Value
-            </h5>
-            <button type="button" class="ai-widget-close" aria-label="@Localizer["Ai_Close"].Value">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="ai-widget-body" id="aiChatMessages">
-            <div class="ai-chat-msg ai-chat-msg-assistant">
-                <div class="ai-chat-bubble">@Localizer["Ai_Description"].Value</div>
-            </div>
-        </div>
-        <form class="ai-widget-footer" id="aiChatForm" autocomplete="off">
-            <input type="text" class="form-control" id="aiChatInput"
-                   placeholder="@Localizer["Ai_Placeholder"].Value" maxlength="1000" />
-            <button type="submit" class="btn btn-secondary" id="aiChatSendBtn">@Localizer["Ai_Send"].Value</button>
-        </form>
+         <div class="ai-widget-header">
+             <h5 class="ai-widget-title">
+                 <i class="bi bi-stars me-2"></i> @Localizer["Ai_Title"].Value
+             </h5>
+             @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+             {
+                 <button type="button" class="ai-widget-history-toggle" id="aiHistoryBtn"
+                         aria-label="@Localizer["Ai_History"].Value">
+                     <i class="bi bi-clock-history"></i>
+                 </button>
+             }
+             <button type="button" class="ai-widget-close" aria-label="@Localizer["Ai_Close"].Value">
+                 <i class="bi bi-x-lg"></i>
+             </button>
+         </div>
+         <div class="ai-widget-body" id="aiChatMessages">
+             <div class="ai-chat-msg ai-chat-msg-assistant">
+                 <div class="ai-chat-bubble">@Localizer["Ai_Description"].Value</div>
+             </div>
+         </div>
+         <div class="ai-widget-history" id="aiWidgetHistory" hidden>
+             <div class="ai-widget-history-header">
+                 <button type="button" class="ai-history-back-btn" id="aiHistoryBackBtn"
+                         aria-label="@Localizer["Ai_Back"].Value">
+                     <i class="bi bi-arrow-left"></i>
+                 </button>
+                 <span>@Localizer["Ai_History"].Value</span>
+             </div>
+             <div class="ai-widget-history-list" id="aiHistoryList">
+             </div>
+         </div>
+         <form class="ai-widget-footer" id="aiChatForm" autocomplete="off">
+             <input type="text" class="form-control" id="aiChatInput"
+                    placeholder="@Localizer["Ai_Placeholder"].Value" maxlength="1000" />
+             <button type="submit" class="btn btn-secondary" id="aiChatSendBtn">@Localizer["Ai_Send"].Value</button>
+         </form>
     </div>
 
     <!-- ============================================================
@@ -1043,6 +1127,106 @@
             padding: 12px 16px;
             display: flex;
             gap: 8px;
+        }
+
+        .ai-widget-history-toggle {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            transition: color .2s ease;
+        }
+        .ai-widget-history-toggle:hover,
+        .ai-widget-history-toggle:focus {
+            color: #fff;
+            outline: none;
+        }
+
+        .ai-widget-history {
+            display: none;
+            flex-direction: column;
+            background: var(--egy-light);
+            min-height: 220px;
+            max-height: 420px;
+            overflow: hidden;
+        }
+
+        .ai-widget-history-mode .ai-widget-body,
+        .ai-widget-history-mode .ai-widget-footer {
+            display: none;
+        }
+        .ai-widget-history-mode .ai-widget-history {
+            display: flex;
+        }
+
+        .ai-widget-history-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(200, 131, 42, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--egy-dark);
+        }
+
+        .ai-history-back-btn {
+            background: none;
+            border: none;
+            color: var(--egy-dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 2px;
+            line-height: 1;
+        }
+        .ai-history-back-btn:hover,
+        .ai-history-back-btn:focus {
+            color: var(--egy-primary);
+            outline: none;
+        }
+
+        .ai-widget-history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .ai-history-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background .15s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        .ai-history-item:last-child {
+            border-bottom: none;
+        }
+        .ai-history-item:hover,
+        .ai-history-item:focus {
+            background: rgba(200, 131, 42, 0.08);
+            outline: none;
+        }
+        .ai-history-item-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--egy-dark);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ai-history-item-date {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .ai-history-empty {
+            text-align: center;
+            padding: 32px 16px;
+            color: #888;
+            font-size: 0.9rem;
         }
 
         @@media (max-width: 575.98px) {
@@ -1265,6 +1449,16 @@
             }
         }
     </style>
+
+    <script>
+        window.hideGlobalLoader = function () {
+            document.body.classList.add('loaded');
+        };
+
+        window.addEventListener('load', function () {
+            window.hideGlobalLoader();
+        });
+    </script>
 
 </body>
 </html>

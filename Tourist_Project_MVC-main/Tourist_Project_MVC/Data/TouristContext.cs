@@ -25,6 +25,7 @@ namespace Tourist_Project_MVC.Data
         public DbSet<SupportTicket> SupportTickets { get; set; }
         public DbSet<SponsorApprovalRequest> SponsorApprovalRequests { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<ChatSession> ChatSessions { get; set; }
 
         public TouristContext(DbContextOptions<TouristContext> options) : base(options)
         {

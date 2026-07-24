@@ -28,6 +28,9 @@ namespace Tourist_Project_MVC.View_Model
         // Audio sent as a single base64 string.
         public string? AudioBase64 { get; set; }
         public string? AudioMimeType { get; set; }
+
+        // Id of the persisted chat session this turn belongs to (null = new conversation).
+        public int? ChatSessionId { get; set; }
     }
 
     // What the server returns to the browser.
@@ -39,6 +42,9 @@ namespace Tourist_Project_MVC.View_Model
         public bool TripSaved { get; set; }
         public int? TripPlanId { get; set; }
         public string? TripPlanTitle { get; set; }
+
+        // Id of the persisted chat session this response belongs to.
+        public int? ChatSessionId { get; set; }
     }
 
     // Compact projection of a Destination, cheap enough to inline into

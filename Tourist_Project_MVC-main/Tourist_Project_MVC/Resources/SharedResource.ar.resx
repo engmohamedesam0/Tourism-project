@@ -180,6 +180,15 @@
   <data name="Ai_ViewTrip" xml:space="preserve">
     <value>عرض الرحلة</value>
   </data>
+  <data name="Ai_History" xml:space="preserve">
+    <value>السجل</value>
+  </data>
+  <data name="Ai_Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="Ai_HistoryEmpty" xml:space="preserve">
+    <value>لا توجد محادثات محفوظة بعد.</value>
+  </data>
   <data name="Search_Placeholder" xml:space="preserve">
     <value>ابحث في مصر…</value>
   </data>

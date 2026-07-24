@@ -180,6 +180,15 @@
   <data name="Ai_ViewTrip" xml:space="preserve">
     <value>View trip</value>
   </data>
+  <data name="Ai_History" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="Ai_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Ai_HistoryEmpty" xml:space="preserve">
+    <value>You have no saved conversations yet.</value>
+  </data>
   <data name="Search_Placeholder" xml:space="preserve">
     <value>Search Egypt…</value>
   </data>

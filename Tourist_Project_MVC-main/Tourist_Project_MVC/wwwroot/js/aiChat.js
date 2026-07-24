@@ -16,10 +16,19 @@
         var thinkingText = panel.getAttribute('data-thinking-text') || 'Thinking…';
         var errorText = panel.getAttribute('data-error-text') || "Sorry, something went wrong. Please try again.";
         var viewTripText = panel.getAttribute('data-view-trip-text') || 'View trip';
+        var historyUrl = panel.getAttribute('data-history-url') || '';
+        var historySessionUrlTemplate = panel.getAttribute('data-history-session-url-template') || '';
 
         var MAX_HISTORY = 12;
         var history = [];
         var sending = false;
+        var currentSessionId = null;
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
         function openWidget() {
             panel.classList.add('ai-widget-open');
@@ -94,6 +103,73 @@
             if (sendBtn) sendBtn.disabled = isSending;
         }
 
+        async function loadHistorySession(id) {
+            var url = historySessionUrlTemplate.replace('__ID__', id);
+            try {
+                var response = await fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                if (!response.ok) return;
+                var data = await response.json();
+                messagesEl.innerHTML = '';
+                history = [];
+                currentSessionId = data.id;
+                if (data.messages && Array.isArray(data.messages)) {
+                    data.messages.forEach(function (m) {
+                        appendMessage(m.role, m.content);
+                        history.push({ role: m.role, content: m.content });
+                    });
+                }
+                panel.classList.remove('ai-widget-history-mode');
+                if (input) input.focus();
+            } catch (err) {
+                // silently keep current view on error
+            }
+        }
+
+        var historyBtn = document.getElementById('aiHistoryBtn');
+        if (historyBtn) {
+            historyBtn.addEventListener('click', async function () {
+                if (!historyUrl) return;
+                var listEl = document.getElementById('aiHistoryList');
+                listEl.innerHTML = '<div class="ai-history-empty">Loading…</div>';
+                panel.classList.add('ai-widget-history-mode');
+
+                try {
+                    var response = await fetch(historyUrl, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    var sessions = await response.json();
+                    listEl.innerHTML = '';
+                    if (!sessions || sessions.length === 0) {
+                        listEl.innerHTML = '<div class="ai-history-empty">@Localizer["Ai_HistoryEmpty"].Value</div>';
+                        return;
+                    }
+                    sessions.forEach(function (s) {
+                        var item = document.createElement('div');
+                        item.className = 'ai-history-item';
+                        item.setAttribute('tabindex', '0');
+                        item.setAttribute('role', 'button');
+                        var dateStr = new Date(s.updatedDate).toLocaleDateString();
+                        item.innerHTML = '<div class="ai-history-item-title">' + escapeHtml(s.title) + '</div>' +
+                                         '<div class="ai-history-item-date">' + escapeHtml(dateStr) + '</div>';
+                        item.addEventListener('click', function () { loadHistorySession(s.id); });
+                        item.addEventListener('keydown', function (e) { if (e.key === 'Enter') loadHistorySession(s.id); });
+                        listEl.appendChild(item);
+                    });
+                } catch (err) {
+                    listEl.innerHTML = '<div class="ai-history-empty">@Localizer["Ai_Error"].Value</div>';
+                }
+            });
+        }
+
+        var historyBackBtn = document.getElementById('aiHistoryBackBtn');
+        if (historyBackBtn) {
+            historyBackBtn.addEventListener('click', function () {
+                panel.classList.remove('ai-widget-history-mode');
+            });
+        }
+
         async function sendMessage(text) {
             appendMessage('user', text);
             history.push({ role: 'user', content: text });
@@ -104,6 +180,7 @@
             var formData = new FormData();
             formData.append('Message', text);
             formData.append('History', JSON.stringify(history.slice(0, -1)));
+            formData.append('ChatSessionId', currentSessionId || '');
 
             try {
                 var response = await fetch(sendUrl, {
@@ -131,6 +208,10 @@
 
                 if (history.length > MAX_HISTORY) {
                     history = history.slice(history.length - MAX_HISTORY);
+                }
+
+                if (data && data.chatSessionId) {
+                    currentSessionId = data.chatSessionId;
                 }
             } catch (err) {
                 typingEl.remove();

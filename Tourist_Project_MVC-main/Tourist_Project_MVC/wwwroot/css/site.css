@@ -1,31 +1,50 @@
 /* Custom Global Variables matching an Elegant Egyptian Palette */
 :root {
     /* Color */
-    --egy-primary: #C8832A; /* Rich Ochre / Antique Gold — ONLY primary/brand color */
-    --egy-dark: #1E120A; /* Dark Pharaoh Brown — canonical dark surface */
-    --egy-light: #FDF9F3; /* Soft Papyrus Alabaster — canonical light surface */
-    --egy-accent: #E8A045; /* Radiant Sun Amber — hover/active state */
-    --egy-muted-gold: #b37424; /* Muted gold — links, secondary emphasis */
-    --egy-success: #2E7D32; /* Add / Create action */
-    --egy-success-hover: #1B5E20; /* Add / Create hover */
-    --egy-danger: #a16468; /* Destructive / Delete action */
-    --egy-text-body: #333333; /* Default paragraph text */
-    --egy-text-muted: #6b7280; /* Muted secondary text */
+    --egy-primary: #C8832A;
+    /* Rich Ochre / Antique Gold — ONLY primary/brand color */
+    --egy-dark: #1E120A;
+    /* Dark Pharaoh Brown — canonical dark surface */
+    --egy-light: #FDF9F3;
+    /* Soft Papyrus Alabaster — canonical light surface */
+    --egy-accent: #E8A045;
+    /* Radiant Sun Amber — hover/active state */
+    --egy-muted-gold: #b37424;
+    /* Muted gold — links, secondary emphasis */
+    --egy-success: #2E7D32;
+    /* Add / Create action */
+    --egy-success-hover: #1B5E20;
+    /* Add / Create hover */
+    --egy-danger: #a16468;
+    /* Destructive / Delete action */
+    --egy-text-body: #333333;
+    /* Default paragraph text */
+    --egy-text-muted: #6b7280;
+    /* Muted secondary text */
 
     /* Radius */
-    --radius-sm: 4px; /* buttons, tables, dropdowns */
-    --radius-md: 10px; /* auth card */
-    --radius-lg: 14px; /* stat card */
-    --radius-pill: 50rem; /* back button, badges */
+    --radius-sm: 4px;
+    /* buttons, tables, dropdowns */
+    --radius-md: 10px;
+    /* auth card */
+    --radius-lg: 14px;
+    /* stat card */
+    --radius-pill: 50rem;
+    /* back button, badges */
 
     /* Shadow */
-    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.05); /* table */
-    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.06); /* stat card resting */
-    --shadow-large: 0 10px 30px rgba(30, 18, 10, 0.12); /* auth card, stat card hover */
-    --shadow-glow-gold: 0 8px 20px rgba(200, 131, 42, 0.4); /* primary button hover */
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* table */
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.06);
+    /* stat card resting */
+    --shadow-large: 0 10px 30px rgba(30, 18, 10, 0.12);
+    /* auth card, stat card hover */
+    --shadow-glow-gold: 0 8px 20px rgba(200, 131, 42, 0.4);
+    /* primary button hover */
 
     /* Layout */
-    --nav-offset: 80px; /* live navbar height; synced by scripts.js (#mainNav.offsetHeight) */
+    --nav-offset: 80px;
+    /* live navbar height; synced by scripts.js (#mainNav.offsetHeight) */
 
     /* Floating AI + Notification FABs and their panels sit above Leaflet
        (max z-index 1000) and other overlays. */
@@ -42,8 +61,14 @@ body {
     min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6,
-.page-title, .table thead th {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.page-title,
+.table thead th {
     font-family: 'Cinzel', serif;
     font-weight: 700;
     letter-spacing: 1px;
@@ -69,7 +94,7 @@ h1, h2, h3, h4, h5, h6,
     padding: 0;
     background-color: transparent;
     border-bottom: 2px solid var(--egy-primary);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     transition: background-color 0.3s ease-in-out;
 }
 
@@ -84,12 +109,12 @@ h1, h2, h3, h4, h5, h6,
     transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.3s ease;
 }
 
-    #mainNav.nav-utility-hidden .navbar-utility {
-        max-height: 0;
-        opacity: 0;
-        border-bottom: none;
-        overflow: hidden;
-    }
+#mainNav.nav-utility-hidden .navbar-utility {
+    max-height: 0;
+    opacity: 0;
+    border-bottom: none;
+    overflow: hidden;
+}
 
 /* Lower primary bar */
 .navbar-primary {
@@ -101,14 +126,15 @@ h1, h2, h3, h4, h5, h6,
     transition: background 0.3s ease, backdrop-filter 0.3s ease;
 }
 
-    #mainNav.navbar-shrink .navbar-primary {
-        background: var(--egy-dark);
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-    }
+#mainNav.navbar-shrink .navbar-primary {
+    background: var(--egy-dark);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
 
 /* Solid bars on inner pages (no hero behind) */
 @media (min-width: 992px) {
+
     body:has(.inner-page-wrapper) #mainNav .navbar-utility,
     body:has(.explore-page) #mainNav .navbar-utility,
     body:has(.nearme-page) #mainNav .navbar-utility {
@@ -145,12 +171,12 @@ h1, h2, h3, h4, h5, h6,
     transition: all 0.2s ease;
 }
 
-    .utility-link:hover,
-    .utility-link:focus {
-        color: var(--egy-dark);
-        background-color: var(--egy-accent);
-        border-color: var(--egy-accent);
-    }
+.utility-link:hover,
+.utility-link:focus {
+    color: var(--egy-dark);
+    background-color: var(--egy-accent);
+    border-color: var(--egy-accent);
+}
 
 .utility-register {
     background-color: var(--egy-accent);
@@ -159,11 +185,11 @@ h1, h2, h3, h4, h5, h6,
     font-weight: 700;
 }
 
-    .utility-register:hover,
-    .utility-register:focus {
-        background-color: var(--egy-primary);
-        color: var(--egy-dark) !important;
-    }
+.utility-register:hover,
+.utility-register:focus {
+    background-color: var(--egy-primary);
+    color: var(--egy-dark) !important;
+}
 
 .utility-search .input-group-text {
     background-color: rgba(255, 255, 255, 0.92);
@@ -205,13 +231,13 @@ h1, h2, h3, h4, h5, h6,
     margin-right: 1.5rem;
 }
 
-    #mainNav .navbar-brand .brand-gold {
-        color: var(--egy-accent);
-    }
+#mainNav .navbar-brand .brand-gold {
+    color: var(--egy-accent);
+}
 
-    #mainNav .navbar-brand .brand-icon {
-        font-size: 1.4rem;
-    }
+#mainNav .navbar-brand .brand-icon {
+    font-size: 1.4rem;
+}
 
 #mainNav .nav-link {
     color: rgba(255, 255, 255, 0.8) !important;
@@ -223,11 +249,11 @@ h1, h2, h3, h4, h5, h6,
     transition: all 0.2s ease;
 }
 
-    #mainNav .nav-link:hover,
-    #mainNav .nav-link:focus,
-    #mainNav .dropdown:hover .nav-link {
-        color: var(--egy-accent) !important;
-    }
+#mainNav .nav-link:hover,
+#mainNav .nav-link:focus,
+#mainNav .dropdown:hover .nav-link {
+    color: var(--egy-accent) !important;
+}
 
 /* Responsive Authentication Buttons */
 #mainNav .nav-auth-btn {
@@ -236,17 +262,17 @@ h1, h2, h3, h4, h5, h6,
     text-align: center;
 }
 
-    #mainNav .nav-auth-btn.auth-register {
-        background-color: var(--egy-primary);
-        color: #FFFFFF !important;
-        border-color: var(--egy-primary);
-    }
+#mainNav .nav-auth-btn.auth-register {
+    background-color: var(--egy-primary);
+    color: #FFFFFF !important;
+    border-color: var(--egy-primary);
+}
 
-        #mainNav .nav-auth-btn.auth-register:hover {
-            background-color: var(--egy-accent) !important;
-            border-color: var(--egy-accent);
-            color: var(--egy-dark) !important;
-        }
+#mainNav .nav-auth-btn.auth-register:hover {
+    background-color: var(--egy-accent) !important;
+    border-color: var(--egy-accent);
+    color: var(--egy-dark) !important;
+}
 
 #mainNav .nav-spacer {
     color: rgba(255, 255, 255, 0.3);
@@ -260,28 +286,28 @@ h1, h2, h3, h4, h5, h6,
     padding: 0.4rem 0.8rem;
 }
 
-    .navbar-toggler:focus {
-        box-shadow: 0 0 0 0.25rem rgba(200, 131, 42, 0.25);
-    }
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.25rem rgba(200, 131, 42, 0.25);
+}
 
 /* Dropdown Custom Styles */
 .dropdown-menu-dark {
     background-color: var(--egy-dark);
     border: 1px solid var(--egy-primary);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
-    .dropdown-menu-dark .dropdown-item {
-        font-family: 'Cinzel', serif;
-        font-size: 0.8rem;
-        padding: 10px 20px;
-        color: #F5E6D3;
-    }
+.dropdown-menu-dark .dropdown-item {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    padding: 10px 20px;
+    color: #F5E6D3;
+}
 
-        .dropdown-menu-dark .dropdown-item:hover {
-            background-color: var(--egy-primary);
-            color: #FFFFFF;
-        }
+.dropdown-menu-dark .dropdown-item:hover {
+    background-color: var(--egy-primary);
+    color: #FFFFFF;
+}
 
 /* Typography Elements */
 .page-title {
@@ -296,23 +322,24 @@ h1, h2, h3, h4, h5, h6,
 /* Tables Layout Overrides */
 .table {
     background-color: #FFFFFF;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     border-radius: 4px;
     overflow: hidden;
 }
 
-    .table thead {
-        background-color: var(--egy-dark);
-        color: #FFFFFF;
-    }
+.table thead {
+    background-color: var(--egy-dark);
+    color: #FFFFFF;
+}
 
-        .table thead th {
-            border-bottom: 2px solid var(--egy-primary);
-            padding: 14px;
-        }
+.table thead th {
+    border-bottom: 2px solid var(--egy-primary);
+    padding: 14px;
+}
 
 /* Custom UI Form Control Focusing Rules */
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
     border-color: var(--egy-primary);
     box-shadow: 0 0 0 0.25rem rgba(200, 131, 42, 0.2);
 }
@@ -331,14 +358,14 @@ h1, h2, h3, h4, h5, h6,
     transition: all 0.3s ease;
 }
 
-    .btn-success:hover,
-    .btn-success:focus {
-        background-color: var(--egy-success-hover) !important;
-        border-color: var(--egy-success-hover) !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.35);
-        transform: translateY(-1px);
-    }
+.btn-success:hover,
+.btn-success:focus {
+    background-color: var(--egy-success-hover) !important;
+    border-color: var(--egy-success-hover) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.35);
+    transform: translateY(-1px);
+}
 
 /* =============================================
    EXPLORE NOW - Hero primary CTA (gold, Cinzel)
@@ -356,14 +383,15 @@ h1, h2, h3, h4, h5, h6,
     transition: all 0.3s ease;
 }
 
-    .masthead .btn-primary:hover,
-    .masthead .btn-primary:focus {
-        background-color: var(--egy-accent);
-        border-color: var(--egy-accent);
-        color: var(--egy-dark);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-glow-gold);
-    }
+.masthead .btn-primary:hover,
+.masthead .btn-primary:focus {
+    background-color: var(--egy-accent);
+    border-color: var(--egy-accent);
+    color: var(--egy-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow-gold);
+}
+
 /* Filter Bar - Active Status Button */
 .btn-group .btn-primary {
     background-color: var(--egy-primary);
@@ -371,12 +399,12 @@ h1, h2, h3, h4, h5, h6,
     color: white;
 }
 
-    .btn-group .btn-primary:hover,
-    .btn-group .btn-primary:focus {
-        background-color: var(--egy-accent);
-        border-color: var(--egy-accent);
-        color: var(--egy-dark);
-    }
+.btn-group .btn-primary:hover,
+.btn-group .btn-primary:focus {
+    background-color: var(--egy-accent);
+    border-color: var(--egy-accent);
+    color: var(--egy-dark);
+}
 
 /* Filter Outline Buttons */
 .btn-group .btn-outline-secondary {
@@ -384,11 +412,12 @@ h1, h2, h3, h4, h5, h6,
     border-color: #ddd;
 }
 
-    .btn-group .btn-outline-secondary:hover {
-        background-color: var(--egy-light);
-        border-color: var(--egy-primary);
-        color: var(--egy-primary);
-    }
+.btn-group .btn-outline-secondary:hover {
+    background-color: var(--egy-light);
+    border-color: var(--egy-primary);
+    color: var(--egy-primary);
+}
+
 /* App Footer Layout */
 .main-footer {
     background-color: var(--egy-dark);
@@ -398,11 +427,11 @@ h1, h2, h3, h4, h5, h6,
     margin-top: auto;
 }
 
-    .main-footer .footer-logo {
-        font-family: 'Cinzel Decorative', serif;
-        color: var(--egy-accent);
-        font-weight: 700;
-    }
+.main-footer .footer-logo {
+    font-family: 'Cinzel Decorative', serif;
+    color: var(--egy-accent);
+    font-weight: 700;
+}
 
 .footer-col-header {
     font-family: 'Cinzel', serif;
@@ -421,32 +450,35 @@ h1, h2, h3, h4, h5, h6,
     transition: color 0.2s ease;
 }
 
-    .main-footer a:hover {
-        color: var(--egy-accent);
-    }
+.main-footer a:hover {
+    color: var(--egy-accent);
+}
 
 .footer-divider {
     border-color: rgba(200, 131, 42, 0.25);
     opacity: 1;
     margin: 1.5rem 0 1.25rem;
 }
+
 #mainNav.navbar-shrink,
 #mainNav.navbar-scrolled {
     border-bottom: 2px solid var(--egy-primary) !important;
 }
 
-    #mainNav.navbar-shrink .nav-link,
-    #mainNav.navbar-scrolled .nav-link {
-        color: rgba(255, 255, 255, 0.8) !important;
-    }
+#mainNav.navbar-shrink .nav-link,
+#mainNav.navbar-scrolled .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
 
-    #mainNav.navbar-shrink .navbar-brand,
-    #mainNav.navbar-scrolled .navbar-brand {
-        color: #FFFFFF !important;
-    }
+#mainNav.navbar-shrink .navbar-brand,
+#mainNav.navbar-scrolled .navbar-brand {
+    color: #FFFFFF !important;
+}
+
 .btn-sm {
-    padding: 6px 12px; /* Adjust these values: top/bottom left/right */
-    margin:5px;
+    padding: 6px 12px;
+    /* Adjust these values: top/bottom left/right */
+    margin: 5px;
 }
 
 /* =============================================
@@ -467,19 +499,19 @@ h1, h2, h3, h4, h5, h6,
     transition: all 0.2s ease;
 }
 
-    .btn-back:hover,
-    .btn-back:focus {
-        background-color: var(--egy-light);
-        border-color: var(--egy-accent);
-        color: var(--egy-dark);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(200, 131, 42, 0.2);
-    }
+.btn-back:hover,
+.btn-back:focus {
+    background-color: var(--egy-light);
+    border-color: var(--egy-accent);
+    color: var(--egy-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(200, 131, 42, 0.2);
+}
 
-    .btn-back:focus-visible {
-        outline: 2px solid var(--egy-primary);
-        outline-offset: 2px;
-    }
+.btn-back:focus-visible {
+    outline: 2px solid var(--egy-primary);
+    outline-offset: 2px;
+}
 
 /* =============================================
    AUTH PAGES (Register / Login) — centered card
@@ -525,14 +557,14 @@ h1, h2, h3, h4, h5, h6,
     transition: all 0.3s ease;
 }
 
-    .auth-form .btn-primary:hover,
-    .auth-form .btn-primary:focus {
-        background-color: var(--egy-accent);
-        border-color: var(--egy-accent);
-        color: var(--egy-dark);
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(200, 131, 42, 0.3);
-    }
+.auth-form .btn-primary:hover,
+.auth-form .btn-primary:focus {
+    background-color: var(--egy-accent);
+    border-color: var(--egy-accent);
+    color: var(--egy-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(200, 131, 42, 0.3);
+}
 
 .auth-links {
     text-align: center;
@@ -540,17 +572,17 @@ h1, h2, h3, h4, h5, h6,
     font-size: 0.92rem;
 }
 
-    .auth-links a {
-        color: var(--egy-muted-gold);
-        font-weight: 600;
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
+.auth-links a {
+    color: var(--egy-muted-gold);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
 
-        .auth-links a:hover {
-            color: var(--egy-primary);
-            text-decoration: underline;
-        }
+.auth-links a:hover {
+    color: var(--egy-primary);
+    text-decoration: underline;
+}
 
 .auth-link-sep {
     color: rgba(30, 18, 10, 0.25);

@@ -323,13 +323,21 @@ var EGYMaps = (function () {
                 zoom: opts.zoom || 7
             });
 
+            var localLoader = document.createElement('div');
+            localLoader.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(26, 15, 0, 0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;transition:opacity 0.4s;';
+            localLoader.innerHTML = '<div class="loader-container"><img src="/assets/img/scarab.png" alt="Loading map..." class="loader-logo-fixed" /><div class="spinner-ring"></div></div>';
+            mapEl.appendChild(localLoader);
+
             sourceLayer = null;
             overlayGraphicsLayer = new GraphicsLayer({ title: 'overlays' });
             map.add(overlayGraphicsLayer);
 
             graphicsByFeature = new Map();
 
-            loadLayer();
+            loadLayer().finally(function() {
+                localLoader.style.opacity = '0';
+                setTimeout(function() { if (localLoader.parentNode) localLoader.parentNode.removeChild(localLoader); }, 400);
+            });
         })();
 
         return handle;
@@ -373,6 +381,11 @@ var EGYMaps = (function () {
                 center: [initialLng, initialLat],
                 zoom: 13
             });
+
+            var localLoader = document.createElement('div');
+            localLoader.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(26, 15, 0, 0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;transition:opacity 0.4s;';
+            localLoader.innerHTML = '<div class="loader-container"><img src="/assets/img/scarab.png" alt="Loading map..." class="loader-logo-fixed" /><div class="spinner-ring"></div></div>';
+            mapEl.appendChild(localLoader);
 
             _maps[opts.mapElId] = view;
 
@@ -459,6 +472,11 @@ var EGYMaps = (function () {
                     })
                     .catch(function () { _showNotice(mapEl); });
             }
+
+            view.when(function() {
+                localLoader.style.opacity = '0';
+                setTimeout(function() { if (localLoader.parentNode) localLoader.parentNode.removeChild(localLoader); }, 400);
+            });
 
             if (latInput) {
                 latInput.addEventListener('input', function () {

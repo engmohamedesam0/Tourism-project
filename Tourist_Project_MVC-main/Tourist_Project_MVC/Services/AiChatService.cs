@@ -29,6 +29,7 @@ namespace Tourist_Project_MVC.Services
         private readonly IConfiguration _config;
         private readonly IDestinationRepository _destinationRepo;
         private readonly ITripPlanRepository _tripPlanRepo;
+        private readonly IChatSessionRepository _chatSessionRepo;
         private readonly ILogger<AiChatService> _logger;
         private readonly JsonSerializerOptions _jsonOptions;
 
@@ -37,12 +38,14 @@ namespace Tourist_Project_MVC.Services
             IConfiguration config,
             IDestinationRepository destinationRepo,
             ITripPlanRepository tripPlanRepo,
+            IChatSessionRepository chatSessionRepo,
             ILogger<AiChatService> logger)
         {
             _http = http;
             _config = config;
             _destinationRepo = destinationRepo;
             _tripPlanRepo = tripPlanRepo;
+            _chatSessionRepo = chatSessionRepo;
             _logger = logger;
             _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
@@ -202,12 +205,71 @@ namespace Tourist_Project_MVC.Services
             }
 
             var reply = string.Concat(parts.Where(p => p.Text != null).Select(p => p.Text)).Trim();
-            return new AiChatResponseVM
+            var response = new AiChatResponseVM
             {
                 Reply = string.IsNullOrWhiteSpace(reply)
                     ? "I'm not sure how to answer that — could you rephrase?"
                     : reply
             };
+
+            if (tourist != null)
+            {
+                await PersistChatAsync(request, response, tourist);
+            }
+
+            return response;
+        }
+
+        private async Task PersistChatAsync(AiChatRequestVM request, AiChatResponseVM response, Tourist tourist)
+        {
+            ChatSession? session = null;
+
+            if (request.ChatSessionId.HasValue)
+            {
+                session = await _chatSessionRepo.GetByIdAsync(request.ChatSessionId.Value);
+                if (session == null || session.TouristId != tourist.Id)
+                {
+                    session = null;
+                }
+            }
+
+            if (session == null)
+            {
+                session = new ChatSession
+                {
+                    TouristId = tourist.Id,
+                    Title = DeriveTitle(request.Message),
+                    MessagesJson = "[]",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+                _chatSessionRepo.Add(session);
+                _chatSessionRepo.Save();
+            }
+
+            var messages = JsonSerializer.Deserialize<List<AiChatMessageVM>>(session.MessagesJson, _jsonOptions) ?? new();
+            if (!string.IsNullOrWhiteSpace(request.Message))
+            {
+                messages.Add(new AiChatMessageVM { Role = "user", Content = request.Message });
+            }
+            messages.Add(new AiChatMessageVM { Role = "assistant", Content = response.Reply });
+
+            session.MessagesJson = JsonSerializer.Serialize(messages, _jsonOptions);
+            session.UpdatedDate = DateTime.Now;
+            _chatSessionRepo.Update(session);
+            _chatSessionRepo.Save();
+
+            response.ChatSessionId = session.Id;
+        }
+
+        private static string DeriveTitle(string? message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+                return "New conversation";
+
+            var trimmed = message.Trim();
+            if (trimmed.Length <= 40) return trimmed;
+            return trimmed.Substring(0, 40).TrimEnd() + "…";
         }
 
         private AiChatResponseVM HandleSaveTripToolCall(GeminiFunctionCall functionCall, Tourist? tourist, List<AiDestinationContext> destinations)
