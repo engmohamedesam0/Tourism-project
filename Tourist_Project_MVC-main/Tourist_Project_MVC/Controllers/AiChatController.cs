@@ -109,13 +109,6 @@ namespace Tourist_Project_MVC.Controllers
             }
 
             var tourist = await ResolveTouristAsync(ct);
-            _logger.LogInformation(
-                "AiChat.Send — HasIdentityCookie={HasCookie}, IsAuthenticated={IsAuth}, IsInUserRole={InRole}, ResolvedTouristId={TouristId}",
-                Request.Cookies.ContainsKey(".AspNetCore.Identity.Application"),
-                User.Identity?.IsAuthenticated,
-                User.IsInRole("User"),
-                tourist?.Id.ToString() ?? "null");
-
             var result = await _aiChatService.GetReplyAsync(request, tourist, ct);
             return Json(result);
         }

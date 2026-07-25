@@ -111,7 +111,10 @@
             try {
                 var response = await fetch(url, {
                     credentials: 'same-origin',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: {
+                        'RequestVerificationToken': getAntiforgeryToken(),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
                 if (!response.ok) return;
                 var data = await response.json();
@@ -144,7 +147,10 @@
                 try {
                 var response = await fetch(historyUrl, {
                     credentials: 'same-origin',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: {
+                        'RequestVerificationToken': getAntiforgeryToken(),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
                 var sessions = await response.json();
                 listEl.innerHTML = '';
