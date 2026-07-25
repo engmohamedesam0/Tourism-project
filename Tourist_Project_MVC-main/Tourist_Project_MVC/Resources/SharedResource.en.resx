@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -269,6 +269,82 @@
   </data>
   <data name="Contact_Gamified_Text" xml:space="preserve">
     <value>Missions, badges, and rewards for every explorer</value>
+  </data>
+  <!-- Premium Home Page Keys -->
+  <data name="Hero_Badge_Live" xml:space="preserve">
+    <value>Now Live — Discover Egypt</value>
+  </data>
+  <data name="Hero_Scroll" xml:space="preserve">
+    <value>Scroll</value>
+  </data>
+  <data name="About_Eyebrow" xml:space="preserve">
+    <value>Who We Are</value>
+  </data>
+  <data name="About_Badge" xml:space="preserve">
+    <value>Award-Winning Platform</value>
+  </data>
+  <data name="Features_Eyebrow" xml:space="preserve">
+    <value>What We Offer</value>
+  </data>
+  <data name="Features_Title" xml:space="preserve">
+    <value>Experience Egypt Differently</value>
+  </data>
+  <data name="Features_Subtitle" xml:space="preserve">
+    <value>Four pillars that transform how you discover ancient wonders</value>
+  </data>
+  <data name="Feature1_Tag" xml:space="preserve">
+    <value>Destinations</value>
+  </data>
+  <data name="Feature3_Tag" xml:space="preserve">
+    <value>Gamification</value>
+  </data>
+  <data name="Feature_Powered" xml:space="preserve">
+    <value>ArcGIS Powered</value>
+  </data>
+  <data name="HowIt_Eyebrow" xml:space="preserve">
+    <value>Your Journey</value>
+  </data>
+  <data name="HowIt_Title" xml:space="preserve">
+    <value>How It Works</value>
+  </data>
+  <data name="Step1_Title" xml:space="preserve">
+    <value>Create Your Account</value>
+  </data>
+  <data name="Step1_Text" xml:space="preserve">
+    <value>Sign up for free and unlock your personal digital heritage passport</value>
+  </data>
+  <data name="Step2_Title" xml:space="preserve">
+    <value>Explore Destinations</value>
+  </data>
+  <data name="Step2_Text" xml:space="preserve">
+    <value>Browse hundreds of curated archaeological sites and hidden gems across Egypt</value>
+  </data>
+  <data name="Step3_Title" xml:space="preserve">
+    <value>Plan with AI</value>
+  </data>
+  <data name="Step3_Text" xml:space="preserve">
+    <value>Let our AI craft the perfect personalized itinerary matched to your interests and budget</value>
+  </data>
+  <data name="Step4_Title" xml:space="preserve">
+    <value>Earn Rewards</value>
+  </data>
+  <data name="Step4_Text" xml:space="preserve">
+    <value>Complete missions, collect badges and redeem points for exclusive experiences</value>
+  </data>
+  <data name="Pillars_Eyebrow" xml:space="preserve">
+    <value>Core Technology</value>
+  </data>
+  <data name="Pillars_Title" xml:space="preserve">
+    <value>Powered By Innovation</value>
+  </data>
+  <data name="CTA_Title" xml:space="preserve">
+    <value>Begin Your Egyptian Adventure</value>
+  </data>
+  <data name="CTA_Sub" xml:space="preserve">
+    <value>Join thousands of explorers who are already discovering Egypt's hidden wonders through EGYXPLORE</value>
+  </data>
+  <data name="CTA_Btn" xml:space="preserve">
+    <value>Get Started Free</value>
   </data>
   <data name="Explore_Title" xml:space="preserve">
     <value>Explore Egypt</value>

@@ -77,79 +77,8 @@ namespace Tourist_Project_MVC.Controllers
             return View(vm);
         }
 
-        public IActionResult Dashboard()
+        private (List<MonthlyStatRow> ReportRows, List<TopRewardRow> TopRewards) GetSponsorYearlyStats(int sponsorId, int year)
         {
-            var sponsor = ResolveCurrentSponsor();
-            if (sponsor == null)
-                return RedirectToAction("CompleteProfile");
-
-            var sponsorId = sponsor.Id;
-
-            var redeemedCount = _context.Redemptions
-                .Count(r => r.Reward != null && r.Reward.SponsorId == sponsorId);
-
-            var rewardViewCount = _context.RewardViews
-                .Count(v => v.Reward != null && v.Reward.SponsorId == sponsorId);
-
-            var mostWantedTitle = (string?)null;
-            var mostWantedCount = 0;
-            var mostWantedBranch = (string?)null;
-
-            var sponsorRedemptions = _context.Redemptions
-                .Include(r => r.Reward)
-                .Include(r => r.Branch)
-                .Where(r => r.Reward != null && r.Reward.SponsorId == sponsorId)
-                .ToList();
-
-            var topRewardGroup = sponsorRedemptions
-                .GroupBy(r => r.RewardId)
-                .OrderByDescending(g => g.Count())
-                .FirstOrDefault();
-
-            if (topRewardGroup != null)
-            {
-                mostWantedTitle = topRewardGroup.First().Reward?.Title;
-                mostWantedCount = topRewardGroup.Count();
-
-                var topBranch = topRewardGroup
-                    .Where(r => r.BranchId.HasValue)
-                    .GroupBy(r => r.BranchId!.Value)
-                    .OrderByDescending(g => g.Count())
-                    .FirstOrDefault();
-
-                if (topBranch != null)
-                    mostWantedBranch = topBranch.First().Branch?.Name;
-            }
-
-            var reviews = _context.Reviews
-                .Where(rv => rv.SponsorId == sponsorId)
-                .ToList();
-
-            var vm = new SponsorDashboardVM
-            {
-                SponsorId = sponsorId,
-                RedeemedCount = redeemedCount,
-                RewardViewCount = rewardViewCount,
-                MostWantedRewardTitle = mostWantedTitle,
-                MostWantedRewardRedemptions = mostWantedCount,
-                MostWantedBranchName = mostWantedBranch,
-                RatingAvailable = reviews.Any(),
-                AverageRating = reviews.Any() ? reviews.Average(rv => rv.Rating) : (double?)null,
-                ReviewCount = reviews.Count
-            };
-
-            return View("Dashboard", vm);
-        }
-
-        public IActionResult Reports()
-        {
-            var sponsor = ResolveCurrentSponsor();
-            if (sponsor == null)
-                return RedirectToAction("CompleteProfile");
-
-            var sponsorId = sponsor.Id;
-            var year = DateTime.Now.Year;
-
             var redemptions = _context.Redemptions
                 .Include(r => r.Reward)
                 .Where(r => r.Reward != null && r.Reward.SponsorId == sponsorId &&
@@ -196,6 +125,134 @@ namespace Tourist_Project_MVC.Controllers
                 })
                 .OrderByDescending(t => t.Redemptions)
                 .ToList();
+
+            return (reportRows, topRewards);
+        }
+
+        public IActionResult Dashboard()
+        {
+            var sponsor = ResolveCurrentSponsor();
+            if (sponsor == null)
+                return RedirectToAction("CompleteProfile");
+
+            var sponsorId = sponsor.Id;
+            var year = DateTime.Now.Year;
+
+            var redeemedCount = _context.Redemptions
+                .Count(r => r.Reward != null && r.Reward.SponsorId == sponsorId);
+
+            var rewardViewCount = _context.RewardViews
+                .Count(v => v.Reward != null && v.Reward.SponsorId == sponsorId);
+
+            var mostWantedTitle = (string?)null;
+            var mostWantedCount = 0;
+            var mostWantedBranch = (string?)null;
+
+            var sponsorRedemptions = _context.Redemptions
+                .Include(r => r.Reward)
+                .Include(r => r.Branch)
+                .Where(r => r.Reward != null && r.Reward.SponsorId == sponsorId)
+                .ToList();
+
+            var topRewardGroup = sponsorRedemptions
+                .GroupBy(r => r.RewardId)
+                .OrderByDescending(g => g.Count())
+                .FirstOrDefault();
+
+            if (topRewardGroup != null)
+            {
+                mostWantedTitle = topRewardGroup.First().Reward?.Title;
+                mostWantedCount = topRewardGroup.Count();
+
+                var topBranch = topRewardGroup
+                    .Where(r => r.BranchId.HasValue)
+                    .GroupBy(r => r.BranchId!.Value)
+                    .OrderByDescending(g => g.Count())
+                    .FirstOrDefault();
+
+                if (topBranch != null)
+                    mostWantedBranch = topBranch.First().Branch?.Name;
+            }
+
+            var reviews = _context.Reviews
+                .Where(rv => rv.SponsorId == sponsorId)
+                .ToList();
+
+            var totalBranches = _context.Branches.Count(b => b.SponsorId == sponsorId);
+            var totalRewards = _context.Rewards.Count(r => r.SponsorId == sponsorId);
+            var mostActiveBranchName = (string?)null;
+            var mostActiveBranchId = _context.Redemptions
+                .Where(r => r.Reward != null && r.Reward.SponsorId == sponsorId && r.BranchId != null)
+                .GroupBy(r => r.BranchId)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .FirstOrDefault();
+            if (mostActiveBranchId.HasValue)
+            {
+                mostActiveBranchName = _context.Branches
+                    .Where(b => b.Id == mostActiveBranchId.Value)
+                    .Select(b => b.Name)
+                    .FirstOrDefault();
+            }
+
+            var branchMapPoints = _context.Branches
+                .Where(b => b.SponsorId == sponsorId && b.Location != null)
+                .Select(b => new BranchMapPoint
+                {
+                    Id = b.Id,
+                    Name = b.Name,
+                    Lat = b.Location.Y,
+                    Lng = b.Location.X
+                })
+                .ToList();
+
+            var (monthlyStats, dashboardTopRewards) = GetSponsorYearlyStats(sponsorId, year);
+
+            ViewBag.StatBoxes = new List<StatBoxItem>
+            {
+                new StatBoxItem { IconClass = "bi-diagram-3-fill", Color = "blue", Value = totalBranches.ToString("N0"), Label = "Total Branches" },
+                new StatBoxItem { IconClass = "bi-gift-fill", Color = "green", Value = totalRewards.ToString("N0"), Label = "Total Rewards" },
+                new StatBoxItem { IconClass = "bi-receipt-fill", Color = "gold", Value = redeemedCount.ToString("N0"), Label = "Total Redemptions" },
+                new StatBoxItem { IconClass = "bi-trophy-fill", Color = "purple", Value = mostActiveBranchName ?? "—", Label = "Most Active Branch" }
+            };
+
+            var vm = new SponsorDashboardVM
+            {
+                SponsorId = sponsorId,
+                SponsorName = sponsor.Name,
+                SponsorType = sponsor.Type,
+                SponsorAddress = sponsor.Address,
+                SponsorContact = sponsor.ContactNumber.ToString(),
+                RedeemedCount = redeemedCount,
+                RewardViewCount = rewardViewCount,
+                MostWantedRewardTitle = mostWantedTitle,
+                MostWantedRewardRedemptions = mostWantedCount,
+                MostWantedBranchName = mostWantedBranch,
+                RatingAvailable = reviews.Any(),
+                AverageRating = reviews.Any() ? reviews.Average(rv => rv.Rating) : (double?)null,
+                ReviewCount = reviews.Count,
+                TotalBranches = totalBranches,
+                TotalRewards = totalRewards,
+                TotalRedemptions = redeemedCount,
+                MostActiveBranchName = mostActiveBranchName,
+                MonthlyStats = monthlyStats,
+                DashboardTopRewards = dashboardTopRewards,
+                SponsorBranches = branchMapPoints
+            };
+
+            return View("Dashboard", vm);
+        }
+
+        public IActionResult Reports()
+        {
+            var sponsor = ResolveCurrentSponsor();
+            if (sponsor == null)
+                return RedirectToAction("CompleteProfile");
+
+            var sponsorId = sponsor.Id;
+            var year = DateTime.Now.Year;
+
+            var (reportRows, topRewards) = GetSponsorYearlyStats(sponsorId, year);
 
             var vm = new SponsorReportsVM
             {

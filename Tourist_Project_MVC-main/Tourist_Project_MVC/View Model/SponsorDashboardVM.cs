@@ -1,3 +1,4 @@
+using System.Globalization;
 using Tourist_Project_MVC.Models;
 
 namespace Tourist_Project_MVC.View_Model
@@ -8,22 +9,41 @@ namespace Tourist_Project_MVC.View_Model
     {
         public int SponsorId { get; set; }
 
-        // Redeemed rewards count: number of Redemptions tied to this sponsor's rewards.
+        // Sponsor identity / context
+        public string? SponsorName { get; set; }
+        public string? SponsorType { get; set; }
+        public string? SponsorAddress { get; set; }
+        public string? SponsorContact { get; set; }
+
+        // Existing KPIs
         public int RedeemedCount { get; set; }
-
-        // How many times tourists opened one of this sponsor's reward detail pages.
         public int RewardViewCount { get; set; }
-
-        // Most-wanted reward (most redemptions) and the branch it was most
-        // redeemed at. Null when the sponsor has no redemptions yet.
         public string? MostWantedRewardTitle { get; set; }
         public int MostWantedRewardRedemptions { get; set; }
         public string? MostWantedBranchName { get; set; }
-
-        // Average tourist rating across the sponsor's reviews (reuses the
-        // existing Review entity, which is stored at the Sponsor level).
         public bool RatingAvailable { get; set; }
         public double? AverageRating { get; set; }
         public int ReviewCount { get; set; }
+
+        // Branch / reward aggregates (reuses SponsorBranchController.Index pattern)
+        public int TotalBranches { get; set; }
+        public int TotalRewards { get; set; }
+        public int TotalRedemptions { get; set; }
+        public string? MostActiveBranchName { get; set; }
+
+        // Yearly stats reused from Reports logic
+        public List<MonthlyStatRow> MonthlyStats { get; set; } = new();
+        public List<TopRewardRow> DashboardTopRewards { get; set; } = new();
+
+        // Branches for map panel (lat/lng for fitBounds, popup wiring)
+        public List<BranchMapPoint> SponsorBranches { get; set; } = new();
+    }
+
+    public class BranchMapPoint
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public double Lat { get; set; }
+        public double Lng { get; set; }
     }
 }

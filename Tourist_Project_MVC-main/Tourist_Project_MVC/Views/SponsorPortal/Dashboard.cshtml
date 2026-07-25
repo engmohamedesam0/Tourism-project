@@ -3,88 +3,588 @@
 @{
     ViewData["Title"] = Localizer["SponsorPortal_DashboardPageTitle"].Value;
     ViewData["IsHomePage"] = false;
+    var culture = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var isRtl = culture == "ar";
 }
 
-<div class="container my-4" style="max-width: 1000px;">
+<div class="dashboard-wrapper">
 
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="page-title mb-0">
-            <i class="bi bi-speedometer2 me-2"></i> @Localizer["SponsorPortal_Dashboard"].Value
-        </h1>
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4 dashboard-header">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-custom mb-1">
+                    <li class="breadcrumb-item"><a asp-controller="SponsorPortal" asp-action="Index">@Localizer["SponsorPortal_PageTitle"].Value</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Localizer["SponsorPortal_Dashboard"].Value</li>
+                </ol>
+            </nav>
+            <h1 class="page-title mb-0">
+                <i class="bi bi-speedometer2 me-2"></i> @Localizer["SponsorPortal_Dashboard"].Value
+            </h1>
+            <p class="text-muted small mb-0 mt-1">@Localizer["SponsorPortal_WelcomeMessage"].Value @Model.SponsorName</p>
+        </div>
         <a asp-controller="SponsorRedemption" asp-action="Index" class="btn btn-outline-primary">
             <i class="bi bi-receipt me-1"></i> @Localizer["SponsorPortal_RedemptionHistory"].Value
         </a>
     </div>
 
-    <div class="row g-3">
-        <!-- Redeemed rewards count -->
-        <div class="col-md-6 col-lg-3">
-            <div class="stat-card stat-blue h-100">
-                <i class="bi bi-ticket-perforated-fill stat-icon"></i>
-                <div class="stat-number">@Model.RedeemedCount</div>
-                <div class="stat-label">@Localizer["SponsorPortal_RewardsRedeemed"].Value</div>
-            </div>
-        </div>
+    <!-- Main Grid -->
+    <div class="dashboard-grid">
 
-        <!-- Reward detail views -->
-        <div class="col-md-6 col-lg-3">
-            <div class="stat-card stat-green h-100">
-                <i class="bi bi-eye-fill stat-icon"></i>
-                <div class="stat-number">@Model.RewardViewCount</div>
-                <div class="stat-label">@Localizer["SponsorPortal_RewardDetailViews"].Value</div>
-            </div>
-        </div>
-
-        <!-- Most-wanted reward + branch -->
-        <div class="col-md-6 col-lg-3">
-            <div class="stat-card stat-gold h-100">
-                <i class="bi bi-fire stat-icon"></i>
-                <div class="stat-number" style="font-size: 1.15rem; line-height: 1.3;">
-                    @(Model.MostWantedRewardTitle ?? "—")
+        <!-- Left Sidebar -->
+        <aside class="dash-sidebar">
+            <div class="dash-sidebar-card mb-3">
+                <div class="dash-card-header">
+                    <i class="bi bi-building me-2"></i> @Localizer["SponsorPortal_Profile"].Value
                 </div>
-                <div class="stat-label">
-                    @Localizer["SponsorPortal_MostWanted"].Value
-                    @if (Model.MostWantedRewardRedemptions > 0)
+                <div class="dash-card-body">
+                    <h6 class="fw-bold mb-2 text-truncate" title="@Model.SponsorName">@Model.SponsorName</h6>
+                    <span class="badge-category mb-2">@Model.SponsorType</span>
+                    @if (!string.IsNullOrEmpty(Model.SponsorAddress))
                     {
-                        @:(@Model.MostWantedRewardRedemptions)
+                        <p class="small text-muted mb-1"><i class="bi bi-geo-alt me-1"></i> @Model.SponsorAddress</p>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.SponsorContact))
+                    {
+                        <p class="small text-muted mb-0"><i class="bi bi-telephone me-1"></i> @Model.SponsorContact</p>
                     }
                 </div>
-                @if (!string.IsNullOrEmpty(Model.MostWantedBranchName))
+            </div>
+
+            <div class="dash-sidebar-card mb-3">
+                <div class="dash-card-header">
+                    <i class="bi bi-info-circle me-2"></i> @Localizer["SponsorPortal_QuickInfo"].Value
+                </div>
+                <div class="dash-card-body">
+                    <div class="dash-info-row">
+                        <span class="dash-info-label">@Localizer["SponsorPortal_Branches"].Value</span>
+                        <span class="dash-info-value">@Model.TotalBranches</span>
+                    </div>
+                    <div class="dash-info-row">
+                        <span class="dash-info-label">@Localizer["SponsorPortal_Rewards"].Value</span>
+                        <span class="dash-info-value">@Model.TotalRewards</span>
+                    </div>
+                    <div class="dash-info-row">
+                        <span class="dash-info-label">@Localizer["SponsorPortal_Reviews"].Value</span>
+                        <span class="dash-info-value">@Model.ReviewCount</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-sidebar-card">
+                <div class="dash-card-header">
+                    <i class="bi bi-funnel me-2"></i> @Localizer["SponsorPortal_Filters"].Value
+                </div>
+                <div class="dash-card-body">
+                    <label class="form-label small text-muted-label mb-2">@Localizer["SponsorPortal_TrendMetric"].Value</label>
+                    <div class="chips-group flex-column">
+                        <button type="button" class="chip chip-active" data-chart-metric="both">@Localizer["SponsorPortal_Both"].Value</button>
+                        <button type="button" class="chip" data-chart-metric="redemptions">@Localizer["SponsorPortal_RedemptionsOnly"].Value</button>
+                        <button type="button" class="chip" data-chart-metric="views">@Localizer["SponsorPortal_ViewsOnly"].Value</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center: Map -->
+        <section class="dash-map-card">
+            <div id="dashboardMap" class="dash-map-container">
+                <div class="map-watermark">
+                    <i class="bi bi-map" style="font-size: 2.5rem;"></i>
+                    <p class="mb-0 mt-2">@Localizer["Explore_MapPlaceholder"].Value</p>
+                    <small class="text-muted">@Localizer["Explore_MapNote"].Value</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right: Widgets -->
+        <aside class="dash-widgets">
+            <div class="dash-widget-card mb-3">
+                <div class="dash-card-header">
+                    <i class="bi bi-bar-chart-fill me-2"></i> @Localizer["SponsorPortal_Stats"].Value
+                </div>
+                <div class="dash-card-body p-0">
+                    @await Html.PartialAsync("_StatBoxRow", ViewBag.StatBoxes as List<Tourist_Project_MVC.View_Model.StatBoxItem>)
+                </div>
+            </div>
+
+            <div class="dash-widget-card">
+                <div class="dash-card-header">
+                    <i class="bi bi-star-fill me-2"></i> @Localizer["SponsorPortal_AvgRating"].Value
+                </div>
+                <div class="dash-card-body text-center">
+                    @if (Model.RatingAvailable && Model.AverageRating.HasValue)
+                    {
+                        <div class="rating-gauge mx-auto" style="--rating:@Model.AverageRating.Value;">
+                            <span class="rating-gauge-value">@Model.AverageRating.Value.ToString("0.0")</span>
+                        </div>
+                        <p class="text-muted small mb-0">@Model.ReviewCount @Localizer["SponsorPortal_Reviews"].Value</p>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <i class="bi bi-star-slash text-muted" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2 mb-0 small">@Localizer["SponsorPortal_NoReviewsInfo"].Value</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Bottom Charts -->
+    <div class="charts-grid mt-4">
+        <div class="chart-card">
+            <div class="dash-card-header">
+                <i class="bi bi-graph-up me-2"></i> @Localizer["SponsorPortal_MonthlyTrend"].Value
+            </div>
+            <div class="chart-body">
+                <div style="height: 320px;">
+                    <canvas id="monthlyTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="dash-card-header">
+                <i class="bi bi-trophy-fill me-2"></i> @Localizer["SponsorPortal_TopRewards"].Value
+            </div>
+            <div class="chart-body">
+                @if (Model.DashboardTopRewards.Any())
                 {
-                    <div class="small text-muted mt-1">
-                        <i class="bi bi-geo-alt-fill"></i> @Model.MostWantedBranchName
+                    <div style="height: 320px;">
+                        <canvas id="topRewardsChart"></canvas>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-gift text-muted" style="font-size:2rem;"></i>
+                        <p class="text-muted mt-2 mb-0">@Localizer["SponsorPortal_NoRewardActivity"].Value</p>
                     </div>
                 }
             </div>
         </div>
-
-        <!-- Tourist rating -->
-        <div class="col-md-6 col-lg-3">
-            <div class="stat-card stat-purple h-100">
-                <i class="bi bi-star-fill stat-icon"></i>
-                <div class="stat-number">
-                    @(Model.RatingAvailable ? $"{Model.AverageRating:F1}" : "—")
-                </div>
-                <div class="stat-label">
-                    @Localizer["SponsorPortal_AvgRating"].Value
-                    @if (Model.RatingAvailable)
-                    {
-                        @:(@Model.ReviewCount)
-                    }
-                </div>
-            </div>
-        </div>
     </div>
 
-    @if (!Model.RatingAvailable)
-    {
-        <div class="alert alert-info mt-3" role="alert">
-            <i class="bi bi-info-circle-fill me-1"></i>
-            @Localizer["SponsorPortal_NoReviewsInfo"].Value
-        </div>
-    }
-
-    <p class="text-muted small mt-4 mb-0">
-        @Localizer["SponsorPortal_MetricsScopeHelp"].Value
-    </p>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            window.sponsorBranchLatlngs = [@foreach (var b in Model.SponsorBranches) {<text>[@b.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture), @b.Lng.ToString(System.Globalization.CultureInfo.InvariantCulture)],</text>}];
+
+            var dashboardMap = EGYMaps.initWfsMap({
+                mapElId: 'dashboardMap',
+                layer: 'branches',
+                propMap: {
+                    id: ['Id', 'id', 'SponsorId', 'sponsorId'],
+                    name: ['Name', 'name', 'branch_name']
+                },
+                markerStyle: { radius: 9, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
+                popupHtml: function (ctx) {
+                    var p = ctx.attributes || {};
+                    var name = _firstDefined(p, ['Name', 'name', 'branch_name'], ['Unnamed']);
+                    var address = _firstDefined(p, ['Address', 'address'], ['']);
+                    var html = '<strong>' + _esc(name) + '</strong>';
+                    if (address) html += '<br><span style="color:#666">' + _esc(address) + '</span>';
+                    return html;
+                },
+                onLayerReady: function () {
+                    if (dashboardMap && dashboardMap.filterMarkers) {
+                        dashboardMap.filterMarkers(function (f) {
+                            return f.attributes && f.attributes.SponsorId == @Model.SponsorId;
+                        });
+                    }
+                    if (window.sponsorBranchLatlngs && window.sponsorBranchLatlngs.length && dashboardMap && dashboardMap.fitBounds) {
+                        dashboardMap.fitBounds(window.sponsorBranchLatlngs);
+                    }
+                }
+            });
+
+            function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+            function _firstDefined(p, keys, fallback) {
+                for (var i = 0; i < keys.length; i++) { if (p[keys[i]] !== undefined && p[keys[i]] !== null && String(p[keys[i]]) !== '') return String(p[keys[i]]); }
+                return fallback[0] || '';
+            }
+        })();
+
+        (function () {
+            var monthLabels = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => $"\"{r.MonthLabel}\"")))];
+            var redemptionsData = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => r.Redemptions)))];
+            var viewsData = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => r.Views)))];
+            var ctx = document.getElementById('monthlyTrendChart');
+            if (!ctx) return;
+
+            var showRedemptions = true;
+            var showViews = true;
+
+            window.dashboardTrendChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [
+                        {
+                            label: '@Localizer["SponsorPortal_RedemptionsHeader"].Value',
+                            data: redemptionsData,
+                            backgroundColor: 'rgba(44, 26, 14, 0.75)',
+                            borderRadius: 6,
+                            order: 2
+                        },
+                        {
+                            label: '@Localizer["SponsorPortal_RewardViews"].Value',
+                            data: viewsData,
+                            backgroundColor: 'rgba(200, 131, 42, 0.35)',
+                            borderRadius: 6,
+                            order: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 20, font: { family: 'Nunito', size: 12 } } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0, font: { family: 'Nunito' } }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { ticks: { font: { family: 'Nunito' } }, grid: { display: false } }
+                    }
+                }
+            });
+
+            document.querySelectorAll('[data-chart-metric]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('[data-chart-metric]').forEach(function (b) { b.classList.remove('chip-active'); });
+                    btn.classList.add('chip-active');
+                    var metric = btn.getAttribute('data-chart-metric');
+                    showRedemptions = metric === 'both' || metric === 'redemptions';
+                    showViews = metric === 'both' || metric === 'views';
+                    if (window.dashboardTrendChart) {
+                        var ds = window.dashboardTrendChart.data.datasets;
+                        ds[0].hidden = !showRedemptions;
+                        ds[1].hidden = !showViews;
+                        window.dashboardTrendChart.update();
+                    }
+                });
+            });
+        })();
+
+        @if (Model.DashboardTopRewards.Any())
+        {
+            <text>
+            (function () {
+                var labels = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => $"\"{r.RewardTitle}\"")))];
+                var data = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => r.Redemptions)))];
+                var ctx = document.getElementById('topRewardsChart');
+                if (!ctx) return;
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '@Localizer["SponsorPortal_RedemptionsHeader"].Value',
+                            data: data,
+                            backgroundColor: 'rgba(200, 131, 42, 0.75)',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { beginAtZero: true, ticks: { precision: 0, font: { family: 'Nunito' } }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                            y: { ticks: { font: { family: 'Nunito', size: 11 } }, grid: { display: false } }
+                        }
+                    }
+                });
+            })();
+            </text>
+        }
+    </script>
+
+    <style>
+        .dashboard-wrapper {
+            padding-top: var(--nav-offset);
+            padding-bottom: 40px;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px 24px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .breadcrumb-custom {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 4px;
+            font-size: 0.78rem;
+        }
+
+        .breadcrumb-custom .breadcrumb-item a {
+            color: var(--egy-muted-gold);
+            text-decoration: none;
+        }
+
+        .breadcrumb-custom .breadcrumb-item.active {
+            color: var(--egy-primary);
+        }
+
+        /* Grid */
+        .dashboard-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 260px 1fr 260px;
+        }
+
+        /* Sidebar cards */
+        .dash-sidebar-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            transition: box-shadow .2s ease;
+        }
+
+        .dash-sidebar-card:hover {
+            box-shadow: var(--shadow-medium);
+        }
+
+        .dash-card-header {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--egy-dark);
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(200, 131, 42, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dash-card-body {
+            padding: 14px 16px;
+        }
+
+        .badge-category {
+            display: inline-block;
+            background: rgba(200, 131, 42, 0.06);
+            color: var(--egy-muted-gold);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(200, 131, 42, 0.15);
+        }
+
+        .dash-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .dash-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .dash-info-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .dash-info-value {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--egy-dark);
+        }
+
+        /* Chips */
+        .chip {
+            border: 1px solid rgba(200, 131, 42, 0.25);
+            background: rgba(248, 250, 252, 0.6);
+            color: var(--egy-muted-gold);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+        }
+
+        .chip:hover {
+            background: var(--egy-accent);
+            color: var(--egy-dark);
+            border-color: var(--egy-accent);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(200, 131, 42, 0.12);
+        }
+
+        .chip-active {
+            background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%);
+            color: #fff !important;
+            border-color: transparent;
+            box-shadow: var(--shadow-glow-gold);
+        }
+
+        /* Map */
+        .dash-map-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: var(--shadow-medium);
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .dash-map-container {
+            position: relative;
+            height: 520px;
+            border-radius: 14px;
+            background: #ece6db;
+            overflow: hidden;
+        }
+
+        .map-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--egy-muted-gold);
+            opacity: 0.65;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Right widgets */
+        .dash-widgets {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .dash-widget-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+        }
+
+        .stat-box-row {
+            margin-bottom: 0;
+        }
+
+        .stat-box-row .col {
+            padding: 10px 12px;
+        }
+
+        .stat-box-row .stat-card {
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: none;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        /* Rating gauge */
+        .rating-gauge {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: conic-gradient(var(--egy-primary) calc(var(--rating) * 36deg), rgba(200,131,42,0.15) 0);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .rating-gauge::before {
+            content: '';
+            position: absolute;
+            inset: 10px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .rating-gauge-value {
+            position: relative;
+            z-index: 1;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 1.6rem;
+            color: var(--egy-dark);
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .chart-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: var(--shadow-medium);
+            overflow: hidden;
+        }
+
+        .chart-body {
+            padding: 12px 16px 16px;
+        }
+
+        .text-muted-label {
+            color: #888;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @@media (max-width: 1199.98px) {
+            .dashboard-grid {
+                grid-template-columns: 220px 1fr 220px;
+            }
+        }
+
+        @@media (max-width: 991.98px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dash-sidebar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+
+            .dash-map-container {
+                height: 360px;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 575.98px) {
+            .dash-sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+}
