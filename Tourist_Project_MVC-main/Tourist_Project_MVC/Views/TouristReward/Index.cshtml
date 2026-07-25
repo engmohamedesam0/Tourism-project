@@ -3,162 +3,211 @@
 @{
     ViewData["Title"] = "Points & Rewards";
     ViewData["IsHomePage"] = false;
+    ViewData["FullWidth"] = true;
 }
 
-<div class="container my-4" style="max-width: 1200px;">
+<div class="rewards-page-container px-3 px-md-4 px-xl-5 py-4" style="max-width: 1600px; margin: 0 auto;">
 
-    <h1 class="page-title mb-4">
-        <i class="bi bi-gift me-2"></i> @Localizer["Reward_Title"].Value
-    </h1>
+    <!-- MODERN HERO BANNER -->
+    <div class="rewards-hero-card mb-4 p-4 p-md-5 rounded-4 shadow-sm border-0 position-relative overflow-hidden" style="background: linear-gradient(135deg, #1E120A 0%, #2D1A0E 50%, #3B2314 100%); color: #fff;">
+        <div class="position-relative z-2">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <span class="badge px-3 py-2 rounded-pill text-uppercase fw-bold tracking-wider mb-2 d-inline-flex align-items-center gap-2" style="background: rgba(200, 131, 42, 0.25); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 0.78rem;">
+                        <i class="bi bi-gift-fill"></i> Royal Egyptian Rewards
+                    </span>
+                    <h1 class="display-5 fw-bold mb-2" style="font-family:'Cinzel', serif; color: #F59E0B; letter-spacing: 0.5px;">@Localizer["Reward_Title"].Value</h1>
+                    <p class="text-white opacity-90 mb-0" style="max-width: 720px; font-size: 1.1rem; line-height: 1.6;">Exchange your travel points for exclusive vouchers, premium local branch experiences, and partner discounts.</p>
+                </div>
+                <div class="glass-pill px-4 py-3 rounded-pill d-flex align-items-center gap-3" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25);">
+                    <div class="avatar-circle" style="width: 46px; height: 46px; border-radius: 50%; background: #C8832A; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; box-shadow: 0 4px 12px rgba(200, 131, 42, 0.4);">
+                        <i class="bi bi-coin"></i>
+                    </div>
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold" style="font-size: 0.72rem; letter-spacing: 0.5px;">@Localizer["Reward_YourBalance"].Value</div>
+                        <div class="fw-bold text-white fs-5">@Model.PointBalance.ToString("N0") <span style="font-size: 0.85rem; color: #F59E0B;">pts</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @if (!string.IsNullOrEmpty(TempData["RewardMessage"] as string))
     {
         var msgType = TempData["RewardMessageType"] as string ?? "info";
-        <div class="alert alert-@msgType alert-dismissible fade show" role="alert">
+        <div class="alert alert-@msgType alert-dismissible fade show rounded-3 mb-4" role="alert">
             @Html.Raw(TempData["RewardMessage"])
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
-    <!-- Points balance -->
-    <div class="row mb-4">
-        <div class="col-md-4 mx-auto">
-            <div class="stat-card text-center">
-                <i class="bi bi-coin stat-icon"></i>
-                <div>
-                    <span class="stat-number">@Model.PointBalance.ToString("N0")</span>
-                    <span class="stat-suffix">pts</span>
+    <!-- TWO-COLUMN GRID: FILTER ON LEFT (TOP LEFT), CONTENT ON RIGHT -->
+    <div class="row g-4">
+        <!-- LEFT FILTER COLUMN -->
+        <div class="col-lg-4 col-xl-3">
+            <div class="filter-bar p-4 rounded-4 shadow-sm border-0 position-sticky" style="background: #ffffff; border: 1px solid #E2E8F0 !important; padding: 1.75rem !important; top: 20px;">
+                <h5 class="fw-bold mb-4" style="font-family:'Cinzel',serif; color:#0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
+                    <i class="bi bi-sliders me-2 text-gold"></i> @Localizer["Reward_FilterHeading"].Value
+                </h5>
+
+                <div class="filter-field mb-4">
+                    <label class="form-label fw-bold mb-1.5 small text-uppercase text-muted">@Localizer["Reward_SearchLabel"].Value</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search text-gold"></i></span>
+                        <input type="text" id="rewardSearchInput" class="form-control border-start-0 ps-0 text-dark fw-semibold" placeholder='@Localizer["Reward_SearchPlaceholder"].Value' />
+                    </div>
                 </div>
-                 <span class="stat-label">@Localizer["Reward_YourBalance"].Value</span>
-            </div>
-        </div>
-    </div>
 
-    <!-- Available rewards -->
-    <h4 class="mb-3" style="font-family:'Cinzel',serif; color: var(--egy-dark);">
-        <i class="bi bi-shop me-2"></i> @Localizer["Reward_Available"].Value
-    </h4>
-
-    <div class="filter-bar h-100 d-flex flex-column justify-content-between p-3 rounded-3 mb-3" style="background: #F8FAFC; border: 1px solid #E2E8F0;">
-        <div>
-            <h5 class="fw-bold mb-3" style="font-family:'Cinzel',serif; color:#0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
-                <i class="bi bi-sliders me-2" style="color: #C8832A;"></i> @Localizer["Reward_FilterHeading"].Value
-            </h5>
-
-            <div class="filter-field mb-3">
-                <label class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["Reward_SearchLabel"].Value</label>
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                    <input type="text" id="rewardSearchInput" class="form-control border-start-0" placeholder='@Localizer["Reward_SearchPlaceholder"].Value' />
+                <div class="filter-field mb-4">
+                    <label class="form-label fw-bold mb-1.5 small text-uppercase text-muted">@Localizer["Reward_TypeLabel"].Value</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-tag text-gold"></i></span>
+                        <select id="rewardTypeFilter" class="form-select border-start-0 ps-0 text-dark fw-semibold">
+                            <option value="">@Localizer["Reward_AllTypes"].Value</option>
+                            @foreach (var type in Model.AvailableRewards.Select(r => r.RewardType).Distinct().OrderBy(t => t))
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <div class="filter-field mb-3">
-                <label class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["Reward_TypeLabel"].Value</label>
-                <select id="rewardTypeFilter" class="form-select form-select-sm">
-                    <option value="">@Localizer["Reward_AllTypes"].Value</option>
-                    @foreach (var type in Model.AvailableRewards.Select(r => r.RewardType).Distinct().OrderBy(t => t))
-                    {
-                        <option value="@type">@type</option>
-                    }
-                </select>
-            </div>
+                <div class="filter-field mb-4">
+                    <label class="form-label fw-bold mb-1.5 small text-uppercase text-muted">@Localizer["Reward_MaxPoints"].Value</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-coin text-gold"></i></span>
+                        <input type="number" id="rewardMaxPoints" class="form-control border-start-0 ps-0 text-dark fw-semibold" min="0" placeholder='@Localizer["Reward_MaxPointsPlaceholder"].Value' />
+                    </div>
+                </div>
 
-            <div class="filter-field mb-3">
-                <label class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["Reward_MaxPoints"].Value</label>
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-coin"></i></span>
-                    <input type="number" id="rewardMaxPoints" class="form-control border-start-0" min="0" placeholder='@Localizer["Reward_MaxPointsPlaceholder"].Value' />
+                <div class="p-3 rounded-3 text-center" style="background: #FFFBEB; border: 1px solid #FEF3C7; margin-top: 1.5rem;">
+                    <i class="bi bi-trophy text-gold fs-4"></i>
+                    <div class="small fw-bold text-dark mt-1">Unlock Royal Perks</div>
+                    <div class="text-muted" style="font-size: 0.75rem; line-height: 1.4;">Earn points by visiting archaeological landmarks and write reviews to unlock high-tier experiences!</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    @if (!Model.AvailableRewards.Any())
-    {
-        <div class="text-center py-5 text-muted">
-            <i class="bi bi-gift" style="font-size:2.5rem;"></i>
-            <p class="mb-0 mt-2">@Localizer["Reward_NoneAvailable"].Value</p>
-        </div>
-    }
-    else
-    {
-        <div id="rewardEmptyFilter" class="text-muted small p-3 text-center" style="display:none">
-            <i class="bi bi-exclamation-circle fs-4 d-block mb-1"></i>
-            @Localizer["Reward_NoMatch"].Value
-        </div>
-        <div class="row g-3">
-            @foreach (var reward in Model.AvailableRewards)
+        <!-- RIGHT REWARDS CONTENT COLUMN -->
+        <div class="col-lg-8 col-xl-9">
+            <h4 class="section-title mb-3" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
+                <i class="bi bi-shop me-2 text-gold"></i> @Localizer["Reward_Available"].Value
+            </h4>
+
+            @if (!Model.AvailableRewards.Any())
             {
-                var canAfford = Model.PointBalance >= reward.PointsRequired;
-                <div class="col-md-6 col-lg-4" data-title="@reward.Title.ToLower()" data-type="@reward.RewardType" data-points="@reward.PointsRequired">
-                    <div class="card border-0 shadow-sm rounded-4 h-100">
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="fw-bold mb-0">@reward.Title</h6>
-                                <span class="badge bg-@(reward.RewardType == "Discount" ? "primary" : reward.RewardType == "Experience" ? "success" : "info")">@reward.RewardType</span>
-                            </div>
-                            <p class="small text-muted mb-2">@reward.Description</p>
-                            <p class="small mb-2">
-                                <i class="bi bi-building me-1"></i> @reward.Sponsor?.Name
-                            </p>
-                            <p class="small text-muted mb-3">
-                                <i class="bi bi-geo-alt me-1"></i>
-                                @if (reward.RewardBranches != null && reward.RewardBranches.Any())
-                                {
-                                    @string.Join(", ", reward.RewardBranches.Select(rb => rb.Branch?.Name).Where(n => !string.IsNullOrEmpty(n)))
-                                }
-                                else
-                                {
-                                    <text>Any branch</text>
-                                }
-                            </p>
-                            <div class="mt-auto d-flex justify-content-between align-items-center">
-                                <span class="fw-bold" style="color: var(--egy-primary);">
-                                    <i class="bi bi-coin me-1"></i> @reward.PointsRequired.ToString("N0") pts
-                                </span>
-                                <form asp-action="Redeem" method="post" asp-route-rewardId="@reward.Id" onsubmit="return confirm('Redeem @reward.Title for @reward.PointsRequired points?');">
-                                    <button type="submit" class="btn btn-sm @(canAfford ? "btn-success" : "btn-secondary")" @(canAfford ? "" : "disabled")>
-                                         <i class="bi bi-gift me-1"></i> @(canAfford ? @Localizer["Reward_Redeem"].Value : @Localizer["Reward_NotEnough"].Value)
-                                    </button>
-                                </form>
+                <div class="text-center py-5 text-muted card border-0 shadow-sm rounded-4">
+                    <i class="bi bi-gift text-gold" style="font-size:3rem; opacity: 0.7;"></i>
+                    <h5 class="fw-bold text-dark mb-1 mt-3">@Localizer["Reward_NoneAvailable"].Value</h5>
+                    <p class="small text-muted mb-0">Check back later for new vouchers and offers.</p>
+                </div>
+            }
+            else
+            {
+                <div id="rewardEmptyFilter" class="text-center py-5 text-muted card border-0 shadow-sm rounded-4 mb-3" style="display:none">
+                    <i class="bi bi-exclamation-circle text-gold fs-2 mb-2"></i>
+                    <h5 class="fw-bold text-dark mb-1">@Localizer["Reward_NoMatch"].Value</h5>
+                    <p class="small text-muted mb-0">Try adjusting your filters or search terms.</p>
+                </div>
+
+                <div class="row g-3">
+                    @foreach (var reward in Model.AvailableRewards)
+                    {
+                        var canAfford = Model.PointBalance >= reward.PointsRequired;
+                        <div class="col-md-6 col-xxl-4" data-title="@reward.Title.ToLower()" data-type="@reward.RewardType" data-points="@reward.PointsRequired">
+                            <div class="card reward-card h-100 p-3">
+                                <div class="card-body p-2 d-flex flex-column justify-content-between h-100">
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-start mb-2 gap-2">
+                                            <h5 class="reward-card-title mb-0 text-truncate" title="@reward.Title">
+                                                @reward.Title
+                                            </h5>
+                                            <span class="badge rounded-pill px-2.5 py-1 fw-bold text-uppercase border" 
+                                                  style="font-size: 0.7rem; 
+                                                         background: @(reward.RewardType == "Discount" ? "#EFF6FF" : reward.RewardType == "Experience" ? "#ECFDF5" : "#F0FDF4"); 
+                                                         color: @(reward.RewardType == "Discount" ? "#1E40AF" : reward.RewardType == "Experience" ? "#065F46" : "#166534"); 
+                                                         border-color: @(reward.RewardType == "Discount" ? "#BFDBFE" : reward.RewardType == "Experience" ? "#A7F3D0" : "#BBF7D0");">
+                                                @reward.RewardType
+                                            </span>
+                                        </div>
+                                        <p class="reward-card-desc mb-3">@reward.Description</p>
+                                        
+                                        <div class="reward-info-grid mb-3">
+                                            <div class="small text-muted mb-2 d-flex align-items-center gap-2">
+                                                <i class="bi bi-building text-gold"></i>
+                                                <span class="text-dark fw-semibold text-truncate">@reward.Sponsor?.Name</span>
+                                            </div>
+                                            <div class="small text-muted d-flex align-items-center gap-2">
+                                                <i class="bi bi-geo-alt text-gold"></i>
+                                                <span class="text-truncate" title="@(reward.RewardBranches != null && reward.RewardBranches.Any() ? string.Join(", ", reward.RewardBranches.Select(rb => rb.Branch?.Name).Where(n => !string.IsNullOrEmpty(n))) : "Any branch")">
+                                                    @if (reward.RewardBranches != null && reward.RewardBranches.Any())
+                                                    {
+                                                        @string.Join(", ", reward.RewardBranches.Select(rb => rb.Branch?.Name).Where(n => !string.IsNullOrEmpty(n)))
+                                                    }
+                                                    else
+                                                    {
+                                                        <text>Any branch</text>
+                                                    }
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pt-3 border-top mt-auto d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold fs-5 text-gold-dark">
+                                            <i class="bi bi-coin me-1 text-gold"></i> @reward.PointsRequired.ToString("N0") <span style="font-size: 0.8rem; font-weight: normal; color: #64748B;">pts</span>
+                                        </span>
+                                        <form asp-action="Redeem" method="post" asp-route-rewardId="@reward.Id" onsubmit="return confirm('Redeem @reward.Title for @reward.PointsRequired points?');">
+                                            <button type="submit" class="btn btn-sm btn-redeem px-3 py-2 rounded-pill @(canAfford ? "btn-egy-primary" : "btn-disabled")" @(canAfford ? "" : "disabled")>
+                                                 <i class="bi bi-gift me-1"></i> @(canAfford ? @Localizer["Reward_Redeem"].Value : @Localizer["Reward_NotEnough"].Value)
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
             }
         </div>
-    }
+    </div>
 
-    <!-- My redemptions -->
+    <!-- MY REDEMPTIONS / VOUCHERS -->
     @if (Model.MyRedemptions.Any())
     {
-        <h4 class="mt-5 mb-3" style="font-family:'Cinzel',serif; color: var(--egy-dark);">
-            <i class="bi bi-ticket-perforated me-2"></i> @Localizer["Reward_MyVouchers"].Value
-        </h4>
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body">
+        <div class="mt-5 mb-4">
+            <h3 class="section-title mb-3" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
+                <i class="bi bi-ticket-perforated me-2 text-gold"></i> @Localizer["Reward_MyVouchers"].Value
+            </h3>
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid #E2E8F0 !important;">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle destinations-table">
-                        <thead>
+                    <table class="table table-hover align-middle mb-0 custom-premium-table">
+                        <thead class="table-light">
                             <tr>
-                                <th>@Localizer["Reward_Code"].Value</th>
-                                <th>@Localizer["Reward_Reward"].Value</th>
-                                <th>@Localizer["Reward_Points"].Value</th>
-                                <th>@Localizer["Reward_Date"].Value</th>
-                                <th>@Localizer["Reward_Status"].Value</th>
+                                <th class="px-4 py-3">@Localizer["Reward_Code"].Value</th>
+                                <th class="py-3">@Localizer["Reward_Reward"].Value</th>
+                                <th class="py-3 text-center">@Localizer["Reward_Points"].Value</th>
+                                <th class="py-3">@Localizer["Reward_Date"].Value</th>
+                                <th class="px-4 py-3 text-end">@Localizer["Reward_Status"].Value</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var r in Model.MyRedemptions)
                             {
+                                var statusClass = r.Status switch
+                                {
+                                    "Active" => "badge-status-active",
+                                    "Used" => "badge-status-inactive",
+                                    "Expired" => "badge-status-draft",
+                                    _ => "badge-status-active"
+                                };
                                 <tr>
-                                    <td class="fw-bold" style="font-family:'Cinzel',serif; letter-spacing:1px;">@r.Code</td>
-                                    <td>@r.Reward?.Title</td>
-                                    <td>@r.PointsRedeemed.ToString("N0")</td>
+                                    <td class="px-4 fw-bold" style="font-family:'Cinzel',serif; letter-spacing:1px; color: #C8832A;">@r.Code</td>
+                                    <td class="fw-semibold text-dark">@r.Reward?.Title</td>
+                                    <td class="text-center text-gold-dark fw-bold"><i class="bi bi-coin text-gold me-1"></i>@r.PointsRedeemed.ToString("N0")</td>
                                     <td class="small text-muted">@r.RedemptionDate.ToString("yyyy-MM-dd")</td>
-                                    <td>
-                                        <span class="badge bg-@(r.Status == "Active" ? "success" : r.Status == "Used" ? "secondary" : "warning")">@r.Status</span>
+                                    <td class="px-4 text-end">
+                                        <span class="badge-status @statusClass">@r.Status</span>
                                     </td>
                                 </tr>
                             }
@@ -168,19 +217,143 @@
             </div>
         </div>
     }
+
+    <!-- REVIEWS CAROUSEL -->
+    @if (ViewBag.RewardsCarousel is Tourist_Project_MVC.View_Model.ReviewsCarouselVM rewardVm && rewardVm.Items != null && rewardVm.Items.Any())
+    {
+        <div class="mt-5 mb-4">
+            @await Html.PartialAsync("_ReviewsCarousel", rewardVm)
+        </div>
+    }
 </div>
 
-@if (ViewBag.RewardsCarousel is Tourist_Project_MVC.View_Model.ReviewsCarouselVM rewardVm && rewardVm.Items != null && rewardVm.Items.Any())
-{
-    <div class="container my-4" style="max-width: 1200px;">
-        @await Html.PartialAsync("_ReviewsCarousel", rewardVm)
-    </div>
-}
-
 @section Scripts {
+    <style>
+        /* OVERRIDE BODY BACKGROUND TO CRISP MODERN NEUTRAL */
+        body {
+            background-color: #F8FAFC !important;
+        }
+
+        .text-gold {
+            color: #C8832A !important;
+        }
+
+        .text-gold-dark {
+            color: #B45309 !important;
+        }
+
+        .btn-egy-primary {
+            background: linear-gradient(135deg, #C8832A 0%, #A6651E 100%);
+            color: #fff !important;
+            border: none;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .btn-egy-primary:hover {
+            background: linear-gradient(135deg, #D98E32 0%, #C8832A 100%);
+            box-shadow: 0 6px 20px rgba(200, 131, 42, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-disabled {
+            background: #F1F5F9 !important;
+            color: #94A3B8 !important;
+            border: 1px solid #E2E8F0 !important;
+            cursor: not-allowed;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px !important;
+            border: 1px solid #CBD5E1 !important;
+            padding: 0.6rem 0.9rem !important;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #C8832A !important;
+            box-shadow: 0 0 0 3px rgba(200, 131, 42, 0.15) !important;
+        }
+
+        .reward-card {
+            background: #ffffff !important;
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 16px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        .reward-card:hover {
+            transform: translateY(-3px) !important;
+            border-color: rgba(200, 131, 42, 0.4) !important;
+            box-shadow: 0 12px 28px rgba(30, 18, 10, 0.1) !important;
+        }
+
+        .reward-card-title {
+            color: #0F172A !important;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .reward-card-desc {
+            color: #64748B !important;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.6rem;
+        }
+
+        .custom-premium-table th {
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            color: #475569 !important;
+            background-color: #F8FAFC !important;
+            border-bottom: 2px solid #E2E8F0 !important;
+        }
+
+        .custom-premium-table td {
+            padding: 1rem 0.75rem;
+        }
+
+        .badge-status-active {
+            background: #DCFCE7 !important;
+            color: #15803D !important;
+            border: 1px solid #86EFAC !important;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+        }
+
+        .badge-status-inactive {
+            background: #FEE2E2 !important;
+            color: #B91C1C !important;
+            border: 1px solid #FCA5A5 !important;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+        }
+
+        .badge-status-draft {
+            background: #F1F5F9 !important;
+            color: #475569 !important;
+            border: 1px solid #CBD5E1 !important;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+        }
+    </style>
+
     <script>
         (function () {
-            var cards = document.querySelectorAll('.col-md-6.col-lg-4[data-title]');
+            var cards = document.querySelectorAll('[data-title]');
             var searchInput = document.getElementById('rewardSearchInput');
             var typeSelect = document.getElementById('rewardTypeFilter');
             var maxPointsInput = document.getElementById('rewardMaxPoints');

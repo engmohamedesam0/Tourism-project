@@ -13,8 +13,8 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    [Migration("20260725120159_20260725145900_AddDestinationPhotoUrls")]
-    partial class _20260725145900_AddDestinationPhotoUrls
+    [Migration("20260725163025_InitialUpdate")]
+    partial class InitialUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

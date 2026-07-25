@@ -5,7 +5,7 @@
 namespace Tourist_Project_MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class _20260725145900_AddDestinationPhotoUrls : Migration
+    public partial class InitialUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
