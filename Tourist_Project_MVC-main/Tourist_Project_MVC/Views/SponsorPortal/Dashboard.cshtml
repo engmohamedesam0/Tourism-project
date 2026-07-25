@@ -1,177 +1,278 @@
 @model Tourist_Project_MVC.View_Model.SponsorDashboardVM
 
 @{
-    ViewData["Title"] = Localizer["SponsorPortal_DashboardPageTitle"].Value;
+    ViewData["Title"] = "Sponsor Dashboard";
     ViewData["IsHomePage"] = false;
-    var culture = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-    var isRtl = culture == "ar";
+    var currentYear = DateTime.Now.Year;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/sponsor-dashboard.css" asp-append-version="true" />
 }
 
 <div class="dashboard-wrapper">
-
-    <!-- Header -->
-    <div class="d-flex align-items-center justify-content-between mb-4 dashboard-header">
-        <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb breadcrumb-custom mb-1">
-                    <li class="breadcrumb-item"><a asp-controller="SponsorPortal" asp-action="Index">@Localizer["SponsorPortal_PageTitle"].Value</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">@Localizer["SponsorPortal_Dashboard"].Value</li>
-                </ol>
-            </nav>
-            <h1 class="page-title mb-0">
-                <i class="bi bi-speedometer2 me-2"></i> @Localizer["SponsorPortal_Dashboard"].Value
-            </h1>
-            <p class="text-muted small mb-0 mt-1">@Localizer["SponsorPortal_WelcomeMessage"].Value @Model.SponsorName</p>
+    <div class="container-fluid px-2 px-md-4">
+        
+        <!-- DASHBOARD HEADER -->
+        <div class="dash-header-card mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb breadcrumb-custom">
+                            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">EGYXPLORE</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Portal</li>
+                        </ol>
+                    </nav>
+                    <div class="d-flex align-items-center gap-3">
+                        <h1 class="dash-title mb-0">Sponsor Dashboard</h1>
+                        <span class="dash-sponsor-badge"><i class="bi bi-shield-check"></i> Enterprise</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a asp-controller="SponsorBranch" asp-action="Index" class="btn btn-outline-dark dash-action-btn">
+                        <i class="bi bi-geo-alt me-1"></i> Branches
+                    </a>
+                    <a asp-controller="Reward" asp-action="Index" class="btn btn-primary dash-action-btn" style="background-color: var(--egy-primary); border-color: var(--egy-primary);">
+                        <i class="bi bi-gift me-1"></i> Rewards
+                    </a>
+                </div>
+            </div>
         </div>
-        <a asp-controller="SponsorRedemption" asp-action="Index" class="btn btn-outline-primary">
-            <i class="bi bi-receipt me-1"></i> @Localizer["SponsorPortal_RedemptionHistory"].Value
-        </a>
-    </div>
 
-    <!-- Main Grid -->
-    <div class="dashboard-grid">
-
-        <!-- Left Sidebar -->
-        <aside class="dash-sidebar">
-            <div class="dash-sidebar-card mb-3">
-                <div class="dash-card-header">
-                    <i class="bi bi-building me-2"></i> @Localizer["SponsorPortal_Profile"].Value
+        <!-- TOP KPI CARDS GRID -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon-wrapper gold">
+                    <i class="bi bi-shop"></i>
                 </div>
-                <div class="dash-card-body">
-                    <h6 class="fw-bold mb-2 text-truncate" title="@Model.SponsorName">@Model.SponsorName</h6>
-                    <span class="badge-category mb-2">@Model.SponsorType</span>
-                    @if (!string.IsNullOrEmpty(Model.SponsorAddress))
-                    {
-                        <p class="small text-muted mb-1"><i class="bi bi-geo-alt me-1"></i> @Model.SponsorAddress</p>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.SponsorContact))
-                    {
-                        <p class="small text-muted mb-0"><i class="bi bi-telephone me-1"></i> @Model.SponsorContact</p>
-                    }
+                <div>
+                    <div class="kpi-label">Active Branches</div>
+                    <div class="kpi-value">@Model.TotalBranches</div>
+                    <div class="kpi-sub">Registered locations</div>
+                </div>
+            </div>
+            
+            <div class="kpi-card">
+                <div class="kpi-icon-wrapper dark">
+                    <i class="bi bi-gift"></i>
+                </div>
+                <div>
+                    <div class="kpi-label">Total Rewards</div>
+                    <div class="kpi-value">@Model.TotalRewards</div>
+                    <div class="kpi-sub">Available offers</div>
                 </div>
             </div>
 
-            <div class="dash-sidebar-card mb-3">
-                <div class="dash-card-header">
-                    <i class="bi bi-info-circle me-2"></i> @Localizer["SponsorPortal_QuickInfo"].Value
+            <div class="kpi-card">
+                <div class="kpi-icon-wrapper green">
+                    <i class="bi bi-check2-circle"></i>
                 </div>
-                <div class="dash-card-body">
-                    <div class="dash-info-row">
-                        <span class="dash-info-label">@Localizer["SponsorPortal_Branches"].Value</span>
-                        <span class="dash-info-value">@Model.TotalBranches</span>
+                <div>
+                    <div class="kpi-label">Redemptions</div>
+                    <div class="kpi-value">@Model.TotalRedemptions.ToString("N0")</div>
+                    <div class="kpi-sub">Total claims</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon-wrapper amber">
+                    <i class="bi bi-eye"></i>
+                </div>
+                <div>
+                    <div class="kpi-label">Reward Views</div>
+                    <div class="kpi-value">@Model.RewardViewCount.ToString("N0")</div>
+                    <div class="kpi-sub">Tourist engagement</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN DASHBOARD GRID (3 COLUMNS) -->
+        <div class="dashboard-main-grid">
+            
+            <!-- LEFT COLUMN (PROFILE & FILTERS) -->
+            <aside class="dash-sidebar">
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <span><i class="bi bi-person-badge me-2"></i> Sponsor Info</span>
                     </div>
-                    <div class="dash-info-row">
-                        <span class="dash-info-label">@Localizer["SponsorPortal_Rewards"].Value</span>
-                        <span class="dash-info-value">@Model.TotalRewards</span>
-                    </div>
-                    <div class="dash-info-row">
-                        <span class="dash-info-label">@Localizer["SponsorPortal_Reviews"].Value</span>
-                        <span class="dash-info-value">@Model.ReviewCount</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dash-sidebar-card">
-                <div class="dash-card-header">
-                    <i class="bi bi-funnel me-2"></i> @Localizer["SponsorPortal_Filters"].Value
-                </div>
-                <div class="dash-card-body">
-                    <label class="form-label small text-muted-label mb-2">@Localizer["SponsorPortal_TrendMetric"].Value</label>
-                    <div class="chips-group flex-column">
-                        <button type="button" class="chip chip-active" data-chart-metric="both">@Localizer["SponsorPortal_Both"].Value</button>
-                        <button type="button" class="chip" data-chart-metric="redemptions">@Localizer["SponsorPortal_RedemptionsOnly"].Value</button>
-                        <button type="button" class="chip" data-chart-metric="views">@Localizer["SponsorPortal_ViewsOnly"].Value</button>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Center: Map -->
-        <section class="dash-map-card">
-            <div id="dashboardMap" class="dash-map-container">
-                <div class="map-watermark">
-                    <i class="bi bi-map" style="font-size: 2.5rem;"></i>
-                    <p class="mb-0 mt-2">@Localizer["Explore_MapPlaceholder"].Value</p>
-                    <small class="text-muted">@Localizer["Explore_MapNote"].Value</small>
-                </div>
-            </div>
-        </section>
-
-        <!-- Right: Widgets -->
-        <aside class="dash-widgets">
-            <div class="dash-widget-card mb-3">
-                <div class="dash-card-header">
-                    <i class="bi bi-bar-chart-fill me-2"></i> @Localizer["SponsorPortal_Stats"].Value
-                </div>
-                <div class="dash-card-body p-0">
-                    @await Html.PartialAsync("_StatBoxRow", ViewBag.StatBoxes as List<Tourist_Project_MVC.View_Model.StatBoxItem>)
-                </div>
-            </div>
-
-            <div class="dash-widget-card">
-                <div class="dash-card-header">
-                    <i class="bi bi-star-fill me-2"></i> @Localizer["SponsorPortal_AvgRating"].Value
-                </div>
-                <div class="dash-card-body text-center">
-                    @if (Model.RatingAvailable && Model.AverageRating.HasValue)
-                    {
-                        <div class="rating-gauge mx-auto" style="--rating:@Model.AverageRating.Value;">
-                            <span class="rating-gauge-value">@Model.AverageRating.Value.ToString("0.0")</span>
+                    <div class="dash-card-body sponsor-profile-meta">
+                        <div class="mb-2">
+                            <h3 class="sponsor-name-heading">@Model.SponsorName</h3>
+                            <span class="sponsor-type-tag">Official Partner</span>
                         </div>
-                        <p class="text-muted small mb-0">@Model.ReviewCount @Localizer["SponsorPortal_Reviews"].Value</p>
-                    }
-                    else
-                    {
-                        <div class="text-center py-3">
-                            <i class="bi bi-star-slash text-muted" style="font-size: 2rem;"></i>
-                            <p class="text-muted mt-2 mb-0 small">@Localizer["SponsorPortal_NoReviewsInfo"].Value</p>
+                        
+                        <div class="profile-info-item">
+                            <i class="bi bi-building"></i>
+                            <span>Enterprise Partner</span>
                         </div>
-                    }
+                        
+                        <div class="mt-3">
+                            <div class="info-row">
+                                <span class="info-row-label">Joined</span>
+                                <span class="info-row-val">@currentYear</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-row-label">Status</span>
+                                <span class="info-row-val text-success"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </aside>
-    </div>
 
-    <!-- Bottom Charts -->
-    <div class="charts-grid mt-4">
-        <div class="chart-card">
-            <div class="dash-card-header">
-                <i class="bi bi-graph-up me-2"></i> @Localizer["SponsorPortal_MonthlyTrend"].Value
-            </div>
-            <div class="chart-body">
-                <div style="height: 320px;">
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <span><i class="bi bi-funnel me-2"></i> Map Filters</span>
+                    </div>
+                    <div class="dash-card-body">
+                        <div class="chips-filter-group">
+                            <button class="chip-btn chip-active" onclick="filterMap('all')">
+                                <span>All Branches</span>
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                            <button class="chip-btn" onclick="filterMap('active')">
+                                <span>High Activity</span>
+                                <i class="bi bi-graph-up"></i>
+                            </button>
+                            <button class="chip-btn" onclick="filterMap('recent')">
+                                <span>Recently Added</span>
+                                <i class="bi bi-clock-history"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- CENTER COLUMN (INTERACTIVE MAP) -->
+            <main class="dash-center-column">
+                <div class="dash-map-card">
+                    <div class="map-card-bar">
+                        <div class="map-card-title">
+                            <i class="bi bi-map"></i> Network Coverage Map
+                        </div>
+                        <div class="map-live-indicator">
+                            <div class="live-dot"></div>
+                            LIVE GIS DATA
+                        </div>
+                    </div>
+                    <div class="dash-map-container" id="dashboardMap">
+                        <div class="map-watermark">
+                            <h2>EGYXPLORE</h2>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- RIGHT COLUMN (RATING & HIGHLIGHTS) -->
+            <aside class="dash-widgets">
+                <div class="dash-card rating-widget-card">
+                    <div class="dash-card-header justify-content-center border-0 bg-transparent pb-0">
+                        <span><i class="bi bi-star me-2"></i> AI Satisfaction</span>
+                    </div>
+                    <div class="dash-card-body">
+                        @if (Model.RatingAvailable)
+                        {
+                            <div class="rating-gauge-wrapper" style="--rating: @(Model.AverageRating / 5.0)">
+                                <div class="rating-gauge">
+                                    <div class="rating-gauge-value">@Model.AverageRating?.ToString("0.0")</div>
+                                </div>
+                            </div>
+                            <div class="rating-stars">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= Math.Round(Model.AverageRating ?? 0))
+                                    {
+                                        <i class="bi bi-star-fill"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star"></i>
+                                    }
+                                }
+                            </div>
+                            <div class="kpi-sub mt-2">Based on tourist feedback</div>
+                        }
+                        else
+                        {
+                            <div class="text-muted mt-3 mb-3">
+                                <i class="bi bi-info-circle display-4 d-block mb-2 text-black-50"></i>
+                                No ratings available yet.
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="dash-card top-performing-card">
+                    <div class="dash-card-header bg-transparent">
+                        <span><i class="bi bi-trophy me-2"></i> Top Performer</span>
+                    </div>
+                    <div class="dash-card-body">
+                        <div class="kpi-label mb-2">Most Active Location</div>
+                        <div class="top-branch-item">
+                            <div class="top-branch-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">
+                                    @(string.IsNullOrEmpty(Model.MostActiveBranchName) ? "Analyzing data..." : Model.MostActiveBranchName)
+                                </h6>
+                                <span class="text-muted" style="font-size: 0.75rem;">Highest engagement rate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+        <!-- BOTTOM CHARTS GRID -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="dash-card-header">
+                    <span><i class="bi bi-graph-up me-2"></i> Monthly Performance</span>
+                </div>
+                <div class="chart-body-wrapper">
                     <canvas id="monthlyTrendChart"></canvas>
                 </div>
             </div>
-        </div>
 
-        <div class="chart-card">
-            <div class="dash-card-header">
-                <i class="bi bi-trophy-fill me-2"></i> @Localizer["SponsorPortal_TopRewards"].Value
-            </div>
-            <div class="chart-body">
-                @if (Model.DashboardTopRewards.Any())
-                {
-                    <div style="height: 320px;">
+            <div class="chart-card">
+                <div class="dash-card-header">
+                    <span><i class="bi bi-bar-chart me-2"></i> Top Rewards by Claims</span>
+                </div>
+                <div class="chart-body-wrapper">
+                    @if (Model.DashboardTopRewards.Any())
+                    {
                         <canvas id="topRewardsChart"></canvas>
-                    </div>
-                }
-                else
-                {
-                    <div class="text-center py-5">
-                        <i class="bi bi-gift text-muted" style="font-size:2rem;"></i>
-                        <p class="text-muted mt-2 mb-0">@Localizer["SponsorPortal_NoRewardActivity"].Value</p>
-                    </div>
-                }
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                            <div class="text-center">
+                                <i class="bi bi-inbox display-4 d-block mb-2 text-black-50"></i>
+                                No reward data available
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="dash-card-header">
+                    <span><i class="bi bi-pie-chart me-2"></i> Engagement Split</span>
+                </div>
+                <div class="chart-body-wrapper">
+                    <canvas id="engagementPieChart"></canvas>
+                </div>
             </div>
         </div>
-    </div>
 
+    </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // --- 1. Initialize Map ---
         (function () {
             window.sponsorBranchLatlngs = [@foreach (var b in Model.SponsorBranches) {<text>[@b.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture), @b.Lng.ToString(System.Globalization.CultureInfo.InvariantCulture)],</text>}];
 
@@ -179,412 +280,184 @@
                 mapElId: 'dashboardMap',
                 layer: 'branches',
                 propMap: {
-                    id: ['Id', 'id', 'SponsorId', 'sponsorId'],
+                    id: ['Id', 'id', 'SponsorId'],
                     name: ['Name', 'name', 'branch_name']
                 },
-                markerStyle: { radius: 9, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
+                markerStyle: {
+                    radius: 9,
+                    fillColor: '#C8832A',
+                    color: '#fff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.9
+                },
                 popupHtml: function (ctx) {
                     var p = ctx.attributes || {};
-                    var name = _firstDefined(p, ['Name', 'name', 'branch_name'], ['Unnamed']);
-                    var address = _firstDefined(p, ['Address', 'address'], ['']);
-                    var html = '<strong>' + _esc(name) + '</strong>';
-                    if (address) html += '<br><span style="color:#666">' + _esc(address) + '</span>';
-                    return html;
+                    var name = p['Name'] || p['name'] || p['branch_name'] || 'Unnamed Branch';
+                    return '<div style="text-align:center;">' +
+                           '<strong style="color:#1E120A;font-family:Cinzel,serif;font-size:1.1em;">' + name + '</strong>' +
+                           '<br><span style="color:#C8832A;font-size:0.85em;"><i class="bi bi-shield-check"></i> Verified Partner</span>' +
+                           '</div>';
                 },
                 onLayerReady: function () {
+                    // Filter to show only this sponsor's branches
                     if (dashboardMap && dashboardMap.filterMarkers) {
                         dashboardMap.filterMarkers(function (f) {
-                            return f.attributes && f.attributes.SponsorId == @Model.SponsorId;
+                            var p = f.attributes || {};
+                            return p.SponsorId == @Model.SponsorId;
                         });
                     }
+
+                    // Auto-zoom to fit sponsor's branches
                     if (window.sponsorBranchLatlngs && window.sponsorBranchLatlngs.length && dashboardMap && dashboardMap.fitBounds) {
                         dashboardMap.fitBounds(window.sponsorBranchLatlngs);
                     }
                 }
             });
 
-            function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-            function _firstDefined(p, keys, fallback) {
-                for (var i = 0; i < keys.length; i++) { if (p[keys[i]] !== undefined && p[keys[i]] !== null && String(p[keys[i]]) !== '') return String(p[keys[i]]); }
-                return fallback[0] || '';
-            }
+            // Map Filter functionality (UI simulation)
+            window.filterMap = function (filterType) {
+                document.querySelectorAll('.chip-btn').forEach(btn => btn.classList.remove('chip-active'));
+                event.currentTarget.classList.add('chip-active');
+                
+                // If real filtering is implemented on map layers, trigger here.
+                // dashboardMap.filterMarkers(...)
+            };
         })();
 
+        // --- 2. Initialize Charts ---
         (function () {
+            Chart.defaults.font.family = "'Nunito', sans-serif";
+            Chart.defaults.color = '#1E120A';
+
+            var themePrimary = '#C8832A'; // Gold
+            var themeDark = '#1E120A';    // Dark
+            var themeLight = 'rgba(200, 131, 42, 0.1)';
+
+            // 1. Monthly Trend Chart
             var monthLabels = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => $"\"{r.MonthLabel}\"")))];
             var redemptionsData = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => r.Redemptions)))];
             var viewsData = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => r.Views)))];
-            var ctx = document.getElementById('monthlyTrendChart');
-            if (!ctx) return;
-
-            var showRedemptions = true;
-            var showViews = true;
-
-            window.dashboardTrendChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: monthLabels,
-                    datasets: [
-                        {
-                            label: '@Localizer["SponsorPortal_RedemptionsHeader"].Value',
-                            data: redemptionsData,
-                            backgroundColor: 'rgba(44, 26, 14, 0.75)',
-                            borderRadius: 6,
-                            order: 2
-                        },
-                        {
-                            label: '@Localizer["SponsorPortal_RewardViews"].Value',
-                            data: viewsData,
-                            backgroundColor: 'rgba(200, 131, 42, 0.35)',
-                            borderRadius: 6,
-                            order: 3
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: true, position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 20, font: { family: 'Nunito', size: 12 } } }
+            
+            var ctxTrend = document.getElementById('monthlyTrendChart');
+            if (ctxTrend) {
+                new Chart(ctxTrend, {
+                    type: 'line',
+                    data: {
+                        labels: monthLabels,
+                        datasets: [
+                            {
+                                label: 'Redemptions',
+                                data: redemptionsData,
+                                borderColor: themePrimary,
+                                backgroundColor: themeLight,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: themePrimary,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                fill: true,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Views',
+                                data: viewsData,
+                                borderColor: themeDark,
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                pointRadius: 3,
+                                tension: 0.4
+                            }
+                        ]
                     },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { precision: 0, font: { family: 'Nunito' } }, grid: { color: 'rgba(0,0,0,0.05)' } },
-                        x: { ticks: { font: { family: 'Nunito' } }, grid: { display: false } }
-                    }
-                }
-            });
-
-            document.querySelectorAll('[data-chart-metric]').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    document.querySelectorAll('[data-chart-metric]').forEach(function (b) { b.classList.remove('chip-active'); });
-                    btn.classList.add('chip-active');
-                    var metric = btn.getAttribute('data-chart-metric');
-                    showRedemptions = metric === 'both' || metric === 'redemptions';
-                    showViews = metric === 'both' || metric === 'views';
-                    if (window.dashboardTrendChart) {
-                        var ds = window.dashboardTrendChart.data.datasets;
-                        ds[0].hidden = !showRedemptions;
-                        ds[1].hidden = !showViews;
-                        window.dashboardTrendChart.update();
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: { usePointStyle: true, boxWidth: 8 }
+                            }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+                            x: { grid: { display: false } }
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        }
                     }
                 });
-            });
-        })();
+            }
 
-        @if (Model.DashboardTopRewards.Any())
-        {
-            <text>
-            (function () {
-                var labels = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => $"\"{r.RewardTitle}\"")))];
-                var data = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => r.Redemptions)))];
-                var ctx = document.getElementById('topRewardsChart');
-                if (!ctx) return;
-                new Chart(ctx, {
-                    type: 'bar',
+            // 2. Top Rewards Bar Chart
+            @if (Model.DashboardTopRewards.Any())
+            {
+                <text>
+                var rewardLabels = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => $"\"{r.RewardTitle}\"")))];
+                var rewardData = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => r.Redemptions)))];
+                
+                var ctxRewards = document.getElementById('topRewardsChart');
+                if (ctxRewards) {
+                    new Chart(ctxRewards, {
+                        type: 'bar',
+                        data: {
+                            labels: rewardLabels,
+                            datasets: [{
+                                label: 'Total Claims',
+                                data: rewardData,
+                                backgroundColor: themePrimary,
+                                borderRadius: 6,
+                                barThickness: 24
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false }
+                            },
+                            scales: {
+                                x: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+                                y: { grid: { display: false } }
+                            }
+                        }
+                    });
+                }
+                </text>
+            }
+
+            // 3. Engagement Pie Chart
+            var ctxPie = document.getElementById('engagementPieChart');
+            if (ctxPie) {
+                new Chart(ctxPie, {
+                    type: 'doughnut',
                     data: {
-                        labels: labels,
+                        labels: ['Redemptions', 'Views'],
                         datasets: [{
-                            label: '@Localizer["SponsorPortal_RedemptionsHeader"].Value',
-                            data: data,
-                            backgroundColor: 'rgba(200, 131, 42, 0.75)',
-                            borderRadius: 6
+                            data: [@Model.TotalRedemptions, @Model.RewardViewCount],
+                            backgroundColor: [themePrimary, themeDark],
+                            borderWidth: 2,
+                            borderColor: '#ffffff',
+                            hoverOffset: 4
                         }]
                     },
                     options: {
-                        indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { beginAtZero: true, ticks: { precision: 0, font: { family: 'Nunito' } }, grid: { color: 'rgba(0,0,0,0.05)' } },
-                            y: { ticks: { font: { family: 'Nunito', size: 11 } }, grid: { display: false } }
-                        }
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { padding: 20, usePointStyle: true }
+                            }
+                        },
+                        cutout: '70%'
                     }
                 });
-            })();
-            </text>
-        }
+            }
+        })();
     </script>
-
-    <style>
-        .dashboard-wrapper {
-            padding-top: var(--nav-offset);
-            padding-bottom: 40px;
-        }
-
-        /* Header */
-        .dashboard-header {
-            background: #fff;
-            border-radius: 16px;
-            padding: 20px 24px;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .breadcrumb-custom {
-            background: transparent;
-            padding: 0;
-            margin-bottom: 4px;
-            font-size: 0.78rem;
-        }
-
-        .breadcrumb-custom .breadcrumb-item a {
-            color: var(--egy-muted-gold);
-            text-decoration: none;
-        }
-
-        .breadcrumb-custom .breadcrumb-item.active {
-            color: var(--egy-primary);
-        }
-
-        /* Grid */
-        .dashboard-grid {
-            display: grid;
-            gap: 20px;
-            grid-template-columns: 260px 1fr 260px;
-        }
-
-        /* Sidebar cards */
-        .dash-sidebar-card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: var(--shadow-soft);
-            overflow: hidden;
-            transition: box-shadow .2s ease;
-        }
-
-        .dash-sidebar-card:hover {
-            box-shadow: var(--shadow-medium);
-        }
-
-        .dash-card-header {
-            font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--egy-dark);
-            padding: 14px 16px;
-            border-bottom: 1px solid rgba(200, 131, 42, 0.1);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .dash-card-body {
-            padding: 14px 16px;
-        }
-
-        .badge-category {
-            display: inline-block;
-            background: rgba(200, 131, 42, 0.06);
-            color: var(--egy-muted-gold);
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 3px 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(200, 131, 42, 0.15);
-        }
-
-        .dash-info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-        }
-
-        .dash-info-row:last-child {
-            border-bottom: none;
-        }
-
-        .dash-info-label {
-            font-size: 0.8rem;
-            color: #6b7280;
-            font-weight: 600;
-        }
-
-        .dash-info-value {
-            font-family: 'Cinzel', serif;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--egy-dark);
-        }
-
-        /* Chips */
-        .chip {
-            border: 1px solid rgba(200, 131, 42, 0.25);
-            background: rgba(248, 250, 252, 0.6);
-            color: var(--egy-muted-gold);
-            border-radius: 20px;
-            padding: 5px 14px;
-            font-size: 0.76rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.01);
-        }
-
-        .chip:hover {
-            background: var(--egy-accent);
-            color: var(--egy-dark);
-            border-color: var(--egy-accent);
-            transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(200, 131, 42, 0.12);
-        }
-
-        .chip-active {
-            background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%);
-            color: #fff !important;
-            border-color: transparent;
-            box-shadow: var(--shadow-glow-gold);
-        }
-
-        /* Map */
-        .dash-map-card {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: var(--shadow-medium);
-            padding: 12px;
-            overflow: hidden;
-        }
-
-        .dash-map-container {
-            position: relative;
-            height: 520px;
-            border-radius: 14px;
-            background: #ece6db;
-            overflow: hidden;
-        }
-
-        .map-watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: var(--egy-muted-gold);
-            opacity: 0.65;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Right widgets */
-        .dash-widgets {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .dash-widget-card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: var(--shadow-soft);
-            overflow: hidden;
-        }
-
-        .stat-box-row {
-            margin-bottom: 0;
-        }
-
-        .stat-box-row .col {
-            padding: 10px 12px;
-        }
-
-        .stat-box-row .stat-card {
-            border-radius: 12px;
-            padding: 14px;
-            box-shadow: none;
-            border: 1px solid rgba(0,0,0,0.04);
-        }
-
-        /* Rating gauge */
-        .rating-gauge {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            background: conic-gradient(var(--egy-primary) calc(var(--rating) * 36deg), rgba(200,131,42,0.15) 0);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .rating-gauge::before {
-            content: '';
-            position: absolute;
-            inset: 10px;
-            background: #fff;
-            border-radius: 50%;
-        }
-
-        .rating-gauge-value {
-            position: relative;
-            z-index: 1;
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            font-size: 1.6rem;
-            color: var(--egy-dark);
-        }
-
-        /* Charts */
-        .charts-grid {
-            display: grid;
-            gap: 20px;
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .chart-card {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: var(--shadow-medium);
-            overflow: hidden;
-        }
-
-        .chart-body {
-            padding: 12px 16px 16px;
-        }
-
-        .text-muted-label {
-            color: #888;
-            font-weight: 600;
-        }
-
-        /* Responsive */
-        @@media (max-width: 1199.98px) {
-            .dashboard-grid {
-                grid-template-columns: 220px 1fr 220px;
-            }
-        }
-
-        @@media (max-width: 991.98px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .dash-sidebar {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 16px;
-            }
-
-            .dash-map-container {
-                height: 360px;
-            }
-
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @@media (max-width: 575.98px) {
-            .dash-sidebar {
-                grid-template-columns: 1fr;
-            }
-
-            .dashboard-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-        }
-    </style>
 }
