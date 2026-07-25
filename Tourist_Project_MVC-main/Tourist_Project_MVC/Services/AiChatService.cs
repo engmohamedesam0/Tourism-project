@@ -24,6 +24,9 @@ namespace Tourist_Project_MVC.Services
     public class AiChatService : IAiChatService
     {
         private const string SaveTripToolName = "save_trip_plan";
+        private const string AddDestinationToolName = "add_destination_to_trip";
+        private const string RemoveDestinationToolName = "remove_destination_from_trip";
+        private const string ReorderDestinationsToolName = "reorder_trip_destinations";
 
         private readonly HttpClient _http;
         private readonly IConfiguration _config;
@@ -77,6 +80,14 @@ namespace Tourist_Project_MVC.Services
                     Rating = d.Rating
                 })
                 .ToList();
+
+            var touristTrips = tourist != null
+                ? _tripPlanRepo.GetAllWithDetails()
+                    .Where(t => t.TouristId == tourist.Id)
+                    .OrderByDescending(t => t.StartDate)
+                    .Take(10)
+                    .ToList()
+                : new List<TripPlan>();
 
             // Gemini has no "system" role in `contents` — the system prompt goes in
             // the separate system_instruction field. Roles inside `contents` are
@@ -148,10 +159,10 @@ namespace Tourist_Project_MVC.Services
             {
                 SystemInstruction = new GeminiContent
                 {
-                    Parts = new List<GeminiPart> { new GeminiPart { Text = BuildSystemPrompt(tourist, destinations) } }
+                    Parts = new List<GeminiPart> { new GeminiPart { Text = BuildSystemPrompt(tourist, destinations, touristTrips) } }
                 },
                 Contents = contents,
-                Tools = new List<GeminiTool> { BuildSaveTripTool() },
+                Tools = new List<GeminiTool> { BuildSaveTripTool(), BuildAddDestinationTool(), BuildRemoveDestinationTool(), BuildReorderDestinationsTool() },
                 GenerationConfig = new GeminiGenerationConfig { Temperature = 0.4 }
             };
 
@@ -198,10 +209,41 @@ namespace Tourist_Project_MVC.Services
             var candidate = apiResponse?.Candidates?.FirstOrDefault();
             var parts = candidate?.Content?.Parts ?? new List<GeminiPart>();
 
-            var functionCallPart = parts.FirstOrDefault(p => p.FunctionCall != null && p.FunctionCall.Name == SaveTripToolName);
+            var functionCallPart = parts.FirstOrDefault(p => p.FunctionCall != null);
+            AiChatResponseVM? functionResponse = null;
             if (functionCallPart?.FunctionCall != null)
             {
-                return HandleSaveTripToolCall(functionCallPart.FunctionCall, tourist, destinations);
+                var fc = functionCallPart.FunctionCall;
+                switch (fc.Name)
+                {
+                    case SaveTripToolName:
+                        return HandleSaveTripToolCall(fc, tourist, destinations);
+                    case AddDestinationToolName:
+                        functionResponse = HandleAddDestinationToolCall(fc, tourist, destinations);
+                        break;
+                    case RemoveDestinationToolName:
+                        functionResponse = HandleRemoveDestinationToolCall(fc, tourist, destinations);
+                        break;
+                    case ReorderDestinationsToolName:
+                        functionResponse = HandleReorderDestinationsToolCall(fc, tourist, destinations);
+                        break;
+                }
+
+                if (functionResponse != null)
+                {
+                    if (tourist != null)
+                    {
+                        try
+                        {
+                            await PersistChatAsync(request, functionResponse, tourist);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Failed to persist chat session for tourist {TouristId}", tourist.Id);
+                        }
+                    }
+                    return functionResponse;
+                }
             }
 
             var reply = string.Concat(parts.Where(p => p.Text != null).Select(p => p.Text)).Trim();
@@ -396,6 +438,261 @@ namespace Tourist_Project_MVC.Services
             };
         }
 
+        private AiChatResponseVM HandleAddDestinationToolCall(GeminiFunctionCall functionCall, Tourist? tourist, List<AiDestinationContext> destinations)
+        {
+            if (tourist == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I'd love to add that destination, but you'll need to sign in first. " +
+                            "Log in or create an account, then ask me again and I'll add it to your trip."
+                };
+            }
+
+            AddDestinationArgs? args;
+            try
+            {
+                args = JsonSerializer.Deserialize<AddDestinationArgs>(functionCall.Args.GetRawText(), _jsonOptions);
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogWarning(ex, "Could not parse add_destination_to_trip arguments: {Args}", functionCall.Args.GetRawText());
+                args = null;
+            }
+
+            if (args == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I tried to add the destination but something about the details didn't come through correctly. Could you tell me again?"
+                };
+            }
+
+            var trip = _tripPlanRepo.GetByIdWithDetails(args.TripPlanId);
+            if (trip == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I couldn't find that trip plan. Could you check the plan ID and try again?"
+                };
+            }
+
+            if (trip.TouristId != tourist.Id)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I can't modify that trip plan."
+                };
+            }
+
+            var validIds = destinations.Select(d => d.Id).ToHashSet();
+            if (!validIds.Contains(args.DestinationId))
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "That doesn't match any active destination in our catalog — could you double-check the destination ID?"
+                };
+            }
+
+            if (trip.TripDestinations.Any(td => td.DestinationId == args.DestinationId))
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "That destination is already included in this trip plan."
+                };
+            }
+
+            var maxOrder = trip.TripDestinations.Any()
+                ? trip.TripDestinations.Max(td => td.Visit_Order)
+                : 0;
+
+            var destName = destinations.First(d => d.Id == args.DestinationId).Name;
+            var newStop = new TripDestination
+            {
+                TripPlanId = trip.Id,
+                DestinationId = args.DestinationId,
+                Visit_Order = maxOrder + 1,
+                ArrivalDate = trip.StartDate,
+                DepartureDate = trip.EndDate
+            };
+            _tripPlanRepo.AddStop(newStop);
+            _tripPlanRepo.Save();
+
+            var reply = $"Done! I've added **{destName}** to **{trip.Title}** as stop {maxOrder + 1}.";
+
+            return new AiChatResponseVM
+            {
+                Reply = reply,
+                TripSaved = true,
+                TripPlanId = trip.Id,
+                TripPlanTitle = trip.Title
+            };
+        }
+
+        private AiChatResponseVM HandleRemoveDestinationToolCall(GeminiFunctionCall functionCall, Tourist? tourist, List<AiDestinationContext> destinations)
+        {
+            if (tourist == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I'd love to remove that destination, but you'll need to sign in first. " +
+                            "Log in or create an account, then ask me again and I'll remove it from your trip."
+                };
+            }
+
+            RemoveDestinationArgs? args;
+            try
+            {
+                args = JsonSerializer.Deserialize<RemoveDestinationArgs>(functionCall.Args.GetRawText(), _jsonOptions);
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogWarning(ex, "Could not parse remove_destination_from_trip arguments: {Args}", functionCall.Args.GetRawText());
+                args = null;
+            }
+
+            if (args == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I tried to remove the destination but something about the details didn't come through correctly. Could you tell me again?"
+                };
+            }
+
+            var trip = _tripPlanRepo.GetByIdWithDetails(args.TripPlanId);
+            if (trip == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I couldn't find that trip plan. Could you check the plan ID and try again?"
+                };
+            }
+
+            if (trip.TouristId != tourist.Id)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I can't modify that trip plan."
+                };
+            }
+
+            var existingStop = trip.TripDestinations.FirstOrDefault(td => td.DestinationId == args.DestinationId);
+            if (existingStop == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "That destination isn't part of this trip plan."
+                };
+            }
+
+            var destName = destinations.FirstOrDefault(d => d.Id == args.DestinationId)?.Name ?? "that destination";
+            _tripPlanRepo.RemoveStop(existingStop.Id);
+
+            var remainingStops = trip.TripDestinations
+                .Where(td => td.Id != existingStop.Id)
+                .OrderBy(td => td.Visit_Order)
+                .ToList();
+
+            for (var i = 0; i < remainingStops.Count; i++)
+            {
+                remainingStops[i].Visit_Order = i + 1;
+                _tripPlanRepo.UpdateStop(remainingStops[i]);
+            }
+
+            _tripPlanRepo.Save();
+
+            var reply = $"Done! I've removed **{destName}** from **{trip.Title}**. " +
+                        $"The remaining stops have been renumbered 1..{remainingStops.Count}.";
+
+            return new AiChatResponseVM
+            {
+                Reply = reply,
+                TripSaved = true,
+                TripPlanId = trip.Id,
+                TripPlanTitle = trip.Title
+            };
+        }
+
+        private AiChatResponseVM HandleReorderDestinationsToolCall(GeminiFunctionCall functionCall, Tourist? tourist, List<AiDestinationContext> destinations)
+        {
+            if (tourist == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I'd love to reorder your trip, but you'll need to sign in first. " +
+                            "Log in or create an account, then ask me again and I'll reorder it."
+                };
+            }
+
+            ReorderDestinationsArgs? args;
+            try
+            {
+                args = JsonSerializer.Deserialize<ReorderDestinationsArgs>(functionCall.Args.GetRawText(), _jsonOptions);
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogWarning(ex, "Could not parse reorder_trip_destinations arguments: {Args}", functionCall.Args.GetRawText());
+                args = null;
+            }
+
+            if (args == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I tried to reorder the destinations but something about the details didn't come through correctly. Could you tell me again?"
+                };
+            }
+
+            var trip = _tripPlanRepo.GetByIdWithDetails(args.TripPlanId);
+            if (trip == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I couldn't find that trip plan. Could you check the plan ID and try again?"
+                };
+            }
+
+            if (trip.TouristId != tourist.Id)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I can't modify that trip plan."
+                };
+            }
+
+            var currentIds = trip.TripDestinations.Select(td => td.DestinationId).ToHashSet();
+            var newIds = args.DestinationIds.ToHashSet();
+
+            if (currentIds.Count != newIds.Count || !currentIds.SetEquals(newIds) || args.DestinationIds.Count != args.DestinationIds.Distinct().Count())
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "The destination list you provided doesn't match the current stops in this trip. " +
+                            "Please confirm the full new order by listing all destination IDs exactly once."
+                };
+            }
+
+            for (var i = 0; i < args.DestinationIds.Count; i++)
+            {
+                var stop = trip.TripDestinations.First(td => td.DestinationId == args.DestinationIds[i]);
+                stop.Visit_Order = i + 1;
+                _tripPlanRepo.UpdateStop(stop);
+            }
+
+            _tripPlanRepo.Save();
+
+            var reply = $"Done! I've reordered **{trip.Title}** to: " +
+                        $"{string.Join(" → ", args.DestinationIds.Select(id => destinations.First(d => d.Id == id).Name))}.";
+
+            return new AiChatResponseVM
+            {
+                Reply = reply,
+                TripSaved = true,
+                TripPlanId = trip.Id,
+                TripPlanTitle = trip.Title
+            };
+        }
+
         private static DateTime ParseDateOrDefault(string? value, DateTime fallback)
         {
             if (!string.IsNullOrWhiteSpace(value) &&
@@ -406,7 +703,7 @@ namespace Tourist_Project_MVC.Services
             return fallback.Date;
         }
 
-        private static string BuildSystemPrompt(Tourist? tourist, List<AiDestinationContext> destinations)
+        private static string BuildSystemPrompt(Tourist? tourist, List<AiDestinationContext> destinations, List<TripPlan> touristTrips)
         {
             var destinationsBlock = string.Join("\n", destinations.Select(d =>
                 $"- id={d.Id} | {d.Name} | {d.City} | {d.Category ?? "General"} | " +
@@ -417,9 +714,14 @@ namespace Tourist_Project_MVC.Services
                 ? $"The signed-in tourist is named {tourist.Name}."
                 : "This visitor is not signed in — you can chat, but you cannot save a trip for them until they log in.";
 
+            var tripsBlock = touristTrips.Any()
+                ? string.Join("\n", touristTrips.Select(t =>
+                    $"- plan_id={t.Id} | \"{t.Title}\" | status={t.Status} | {t.StartDate:yyyy-MM-dd} to {t.EndDate:yyyy-MM-dd} | stops: [{string.Join(", ", t.TripDestinations.OrderBy(td => td.Visit_Order).Select(td => $"order{td.Visit_Order}: id={td.DestinationId} {td.Destination?.Name ?? "unknown"}"))}]"))
+                : "This tourist has no saved trip plans yet.";
+
             return $"""
                 You are the EGYXPLORE Assistant, a friendly and knowledgeable travel guide embedded in a
-                tourism website about Egypt. You have two jobs:
+                tourism website about Egypt. You have three jobs:
 
                 1. Answer questions about the history of Egypt (Ancient Egyptian civilization, pharaohs,
                    dynasties, monuments, temples, mythology, and more recent history too) and about
@@ -429,7 +731,11 @@ namespace Tourist_Project_MVC.Services
                 2. Help the user plan a trip: suggest an itinerary using ONLY the real destinations listed
                    below (never invent a place or an ID). Ask about interests, trip length, budget, or
                    number of travelers if useful, but don't interrogate the user with too many questions —
-                   propose a solid plan and refine it based on feedback.
+                   propose a solid plan and refine it based on feedback. You can also call the
+                   add_destination_to_trip, remove_destination_from_trip, and reorder_trip_destinations
+                   tools to modify existing trip plans.
+
+                3. Help the user modify their existing trip plans listed below — add a destination, remove one, or reorder the stops — using the destination IDs and plan IDs from that list. Only call an edit tool once the user has clearly confirmed which plan and what change they want. If the user has multiple trips and hasn't specified which one, ask them to clarify instead of guessing.
 
                 {touristLine}
 
@@ -441,6 +747,9 @@ namespace Tourist_Project_MVC.Services
 
                 Available destinations (id | name | city | category | ticket price | rating):
                 {destinationsBlock}
+
+                Existing trip plans:
+                {tripsBlock}
 
                 Today's date is {DateTime.Today:yyyy-MM-dd}. If the user doesn't give exact dates, choose
                 sensible ones relative to today. Keep replies in plain, warm language — this is a chat widget,
@@ -476,6 +785,86 @@ namespace Tourist_Project_MVC.Services
                                 }
                             },
                             required = new[] { "title", "start_date", "end_date", "destination_ids" }
+                        }
+                    }
+                }
+            };
+        }
+
+        private static GeminiTool BuildAddDestinationTool()
+        {
+            return new GeminiTool
+            {
+                FunctionDeclarations = new List<GeminiFunctionDeclaration>
+                {
+                    new GeminiFunctionDeclaration
+                    {
+                        Name = AddDestinationToolName,
+                        Description = "Add a destination to an existing trip plan by its plan ID and destination ID.",
+                        Parameters = new
+                        {
+                            type = "OBJECT",
+                            properties = new
+                            {
+                                trip_plan_id = new { type = "INTEGER", description = "The ID of the trip plan to add the destination to." },
+                                destination_id = new { type = "INTEGER", description = "The ID of the destination to add, from the available destinations list." }
+                            },
+                            required = new[] { "trip_plan_id", "destination_id" }
+                        }
+                    }
+                }
+            };
+        }
+
+        private static GeminiTool BuildRemoveDestinationTool()
+        {
+            return new GeminiTool
+            {
+                FunctionDeclarations = new List<GeminiFunctionDeclaration>
+                {
+                    new GeminiFunctionDeclaration
+                    {
+                        Name = RemoveDestinationToolName,
+                        Description = "Remove a destination from an existing trip plan by its plan ID and destination ID.",
+                        Parameters = new
+                        {
+                            type = "OBJECT",
+                            properties = new
+                            {
+                                trip_plan_id = new { type = "INTEGER", description = "The ID of the trip plan to remove the destination from." },
+                                destination_id = new { type = "INTEGER", description = "The ID of the destination to remove." }
+                            },
+                            required = new[] { "trip_plan_id", "destination_id" }
+                        }
+                    }
+                }
+            };
+        }
+
+        private static GeminiTool BuildReorderDestinationsTool()
+        {
+            return new GeminiTool
+            {
+                FunctionDeclarations = new List<GeminiFunctionDeclaration>
+                {
+                    new GeminiFunctionDeclaration
+                    {
+                        Name = ReorderDestinationsToolName,
+                        Description = "Reorder the destinations in an existing trip plan by providing a new ordered list of destination IDs.",
+                        Parameters = new
+                        {
+                            type = "OBJECT",
+                            properties = new
+                            {
+                                trip_plan_id = new { type = "INTEGER", description = "The ID of the trip plan to reorder." },
+                                destination_ids = new
+                                {
+                                    type = "ARRAY",
+                                    items = new { type = "INTEGER" },
+                                    description = "The destination IDs in the new desired visit order. Must include every destination currently in the trip exactly once."
+                                }
+                            },
+                            required = new[] { "trip_plan_id", "destination_ids" }
                         }
                     }
                 }

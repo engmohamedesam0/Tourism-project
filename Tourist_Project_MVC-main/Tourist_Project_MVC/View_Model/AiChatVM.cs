@@ -189,4 +189,34 @@ namespace Tourist_Project_MVC.View_Model
         [JsonPropertyName("destination_ids")]
         public List<int> DestinationIds { get; set; } = new();
     }
+
+    // Arguments for the "add_destination_to_trip" tool call.
+    public class AddDestinationArgs
+    {
+        [JsonPropertyName("trip_plan_id")]
+        public int TripPlanId { get; set; }
+
+        [JsonPropertyName("destination_id")]
+        public int DestinationId { get; set; }
+    }
+
+    // Arguments for the "remove_destination_from_trip" tool call.
+    public class RemoveDestinationArgs
+    {
+        [JsonPropertyName("trip_plan_id")]
+        public int TripPlanId { get; set; }
+
+        [JsonPropertyName("destination_id")]
+        public int DestinationId { get; set; }
+    }
+
+    // Arguments for the "reorder_trip_destinations" tool call.
+    public class ReorderDestinationsArgs
+    {
+        [JsonPropertyName("trip_plan_id")]
+        public int TripPlanId { get; set; }
+
+        [JsonPropertyName("destination_ids")]
+        public List<int> DestinationIds { get; set; } = new();
+    }
 }
