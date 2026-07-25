@@ -110,6 +110,7 @@
             var url = historySessionUrlTemplate.replace('__ID__', id);
             try {
                 var response = await fetch(url, {
+                    credentials: 'same-origin',
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 });
                 if (!response.ok) return;
@@ -142,6 +143,7 @@
 
                 try {
                 var response = await fetch(historyUrl, {
+                    credentials: 'same-origin',
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 });
                 var sessions = await response.json();
@@ -191,6 +193,7 @@
             try {
                 var response = await fetch(sendUrl, {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: {
                         'RequestVerificationToken': getAntiforgeryToken(),
                         'X-Requested-With': 'XMLHttpRequest'

@@ -34,19 +34,22 @@ namespace Tourist_Project_MVC.Controllers
         private readonly ITouristRepository _touristRepo;
         private readonly IChatSessionRepository _chatSessionRepo;
         private readonly IAntiforgery _antiforgery;
+        private readonly ILogger<AiChatController> _logger;
 
         public AiChatController(
             IAiChatService aiChatService,
             UserManager<ApplicationUser> userManager,
             ITouristRepository touristRepo,
             IChatSessionRepository chatSessionRepo,
-            IAntiforgery antiforgery)
+            IAntiforgery antiforgery,
+            ILogger<AiChatController> logger)
         {
             _aiChatService = aiChatService;
             _userManager = userManager;
             _touristRepo = touristRepo;
             _chatSessionRepo = chatSessionRepo;
             _antiforgery = antiforgery;
+            _logger = logger;
         }
 
         private async Task<Tourist?> ResolveTouristAsync(CancellationToken ct = default)
@@ -106,6 +109,12 @@ namespace Tourist_Project_MVC.Controllers
             }
 
             var tourist = await ResolveTouristAsync(ct);
+            _logger.LogInformation(
+                "AiChat.Send — HasIdentityCookie={HasCookie}, IsAuthenticated={IsAuth}, IsInUserRole={InRole}, ResolvedTouristId={TouristId}",
+                Request.Cookies.ContainsKey(".AspNetCore.Identity.Application"),
+                User.Identity?.IsAuthenticated,
+                User.IsInRole("User"),
+                tourist?.Id.ToString() ?? "null");
 
             var result = await _aiChatService.GetReplyAsync(request, tourist, ct);
             return Json(result);
