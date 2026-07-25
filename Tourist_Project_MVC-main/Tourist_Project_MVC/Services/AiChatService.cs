@@ -27,6 +27,7 @@ namespace Tourist_Project_MVC.Services
         private const string AddDestinationToolName = "add_destination_to_trip";
         private const string RemoveDestinationToolName = "remove_destination_from_trip";
         private const string ReorderDestinationsToolName = "reorder_trip_destinations";
+        private const string GetPhotosToolName = "get_destination_photos";
 
         private readonly HttpClient _http;
         private readonly IConfiguration _config;
@@ -77,7 +78,8 @@ namespace Tourist_Project_MVC.Services
                     City = d.City,
                     Category = d.Category,
                     TicketPrice = d.TicketPrice,
-                    Rating = d.Rating
+                    Rating = d.Rating,
+                    PhotoUrls = d.PhotoUrlList
                 })
                 .ToList();
 
@@ -162,7 +164,7 @@ namespace Tourist_Project_MVC.Services
                     Parts = new List<GeminiPart> { new GeminiPart { Text = BuildSystemPrompt(tourist, destinations, touristTrips) } }
                 },
                 Contents = contents,
-                Tools = new List<GeminiTool> { BuildSaveTripTool(), BuildAddDestinationTool(), BuildRemoveDestinationTool(), BuildReorderDestinationsTool() },
+                Tools = new List<GeminiTool> { BuildSaveTripTool(), BuildAddDestinationTool(), BuildRemoveDestinationTool(), BuildReorderDestinationsTool(), BuildGetPhotosTool() },
                 GenerationConfig = new GeminiGenerationConfig { Temperature = 0.4 }
             };
 
@@ -226,6 +228,9 @@ namespace Tourist_Project_MVC.Services
                         break;
                     case ReorderDestinationsToolName:
                         functionResponse = HandleReorderDestinationsToolCall(fc, tourist, destinations);
+                        break;
+                    case GetPhotosToolName:
+                        functionResponse = HandleGetPhotosToolCall(fc, destinations);
                         break;
                 }
 
@@ -693,6 +698,53 @@ namespace Tourist_Project_MVC.Services
             };
         }
 
+        private AiChatResponseVM HandleGetPhotosToolCall(GeminiFunctionCall functionCall, List<AiDestinationContext> destinations)
+        {
+            GetPhotosArgs? args;
+            try
+            {
+                args = JsonSerializer.Deserialize<GetPhotosArgs>(functionCall.Args.GetRawText(), _jsonOptions);
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogWarning(ex, "Could not parse get_destination_photos arguments: {Args}", functionCall.Args.GetRawText());
+                args = null;
+            }
+
+            if (args == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I tried to get the photos but something about the destination details didn't come through correctly. Could you tell me again?"
+                };
+            }
+
+            var dest = destinations.FirstOrDefault(d => d.Id == args.DestinationId);
+            if (dest == null)
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = "I couldn't find that destination in our catalog — could you double-check the destination ID?"
+                };
+            }
+
+            if (!dest.PhotoUrls.Any())
+            {
+                return new AiChatResponseVM
+                {
+                    Reply = $"I don't have any photos for **{dest.Name}** right now, but here's what I can tell you: it's a {dest.Category ?? "popular"} destination in {dest.City}."
+                };
+            }
+
+            var reply = $"Here are some photos of **{dest.Name}** in {dest.City}:";
+
+            return new AiChatResponseVM
+            {
+                Reply = reply,
+                PhotoUrls = dest.PhotoUrls
+            };
+        }
+
         private static DateTime ParseDateOrDefault(string? value, DateTime fallback)
         {
             if (!string.IsNullOrWhiteSpace(value) &&
@@ -721,21 +773,23 @@ namespace Tourist_Project_MVC.Services
 
             return $"""
                 You are the EGYXPLORE Assistant, a friendly and knowledgeable travel guide embedded in a
-                tourism website about Egypt. You have three jobs:
+                tourism website about Egypt. You have four jobs:
 
                 1. Answer questions about the history of Egypt (Ancient Egyptian civilization, pharaohs,
-                   dynasties, monuments, temples, mythology, and more recent history too) and about
-                   historical/touristic locations in Egypt. Be accurate, engaging, and reasonably concise
-                   unless the user asks for depth.
+                    dynasties, monuments, temples, mythology, and more recent history too) and about
+                    historical/touristic locations in Egypt. Be accurate, engaging, and reasonably concise
+                    unless the user asks for depth.
 
                 2. Help the user plan a trip: suggest an itinerary using ONLY the real destinations listed
-                   below (never invent a place or an ID). Ask about interests, trip length, budget, or
-                   number of travelers if useful, but don't interrogate the user with too many questions —
-                   propose a solid plan and refine it based on feedback. You can also call the
-                   add_destination_to_trip, remove_destination_from_trip, and reorder_trip_destinations
-                   tools to modify existing trip plans.
+                    below (never invent a place or an ID). Ask about interests, trip length, budget, or
+                    number of travelers if useful, but don't interrogate the user with too many questions —
+                    propose a solid plan and refine it based on feedback. You can also call the
+                    add_destination_to_trip, remove_destination_from_trip, and reorder_trip_destinations
+                    tools to modify existing trip plans.
 
                 3. Help the user modify their existing trip plans listed below — add a destination, remove one, or reorder the stops — using the destination IDs and plan IDs from that list. Only call an edit tool once the user has clearly confirmed which plan and what change they want. If the user has multiple trips and hasn't specified which one, ask them to clarify instead of guessing.
+
+                4. When the user asks to see photos of a specific destination, call the `get_destination_photos` tool with the destination ID from the list below to retrieve the photo URLs for that place.
 
                 {touristLine}
 
@@ -865,6 +919,30 @@ namespace Tourist_Project_MVC.Services
                                 }
                             },
                             required = new[] { "trip_plan_id", "destination_ids" }
+                        }
+                    }
+                }
+            };
+        }
+
+        private static GeminiTool BuildGetPhotosTool()
+        {
+            return new GeminiTool
+            {
+                FunctionDeclarations = new List<GeminiFunctionDeclaration>
+                {
+                    new GeminiFunctionDeclaration
+                    {
+                        Name = GetPhotosToolName,
+                        Description = "Get the photo URLs for a specific destination by its ID. Use this when the user asks to see photos of a place.",
+                        Parameters = new
+                        {
+                            type = "OBJECT",
+                            properties = new
+                            {
+                                destination_id = new { type = "INTEGER", description = "The ID of the destination to get photos for, from the available destinations list." }
+                            },
+                            required = new[] { "destination_id" }
                         }
                     }
                 }

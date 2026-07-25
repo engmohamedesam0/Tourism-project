@@ -83,6 +83,29 @@
                 bubble.appendChild(link);
             }
 
+            if (options.photos && options.photos.length) {
+                var gallery = document.createElement('div');
+                gallery.className = 'ai-chat-photos';
+                options.photos.forEach(function (url) {
+                    var trimmed = url.trim();
+                    if (!trimmed) return;
+                    var a = document.createElement('a');
+                    a.className = 'ai-chat-photos-a';
+                    a.href = trimmed;
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    var img = document.createElement('img');
+                    img.className = 'ai-chat-photo';
+                    img.src = trimmed;
+                    img.alt = '';
+                    img.loading = 'lazy';
+                    a.appendChild(img);
+                    gallery.appendChild(a);
+                });
+                bubble.appendChild(document.createElement('br'));
+                bubble.appendChild(gallery);
+            }
+
             messagesEl.appendChild(wrap);
             messagesEl.scrollTop = messagesEl.scrollHeight;
             return wrap;
@@ -218,7 +241,10 @@
                 var data = await response.json();
                 var reply = data && data.reply ? data.reply : errorText;
 
-                appendMessage('assistant', reply, data && data.tripSaved ? { tripId: data.tripPlanId } : {});
+                var extraOpts = {};
+                if (data && data.tripSaved) extraOpts.tripId = data.tripPlanId;
+                if (data && data.photoUrls && data.photoUrls.length > 0) extraOpts.photos = data.photoUrls;
+                appendMessage('assistant', reply, extraOpts);
                 history.push({ role: 'assistant', content: reply });
 
                 if (history.length > MAX_HISTORY) {

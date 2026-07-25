@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NetTopologySuite.Geometries;
+using System.Net.Http;
 using System.Text.Json;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
@@ -40,6 +41,8 @@ namespace Tourist_Project_MVC.Services
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
+            var httpClientFactory = scope.ServiceProvider.GetRequiredService<IHttpClientFactory>();
+            var httpClient = httpClientFactory.CreateClient();
 
             var seedDir = Path.Combine(env.ContentRootPath, "SeedData");
 
@@ -52,6 +55,7 @@ namespace Tourist_Project_MVC.Services
             await SeedTableAsync<Tourist>(context, seedDir, "tourists.json");
             await SeedGeoAsync<Destination>(context, seedDir, "destinations.json",
                 (e, el) => e.Location = new Point(el.GetProperty("lng").GetDouble(), el.GetProperty("lat").GetDouble()) { SRID = 4326 });
+            await SeedDestinationPhotosAsync(context, httpClient, env);
             await SeedGeoAsync<Branch>(context, seedDir, "branches.json",
                 (e, el) => e.Location = new Point(el.GetProperty("lng").GetDouble(), el.GetProperty("lat").GetDouble()) { SRID = 4326 });
             await SeedTableAsync<MenuItem>(context, seedDir, "menu-items.json");
@@ -206,6 +210,85 @@ namespace Tourist_Project_MVC.Services
                 }
 
             await transaction.CommitAsync();
+        }
+
+        private static async Task SeedDestinationPhotosAsync(TouristContext context, HttpClient httpClient, IHostEnvironment env)
+        {
+            if (!env.IsDevelopment()) return;
+
+            var nameToTitle = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["The Great Pyramids of Giza"] = "Great Pyramid of Giza",
+                ["The Great Sphinx"] = "Great Sphinx of Giza",
+                ["Karnak Temple Complex"] = "Karnak",
+                ["Valley of the Kings"] = "Valley of the Kings",
+                ["Abu Simbel Temples"] = "Abu Simbel temples",
+                ["Qaitbay Citadel"] = "Citadel of Qaitbay",
+                ["Egyptian Museum"] = "Egyptian Museum",
+                ["Saint Catherine's Monastery"] = "Saint Catherine's Monastery, Sinai",
+                ["Siwa Oasis"] = "Siwa Oasis",
+                ["Wadi El Hitan (Whale Valley)"] = "Wadi Al-Hitan",
+                ["Dendera Temple"] = "Dendera Temple complex",
+                ["Tanis (Ancient City)"] = "Tanis",
+                ["Dahshur Pyramids"] = "Dahshur",
+                ["The Grand Egyptian Museum"] = "Grand Egyptian Museum",
+                ["Saladin Citadel"] = "Cairo Citadel",
+                ["Bibliotheca Alexandrina"] = "Bibliotheca Alexandrina",
+                ["Al-Azhar Mosque"] = "Al-Azhar Mosque",
+                ["Philae Temple"] = "Philae"
+            };
+
+            var destinations = await context.Destinations
+                .Where(d => string.IsNullOrWhiteSpace(d.PhotoUrls))
+                .ToListAsync();
+
+            foreach (var dest in destinations)
+            {
+                if (!nameToTitle.TryGetValue(dest.Name, out var title))
+                {
+                    Console.Error.WriteLine($"[DbInitializer] No Wikipedia mapping for destination: {dest.Name}");
+                    continue;
+                }
+
+                try
+                {
+                    var url = $"https://en.wikipedia.org/api/rest_v1/page/summary/{Uri.EscapeDataString(title)}";
+                    using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                    request.Headers.UserAgent.ParseAdd("TouristProjectMVC/1.0 (https://github.com/your-repo; contact@example.com)");
+                    using var response = await httpClient.SendAsync(request);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Console.Error.WriteLine($"[DbInitializer] Wikipedia lookup failed for '{title}' (status {response.StatusCode})");
+                        continue;
+                    }
+
+                    await using var stream = await response.Content.ReadAsStreamAsync();
+                    using var doc = await JsonDocument.ParseAsync(stream);
+                    if (doc.RootElement.TryGetProperty("originalimage", out var origImg) &&
+                        origImg.TryGetProperty("source", out var src))
+                    {
+                        dest.PhotoUrls = src.GetString();
+                    }
+                    else if (doc.RootElement.TryGetProperty("thumbnail", out var thumb) &&
+                             thumb.TryGetProperty("source", out var thumbSrc))
+                    {
+                        dest.PhotoUrls = thumbSrc.GetString();
+                    }
+                    else
+                    {
+                        Console.Error.WriteLine($"[DbInitializer] Wikipedia response missing image for '{title}'");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"[DbInitializer] Failed to fetch photo for '{title}': {ex.Message}");
+                }
+            }
+
+            if (context.ChangeTracker.HasChanges())
+            {
+                await context.SaveChangesAsync();
+            }
         }
 
         private static T? ReadJson<T>(string path) where T : class

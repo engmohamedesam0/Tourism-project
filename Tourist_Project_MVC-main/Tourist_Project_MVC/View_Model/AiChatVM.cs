@@ -45,6 +45,7 @@ namespace Tourist_Project_MVC.View_Model
 
         // Id of the persisted chat session this response belongs to.
         public int? ChatSessionId { get; set; }
+        public List<string>? PhotoUrls { get; set; }
     }
 
     // Compact projection of a Destination, cheap enough to inline into
@@ -58,6 +59,7 @@ namespace Tourist_Project_MVC.View_Model
         public string? Category { get; set; }
         public decimal? TicketPrice { get; set; }
         public decimal? Rating { get; set; }
+        public List<string> PhotoUrls { get; set; } = new();
     }
 
     // ---- Gemini generateContent wire format (only the fields we use) ----
@@ -218,5 +220,11 @@ namespace Tourist_Project_MVC.View_Model
 
         [JsonPropertyName("destination_ids")]
         public List<int> DestinationIds { get; set; } = new();
+    }
+
+    public class GetPhotosArgs
+    {
+        [JsonPropertyName("destination_id")]
+        public int DestinationId { get; set; }
     }
 }

@@ -34,6 +34,10 @@
 
             </div>
             <div class="mb-3">
+                <label asp-for="PhotoUrls" class="form-label">Photo URLs</label>
+                <textarea asp-for="PhotoUrls" class="form-control" rows="3" placeholder="Enter one image URL per line"></textarea>
+            </div>
+            <div class="mb-3">
                 <label asp-for="Status" class="form-label">@Localizer["Destination_Status"].Value</label>
                 <select asp-for="Status" class="form-select">
                     <option value="Active">@Localizer["Destination_StatusActive"].Value</option>

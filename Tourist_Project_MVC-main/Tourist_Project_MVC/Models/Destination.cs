@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using NetTopologySuite.Geometries;
 
 namespace Tourist_Project_MVC.Models
@@ -12,6 +13,7 @@ namespace Tourist_Project_MVC.Models
         public string? Category { get; set; }
         public Point Location { get; set; } = null!;
         public string? Description { get; set; }
+        public string? PhotoUrls { get; set; }
         public decimal? TicketPrice { get; set; }
 
         // Added for the tourist-facing Explore page (Step 1).
@@ -21,6 +23,11 @@ namespace Tourist_Project_MVC.Models
 
         public int Visits { get; set; } = 0;
         public string Status { get; set; } = "Active";
+
+        [NotMapped]
+        public List<string> PhotoUrlList => string.IsNullOrWhiteSpace(PhotoUrls)
+            ? new List<string>()
+            : PhotoUrls.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
 
         public List<Mission> Missions { get; set; } = new List<Mission>();
         public List<TripDestination> TripDestinations { get; set; } = new List<TripDestination>();

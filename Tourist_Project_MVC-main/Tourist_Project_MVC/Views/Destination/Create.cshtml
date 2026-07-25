@@ -37,6 +37,12 @@
             </div>
 
             <div class="mb-3">
+                <label asp-for="PhotoUrls" class="form-label">Photo URLs</label>
+                <textarea asp-for="PhotoUrls" class="form-control" rows="3" placeholder="Enter one image URL per line"></textarea>
+                <span asp-validation-for="PhotoUrls" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
                 <label asp-for="TicketPrice" class="form-label"></label>
                 <input asp-for="TicketPrice" class="form-control" type="number" step="0.01" />
                 <span asp-validation-for="TicketPrice" class="text-danger"></span>
