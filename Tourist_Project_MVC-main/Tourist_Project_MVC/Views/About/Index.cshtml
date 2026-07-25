@@ -1,93 +1,825 @@
 @{
     ViewData["Title"] = "About";
+    ViewData["FullWidth"] = true;
 }
 
-<div class="inner-page-wrapper">
-    <div class="container" style="max-width: 1000px;">
-
-        <h2 class="page-title mb-4">@Localizer["About_PageTitle"].Value</h2>
-
-        <!-- Intro -->
-        <section class="about-block mb-5">
-            <p class="lead" style="color: var(--egy-dark);">
-                @Localizer["About_Intro"].Value
-            </p>
-        </section>
-
-        <!-- Mission / Story -->
-        <section class="about-block mb-5">
-            <h3 class="about-subtitle">@Localizer["About_Story"].Value</h3>
-            <p class="text-muted">
-                @Localizer["About_StoryText"].Value
-            </p>
-        </section>
-
-        <!-- Values -->
-        <section class="about-block mb-5">
-            <h3 class="about-subtitle">@Localizer["About_Values"].Value</h3>
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <div class="value-card stat-card">
-                        <i class="bi bi-compass stat-icon"></i>
-                        <h5 style="font-family:'Cinzel',serif;">@Localizer["About_Discovery"].Value</h5>
-                        <p class="small text-muted mb-0">@Localizer["About_DiscoveryText"].Value</p>
-                    </div>
+<!-- ABOUT US HERO SECTION -->
+<div class="about-hero">
+    <div class="about-hero-bg"></div>
+    <div class="about-hero-overlay"></div>
+    
+    <div class="container position-relative text-center text-white py-5 z-2">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <span class="about-badge mb-3 animate-fade-down">
+                    <i class="bi bi-stars me-2"></i>EGYXPLORE PLATFORM
+                </span>
+                
+                <h1 class="about-hero-title mb-4 animate-fade-up">
+                    @Localizer["About_PageTitle"].Value
+                </h1>
+                
+                <div class="about-hero-lead-wrapper p-4 mb-4 animate-fade-up delay-1">
+                    <p class="about-hero-lead mb-0">
+                        @Localizer["About_Intro"].Value
+                    </p>
                 </div>
-                <div class="col-md-4">
-                    <div class="value-card stat-card">
-                        <i class="bi bi-robot stat-icon"></i>
-                        <h5 style="font-family:'Cinzel',serif;">@Localizer["About_Innovation"].Value</h5>
-                        <p class="small text-muted mb-0">@Localizer["About_InnovationText"].Value</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="value-card stat-card">
-                        <i class="bi bi-people-fill stat-icon"></i>
-                        <h5 style="font-family:'Cinzel',serif;">@Localizer["About_Community"].Value</h5>
-                        <p class="small text-muted mb-0">@Localizer["About_CommunityText"].Value</p>
-                    </div>
+                
+                <div class="d-flex flex-wrap align-items-center justify-content-center gap-3 animate-fade-up delay-2">
+                    <a href="#our-story" class="btn btn-egy-hero primary-hero-btn">
+                        <i class="bi bi-compass me-2"></i> Our Story
+                    </a>
+                    <button type="button" id="openAboutContactHeroBtn" class="btn btn-egy-hero secondary-hero-btn">
+                        <i class="bi bi-envelope-paper me-2"></i> Get In Touch
+                    </button>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <!-- Team (placeholder) -->
-        <section class="about-block">
-            <h3 class="about-subtitle">@Localizer["About_Team"].Value</h3>
-            <p class="text-muted">
-                @Localizer["About_TeamText"].Value
-            </p>
-        </section>
-
+    <!-- STYLISH BOTTOM DIVIDER (Arrow / Island pointed downward) -->
+    <div class="hero-shape-divider">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 C480,100 960,100 1440,0 L1440,120 L0,120 Z" fill="#F8FAFC"></path>
+        </svg>
+        <div class="divider-arrow-notch">
+            <i class="bi bi-chevron-down"></i>
+        </div>
     </div>
 </div>
 
+<!-- MAIN PAGE CONTENT CONTAINER -->
+<div class="container py-5">
+    
+    <!-- MISSION / STORY SECTION -->
+    <section id="our-story" class="mb-5 pb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <div class="story-image-card shadow-lg">
+                    <div class="story-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1200&auto=format&fit=crop" 
+                             alt="Egypt Heritage" class="img-fluid story-img" />
+                        <div class="story-img-overlay"></div>
+                    </div>
+                    <div class="story-stat-badge">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">Historical Treasures</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="story-content-card p-4 p-md-5">
+                    <span class="section-tag mb-2"><i class="bi bi-book-half me-2"></i>OUR JOURNEY</span>
+                    <h2 class="about-section-title mb-4">@Localizer["About_Story"].Value</h2>
+                    <p class="about-text-lead mb-4">
+                        @Localizer["About_StoryText"].Value
+                    </p>
+                    
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="feature-mini-box">
+                                <i class="bi bi-shield-check text-warning"></i>
+                                <span>Verified Sponsors</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="feature-mini-box">
+                                <i class="bi bi-cpu text-warning"></i>
+                                <span>AI Trip Planner</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE VALUES SECTION -->
+    <section id="our-values" class="mb-5 pb-4">
+        <div class="text-center mb-5">
+            <span class="section-tag mb-2"><i class="bi bi-gem me-2"></i>PRINCIPLES</span>
+            <h2 class="about-section-title text-center mx-auto mb-3" style="max-width: 600px;">
+                @Localizer["About_Values"].Value
+            </h2>
+            <div class="title-accent-line mx-auto"></div>
+        </div>
+
+        <div class="row g-4">
+            <!-- DISCOVERY -->
+            <div class="col-md-4">
+                <div class="value-card-premium h-100">
+                    <div class="value-icon-wrapper mb-4">
+                        <i class="bi bi-compass"></i>
+                    </div>
+                    <h4 class="value-title mb-3">@Localizer["About_Discovery"].Value</h4>
+                    <p class="value-text mb-0">
+                        @Localizer["About_DiscoveryText"].Value
+                    </p>
+                </div>
+            </div>
+
+            <!-- INNOVATION -->
+            <div class="col-md-4">
+                <div class="value-card-premium h-100">
+                    <div class="value-icon-wrapper mb-4">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <h4 class="value-title mb-3">@Localizer["About_Innovation"].Value</h4>
+                    <p class="value-text mb-0">
+                        @Localizer["About_InnovationText"].Value
+                    </p>
+                </div>
+            </div>
+
+            <!-- COMMUNITY -->
+            <div class="col-md-4">
+                <div class="value-card-premium h-100">
+                    <div class="value-icon-wrapper mb-4">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h4 class="value-title mb-3">@Localizer["About_Community"].Value</h4>
+                    <p class="value-text mb-0">
+                        @Localizer["About_CommunityText"].Value
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM / VISION SECTION -->
+    <section id="our-team" class="mb-4">
+        <div class="team-banner-card p-4 p-md-5">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <span class="section-tag mb-2"><i class="bi bi-award-fill me-2"></i>THE PEOPLE BEHIND EGYXPLORE</span>
+                    <h3 class="team-card-title mb-3">@Localizer["About_Team"].Value</h3>
+                    <p class="team-card-text mb-0">
+                        @Localizer["About_TeamText"].Value
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <button type="button" id="openAboutContactTeamBtn" class="btn btn-egy-gold btn-lg rounded-pill px-4 shadow">
+                        <i class="bi bi-chat-left-dots-fill me-2"></i> Contact Team
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- FLOATING CONTACT BUTTON (RIGHT SIDE) -->
+<button type="button" id="floatingContactFab" class="floating-contact-fab" aria-label="Open Contact Panel">
+    <i class="bi bi-envelope-fill me-2"></i>
+    <span class="fab-text">Contact Us</span>
+</button>
+
+<!-- CONTACT SLIDE-OUT PANEL BACKDROP -->
+<div id="aboutContactBackdrop" class="contact-backdrop"></div>
+
+<!-- CONTACT SLIDE-OUT PANEL -->
+<aside id="aboutContactPanel" class="contact-slide-panel" aria-hidden="true">
+    <div class="contact-panel-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-envelope-heart-fill fs-4 text-warning"></i>
+            <div>
+                <h5 class="mb-0 text-white font-cinzel">Get in Touch</h5>
+                <small class="text-white-50">We'd love to hear from you</small>
+            </div>
+        </div>
+        <button type="button" id="closeAboutContactBtn" class="contact-panel-close" aria-label="Close">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <div class="contact-panel-body p-4">
+        <div id="contactFormAlert" class="alert alert-success d-none mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> Thank you! Your message has been sent successfully.
+        </div>
+
+        <form id="aboutContactForm" autocomplete="off">
+            <div class="mb-3">
+                <label for="contactFullName" class="form-label contact-label">Full Name</label>
+                <div class="input-group">
+                    <span class="input-group-text contact-input-icon"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control contact-input" id="contactFullName" placeholder="e.g. Mohamed Esam" required />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="contactEmail" class="form-label contact-label">Email Address</label>
+                <div class="input-group">
+                    <span class="input-group-text contact-input-icon"><i class="bi bi-envelope"></i></span>
+                    <input type="email" class="form-control contact-input" id="contactEmail" placeholder="name@example.com" required />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="contactPhone" class="form-label contact-label">Phone Number</label>
+                <div class="input-group">
+                    <span class="input-group-text contact-input-icon"><i class="bi bi-telephone"></i></span>
+                    <input type="tel" class="form-control contact-input" id="contactPhone" placeholder="+20 123 456 789" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="contactSubject" class="form-label contact-label">Subject</label>
+                <div class="input-group">
+                    <span class="input-group-text contact-input-icon"><i class="bi bi-chat-square-text"></i></span>
+                    <input type="text" class="form-control contact-input" id="contactSubject" placeholder="How can we help you?" required />
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="contactMessage" class="form-label contact-label">Message</label>
+                <textarea class="form-control contact-input" id="contactMessage" rows="4" placeholder="Write your message here..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-egy-primary w-100 py-3 rounded-pill shadow-sm">
+                <i class="bi bi-send-fill me-2"></i> Send Message
+            </button>
+        </form>
+    </div>
+</aside>
+
 @section Scripts {
 <style>
-    .about-block {
-        background: #fff;
-        border: 1px solid rgba(200, 131, 42, 0.2);
-        border-radius: 16px;
-        padding: 24px 28px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    /* ============================================================
+       ABOUT US PAGE PREMIUM STYLES
+       ============================================================ */
+
+    /* HERO SECTION */
+    .about-hero {
+        position: relative;
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--egy-dark);
+        margin-top: calc(-1 * var(--nav-offset));
+        padding-top: calc(var(--nav-offset) + 60px);
+        padding-bottom: 120px;
+        overflow: hidden;
     }
 
-    .about-subtitle {
-        font-family: 'Cinzel', serif;
+    .about-hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=2000&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.65) contrast(1.1);
+        transform: scale(1.05);
+        transition: transform 10s ease;
+    }
+
+    .about-hero:hover .about-hero-bg {
+        transform: scale(1);
+    }
+
+    .about-hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, rgba(30, 18, 10, 0.85) 0%, rgba(30, 18, 10, 0.6) 50%, rgba(30, 18, 10, 0.95) 100%);
+    }
+
+    .about-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 18px;
+        border-radius: 999px;
+        background: rgba(200, 131, 42, 0.25);
+        border: 1px solid rgba(232, 160, 69, 0.4);
+        color: var(--egy-accent);
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        backdrop-filter: blur(8px);
+    }
+
+    .about-hero-title {
+        font-family: 'Cinzel Decorative', 'Cinzel', serif;
+        font-size: clamp(2.2rem, 5vw, 3.8rem);
+        font-weight: 900;
+        color: #ffffff;
+        letter-spacing: 2px;
+        line-height: 1.2;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .about-hero-lead-wrapper {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .about-hero-lead {
+        font-family: 'Nunito', sans-serif;
+        font-size: 1.15rem;
+        color: rgba(255, 255, 255, 0.92);
+        line-height: 1.7;
+        font-weight: 400;
+    }
+
+    .btn-egy-hero {
+        padding: 14px 32px;
+        border-radius: 999px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .primary-hero-btn {
+        background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%);
+        color: var(--egy-dark) !important;
+        border: none;
+        box-shadow: 0 8px 25px rgba(200, 131, 42, 0.4);
+    }
+
+    .primary-hero-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(232, 160, 69, 0.6);
+        background: linear-gradient(135deg, var(--egy-accent) 0%, #ffc06e 100%);
+    }
+
+    .secondary-hero-btn {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(8px);
+    }
+
+    .secondary-hero-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: #ffffff;
+        transform: translateY(-3px);
+    }
+
+    /* BOTTOM SVG DIVIDER WITH POINTED ARROW */
+    .hero-shape-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+        z-index: 3;
+    }
+
+    .hero-shape-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 70px;
+    }
+
+    .divider-arrow-notch {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 44px;
+        height: 44px;
+        background: #ffffff;
+        border-radius: 50%;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
         color: var(--egy-primary);
-        border-bottom: 2px solid rgba(200, 131, 42, 0.3);
-        padding-bottom: 8px;
-        margin-bottom: 16px;
+        font-size: 1.3rem;
+        z-index: 4;
+        animation: bounceNotch 2s infinite;
+    }
+
+    @@keyframes bounceNotch {
+        0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+        40% { transform: translateX(-50%) translateY(6px); }
+        60% { transform: translateX(-50%) translateY(3px); }
+    }
+
+    /* STORY SECTION */
+    .story-image-card {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid rgba(200, 131, 42, 0.2);
+    }
+
+    .story-img-wrapper {
+        position: relative;
+        height: 400px;
+        overflow: hidden;
+    }
+
+    .story-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .story-image-card:hover .story-img {
+        transform: scale(1.06);
+    }
+
+    .story-img-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 50%, rgba(30, 18, 10, 0.7) 100%);
+    }
+
+    .story-stat-badge {
+        position: absolute;
+        bottom: 24px;
+        left: 24px;
+        background: rgba(30, 18, 10, 0.85);
+        border: 1px solid var(--egy-primary);
+        border-radius: 16px;
+        padding: 14px 22px;
+        backdrop-filter: blur(10px);
+        color: #ffffff;
+    }
+
+    .story-stat-badge .stat-number {
+        font-family: 'Cinzel', serif;
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: var(--egy-accent);
+        line-height: 1;
+    }
+
+    .story-stat-badge .stat-label {
+        font-size: 0.78rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.75);
+    }
+
+    .story-content-card {
+        background: #ffffff;
+        border-radius: 24px;
+        border: 1px solid rgba(200, 131, 42, 0.15);
+        box-shadow: 0 10px 30px rgba(30, 18, 10, 0.05);
+    }
+
+    .section-tag {
         display: inline-block;
+        color: var(--egy-primary);
+        font-weight: 800;
+        font-size: 0.8rem;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
     }
 
-    .value-card {
-        background: #fff !important;
-        text-align: center;
-        padding: 28px 18px !important;
+    .about-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--egy-dark);
     }
 
-        .value-card:hover {
-            background: #fff !important;
+    .about-text-lead {
+        font-size: 1.05rem;
+        color: #555555;
+        line-height: 1.8;
+    }
+
+    .feature-mini-box {
+        background: #F8FAFC;
+        border: 1px solid rgba(200, 131, 42, 0.2);
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--egy-dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* VALUES SECTION */
+    .title-accent-line {
+        width: 60px;
+        height: 3px;
+        background: var(--egy-primary);
+        border-radius: 999px;
+    }
+
+    .value-card-premium {
+        background: #ffffff;
+        border: 1px solid rgba(30, 18, 10, 0.08);
+        border-radius: 20px;
+        padding: 36px 28px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+        transition: all 0.35s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .value-card-premium::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--egy-primary), var(--egy-accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .value-card-premium:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 40px rgba(30, 18, 10, 0.12);
+        border-color: rgba(200, 131, 42, 0.3);
+    }
+
+    .value-card-premium:hover::before {
+        opacity: 1;
+    }
+
+    .value-icon-wrapper {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(200, 131, 42, 0.15) 0%, rgba(232, 160, 69, 0.25) 100%);
+        color: var(--egy-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        transition: transform 0.3s ease;
+    }
+
+    .value-card-premium:hover .value-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+        background: var(--egy-primary);
+        color: #ffffff;
+    }
+
+    .value-title {
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        color: var(--egy-dark);
+    }
+
+    .value-text {
+        font-size: 0.95rem;
+        color: #666666;
+        line-height: 1.6;
+    }
+
+    /* TEAM BANNER */
+    .team-banner-card {
+        background: linear-gradient(135deg, var(--egy-dark) 0%, #2a1a0e 100%);
+        border-radius: 24px;
+        border: 1px solid var(--egy-primary);
+        box-shadow: 0 15px 35px rgba(30, 18, 10, 0.2);
+        color: #ffffff;
+    }
+
+    .team-card-title {
+        font-family: 'Cinzel', serif;
+        font-size: 1.8rem;
+        color: var(--egy-accent);
+    }
+
+    .team-card-text {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    .btn-egy-gold {
+        background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%);
+        color: var(--egy-dark) !important;
+        font-weight: 700;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-egy-gold:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(232, 160, 69, 0.5);
+    }
+
+    /* FLOATING CONTACT BUTTON */
+    .floating-contact-fab {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 9998;
+        background: linear-gradient(135deg, var(--egy-dark) 0%, #2a1a0e 100%);
+        color: var(--egy-accent);
+        border: 2px solid var(--egy-primary);
+        border-right: none;
+        border-radius: 30px 0 0 30px;
+        padding: 14px 22px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        box-shadow: -5px 8px 25px rgba(0, 0, 0, 0.25);
+        display: flex;
+        align-items: center;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .floating-contact-fab:hover {
+        background: var(--egy-primary);
+        color: #ffffff;
+        padding-right: 28px;
+        transform: translateY(-50%) translateX(-4px);
+    }
+
+    /* CONTACT SLIDE-OUT PANEL */
+    .contact-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 99998;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .contact-backdrop.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .contact-slide-panel {
+        position: fixed;
+        top: 0;
+        right: -480px;
+        width: 440px;
+        max-width: 92vw;
+        height: 100vh;
+        background: #ffffff;
+        z-index: 99999;
+        box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3);
+        transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .contact-slide-panel.open {
+        right: 0;
+    }
+
+    .contact-panel-header {
+        background: var(--egy-dark);
+        padding: 20px 24px;
+        border-bottom: 2px solid var(--egy-primary);
+    }
+
+    .contact-panel-close {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .contact-panel-close:hover {
+        color: var(--egy-accent);
+    }
+
+    .contact-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--egy-dark);
+        margin-bottom: 6px;
+    }
+
+    .contact-input-icon {
+        background: #F8FAFC;
+        border-color: #E2E8F0;
+        color: var(--egy-primary);
+    }
+
+    .contact-input {
+        border-color: #E2E8F0;
+        font-size: 0.9rem;
+        padding: 10px 14px;
+    }
+
+    .contact-input:focus {
+        border-color: var(--egy-primary);
+        box-shadow: 0 0 0 3px rgba(200, 131, 42, 0.2);
+    }
+
+    /* ANIMATIONS */
+    .animate-fade-up {
+        animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .animate-fade-down {
+        animation: fadeDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .delay-1 { animation-delay: 0.15s; }
+    .delay-2 { animation-delay: 0.3s; }
+
+    @@keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @@keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @@media (max-width: 767.98px) {
+        .about-hero {
+            min-height: 75vh;
+            padding-bottom: 90px;
         }
+        .floating-contact-fab .fab-text {
+            display: none;
+        }
+        .floating-contact-fab {
+            padding: 12px 14px;
+            border-radius: 20px 0 0 20px;
+        }
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var fab = document.getElementById('floatingContactFab');
+        var heroContactBtn = document.getElementById('openAboutContactHeroBtn');
+        var teamContactBtn = document.getElementById('openAboutContactTeamBtn');
+        var panel = document.getElementById('aboutContactPanel');
+        var backdrop = document.getElementById('aboutContactBackdrop');
+        var closeBtn = document.getElementById('closeAboutContactBtn');
+        var form = document.getElementById('aboutContactForm');
+        var alertBox = document.getElementById('contactFormAlert');
+
+        function openContactPanel() {
+            if (panel) {
+                panel.classList.add('open');
+                panel.setAttribute('aria-hidden', 'false');
+            }
+            if (backdrop) {
+                backdrop.classList.add('active');
+            }
+        }
+
+        function closeContactPanel() {
+            if (panel) {
+                panel.classList.remove('open');
+                panel.setAttribute('aria-hidden', 'true');
+            }
+            if (backdrop) {
+                backdrop.classList.remove('active');
+            }
+        }
+
+        if (fab) fab.addEventListener('click', openContactPanel);
+        if (heroContactBtn) heroContactBtn.addEventListener('click', openContactPanel);
+        if (teamContactBtn) teamContactBtn.addEventListener('click', openContactPanel);
+
+        if (closeBtn) closeBtn.addEventListener('click', closeContactPanel);
+        if (backdrop) backdrop.addEventListener('click', closeContactPanel);
+
+        // ESC key to close
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && panel && panel.classList.contains('open')) {
+                closeContactPanel();
+            }
+        });
+
+        // Form submission simulation
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (alertBox) {
+                    alertBox.classList.remove('d-none');
+                }
+                form.reset();
+                setTimeout(function () {
+                    if (alertBox) alertBox.classList.add('d-none');
+                    closeContactPanel();
+                }, 2500);
+            });
+        }
+    });
+</script>
 }

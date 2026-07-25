@@ -103,7 +103,7 @@ h6,
     background-color: rgba(30, 18, 10, 0.9);
     border-bottom: 1px solid rgba(200, 131, 42, 0.25);
     font-size: 0.8rem;
-    max-height: 48px;
+    max-height: 500px;
     position: relative;
     z-index: 1040;
     transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.3s ease;
