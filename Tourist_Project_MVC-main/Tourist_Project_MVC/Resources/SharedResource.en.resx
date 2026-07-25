@@ -2370,4 +2370,19 @@
   <data name="TripDetails_NoAvailableDestinations" xml:space="preserve">
     <value>No destinations available to add.</value>
   </data>
+  <data name="TripDetails_SearchDestinations" xml:space="preserve">
+    <value>Search destinations</value>
+  </data>
+  <data name="TripDetails_SearchPlaceholder" xml:space="preserve">
+    <value>Search by name or city...</value>
+  </data>
+  <data name="TripDetails_FilterByCategory" xml:space="preserve">
+    <value>Filter by category</value>
+  </data>
+  <data name="TripDetails_AllCategories" xml:space="preserve">
+    <value>All categories</value>
+  </data>
+  <data name="TripDetails_AddSelected" xml:space="preserve">
+    <value>Add Selected</value>
+  </data>
 </root>

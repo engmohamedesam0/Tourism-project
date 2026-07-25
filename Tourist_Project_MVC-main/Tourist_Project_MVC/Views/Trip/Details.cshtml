@@ -182,6 +182,16 @@
         </div>
     </div>
 
+    @{
+        var availableDestsList = ViewBag.AvailableDestinations as IEnumerable<Tourist_Project_MVC.Models.Destination>;
+        List<string> categories = (availableDestsList?
+            .Where(d => !string.IsNullOrEmpty(d.Category))
+            .Select(d => d.Category!)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToList() ?? new List<string>());
+    }
+
     <!-- Add Stop Modal -->
     <div class="modal fade" id="addStopModal" tabindex="-1" aria-labelledby="addStopModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -191,21 +201,43 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    @if (ViewBag.AvailableDestinations is IEnumerable<Tourist_Project_MVC.Models.Destination> availableDests && availableDests.Any())
+                    @if (availableDestsList != null && availableDestsList.Any())
                     {
-                        <div class="list-group list-group-flush" id="availableDestinationsList">
-                            @foreach (var dest in availableDests)
-                            {
-                                <div class="list-group-item d-flex align-items-center justify-content-between py-3" data-dest-id="@dest.Id" data-dest-lat="@(dest.Location != null ? dest.Location.Y : 0)" data-dest-lng="@(dest.Location != null ? dest.Location.X : 0)">
-                                    <div>
-                                        <h6 class="mb-1 fw-bold text-dark">@dest.Name</h6>
-                                        <small class="text-secondary"><i class="bi bi-geo-alt me-1 text-gold"></i>@dest.City</small>
-                                        @if (!string.IsNullOrEmpty(dest.Category))
+                        <div class="filter-bar mb-3 p-3 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0;">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-sm-7">
+                                    <label for="addStopSearchInput" class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["TripDetails_SearchDestinations"].Value</label>
+                                    <input type="text" class="form-control form-control-sm" id="addStopSearchInput" placeholder="@Localizer["TripDetails_SearchPlaceholder"].Value" autocomplete="off" />
+                                </div>
+                                <div class="col-sm-5">
+                                    <label for="addStopCategoryFilter" class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["TripDetails_FilterByCategory"].Value</label>
+                                    <select class="form-select form-select-sm" id="addStopCategoryFilter">
+                                        <option value="">@Localizer["TripDetails_AllCategories"].Value</option>
+                                        @foreach (var cat in categories)
                                         {
-                                            <span class="badge bg-secondary ms-2">@dest.Category</span>
+                                            <option value="@cat.ToLower()">@cat</option>
                                         }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list-group list-group-flush" id="availableDestinationsList">
+                            @foreach (var dest in availableDestsList)
+                            {
+                                <div class="list-group-item d-flex align-items-center justify-content-between py-3" data-dest-id="@dest.Id" data-dest-lat="@(dest.Location != null ? dest.Location.Y : 0)" data-dest-lng="@(dest.Location != null ? dest.Location.X : 0)" data-dest-name="@dest.Name" data-dest-city="@dest.City" data-dest-category="@(string.IsNullOrEmpty(dest.Category) ? "" : dest.Category.ToLower())">
+                                    <div class="d-flex align-items-center gap-3 flex-grow-1">
+                                        <input type="checkbox" class="form-check-input dest-select-checkbox" data-dest-id="@dest.Id">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fw-bold text-dark">@dest.Name</h6>
+                                            <small class="text-secondary"><i class="bi bi-geo-alt me-1 text-gold"></i>@dest.City</small>
+                                            @if (!string.IsNullOrEmpty(dest.Category))
+                                            {
+                                                <span class="badge bg-secondary ms-2">@dest.Category</span>
+                                            }
+                                        </div>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-egy-primary btn-add-stop rounded-pill px-3" data-dest-id="@dest.Id">
+                                    <button type="button" class="btn btn-sm btn-egy-primary btn-add-stop rounded-pill px-3 ms-3" data-dest-id="@dest.Id">
                                         <i class="bi bi-plus-lg me-1"></i> @Localizer["TripDetails_AddStop"].Value
                                     </button>
                                 </div>
@@ -219,6 +251,12 @@
                             <p class="mb-0">@Localizer["TripDetails_NoAvailableDestinations"].Value</p>
                         </div>
                     }
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <span class="selected-count small text-muted">0 selected</span>
+                    <button type="button" class="btn btn-egy-primary" id="addSelectedBtn" disabled>
+                        @Localizer["TripDetails_AddSelected"].Value
+                    </button>
                 </div>
             </div>
         </div>
@@ -341,6 +379,21 @@
         opacity: 0.4;
         border-style: dashed !important;
     }
+
+    .add-stop-filter-bar input,
+    .add-stop-filter-bar select {
+        border: 1px solid #CBD5E1;
+        background: #ffffff;
+        color: #0F172A;
+        font-weight: 500;
+    }
+
+    .add-stop-filter-bar input:focus,
+    .add-stop-filter-bar select:focus {
+        border-color: #C8832A;
+        box-shadow: 0 0 0 0.15rem rgba(200, 131, 42, 0.15);
+        outline: none;
+    }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
@@ -414,6 +467,48 @@
             return $('#stopList li').map(function () {
                 return parseInt($(this).data('stop-id'), 10);
             }).get();
+        }
+
+        function buildStopCardHtml(stop) {
+            return '<li class="trip-stop-card p-3 mb-3 rounded-3" data-stop-id="' + stop.stopId + '" data-lat="' + stop.lat + '" data-lng="' + stop.lng + '" data-id="' + stop.destinationId + '" style="background: #ffffff; border: 1px solid #E2E8F0 !important; transition: all 0.2s ease;">' +
+                '<div class="d-flex align-items-center gap-3">' +
+                '<span class="stop-handle text-muted" title="Drag to reorder" style="cursor: grab; font-size: 1.2rem;"><i class="bi bi-grip-vertical"></i></span>' +
+                '<div class="stop-order-badge">' + stop.order + '</div>' +
+                '<div class="flex-grow-1">' +
+                '<h6 class="fw-bold text-dark mb-0 fs-6">' + _esc(stop.destinationName) + '</h6>' +
+                '<small class="text-secondary"><i class="bi bi-geo-alt me-1 text-gold"></i>' + _esc(stop.destinationCity) + '</small>' +
+                '</div>' +
+                '<div class="stop-dates text-dark small text-end bg-light px-3 py-1 rounded-2 border">' +
+                '<div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">' + stop.arrivalDate + '</strong></div>' +
+                '<div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">' + stop.departureDate + '</strong></div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="stop-date-editor d-none mt-3 p-3 bg-light rounded-3 border">' +
+                '<div class="row g-2 align-items-end">' +
+                '<div class="col">' +
+                '<label class="form-label small mb-1 fw-bold text-muted">@Localizer["TripDetails_ArrivalLabel"].Value</label>' +
+                '<input type="date" class="form-control form-control-sm edit-arrival fw-semibold text-dark" value="' + stop.arrivalDateInput + '" />' +
+                '</div>' +
+                '<div class="col">' +
+                '<label class="form-label small mb-1 fw-bold text-muted">@Localizer["TripDetails_DepartureLabel"].Value</label>' +
+                '<input type="date" class="form-control form-control-sm edit-departure fw-semibold text-dark" value="' + stop.departureDateInput + '" />' +
+                '</div>' +
+                '<div class="col-auto">' +
+                '<button type="button" class="btn btn-sm btn-egy-primary btn-save-dates" data-stop-id="' + stop.stopId + '">' +
+                '<i class="bi bi-check-lg me-1"></i> @Localizer["TripDetails_Save"].Value' +
+                '</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="stop-actions mt-3 pt-2 border-top d-flex justify-content-end gap-2">' +
+                '<button type="button" class="btn btn-sm btn-outline-secondary btn-edit-dates rounded-pill px-3">' +
+                '<i class="bi bi-pencil-fill me-1"></i> @Localizer["TripDetails_EditDates"].Value' +
+                '</button>' +
+                '<button type="button" class="btn btn-sm btn-outline-danger btn-remove-stop rounded-pill px-3" data-stop-id="' + stop.stopId + '">' +
+                '<i class="bi bi-trash-fill me-1"></i> @Localizer["TripDetails_Remove"].Value' +
+                '</button>' +
+                '</div>' +
+                '</li>';
         }
 
         // Reorder
@@ -490,9 +585,103 @@
             });
         });
 
-        // Add stop - open modal
+        // Add stop - open modal + reset filters
         $('#addStopBtn').on('click', function () {
+            $('#addStopSearchInput').val('');
+            $('#addStopCategoryFilter').val('');
+            $('#availableDestinationsList .list-group-item').show();
+            $('#availableDestinationsList .dest-select-checkbox').prop('checked', false);
+            updateSelectedCount();
             $('#addStopModal').modal('show');
+        });
+
+        // Filter available destinations in add-stop modal
+        function filterAddStopDestinations() {
+            var searchVal = $('#addStopSearchInput').val().toLowerCase().trim();
+            var categoryVal = $('#addStopCategoryFilter').val().toLowerCase();
+
+            $('#availableDestinationsList .list-group-item').each(function () {
+                var $item = $(this);
+                var name = ($item.data('dest-name') || '').toLowerCase();
+                var city = ($item.data('dest-city') || '').toLowerCase();
+                var category = ($item.data('dest-category') || '').toLowerCase();
+
+                var matchesSearch = name.indexOf(searchVal) !== -1 || city.indexOf(searchVal) !== -1;
+                var matchesCategory = categoryVal === '' || category === categoryVal;
+                var show = matchesSearch && matchesCategory;
+
+                $item.toggle(show);
+
+                if (!show) {
+                    $item.find('.dest-select-checkbox').prop('checked', false);
+                }
+            });
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            var count = $('#availableDestinationsList .dest-select-checkbox:checked').length;
+            $('.selected-count').text(count + ' selected');
+            var $btn = $('#addSelectedBtn');
+            $btn.prop('disabled', count === 0);
+            if (count > 0) {
+                $btn.text('@Localizer["TripDetails_AddSelected"].Value' + ' (' + count + ')');
+            } else {
+                $btn.text('@Localizer["TripDetails_AddSelected"].Value');
+            }
+        }
+
+        $('#addStopSearchInput').on('keyup input', function () {
+            filterAddStopDestinations();
+        });
+
+        $('#addStopCategoryFilter').on('change', function () {
+            filterAddStopDestinations();
+        });
+
+        $('#availableDestinationsList').on('change', '.dest-select-checkbox', function () {
+            updateSelectedCount();
+        });
+
+        // Add selected destinations in batch
+        $('#addSelectedBtn').on('click', function () {
+            var destIds = $('#availableDestinationsList .dest-select-checkbox:checked').map(function () {
+                return parseInt($(this).data('dest-id'), 10);
+            }).get();
+
+            if (!destIds.length) return;
+
+            $.ajax({
+                url: '@Url.Action("AddStops", "Trip", new { id = Model.Id })',
+                type: 'POST',
+                data: { id: @Model.Id, destinationIds: destIds },
+                headers: { 'RequestVerificationToken': token },
+                success: function (response) {
+                    if (response.added && response.added.length) {
+                        var $emptyState = $('#stopList').siblings('.text-center.py-5');
+                        if ($emptyState.length) $emptyState.remove();
+
+                        response.added.forEach(function (stop) {
+                            var $newCard = $(buildStopCardHtml(stop));
+                            $('#stopList').prepend($newCard);
+                            if (detailsMap && detailsMap.addStopOverlay && stop.lat && stop.lng) {
+                                detailsMap.addStopOverlay(stop.lat, stop.lng, '#' + stop.order);
+                            }
+                        });
+
+                        var count = $('#stopList li').length;
+                        $('#stopsCount .badge').text(count + ' Stop' + (count === 1 ? '' : 's'));
+
+                        response.added.forEach(function (stop) {
+                            $('#availableDestinationsList .list-group-item[data-dest-id="' + stop.destinationId + '"]').remove();
+                        });
+
+                        $('#availableDestinationsList .dest-select-checkbox').prop('checked', false);
+                        updateSelectedCount();
+                        $('#addStopModal').modal('hide');
+                    }
+                }
+            });
         });
 
         // Add stop - confirm from modal
@@ -521,45 +710,7 @@
                         if ($emptyState.length) {
                             $emptyState.remove();
                         }
-                        var $newCard = $('<li class="trip-stop-card p-3 mb-3 rounded-3" data-stop-id="' + response.stopId + '" data-lat="' + response.lat + '" data-lng="' + response.lng + '" data-id="' + response.destinationId + '" style="background: #ffffff; border: 1px solid #E2E8F0 !important; transition: all 0.2s ease;">' +
-                            '<div class="d-flex align-items-center gap-3">' +
-                            '<span class="stop-handle text-muted" title="Drag to reorder" style="cursor: grab; font-size: 1.2rem;"><i class="bi bi-grip-vertical"></i></span>' +
-                            '<div class="stop-order-badge">' + response.order + '</div>' +
-                            '<div class="flex-grow-1">' +
-                            '<h6 class="fw-bold text-dark mb-0 fs-6">' + _esc(destName) + '</h6>' +
-                            '<small class="text-secondary"><i class="bi bi-geo-alt me-1 text-gold"></i>' + _esc(destCity) + '</small>' +
-                            '</div>' +
-                            '<div class="stop-dates text-dark small text-end bg-light px-3 py-1 rounded-2 border">' +
-                            '<div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">' + response.arrivalDate + '</strong></div>' +
-                            '<div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">' + response.departureDate + '</strong></div>' +
-                            '</div>' +
-                            '</div>' +
-                            '<div class="stop-date-editor d-none mt-3 p-3 bg-light rounded-3 border">' +
-                            '<div class="row g-2 align-items-end">' +
-                            '<div class="col">' +
-                            '<label class="form-label small mb-1 fw-bold text-muted">@Localizer["TripDetails_ArrivalLabel"].Value</label>' +
-                            '<input type="date" class="form-control form-control-sm edit-arrival fw-semibold text-dark" value="' + response.arrivalDateInput + '" />' +
-                            '</div>' +
-                            '<div class="col">' +
-                            '<label class="form-label small mb-1 fw-bold text-muted">@Localizer["TripDetails_DepartureLabel"].Value</label>' +
-                            '<input type="date" class="form-control form-control-sm edit-departure fw-semibold text-dark" value="' + response.departureDateInput + '" />' +
-                            '</div>' +
-                            '<div class="col-auto">' +
-                            '<button type="button" class="btn btn-sm btn-egy-primary btn-save-dates" data-stop-id="' + response.stopId + '">' +
-                            '<i class="bi bi-check-lg me-1"></i> @Localizer["TripDetails_Save"].Value' +
-                            '</button>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>' +
-                            '<div class="stop-actions mt-3 pt-2 border-top d-flex justify-content-end gap-2">' +
-                            '<button type="button" class="btn btn-sm btn-outline-secondary btn-edit-dates rounded-pill px-3">' +
-                            '<i class="bi bi-pencil-fill me-1"></i> @Localizer["TripDetails_EditDates"].Value' +
-                            '</button>' +
-                            '<button type="button" class="btn btn-sm btn-outline-danger btn-remove-stop rounded-pill px-3" data-stop-id="' + response.stopId + '">' +
-                            '<i class="bi bi-trash-fill me-1"></i> @Localizer["TripDetails_Remove"].Value' +
-                            '</button>' +
-                            '</div>' +
-                            '</li>');
+                        var $newCard = $(buildStopCardHtml(response));
                         $('#stopList').prepend($newCard);
                         var count = $('#stopList li').length;
                         $('#stopsCount .badge').text(count + ' Stop' + (count === 1 ? '' : 's'));

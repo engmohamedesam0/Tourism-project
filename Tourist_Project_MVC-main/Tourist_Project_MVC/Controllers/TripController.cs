@@ -389,6 +389,67 @@ namespace Tourist_Project_MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public IActionResult AddStops(int id, List<int> destinationIds)
+        {
+            var tourist = ResolveTourist();
+            var trip = _tripPlanRepo.GetByIdWithDetails(id);
+            if (trip == null || trip.TouristId != tourist.Id)
+                return Forbid();
+
+            if (destinationIds == null || !destinationIds.Any())
+                return BadRequest();
+
+            var distinctIds = destinationIds.Distinct().ToList();
+            var alreadyExists = new List<int>();
+            var added = new List<object>();
+
+            var maxOrder = trip.TripDestinations.Any()
+                ? trip.TripDestinations.Max(td => td.Visit_Order)
+                : 0;
+
+            foreach (var destId in distinctIds)
+            {
+                if (trip.TripDestinations.Any(td => td.DestinationId == destId))
+                {
+                    alreadyExists.Add(destId);
+                    continue;
+                }
+
+                maxOrder++;
+                var newStop = new TripDestination
+                {
+                    TripPlanId = id,
+                    DestinationId = destId,
+                    Visit_Order = maxOrder,
+                    ArrivalDate = trip.StartDate,
+                    DepartureDate = trip.StartDate.AddDays(1)
+                };
+                _tripPlanRepo.AddStop(newStop);
+
+                var dest = _context.Destinations.Find(destId);
+                added.Add(new
+                {
+                    stopId = newStop.Id,
+                    destinationId = destId,
+                    destinationName = dest != null ? dest.Name : "",
+                    destinationCity = dest != null ? dest.City : "",
+                    lat = dest != null && dest.Location != null ? dest.Location.Y : 0,
+                    lng = dest != null && dest.Location != null ? dest.Location.X : 0,
+                    order = newStop.Visit_Order,
+                    arrivalDate = newStop.ArrivalDate.ToString("MMM dd"),
+                    departureDate = newStop.DepartureDate.ToString("MMM dd"),
+                    arrivalDateInput = newStop.ArrivalDate.ToString("yyyy-MM-dd"),
+                    departureDateInput = newStop.DepartureDate.ToString("yyyy-MM-dd")
+                });
+            }
+
+            _tripPlanRepo.Save();
+
+            return Json(new { added = added, alreadyExists = alreadyExists });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult AddReview(int id, [Bind("Rating,Comment")] SiteReview vm)
         {
             var trip = _tripPlanRepo.GetById(id);

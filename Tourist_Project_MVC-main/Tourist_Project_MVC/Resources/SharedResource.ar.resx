@@ -2370,4 +2370,19 @@
   <data name="TripDetails_NoAvailableDestinations" xml:space="preserve">
     <value>لا توجد وجهات متاحة للإضافة.</value>
   </data>
+  <data name="TripDetails_SearchDestinations" xml:space="preserve">
+    <value>بحث عن الوجهات</value>
+  </data>
+  <data name="TripDetails_SearchPlaceholder" xml:space="preserve">
+    <value>بحث بالاسم أو المدينة...</value>
+  </data>
+  <data name="TripDetails_FilterByCategory" xml:space="preserve">
+    <value>تصفية حسب الفئة</value>
+  </data>
+  <data name="TripDetails_AllCategories" xml:space="preserve">
+    <value>جميع الفئات</value>
+  </data>
+  <data name="TripDetails_AddSelected" xml:space="preserve">
+    <value>إضافة المحدد</value>
+  </data>
 </root>
