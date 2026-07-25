@@ -194,7 +194,7 @@
 
     <!-- Add Stop Modal -->
     <div class="modal fade" id="addStopModal" tabindex="-1" aria-labelledby="addStopModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addStopModalLabel">@Localizer["TripDetails_AddStop"].Value</h5>
@@ -203,13 +203,13 @@
                 <div class="modal-body">
                     @if (availableDestsList != null && availableDestsList.Any())
                     {
-                        <div class="filter-bar mb-3 p-3 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0;">
+                        <div class="filter-bar p-3 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 2;">
                             <div class="row g-2 align-items-end">
-                                <div class="col-sm-7">
+                                <div class="col-sm-5">
                                     <label for="addStopSearchInput" class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["TripDetails_SearchDestinations"].Value</label>
                                     <input type="text" class="form-control form-control-sm" id="addStopSearchInput" placeholder="@Localizer["TripDetails_SearchPlaceholder"].Value" autocomplete="off" />
                                 </div>
-                                <div class="col-sm-5">
+                                <div class="col-sm-4">
                                     <label for="addStopCategoryFilter" class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["TripDetails_FilterByCategory"].Value</label>
                                     <select class="form-select form-select-sm" id="addStopCategoryFilter">
                                         <option value="">@Localizer["TripDetails_AllCategories"].Value</option>
@@ -218,6 +218,12 @@
                                             <option value="@cat.ToLower()">@cat</option>
                                         }
                                     </select>
+                                </div>
+                                <div class="col-sm-3 text-end">
+                                    <span class="selected-count small text-muted me-2">0 selected</span>
+                                    <button type="button" class="btn btn-egy-primary" id="addSelectedBtn" disabled>
+                                        @Localizer["TripDetails_AddSelected"].Value
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -251,12 +257,6 @@
                             <p class="mb-0">@Localizer["TripDetails_NoAvailableDestinations"].Value</p>
                         </div>
                     }
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <span class="selected-count small text-muted">0 selected</span>
-                    <button type="button" class="btn btn-egy-primary" id="addSelectedBtn" disabled>
-                        @Localizer["TripDetails_AddSelected"].Value
-                    </button>
                 </div>
             </div>
         </div>
@@ -393,6 +393,14 @@
         border-color: #C8832A;
         box-shadow: 0 0 0 0.15rem rgba(200, 131, 42, 0.15);
         outline: none;
+    }
+
+    .filter-bar {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: #F8FAFC;
+        border-bottom: 1px solid #E2E8F0;
     }
 </style>
 

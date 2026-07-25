@@ -350,3 +350,83 @@ $('#addSelectedBtn').on('click', function () {
 - Filter logic is extended only to uncheck hidden items.
 - New strings go through `@Localizer[...]` with `TripDetails_*` naming in both `.en.resx` and `.ar.resx`.
 - No changes to `TripController.Details` or `ViewBag.AvailableDestinations` scoping.
+
+---
+
+## Layout Adjustment: Sticky Filter Bar with Inline Batch Controls
+
+### Current State
+- `.modal-dialog` has only `modal-lg`; modal body scrolls with default browser overflow.
+- Filter/search bar sits at the top of `.modal-body` with class `filter-bar`.
+- Batch controls ("N selected" + "Add Selected" button) live in a `.modal-footer` below the list.
+- JS selectors `$('.selected-count')` and `$('#addSelectedBtn')` target the footer elements.
+
+### Changes Required
+
+#### 1. `Views/Trip/Details.cshtml` — Move batch controls into filter bar
+
+**HTML restructuring:**
+- Remove the `<div class="modal-footer justify-content-between">...</div>` entirely.
+- Inside the `.filter-bar` div, restructure the existing `.row` from 2 columns to 3 columns:
+  - `col-sm-5` — Search input + label
+  - `col-sm-4` — Category filter + label
+  - `col-sm-3 text-end` — Selected count `<span>` + Add Selected `<button>`
+- Keep the existing `@Localizer[...]` strings and `id` attributes (`addStopSearchInput`, `addStopCategoryFilter`, `addSelectedBtn`) unchanged.
+
+**CSS additions:**
+- Add `modal-dialog-scrollable` to `.modal-dialog` so `.modal-body` becomes Bootstrap's scroll container.
+- Add sticky styling to `.filter-bar`:
+  ```css
+  .filter-bar {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #F8FAFC; /* already inline, keep it */
+      border-bottom: 1px solid #E2E8F0;
+  }
+  ```
+- Remove `mb-3` from `.filter-bar` so there's no persistent gap between the sticky bar and the scrolling list; the new `border-bottom` provides visual separation.
+
+**Why `col-sm-5` / `col-sm-4` / `col-sm-3`:**
+- Preserves reasonable width for the search input while fitting the button/count in one row.
+- On `< sm`, Bootstrap auto-stacks all three, which is acceptable mobile behavior inside a modal.
+
+**Alternative (if input width is a concern):**
+- Keep search/category at current widths (`col-sm-7` + `col-sm-5`) and place the batch controls in a compact sub-row directly below:
+  ```html
+  <div class="row g-2 align-items-end">
+      <!-- existing search/category row -->
+  </div>
+  <div class="row g-2 align-items-center mt-2">
+      <div class="col-12 text-end">
+          <span class="selected-count small text-muted me-2">0 selected</span>
+          <button type="button" class="btn btn-egy-primary" id="addSelectedBtn" disabled>...</button>
+      </div>
+  </div>
+  ```
+- This avoids squeezing inputs but adds ~40px of vertical height to the sticky block.
+
+**JS impact:** None. The selectors `$('.selected-count')` and `$('#addSelectedBtn')` work regardless of DOM position. No handler changes needed.
+
+**Sticky behavior verification:**
+- `.filter-bar` is already a direct child of `.modal-body`.
+- Adding `modal-dialog-scrollable` makes `.modal-body` the nearest scrolling ancestor (`overflow-y: auto`).
+- `position: sticky; top: 0;` on `.filter-bar` will therefore stick to the top of `.modal-body`'s scroll area.
+- Opaque background + `z-index: 2` prevents list items from showing through.
+
+### Execution Order
+
+1. Edit `Views/Trip/Details.cshtml`:
+   - Add `modal-dialog-scrollable` to `.modal-dialog`.
+   - Restructure the `.filter-bar` row to 3 columns and move the footer content inside it.
+   - Remove the `.modal-footer` div.
+   - Update `.filter-bar` inline styles: remove `mb-3`, add `border-bottom: 1px solid #E2E8F0;` (or move to CSS block).
+   - Add sticky CSS rules for `.filter-bar` in the `@section Scripts` `<style>` block.
+2. Run `dotnet build` to verify no compilation errors.
+
+### Risks / Edge Cases
+
+- **Narrow modals:** On very small screens the stacked layout may make the filter bar tall, but sticky still works and the user can scroll the list underneath.
+- **Z-index conflicts:** Bootstrap modals already use high z-indexes; `.filter-bar` at `z-index: 2` is relative to `.modal-body` (which has `position: relative`), so it stacks above list items without fighting the modal backdrop.
+- **Dead CSS:** The existing `.add-stop-filter-bar input/select` rules are currently unused because the HTML lacks that class. Adding `add-stop-filter-bar` to the div would activate them; this is harmless and can be done as part of the edit.
+
