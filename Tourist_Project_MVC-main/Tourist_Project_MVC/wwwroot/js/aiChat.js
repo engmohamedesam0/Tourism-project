@@ -18,11 +18,14 @@
         var viewTripText = panel.getAttribute('data-view-trip-text') || 'View trip';
         var historyUrl = panel.getAttribute('data-history-url') || '';
         var historySessionUrlTemplate = panel.getAttribute('data-history-session-url-template') || '';
+        var historyEmptyText = panel.getAttribute('data-history-empty-text') || 'No saved conversations yet.';
+        var historyErrorText = panel.getAttribute('data-history-error-text') || 'Could not load history.';
 
         var MAX_HISTORY = 12;
         var history = [];
         var sending = false;
         var currentSessionId = null;
+        var historyPanel = document.getElementById('aiWidgetHistory');
 
         function escapeHtml(text) {
             var div = document.createElement('div');
@@ -121,6 +124,7 @@
                     });
                 }
                 panel.classList.remove('ai-widget-history-mode');
+                if (historyPanel) historyPanel.hidden = true;
                 if (input) input.focus();
             } catch (err) {
                 // silently keep current view on error
@@ -134,17 +138,18 @@
                 var listEl = document.getElementById('aiHistoryList');
                 listEl.innerHTML = '<div class="ai-history-empty">Loading…</div>';
                 panel.classList.add('ai-widget-history-mode');
+                if (historyPanel) historyPanel.hidden = false;
 
                 try {
-                    var response = await fetch(historyUrl, {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    });
-                    var sessions = await response.json();
-                    listEl.innerHTML = '';
-                    if (!sessions || sessions.length === 0) {
-                        listEl.innerHTML = '<div class="ai-history-empty">@Localizer["Ai_HistoryEmpty"].Value</div>';
-                        return;
-                    }
+                var response = await fetch(historyUrl, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                var sessions = await response.json();
+                listEl.innerHTML = '';
+                if (!sessions || sessions.length === 0) {
+                    listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyEmptyText) + '</div>';
+                    return;
+                }
                     sessions.forEach(function (s) {
                         var item = document.createElement('div');
                         item.className = 'ai-history-item';
@@ -158,7 +163,7 @@
                         listEl.appendChild(item);
                     });
                 } catch (err) {
-                    listEl.innerHTML = '<div class="ai-history-empty">@Localizer["Ai_Error"].Value</div>';
+                    listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyErrorText) + '</div>';
                 }
             });
         }
@@ -167,6 +172,7 @@
         if (historyBackBtn) {
             historyBackBtn.addEventListener('click', function () {
                 panel.classList.remove('ai-widget-history-mode');
+                if (historyPanel) historyPanel.hidden = true;
             });
         }
 

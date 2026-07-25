@@ -817,6 +817,12 @@
             @RenderBody()
         </main>
     }
+    else if (ViewData["FullWidth"] as bool? == true)
+    {
+        <main role="main" class="inner-page-wrapper">
+            @RenderBody()
+        </main>
+    }
     else
     {
         <main role="main" class="inner-page-wrapper">
@@ -890,6 +896,8 @@
          data-trip-url-template="@Url.Action("Details", "Trip", new { id = "__ID__" })"
          data-history-url="@Url.Action("GetHistory", "AiChat")"
          data-history-session-url-template="@Url.Action("GetHistorySession", "AiChat", new { id = "__ID__" })"
+         data-history-empty-text="@Localizer["Ai_HistoryEmpty"].Value"
+         data-history-error-text="@Localizer["Ai_Error"].Value"
          data-thinking-text="@Localizer["Ai_Thinking"].Value"
          data-error-text="@Localizer["Ai_Error"].Value"
          data-view-trip-text="@Localizer["Ai_ViewTrip"].Value">

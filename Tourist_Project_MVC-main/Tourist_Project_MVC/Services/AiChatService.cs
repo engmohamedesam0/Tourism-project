@@ -214,7 +214,14 @@ namespace Tourist_Project_MVC.Services
 
             if (tourist != null)
             {
-                await PersistChatAsync(request, response, tourist);
+                try
+                {
+                    await PersistChatAsync(request, response, tourist);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to persist chat session for tourist {TouristId}", tourist.Id);
+                }
             }
 
             return response;

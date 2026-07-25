@@ -1,137 +1,179 @@
-﻿@model Tourist_Project_MVC.Models.TripPlan
+@model Tourist_Project_MVC.Models.TripPlan
 
 @{
     ViewData["Title"] = @Localizer["TripDetails_PageTitle"].Value;
+    ViewData["FullWidth"] = true;
     var tourist = ViewBag.Tourist as Tourist_Project_MVC.Models.Tourist;
 }
 
-<div class="container mt-4" style="max-width: 1100px;">
+<div class="trip-page-container px-3 px-md-4 px-xl-5 py-4" style="max-width: 1500px; margin: 0 auto;">
 
     @Html.AntiForgeryToken()
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-        <h2 class="page-title mb-0">🧳 @Model.Title</h2>
-        <a asp-action="Index" class="btn-back">
-            <i class="bi bi-arrow-left me-1"></i> @Localizer["TripDetails_BackToTrip"].Value
-        </a>
-    </div>
+    <!-- HERO HEADER CARD -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #1E120A 0%, #2D1A0E 50%, #3B2314 100%); color: #fff;">
+        <div class="position-relative z-2">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+                <div>
+                    <span class="badge px-3 py-2 rounded-pill text-uppercase fw-bold tracking-wider mb-2 d-inline-flex align-items-center gap-2" style="background: rgba(200, 131, 42, 0.25); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 0.78rem;">
+                        <i class="bi bi-map-fill"></i> Trip Expedition Itinerary
+                    </span>
+                    <h1 class="display-5 fw-bold mb-0 text-truncate" style="font-family:'Cinzel', serif; color: #F59E0B;" title="@Model.Title">
+                        @Model.Title
+                    </h1>
+                </div>
+                <a asp-action="Index" class="btn btn-outline-light rounded-pill px-4 py-2 small fw-semibold shadow-sm" style="border-color: rgba(245, 158, 11, 0.5); color: #F59E0B;">
+                    <i class="bi bi-arrow-left me-1"></i> @Localizer["TripDetails_BackToTrip"].Value
+                </a>
+            </div>
 
-    <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-        <span class="text-muted">
-            <i class="bi bi-calendar-event me-1"></i>
-            @Model.StartDate.ToString("MMM dd, yyyy") &ndash; @Model.EndDate.ToString("MMM dd, yyyy")
-        </span>
-        @{
-            var statusBadge = Model.Status switch
-            {
-                "Active" => "badge-status-active",
-                "Completed" => "badge-status-pending",
-                "Cancelled" => "badge-status-inactive",
-                "Draft" => "badge-status-draft",
-                _ => "badge-status-active"
-            };
-            var statusLabel = Model.Status switch
-            {
-                "Active" => @Localizer["TripDetails_StatusActive"].Value,
-                "Completed" => @Localizer["TripDetails_StatusCompleted"].Value,
-                "Cancelled" => @Localizer["TripDetails_StatusCancelled"].Value,
-                "Draft" => @Localizer["TripDetails_StatusDraft"].Value,
-                _ => Model.Status
-            };
-        }
-        <span class="badge-status @statusBadge">@statusLabel</span>
+            <!-- KEY STATS & METADATA PILLS -->
+            <div class="d-flex flex-wrap align-items-center gap-3 mt-4 pt-3 border-top border-secondary border-opacity-25">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill" style="background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);">
+                    <i class="bi bi-calendar3 text-gold"></i>
+                    <span class="small fw-semibold text-white">@Model.StartDate.ToString("MMM dd, yyyy") &ndash; @Model.EndDate.ToString("MMM dd, yyyy")</span>
+                </div>
 
-        @if (Model.Budget.HasValue)
-        {
-            <span class="text-muted"><i class="bi bi-cash-coin me-1"></i> @Localizer["TripDetails_Budget"].Value: @Model.Budget.Value.ToString("C")</span>
-        }
-        @if (Model.Companions.HasValue)
-        {
-            <span class="text-muted"><i class="bi bi-people-fill me-1"></i> @Localizer["TripDetails_Companions"].Value: @Model.Companions</span>
-        }
+                @{
+                    var statusBadge = Model.Status switch
+                    {
+                        "Active" => "badge-status-active",
+                        "Completed" => "badge-status-pending",
+                        "Cancelled" => "badge-status-inactive",
+                        "Draft" => "badge-status-draft",
+                        _ => "badge-status-active"
+                    };
+                    var statusLabel = Model.Status switch
+                    {
+                        "Active" => @Localizer["TripDetails_StatusActive"].Value,
+                        "Completed" => @Localizer["TripDetails_StatusCompleted"].Value,
+                        "Cancelled" => @Localizer["TripDetails_StatusCancelled"].Value,
+                        "Draft" => @Localizer["TripDetails_StatusDraft"].Value,
+                        _ => Model.Status
+                    };
+                }
+                <span class="badge-status @statusBadge px-3 py-2 fs-6">@statusLabel</span>
+
+                @if (Model.Budget.HasValue)
+                {
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill" style="background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);">
+                        <i class="bi bi-cash-coin text-gold"></i>
+                        <span class="small text-white">@Localizer["TripDetails_Budget"].Value: <strong class="text-white">@Model.Budget.Value.ToString("C")</strong></span>
+                    </div>
+                }
+                @if (Model.Companions.HasValue)
+                {
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill" style="background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);">
+                        <i class="bi bi-people-fill text-gold"></i>
+                        <span class="small text-white">@Localizer["TripDetails_Companions"].Value: <strong class="text-white">@Model.Companions</strong></span>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 
     <div class="row g-4">
-        <!-- LEFT: map placeholder -->
-        <div class="col-lg-5">
-            <div id="tripDetailsMap" class="trip-details-map">
-                <div class="map-watermark">
-                    <i class="bi bi-map" style="font-size: 3rem;"></i>
-                    <p class="mb-0 mt-2">@Localizer["TripDetails_MapPlaceholder"].Value</p>
-                    <small class="text-muted">@Localizer["TripDetails_MapMarkerInfo"].Value</small>
+        <!-- LEFT: Map View -->
+        <div class="col-lg-5 col-xl-5">
+            <div class="card border-0 shadow-sm rounded-4 p-2 sticky-top" style="top: 100px; background: #fff; border: 1px solid #E2E8F0 !important;">
+                <div class="position-relative">
+                    <div class="map-badge-overlay position-absolute top-0 end-0 m-3 z-3 px-3 py-1 rounded-pill bg-dark text-white small shadow-sm" style="opacity: 0.95;">
+                        <i class="bi bi-geo-alt me-1 text-gold"></i> Route Map
+                    </div>
+                    <div id="tripDetailsMap" class="trip-details-map rounded-3 overflow-hidden" style="height: 420px; min-height: 420px;">
+                        <div class="map-watermark">
+                            <i class="bi bi-map text-gold" style="font-size: 3rem;"></i>
+                            <p class="mb-0 mt-2 fw-semibold text-dark">@Localizer["TripDetails_MapPlaceholder"].Value</p>
+                            <small class="text-muted">@Localizer["TripDetails_MapMarkerInfo"].Value</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT: sortable stop list -->
-        <div class="col-lg-7">
-            <h4 class="mb-3" style="font-family:'Cinzel',serif; color:var(--egy-dark);">@Localizer["TripDetails_ItineraryStops"].Value</h4>
+        <!-- RIGHT: Sortable Stop List -->
+        <div class="col-lg-7 col-xl-7">
+            <div class="card border-0 shadow-sm rounded-4 p-4" style="background: #fff; border: 1px solid #E2E8F0 !important;">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h4 class="mb-0" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
+                        <i class="bi bi-signpost-split me-2 text-gold"></i>@Localizer["TripDetails_ItineraryStops"].Value
+                    </h4>
+                    <span class="badge rounded-pill px-3 py-2 fw-semibold" style="background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A;">
+                        @Model.TripDestinations.Count Stop@(Model.TripDestinations.Count == 1 ? "" : "s")
+                    </span>
+                </div>
 
-            <div id="reorderNotice" class="alert alert-warning d-none small py-2 mb-3">
-                <i class="bi bi-info-circle-fill me-1"></i>
-                @Localizer["TripDetails_ReorderNotice"].Value
-            </div>
+                <div id="reorderNotice" class="alert alert-warning d-none small py-2 mb-3 rounded-3 border-warning">
+                    <i class="bi bi-info-circle-fill me-1"></i>
+                    @Localizer["TripDetails_ReorderNotice"].Value
+                </div>
 
-            <ul id="stopList" class="list-unstyled">
-                @foreach (var td in Model.TripDestinations.OrderBy(x => x.Visit_Order))
+                <ul id="stopList" class="list-unstyled mb-0">
+                    @foreach (var td in Model.TripDestinations.OrderBy(x => x.Visit_Order))
+                    {
+                        <li class="trip-stop-card p-3 mb-3 rounded-3"
+                            data-stop-id="@td.Id"
+                            data-lat="@td.Destination?.Location?.Y"
+                            data-lng="@td.Destination?.Location?.X"
+                            data-id="@td.DestinationId"
+                            style="background: #ffffff; border: 1px solid #E2E8F0 !important; transition: all 0.2s ease;">
+                            
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="stop-handle text-muted" title="Drag to reorder" style="cursor: grab; font-size: 1.2rem;"><i class="bi bi-grip-vertical"></i></span>
+                                <div class="stop-order-badge">@td.Visit_Order</div>
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold text-dark mb-0 fs-6">@td.Destination?.Name</h6>
+                                    <small class="text-secondary"><i class="bi bi-geo-alt me-1 text-gold"></i>@td.Destination?.City</small>
+                                </div>
+                                <div class="stop-dates text-dark small text-end bg-light px-3 py-1 rounded-2 border">
+                                    <div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">@td.ArrivalDate.ToString("MMM dd")</strong></div>
+                                    <div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">@td.DepartureDate.ToString("MMM dd")</strong></div>
+                                </div>
+                            </div>
+
+                            <!-- Inline Date Editor -->
+                            <div class="stop-date-editor d-none mt-3 p-3 bg-light rounded-3 border">
+                                <div class="row g-2 align-items-end">
+                                    <div class="col">
+                                        <label class="form-label small mb-1 fw-bold text-muted">@Localizer["TripDetails_ArrivalLabel"].Value</label>
+                                        <input type="date" class="form-control form-control-sm edit-arrival fw-semibold text-dark"
+                                               value="@td.ArrivalDate.ToString("yyyy-MM-dd")" />
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label small mb-1 fw-bold text-muted">@Localizer["TripDetails_DepartureLabel"].Value</label>
+                                        <input type="date" class="form-control form-control-sm edit-departure fw-semibold text-dark"
+                                               value="@td.DepartureDate.ToString("yyyy-MM-dd")" />
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-sm btn-egy-primary btn-save-dates"
+                                                data-stop-id="@td.Id">
+                                            <i class="bi bi-check-lg me-1"></i> @Localizer["TripDetails_Save"].Value
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stop-actions mt-3 pt-2 border-top d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-edit-dates rounded-pill px-3">
+                                    <i class="bi bi-pencil-fill me-1"></i> @Localizer["TripDetails_EditDates"].Value
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-remove-stop rounded-pill px-3"
+                                        data-stop-id="@td.Id">
+                                    <i class="bi bi-trash-fill me-1"></i> @Localizer["TripDetails_Remove"].Value
+                                </button>
+                            </div>
+                        </li>
+                    }
+                </ul>
+
+                @if (!Model.TripDestinations.Any())
                 {
-                    <li class="trip-stop-card"
-                        data-stop-id="@td.Id"
-                         data-lat="@td.Destination?.Location?.Y"
-                         data-lng="@td.Destination?.Location?.X"
-                        data-id="@td.DestinationId">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="stop-handle" title="Drag to reorder"><i class="bi bi-grip-vertical"></i></span>
-                            <div class="stop-order-badge">@td.Visit_Order</div>
-                            <div class="flex-grow-1">
-                                <strong>@td.Destination?.Name</strong>
-                                <small class="text-muted d-block">@td.Destination?.City</small>
-                            </div>
-                            <div class="stop-dates text-muted small text-end">
-                                <div>Arrive: @td.ArrivalDate.ToString("MMM dd, yyyy")</div>
-                                <div>Depart: @td.DepartureDate.ToString("MMM dd, yyyy")</div>
-                            </div>
-                        </div>
-
-                        <!-- Inline date editor (toggled) -->
-                        <div class="stop-date-editor d-none mt-2">
-                            <div class="row g-2 align-items-end">
-                                <div class="col">
-                                    <label class="form-label small mb-1">@Localizer["TripDetails_ArrivalLabel"].Value</label>
-                                    <input type="date" class="form-control form-control-sm edit-arrival"
-                                           value="@td.ArrivalDate.ToString("yyyy-MM-dd")" />
-                                </div>
-                                <div class="col">
-                                    <label class="form-label small mb-1">@Localizer["TripDetails_DepartureLabel"].Value</label>
-                                    <input type="date" class="form-control form-control-sm edit-departure"
-                                           value="@td.DepartureDate.ToString("yyyy-MM-dd")" />
-                                </div>
-                                <div class="col-auto">
-                                    <button type="button" class="btn btn-sm btn-primary btn-save-dates"
-                                            data-stop-id="@td.Id">
-                                        <i class="bi bi-check-lg"></i> @Localizer["TripDetails_Save"].Value
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="stop-actions mt-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary btn-edit-dates">
-                                <i class="bi bi-pencil-fill me-1"></i> @Localizer["TripDetails_EditDates"].Value
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-stop"
-                                    data-stop-id="@td.Id">
-                                <i class="bi bi-trash-fill me-1"></i> @Localizer["TripDetails_Remove"].Value
-                            </button>
-                        </div>
-                    </li>
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-pin-map text-gold mb-2 d-block" style="font-size: 3rem; opacity: 0.7;"></i>
+                        <p class="mb-0">@Localizer["TripDetails_NoStops"].Value</p>
+                    </div>
                 }
-            </ul>
-
-            @if (!Model.TripDestinations.Any())
-            {
-                <p class="text-muted">@Localizer["TripDetails_NoStops"].Value</p>
-            }
+            </div>
         </div>
     </div>
 </div>
@@ -143,14 +185,32 @@
 
 @section Scripts {
 <style>
+    /* OVERRIDE BODY BACKGROUND TO CRISP MODERN NEUTRAL */
+    body {
+        background-color: #F8FAFC !important;
+    }
+
+    .text-gold {
+        color: #C8832A !important;
+    }
+
+    .btn-egy-primary {
+        background: linear-gradient(135deg, #C8832A 0%, #A6651E 100%);
+        color: #fff !important;
+        border: none;
+        font-weight: 600;
+        transition: all 0.25s ease;
+    }
+
+    .btn-egy-primary:hover {
+        background: linear-gradient(135deg, #D98E32 0%, #C8832A 100%);
+        box-shadow: 0 4px 14px rgba(200, 131, 42, 0.35);
+    }
+
     .trip-details-map {
-        height: 360px;
-        border-radius: 14px;
-        border: 1px solid rgba(200, 131, 42, 0.25);
-        background:
-            repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
-        position: sticky;
-        top: 100px;
+        height: 420px;
+        border-radius: 12px;
+        background: repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
     }
 
     .map-watermark {
@@ -159,51 +219,80 @@
         left: 50%;
         transform: translate(-50%, -50%);
         text-align: center;
-        color: var(--egy-muted-gold);
-        opacity: 0.65;
+        color: #C8832A;
+        opacity: 0.75;
+    }
+
+    .badge-status-active {
+        background: #DCFCE7 !important;
+        color: #15803D !important;
+        border: 1px solid #86EFAC !important;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+    }
+
+    .badge-status-pending {
+        background: #FEF3C7 !important;
+        color: #B45309 !important;
+        border: 1px solid #FDE68A !important;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
     }
 
     .badge-status-draft {
-        background: rgba(200, 131, 42, 0.15);
-        color: var(--egy-muted-gold);
-        border: 1px solid var(--egy-accent);
+        background: #F1F5F9 !important;
+        color: #475569 !important;
+        border: 1px solid #CBD5E1 !important;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+    }
+
+    .badge-status-inactive {
+        background: #FEE2E2 !important;
+        color: #B91C1C !important;
+        border: 1px solid #FCA5A5 !important;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
     }
 
     .trip-stop-card {
-        background: #fff;
-        border: 1px solid rgba(200, 131, 42, 0.25);
-        border-radius: 14px;
-        padding: 14px 16px;
-        margin-bottom: 14px;
-        transition: box-shadow 0.2s ease, transform 0.2s ease;
+        background: #ffffff !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
     }
 
-        .trip-stop-card:hover {
-            box-shadow: 0 10px 24px rgba(200, 131, 42, 0.14);
-        }
-
-    .stop-handle {
-        cursor: grab;
-        color: #bba;
-        font-size: 1.1rem;
+    .trip-stop-card:hover {
+        border-color: #C8832A !important;
+        box-shadow: 0 4px 16px rgba(200, 131, 42, 0.12) !important;
+        transform: translateY(-1px);
     }
 
     .stop-order-badge {
-        flex: 0 0 30px;
-        height: 30px;
+        flex: 0 0 32px;
+        height: 32px;
         border-radius: 50%;
-        background: var(--egy-primary);
+        background: #C8832A;
         color: #fff;
         font-weight: 700;
         display: flex;
         align-items: center;
         justify-content: center;
         font-family: 'Cinzel', serif;
+        box-shadow: 0 2px 6px rgba(200, 131, 42, 0.3);
     }
 
     .sortable-ghost {
-        opacity: 0.5;
-        border-style: dashed;
+        opacity: 0.4;
+        border-style: dashed !important;
     }
 </style>
 
@@ -226,8 +315,8 @@
             var city = _firstDefined(p, detailsPropMap.city, ['']);
             var cat = _firstDefined(p, detailsPropMap.category, ['']);
             var html = '';
-            if (name) html += '<strong>' + _esc(name) + '</strong>';
-            if (city) html += '<br><span style="color:#666">' + _esc(city) + '</span>';
+            if (name) html += '<strong class="text-dark">' + _esc(name) + '</strong>';
+            if (city) html += '<br><span style="color:#64748B">' + _esc(city) + '</span>';
             if (cat) html += '<br><span class="badge bg-secondary">' + _esc(cat) + '</span>';
             if (id && detailsPropMap.detailsUrl) {
                 html += '<br><a href="' + detailsPropMap.detailsUrl.replace('{id}', encodeURIComponent(id)) + '" class="btn btn-sm btn-outline-primary mt-1">Details</a>';
@@ -258,7 +347,7 @@
                     var id = li.getAttribute('data-id');
                     var badge = li.querySelector('.stop-order-badge');
                     var order = badge ? badge.textContent.trim() : '?';
-                    var nameEl = li.querySelector('strong');
+                    var nameEl = li.querySelector('h6');
                     var name = nameEl ? nameEl.textContent.trim() : 'Stop ' + order;
 
                     if (!isNaN(lat) && !isNaN(lng) && detailsMap && detailsMap.addStopOverlay) {
@@ -326,7 +415,7 @@
                 headers: { 'RequestVerificationToken': token },
                 success: function () {
                     $card.find('.stop-dates').html(
-                        '<div>Arrive: ' + arrival + '</div><div>Depart: ' + departure + '</div>');
+                        '<div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">' + arrival + '</strong></div><div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">' + departure + '</strong></div>');
                     $card.find('.stop-date-editor').addClass('d-none');
                 }
             });
