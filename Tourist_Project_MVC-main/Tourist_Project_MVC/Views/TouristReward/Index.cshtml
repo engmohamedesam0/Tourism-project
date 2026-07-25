@@ -39,6 +39,41 @@
         <i class="bi bi-shop me-2"></i> @Localizer["Reward_Available"].Value
     </h4>
 
+    <div class="filter-bar h-100 d-flex flex-column justify-content-between p-3 rounded-3 mb-3" style="background: #F8FAFC; border: 1px solid #E2E8F0;">
+        <div>
+            <h5 class="fw-bold mb-3" style="font-family:'Cinzel',serif; color:#0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
+                <i class="bi bi-sliders me-2" style="color: #C8832A;"></i> @Localizer["Reward_FilterHeading"].Value
+            </h5>
+
+            <div class="filter-field mb-3">
+                <label class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["Reward_SearchLabel"].Value</label>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" id="rewardSearchInput" class="form-control border-start-0" placeholder='@Localizer["Reward_SearchPlaceholder"].Value' />
+                </div>
+            </div>
+
+            <div class="filter-field mb-3">
+                <label class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["Reward_TypeLabel"].Value</label>
+                <select id="rewardTypeFilter" class="form-select form-select-sm">
+                    <option value="">@Localizer["Reward_AllTypes"].Value</option>
+                    @foreach (var type in Model.AvailableRewards.Select(r => r.RewardType).Distinct().OrderBy(t => t))
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </select>
+            </div>
+
+            <div class="filter-field mb-3">
+                <label class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["Reward_MaxPoints"].Value</label>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-coin"></i></span>
+                    <input type="number" id="rewardMaxPoints" class="form-control border-start-0" min="0" placeholder='@Localizer["Reward_MaxPointsPlaceholder"].Value' />
+                </div>
+            </div>
+        </div>
+    </div>
+
     @if (!Model.AvailableRewards.Any())
     {
         <div class="text-center py-5 text-muted">
@@ -48,11 +83,15 @@
     }
     else
     {
+        <div id="rewardEmptyFilter" class="text-muted small p-3 text-center" style="display:none">
+            <i class="bi bi-exclamation-circle fs-4 d-block mb-1"></i>
+            @Localizer["Reward_NoMatch"].Value
+        </div>
         <div class="row g-3">
             @foreach (var reward in Model.AvailableRewards)
             {
                 var canAfford = Model.PointBalance >= reward.PointsRequired;
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-title="@reward.Title.ToLower()" data-type="@reward.RewardType" data-points="@reward.PointsRequired">
                     <div class="card border-0 shadow-sm rounded-4 h-100">
                         <div class="card-body d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-start mb-2">
@@ -136,4 +175,52 @@
     <div class="container my-4" style="max-width: 1200px;">
         @await Html.PartialAsync("_ReviewsCarousel", rewardVm)
     </div>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            var cards = document.querySelectorAll('.col-md-6.col-lg-4[data-title]');
+            var searchInput = document.getElementById('rewardSearchInput');
+            var typeSelect = document.getElementById('rewardTypeFilter');
+            var maxPointsInput = document.getElementById('rewardMaxPoints');
+            var emptyEl = document.getElementById('rewardEmptyFilter');
+
+            function applyRewardFilter() {
+                var search = (searchInput.value || '').toLowerCase().trim();
+                var type = typeSelect.value || '';
+                var maxPoints = maxPointsInput.value ? parseInt(maxPointsInput.value, 10) : null;
+                var visibleCount = 0;
+
+                for (var i = 0; i < cards.length; i++) {
+                    var card = cards[i];
+                    var title = card.getAttribute('data-title') || '';
+                    var rewardType = card.getAttribute('data-type') || '';
+                    var points = card.getAttribute('data-points') ? parseInt(card.getAttribute('data-points'), 10) : null;
+
+                    var matchSearch = !search || title.indexOf(search) !== -1;
+                    var matchType = !type || rewardType === type;
+                    var matchPoints = maxPoints === null || points === null || points <= maxPoints;
+
+                    if (matchSearch && matchType && matchPoints) {
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+
+                if (emptyEl) emptyEl.style.display = visibleCount === 0 ? '' : 'none';
+            }
+
+            var searchTimeout;
+            searchInput.addEventListener('input', function () {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(applyRewardFilter, 180);
+            });
+
+            typeSelect.addEventListener('change', applyRewardFilter);
+            maxPointsInput.addEventListener('input', applyRewardFilter);
+        })();
+    </script>
 }

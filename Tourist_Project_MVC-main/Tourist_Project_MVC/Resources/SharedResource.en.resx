@@ -597,6 +597,30 @@
   <data name="Reward_Status" xml:space="preserve">
     <value>Status</value>
   </data>
+  <data name="Reward_FilterHeading" xml:space="preserve">
+    <value>Filter Rewards</value>
+  </data>
+  <data name="Reward_SearchLabel" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Reward_SearchPlaceholder" xml:space="preserve">
+    <value>Search rewards by name...</value>
+  </data>
+  <data name="Reward_TypeLabel" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Reward_AllTypes" xml:space="preserve">
+    <value>All Types</value>
+  </data>
+  <data name="Reward_MaxPoints" xml:space="preserve">
+    <value>Max Points</value>
+  </data>
+  <data name="Reward_MaxPointsPlaceholder" xml:space="preserve">
+    <value>e.g. 5000</value>
+  </data>
+  <data name="Reward_NoMatch" xml:space="preserve">
+    <value>No rewards match your filters.</value>
+  </data>
   <data name="RewardAdmin_EditHeading" xml:space="preserve">
     <value>Edit Mission</value>
   </data>
