@@ -2340,5 +2340,10 @@
   <data name="TouristSupport_SponsorRespondedTooltip" xml:space="preserve">
     <value>Sponsor responded</value>
   </data>
-
+  <data name="TripDetails_AddStop" xml:space="preserve">
+    <value>Add Stop</value>
+  </data>
+  <data name="TripDetails_NoAvailableDestinations" xml:space="preserve">
+    <value>No destinations available to add.</value>
+  </data>
 </root>

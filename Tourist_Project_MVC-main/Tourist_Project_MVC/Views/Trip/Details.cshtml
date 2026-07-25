@@ -98,9 +98,14 @@
                     <h4 class="mb-0" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
                         <i class="bi bi-signpost-split me-2 text-gold"></i>@Localizer["TripDetails_ItineraryStops"].Value
                     </h4>
+                    <span id="stopsCount">
                     <span class="badge rounded-pill px-3 py-2 fw-semibold" style="background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A;">
                         @Model.TripDestinations.Count Stop@(Model.TripDestinations.Count == 1 ? "" : "s")
                     </span>
+                    </span>
+                    <button type="button" class="btn btn-sm btn-egy-primary rounded-pill px-3" id="addStopBtn" data-bs-toggle="modal" data-bs-target="#addStopModal">
+                        <i class="bi bi-plus-lg me-1"></i> @Localizer["TripDetails_AddStop"].Value
+                    </button>
                 </div>
 
                 <div id="reorderNotice" class="alert alert-warning d-none small py-2 mb-3 rounded-3 border-warning">
@@ -173,6 +178,48 @@
                         <p class="mb-0">@Localizer["TripDetails_NoStops"].Value</p>
                     </div>
                 }
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Stop Modal -->
+    <div class="modal fade" id="addStopModal" tabindex="-1" aria-labelledby="addStopModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addStopModalLabel">@Localizer["TripDetails_AddStop"].Value</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if (ViewBag.AvailableDestinations is IEnumerable<Tourist_Project_MVC.Models.Destination> availableDests && availableDests.Any())
+                    {
+                        <div class="list-group list-group-flush" id="availableDestinationsList">
+                            @foreach (var dest in availableDests)
+                            {
+                                <div class="list-group-item d-flex align-items-center justify-content-between py-3" data-dest-id="@dest.Id" data-dest-lat="@(dest.Location != null ? dest.Location.Y : 0)" data-dest-lng="@(dest.Location != null ? dest.Location.X : 0)">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">@dest.Name</h6>
+                                        <small class="text-secondary"><i class="bi bi-geo-alt me-1 text-gold"></i>@dest.City</small>
+                                        @if (!string.IsNullOrEmpty(dest.Category))
+                                        {
+                                            <span class="badge bg-secondary ms-2">@dest.Category</span>
+                                        }
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-egy-primary btn-add-stop rounded-pill px-3" data-dest-id="@dest.Id">
+                                        <i class="bi bi-plus-lg me-1"></i> @Localizer["TripDetails_AddStop"].Value
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-signpost-split text-gold mb-2 d-block" style="font-size: 2.5rem; opacity: 0.7;"></i>
+                            <p class="mb-0">@Localizer["TripDetails_NoAvailableDestinations"].Value</p>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -437,6 +484,89 @@
                     $('#stopList li').each(function (idx) {
                         $(this).find('.stop-order-badge').text(idx + 1);
                     });
+                    var count = $('#stopList li').length;
+                    $('#stopsCount .badge').text(count + ' Stop' + (count === 1 ? '' : 's'));
+                }
+            });
+        });
+
+        // Add stop - open modal
+        $('#addStopBtn').on('click', function () {
+            $('#addStopModal').modal('show');
+        });
+
+        // Add stop - confirm from modal
+        $('#availableDestinationsList').on('click', '.btn-add-stop', function () {
+            var $item = $(this).closest('.list-group-item');
+            var destId = $(this).data('dest-id');
+            var destName = $item.find('h6').text().trim();
+            var destCity = $item.find('.text-secondary').text().trim();
+            var destCategory = $item.find('.badge').text().trim();
+            var destLat = parseFloat($item.data('dest-lat')) || 0;
+            var destLng = parseFloat($item.data('dest-lng')) || 0;
+
+            $.ajax({
+                url: '@Url.Action("AddStop", "Trip", new { id = Model.Id })',
+                type: 'POST',
+                data: { id: @Model.Id, destinationId: destId },
+                headers: { 'RequestVerificationToken': token },
+                success: function (response) {
+                    if (response.alreadyExists) {
+                        $('#addStopModal').modal('hide');
+                        return;
+                    }
+                    if (response.success) {
+                        $('#addStopModal').modal('hide');
+                        var $emptyState = $('#stopList').siblings('.text-center.py-5');
+                        if ($emptyState.length) {
+                            $emptyState.remove();
+                        }
+                        var $newCard = $('<li class="trip-stop-card p-3 mb-3 rounded-3" data-stop-id="' + response.stopId + '" data-lat="' + response.lat + '" data-lng="' + response.lng + '" data-id="' + response.destinationId + '" style="background: #ffffff; border: 1px solid #E2E8F0 !important; transition: all 0.2s ease;">' +
+                            '<div class="d-flex align-items-center gap-3">' +
+                            '<span class="stop-handle text-muted" title="Drag to reorder" style="cursor: grab; font-size: 1.2rem;"><i class="bi bi-grip-vertical"></i></span>' +
+                            '<div class="stop-order-badge">' + response.order + '</div>' +
+                            '<div class="flex-grow-1">' +
+                            '<h6 class="fw-bold text-dark mb-0 fs-6">' + _esc(destName) + '</h6>' +
+                            '<small class="text-secondary"><i class="bi bi-geo-alt me-1 text-gold"></i>' + _esc(destCity) + '</small>' +
+                            '</div>' +
+                            '<div class="stop-dates text-dark small text-end bg-light px-3 py-1 rounded-2 border">' +
+                            '<div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">' + response.arrivalDate + '</strong></div>' +
+                            '<div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">' + response.departureDate + '</strong></div>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="stop-date-editor d-none mt-3 p-3 bg-light rounded-3 border">' +
+                            '<div class="row g-2 align-items-end">' +
+                            '<div class="col">' +
+                            '<label class="form-label small mb-1 fw-bold text-muted">@Localizer["TripDetails_ArrivalLabel"].Value</label>' +
+                            '<input type="date" class="form-control form-control-sm edit-arrival fw-semibold text-dark" value="' + response.arrivalDateInput + '" />' +
+                            '</div>' +
+                            '<div class="col">' +
+                            '<label class="form-label small mb-1 fw-bold text-muted">@Localizer["TripDetails_DepartureLabel"].Value</label>' +
+                            '<input type="date" class="form-control form-control-sm edit-departure fw-semibold text-dark" value="' + response.departureDateInput + '" />' +
+                            '</div>' +
+                            '<div class="col-auto">' +
+                            '<button type="button" class="btn btn-sm btn-egy-primary btn-save-dates" data-stop-id="' + response.stopId + '">' +
+                            '<i class="bi bi-check-lg me-1"></i> @Localizer["TripDetails_Save"].Value' +
+                            '</button>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="stop-actions mt-3 pt-2 border-top d-flex justify-content-end gap-2">' +
+                            '<button type="button" class="btn btn-sm btn-outline-secondary btn-edit-dates rounded-pill px-3">' +
+                            '<i class="bi bi-pencil-fill me-1"></i> @Localizer["TripDetails_EditDates"].Value' +
+                            '</button>' +
+                            '<button type="button" class="btn btn-sm btn-outline-danger btn-remove-stop rounded-pill px-3" data-stop-id="' + response.stopId + '">' +
+                            '<i class="bi bi-trash-fill me-1"></i> @Localizer["TripDetails_Remove"].Value' +
+                            '</button>' +
+                            '</div>' +
+                            '</li>');
+                        $('#stopList').prepend($newCard);
+                        var count = $('#stopList li').length;
+                        $('#stopsCount .badge').text(count + ' Stop' + (count === 1 ? '' : 's'));
+                        if (detailsMap && detailsMap.addStopOverlay) {
+                            detailsMap.addStopOverlay(response.lat, response.lng, '#' + response.order);
+                        }
+                    }
                 }
             });
         });

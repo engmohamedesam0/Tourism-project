@@ -2340,5 +2340,10 @@
   <data name="TouristSupport_SponsorRespondedTooltip" xml:space="preserve">
     <value>الراعي رد</value>
   </data>
-
+  <data name="TripDetails_AddStop" xml:space="preserve">
+    <value>إضافة محطة</value>
+  </data>
+  <data name="TripDetails_NoAvailableDestinations" xml:space="preserve">
+    <value>لا توجد وجهات متاحة للإضافة.</value>
+  </data>
 </root>

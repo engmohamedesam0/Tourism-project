@@ -258,6 +258,10 @@ namespace Tourist_Project_MVC.Controllers
                 TargetType = "TripPlan"
             };
 
+            ViewBag.AvailableDestinations = _destinationRepo.GetAll()
+                .Where(d => !trip.TripDestinations.Any(td => td.DestinationId == d.Id))
+                .ToList();
+
             return View(trip);
         }
 
@@ -335,6 +339,52 @@ namespace Tourist_Project_MVC.Controllers
             _tripPlanRepo.Save();
 
             return Json(new { success = true });
+        }
+
+        // POST: add a destination to the owner's trip.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddStop(int id, int destinationId)
+        {
+            var tourist = ResolveTourist();
+            var trip = _tripPlanRepo.GetByIdWithDetails(id);
+            if (trip == null || trip.TouristId != tourist.Id)
+                return Forbid();
+
+            if (trip.TripDestinations.Any(td => td.DestinationId == destinationId))
+                return Json(new { alreadyExists = true });
+
+            var maxOrder = trip.TripDestinations.Any()
+                ? trip.TripDestinations.Max(td => td.Visit_Order)
+                : 0;
+
+            var newStop = new TripDestination
+            {
+                TripPlanId = id,
+                DestinationId = destinationId,
+                Visit_Order = maxOrder + 1,
+                ArrivalDate = trip.StartDate,
+                DepartureDate = trip.StartDate.AddDays(1)
+            };
+            _tripPlanRepo.AddStop(newStop);
+            _tripPlanRepo.Save();
+
+            var dest = _context.Destinations.Find(destinationId);
+            return Json(new
+            {
+                success = true,
+                stopId = newStop.Id,
+                destinationId = destinationId,
+                destinationName = dest != null ? dest.Name : "",
+                destinationCity = dest != null ? dest.City : "",
+                lat = dest != null && dest.Location != null ? dest.Location.Y : 0,
+                lng = dest != null && dest.Location != null ? dest.Location.X : 0,
+                order = newStop.Visit_Order,
+                arrivalDate = newStop.ArrivalDate.ToString("MMM dd"),
+                departureDate = newStop.DepartureDate.ToString("MMM dd"),
+                arrivalDateInput = newStop.ArrivalDate.ToString("yyyy-MM-dd"),
+                departureDateInput = newStop.DepartureDate.ToString("yyyy-MM-dd")
+            });
         }
 
         [HttpPost]
