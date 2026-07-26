@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -19,19 +20,22 @@ namespace Tourist_Project_MVC.Controllers
         private readonly IDestinationRepository _destinationRepo;
         private readonly ITripPlanRepository _tripPlanRepo;
         private readonly TouristContext _context;
+        private readonly IGamificationService _gamificationService;
 
         public TripController(
             UserManager<ApplicationUser> userManager,
             ITouristRepository touristRepo,
             IDestinationRepository destinationRepo,
             ITripPlanRepository tripPlanRepo,
-            TouristContext context)
+            TouristContext context,
+            IGamificationService gamificationService)
         {
             _userManager = userManager;
             _touristRepo = touristRepo;
             _destinationRepo = destinationRepo;
             _tripPlanRepo = tripPlanRepo;
             _context = context;
+            _gamificationService = gamificationService;
         }
 
         // Resolve the signed-in ApplicationUser to a Tourist record.
@@ -472,7 +476,41 @@ namespace Tourist_Project_MVC.Controllers
 
                 _context.SiteReviews.Add(review);
                 _context.SaveChanges();
+                _ = _gamificationService.AwardXPAsync(tourist.Id, 25, "review");
             }
+
+            return RedirectToAction("Details", new { id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> CompleteTrip(int id)
+        {
+            var trip = _tripPlanRepo.GetByIdWithDetails(id);
+            if (trip == null) return NotFound();
+
+            var tourist = ResolveTourist();
+            if (trip.TouristId != tourist.Id)
+                return Forbid();
+
+            if (trip.Status == "Completed")
+            {
+                TempData["TripMessage"] = "This trip is already marked as completed.";
+                TempData["TripMessageType"] = "warning";
+                return RedirectToAction("Details", new { id });
+            }
+
+            trip.Status = "Completed";
+            _tripPlanRepo.Update(trip);
+            _tripPlanRepo.Save();
+
+            var (xpAdded, newBadges) = await _gamificationService.AwardXPAsync(tourist.Id, 75, "trip-complete");
+
+            TempData["TripMessage"] = $"Trip completed! +{xpAdded} XP";
+            TempData["TripMessageType"] = "success";
+            TempData["NewBadges"] = newBadges?.Select(b => b.Name).ToList();
+            TempData["NewBadgesIcon"] = newBadges?.Select(b => b.Icon).ToList();
 
             return RedirectToAction("Details", new { id });
         }

@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -15,15 +16,17 @@ namespace Tourist_Project_MVC.Controllers
         private readonly ITouristRepository _touristRepo;
         private readonly IRewardRepository _rewardRepo;
         private readonly TouristContext _context;
+        private readonly IGamificationService _gamificationService;
 
-        public TouristRewardController(ITouristRepository touristRepo, IRewardRepository rewardRepo, TouristContext context)
+        public TouristRewardController(ITouristRepository touristRepo, IRewardRepository rewardRepo, TouristContext context, IGamificationService gamificationService)
         {
             _touristRepo = touristRepo;
             _rewardRepo = rewardRepo;
             _context = context;
+            _gamificationService = gamificationService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var tourist = _context.Tourists
@@ -52,11 +55,17 @@ namespace Tourist_Project_MVC.Controllers
                 .OrderByDescending(r => r.RedemptionDate)
                 .ToList();
 
+            var badges = await _gamificationService.GetBadgesForTouristAsync(tourist.Id);
+            var progress = await _gamificationService.GetOrInitializeProgressAsync(tourist.Id);
+
             var vm = new TouristRewardVM
             {
                 PointBalance = tourist.point_Balance,
                 AvailableRewards = availableRewards,
-                MyRedemptions = myRedemptions
+                MyRedemptions = myRedemptions,
+                AllBadges = _context.Badges.ToList(),
+                MyBadges = badges,
+                Progress = progress
             };
 
             var rewardReviews = _context.SiteReviews
@@ -192,6 +201,7 @@ namespace Tourist_Project_MVC.Controllers
 
                 _context.SiteReviews.Add(review);
                 _context.SaveChanges();
+                _ = _gamificationService.AwardXPAsync(tourist.Id, 25, "review");
             }
 
             return RedirectToAction(nameof(Index));

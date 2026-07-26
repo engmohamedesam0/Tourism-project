@@ -26,6 +26,9 @@ namespace Tourist_Project_MVC.Data
         public DbSet<SponsorApprovalRequest> SponsorApprovalRequests { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<ChatSession> ChatSessions { get; set; }
+        public DbSet<Badge> Badges { get; set; }
+        public DbSet<UserBadge> UserBadges { get; set; }
+        public DbSet<UserProgress> UserProgress { get; set; }
 
         public TouristContext(DbContextOptions<TouristContext> options) : base(options)
         {
@@ -176,6 +179,30 @@ namespace Tourist_Project_MVC.Data
                 .WithMany()
                 .HasForeignKey(st => st.TouristId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // UserProgress -> Tourist (one-to-one).
+            modelBuilder.Entity<UserProgress>()
+                .HasKey(up => up.TouristId);
+
+            modelBuilder.Entity<UserProgress>()
+                .HasOne(up => up.Tourist)
+                .WithOne(t => t.UserProgress)
+                .HasForeignKey<UserProgress>(up => up.TouristId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // UserBadge -> Tourist (many-to-one).
+            modelBuilder.Entity<UserBadge>()
+                .HasOne(ub => ub.Tourist)
+                .WithMany(t => t.UserBadges)
+                .HasForeignKey(ub => ub.TouristId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // UserBadge -> Badge (many-to-one).
+            modelBuilder.Entity<UserBadge>()
+                .HasOne(ub => ub.Badge)
+                .WithMany(b => b.UserBadges)
+                .HasForeignKey(ub => ub.BadgeId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // NOTE: All sample data is now seeded from JSON via
             // Services/DbInitializer.cs (see Program.cs). The ad-hoc

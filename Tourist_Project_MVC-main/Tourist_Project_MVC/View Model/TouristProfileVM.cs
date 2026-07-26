@@ -18,6 +18,13 @@ namespace Tourist_Project_MVC.View_Model
 
         public string LevelLabel { get; set; } = string.Empty;
         public string LevelIcon { get; set; } = string.Empty;
+        public int CurrentLevel { get; set; }
+        public int CurrentXP { get; set; }
+        public int NextLevelXP { get; set; }
+        public int TotalBadges { get; set; }
+        public Badge? FeaturedBadge { get; set; }
+        public List<Badge> RecentBadges { get; set; } = new();
+        public int LoginStreak { get; set; }
         public int MissionsCompletedCount { get; set; }
         public int PlacesVisitedCount { get; set; }
         public int RewardsRedeemedCount { get; set; }

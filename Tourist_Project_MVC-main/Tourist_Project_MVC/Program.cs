@@ -63,6 +63,10 @@ namespace Tourist_Project_MVC
             builder.Services.AddScoped<ISiteReviewRepository, SiteReviewRepository>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<ISupportTicketService, SupportTicketService>();
+            builder.Services.AddScoped<IBadgeRepository, BadgeRepository>();
+            builder.Services.AddScoped<IUserBadgeRepository, UserBadgeRepository>();
+            builder.Services.AddScoped<IUserProgressRepository, UserProgressRepository>();
+            builder.Services.AddScoped<IGamificationService, GamificationService>();
             builder.Services.AddDbContext<TouristContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("CS"),
                     o => o.UseNetTopologySuite()));

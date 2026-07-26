@@ -19,12 +19,14 @@ namespace Tourist_Project_MVC.Controllers
         private readonly IDestinationRepository _repo;
         private readonly TouristContext _context;
         private readonly IArcGISSyncService _arcgisSync;
+        private readonly IGamificationService _gamificationService;
 
-        public DestinationController(IDestinationRepository repo, TouristContext context, IArcGISSyncService arcgisSync)
+        public DestinationController(IDestinationRepository repo, TouristContext context, IArcGISSyncService arcgisSync, IGamificationService gamificationService)
         {
             _repo = repo;
             _context = context;
             _arcgisSync = arcgisSync;
+            _gamificationService = gamificationService;
         }
 
         // GET: /Destination/Index
@@ -241,6 +243,7 @@ namespace Tourist_Project_MVC.Controllers
 
                 _context.SiteReviews.Add(review);
                 _context.SaveChanges();
+                _ = _gamificationService.AwardXPAsync(tourist.Id, 25, "review");
             }
 
             return RedirectToAction("Details", new { id });

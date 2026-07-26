@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -17,7 +18,8 @@ namespace Tourist_Project_MVC.Controllers
         private readonly ITouristRepository _touristRepo;
         private readonly TouristContext _context;
         private readonly IWebHostEnvironment _env;
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, TouristContext context, IWebHostEnvironment env)
+        private readonly IGamificationService _gamificationService;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, TouristContext context, IWebHostEnvironment env, IGamificationService gamificationService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -25,6 +27,7 @@ namespace Tourist_Project_MVC.Controllers
             this._touristRepo = touristRepo;
             this._context = context;
             this._env = env;
+            this._gamificationService = gamificationService;
         }
         [HttpGet]
         public IActionResult Register()
@@ -150,6 +153,21 @@ namespace Tourist_Project_MVC.Controllers
                             return RedirectToAction("SponsorApprovalStatus", new { status = "rejected" });
 
                         await signInManager.SignInAsync(user, loginUser.RememberMe);
+
+                        // Daily login streak tracking + XP award.
+                        var loginTourist = _touristRepo.GetOrCreateByApplicationUser(user);
+                        var today = DateTime.Today;
+                        var progress = await _gamificationService.GetOrInitializeProgressAsync(loginTourist.Id);
+                        if (progress.LastLoginDate == null || progress.LastLoginDate.Value < today.AddDays(-1))
+                        {
+                            progress.LoginStreak = progress.LastLoginDate.HasValue && progress.LastLoginDate.Value == today.AddDays(-1)
+                                ? progress.LoginStreak + 1
+                                : 1;
+                            progress.LastLoginDate = today;
+                            _context.UserProgress.Update(progress);
+                            await _context.SaveChangesAsync();
+                            await _gamificationService.AwardXPAsync(loginTourist.Id, 10, "daily-login");
+                        }
 
                         // Role-based landing: Admins stay in the back office,
                         // Sponsors land on their own portal, everyone else (Tourists)

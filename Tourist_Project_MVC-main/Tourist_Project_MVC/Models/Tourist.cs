@@ -26,5 +26,7 @@
         public List<TripPlan>? TripPlans { get; set; }
         public List<UserMission>? UserMissions { get; set; }
         public List<Redemption>? Redemptions { get; set; }
+        public UserProgress? UserProgress { get; set; }
+        public List<UserBadge>? UserBadges { get; set; }
     }
 }

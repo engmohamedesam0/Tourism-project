@@ -71,6 +71,11 @@ namespace Tourist_Project_MVC.Services
             await SeedTableAsync<Notification>(context, seedDir, "notifications.json");
             await SeedTableAsync<SupportTicket>(context, seedDir, "support-tickets.json");
             await SeedTableAsync<SponsorApprovalRequest>(context, seedDir, "sponsor-approval-requests.json");
+
+            // Gamification tables (after Tourists and Missions are seeded).
+            await SeedTableAsync<Badge>(context, seedDir, "badges.json");
+            await SeedTableAsync<UserProgress>(context, seedDir, "user-progress.json");
+            await SeedTableAsync<UserBadge>(context, seedDir, "user-badges.json");
         }
 
         private static async Task EnsureRolesAsync(RoleManager<IdentityRole> roleManager)

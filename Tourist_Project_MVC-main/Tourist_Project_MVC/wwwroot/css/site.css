@@ -610,3 +610,187 @@ h6,
     width: 100% !important;
     height: 100% !important;
 }
+
+/* =============================================
+   GAMIFICATION — Rarity Colors
+   ============================================= */
+:root {
+    --rarity-common: #6B7280;
+    --rarity-common-bg: #F1F5F9;
+    --rarity-rare: #2563EB;
+    --rarity-rare-bg: #DBEAFE;
+    --rarity-epic: #7C3AED;
+    --rarity-epic-bg: #F3E8FF;
+    --rarity-legendary: #C8832A;
+    --rarity-legendary-bg: #FEF3C7;
+}
+
+/* =============================================
+   BADGE TOAST NOTIFICATION
+   ============================================= */
+.badge-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 300px;
+    max-width: 400px;
+    padding: 1rem 1.25rem;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1E120A 0%, #2D1A0E 100%);
+    color: #fff;
+    box-shadow: 0 12px 40px rgba(30, 18, 10, 0.3);
+    animation: badgeToastIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid rgba(200, 131, 42, 0.4);
+}
+
+.badge-toast.leaving {
+    animation: badgeToastOut 0.4s ease-in forwards;
+}
+
+.badge-toast .toast-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.badge-toast .toast-icon {
+    font-size: 1.5rem;
+}
+
+.badge-toast .toast-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #F59E0B;
+}
+
+.badge-toast .toast-body {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.4;
+}
+
+.badge-toast .toast-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 50rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-toast .toast-badge.rarity-common {
+    background: var(--rarity-common-bg);
+    color: var(--rarity-common);
+}
+
+.badge-toast .toast-badge.rarity-rare {
+    background: var(--rarity-rare-bg);
+    color: var(--rarity-rare);
+}
+
+.badge-toast .toast-badge.rarity-epic {
+    background: var(--rarity-epic-bg);
+    color: var(--rarity-epic);
+}
+
+.badge-toast .toast-badge.rarity-legendary {
+    background: var(--rarity-legendary-bg);
+    color: var(--rarity-legendary);
+}
+
+@keyframes badgeToastIn {
+    from {
+        opacity: 0;
+        transform: translateX(100px) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes badgeToastOut {
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px) scale(0.8);
+    }
+}
+
+/* =============================================
+   CONFETTI CANVAS
+   ============================================= */
+.confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+/* =============================================
+   XP GAIN ANIMATION
+   ============================================= */
+.xp-gain-flash {
+    animation: xpGainFlash 0.6s ease-out;
+}
+
+@keyframes xpGainFlash {
+    0% {
+        text-shadow: 0 0 10px rgba(200, 131, 42, 0.8);
+        transform: scale(1.1);
+    }
+    100% {
+        text-shadow: none;
+        transform: scale(1);
+    }
+}
+
+/* =============================================
+   LEVEL-UP GLOW
+   ============================================= */
+.level-up-glow {
+    animation: levelUpGlow 1s ease-in-out 3;
+}
+
+@keyframes levelUpGlow {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(200, 131, 42, 0);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(200, 131, 42, 0.6);
+    }
+}
+
+/* =============================================
+   BADGE GLOW FOR UNLOCKED BADGES
+   ============================================= */
+.badge-card.unlocked {
+    box-shadow: var(--shadow-glow-gold);
+    border-color: rgba(200, 131, 42, 0.3);
+}
+
+/* =============================================
+   RESPONSIVE BADGE CARDS
+   ============================================= */
+@media (max-width: 768px) {
+    .badge-icon {
+        font-size: 2.5rem;
+    }
+
+    .badge-toast {
+        min-width: auto;
+        max-width: 90vw;
+        right: 10px;
+        left: 10px;
+    }
+}

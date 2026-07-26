@@ -1,23 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
 {
+    [Authorize(Roles = "User")]
     public class MissionController : Controller
     {
         private readonly IMissionRepository missionRepo;
         private readonly IDestinationRepository destRepo;
         private readonly TouristContext _context;
+        private readonly IGamificationService _gamificationService;
 
-        public MissionController(IMissionRepository missionRepo, IDestinationRepository destRepo, TouristContext context)
+        public MissionController(IMissionRepository missionRepo, IDestinationRepository destRepo, TouristContext context, IGamificationService gamificationService)
         {
             this.missionRepo = missionRepo;
             this.destRepo = destRepo;
             _context = context;
+            _gamificationService = gamificationService;
         }
 
         public IActionResult Index(string? search, string? missionType)
@@ -159,6 +165,63 @@ namespace Tourist_Project_MVC.Controllers
             missionRepo.Delete(id);
             missionRepo.Save();
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> CompleteMission(int missionId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            var tourist = _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId);
+            if (tourist == null) return RedirectToAction("Index", "Explore");
+
+            var mission = missionRepo.GetById(missionId);
+            if (mission == null) return NotFound();
+
+            var existing = _context.UserMissions
+                .FirstOrDefault(um => um.TouristId == tourist.Id && um.MissionId == missionId);
+
+            if (existing != null && existing.Status == "Completed")
+            {
+                TempData["MissionMessage"] = "You have already completed this mission.";
+                TempData["MissionMessageType"] = "warning";
+                return RedirectToAction("Details", new { id = missionId });
+            }
+
+            if (existing == null)
+            {
+                existing = new UserMission
+                {
+                    TouristId = tourist.Id,
+                    MissionId = missionId,
+                    Status = "Completed",
+                    PointsEarned = mission.PointsReward,
+                    Completed_At = DateTime.Now
+                };
+                _context.UserMissions.Add(existing);
+            }
+            else
+            {
+                existing.Status = "Completed";
+                existing.PointsEarned = mission.PointsReward;
+                existing.Completed_At = DateTime.Now;
+                _context.UserMissions.Update(existing);
+            }
+
+            tourist.point_Balance += mission.PointsReward;
+            _context.Tourists.Update(tourist);
+
+            await _context.SaveChangesAsync();
+
+            var (xpAdded, newBadges) = await _gamificationService.AwardXPAsync(tourist.Id, 50, "mission-complete");
+
+            TempData["MissionMessage"] = $"Mission completed! +{mission.PointsReward} points, +{xpAdded} XP";
+            TempData["MissionMessageType"] = "success";
+            TempData["NewBadges"] = newBadges?.Select(b => b.Name).ToList();
+            TempData["NewBadgesIcon"] = newBadges?.Select(b => b.Icon).ToList();
+
+            return RedirectToAction("Details", new { id = missionId });
         }
     }
 }

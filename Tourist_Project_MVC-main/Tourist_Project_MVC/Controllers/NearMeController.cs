@@ -7,6 +7,7 @@ using NetTopologySuite.Geometries;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -21,17 +22,20 @@ namespace Tourist_Project_MVC.Controllers
         private readonly IDestinationRepository _destinationRepo;
         private readonly ITouristRepository _touristRepo;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IGamificationService _gamificationService;
 
         public NearMeController(
             TouristContext context,
             IDestinationRepository destinationRepo,
             ITouristRepository touristRepo,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IGamificationService gamificationService)
         {
             _context = context;
             _destinationRepo = destinationRepo;
             _touristRepo = touristRepo;
             _userManager = userManager;
+            _gamificationService = gamificationService;
         }
 
         [AllowAnonymous]
@@ -229,9 +233,24 @@ namespace Tourist_Project_MVC.Controllers
 
                 _context.Reviews.Add(review);
                 _context.SaveChanges();
+                _ = _gamificationService.AwardXPAsync(tourist.Id, 25, "review");
             }
 
             return RedirectToAction("Details", new { id });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Visit(int sponsorId)
+        {
+            var user = _userManager.GetUserAsync(User).Result;
+            if (user == null) return Forbid();
+
+            var tourist = _touristRepo.GetOrCreateByApplicationUser(user);
+            var (_, _) = await _gamificationService.AwardXPAsync(tourist.Id, 15, "visit");
+
+            return Json(new { success = true });
         }
 
         // Per-sponsor nearest-branch proximity result from the spatial query.

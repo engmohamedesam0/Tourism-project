@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -17,16 +18,18 @@ namespace Tourist_Project_MVC.Controllers
         private readonly TouristContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _env;
+        private readonly IGamificationService _gamificationService;
 
-        public TouristProfileController(ITouristRepository touristRepo, TouristContext context, UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
+        public TouristProfileController(ITouristRepository touristRepo, TouristContext context, UserManager<ApplicationUser> userManager, IWebHostEnvironment env, IGamificationService gamificationService)
         {
             _touristRepo = touristRepo;
             _context = context;
             _userManager = userManager;
             _env = env;
+            _gamificationService = gamificationService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var tourist = _context.Tourists
@@ -41,7 +44,17 @@ namespace Tourist_Project_MVC.Controllers
             var appUserDetails = _context.Users
                 .FirstOrDefault(u => u.Id == tourist.ApplicationUserId);
 
-            var level = ComputeLevel(tourist.point_Balance);
+            var progress = await _gamificationService.GetOrInitializeProgressAsync(tourist.Id);
+            var levelInfo = LevelDefinitions.GetLevel(progress.CurrentXP);
+            var nextLevelXP = LevelDefinitions.GetNextLevelXP(progress.CurrentXP);
+            var allBadges = await _gamificationService.GetBadgesForTouristAsync(tourist.Id);
+            var featuredBadge = allBadges.FirstOrDefault(ub => ub.IsFeatured)?.Badge;
+            var topBadges = allBadges
+                .Where(ub => ub.Badge != null)
+                .OrderByDescending(ub => ub.EarnedAt)
+                .Take(3)
+                .Select(ub => ub.Badge!)
+                .ToList();
 
             var vm = new TouristProfileVM
             {
@@ -56,8 +69,15 @@ namespace Tourist_Project_MVC.Controllers
                 Status = tourist.Status,
                 PointBalance = tourist.point_Balance,
                 ProfilePicturePath = appUserDetails?.ProfilePicturePath,
-                LevelLabel = level.label,
-                LevelIcon = level.icon,
+                LevelLabel = levelInfo.Name,
+                LevelIcon = levelInfo.Icon,
+                CurrentLevel = progress.CurrentLevel,
+                CurrentXP = progress.CurrentXP,
+                NextLevelXP = nextLevelXP,
+                TotalBadges = allBadges.Count,
+                FeaturedBadge = featuredBadge,
+                RecentBadges = topBadges,
+                LoginStreak = progress.LoginStreak,
                 PreferredLanguage = tourist.PreferredLanguage,
                 TravelInterests = tourist.TravelInterests,
                 NotifyByEmail = tourist.NotifyByEmail,
@@ -215,17 +235,6 @@ namespace Tourist_Project_MVC.Controllers
             TempData["ProfileMessage"] = "Profile updated successfully.";
             TempData["ProfileMessageType"] = "success";
             return RedirectToAction(nameof(Index));
-        }
-
-        private static (string label, string icon) ComputeLevel(int points)
-        {
-            return points switch
-            {
-                >= 5000 => ("Legendary Pharaoh", "👑"),
-                >= 2000 => ("Gold Pioneer", "🥇"),
-                >= 500 => ("Silver Voyager", "🥈"),
-                _ => ("Bronze Explorer", "🥉")
-            };
         }
     }
 }
