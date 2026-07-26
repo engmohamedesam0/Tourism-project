@@ -66,7 +66,7 @@ namespace Tourist_Project_MVC.Controllers
             return draft;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var tourist = ResolveTourist();
 
@@ -80,6 +80,18 @@ namespace Tourist_Project_MVC.Controllers
 
             ViewBag.Tourist = tourist;
             ViewBag.MyTrips = myTrips;
+
+            if (tourist != null)
+            {
+                var progress = await _gamificationService.GetOrInitializeProgressAsync(tourist.Id);
+                var (level, name, icon) = LevelDefinitions.GetLevel(progress.CurrentXP);
+                var nextLevelXP = LevelDefinitions.GetNextLevelXP(progress.CurrentXP);
+                ViewBag.LevelIcon = icon;
+                ViewBag.LevelName = name;
+                ViewBag.CurrentXP = progress.CurrentXP;
+                ViewBag.NextLevelXP = nextLevelXP;
+                ViewBag.ProgressPercent = nextLevelXP > 0 ? (double)progress.CurrentXP / nextLevelXP * 100 : 100;
+            }
 
             // Build the picker from all available destinations.
             var vm = new TripBuilderVM

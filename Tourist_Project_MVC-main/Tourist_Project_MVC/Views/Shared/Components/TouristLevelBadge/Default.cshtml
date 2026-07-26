@@ -1,0 +1,8 @@
+@model dynamic
+@{
+    var name = ViewData["LevelName"] as string ?? "";
+    var icon = ViewData["LevelIcon"] as string ?? "";
+}
+<span class="tourist-level-badge">
+    <span>@icon</span> <span>@name</span>
+</span>

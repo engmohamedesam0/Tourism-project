@@ -10,6 +10,25 @@
 <!-- WIDE MODERN CONTAINER FOR FULL-SCREEN ELEGANCE -->
 <div class="trip-page-container px-3 px-md-4 px-xl-5 py-4" style="max-width: 1600px; margin: 0 auto;">
 
+    @if (ViewBag.LevelIcon != null)
+    {
+        <div class="trip-progress-strip mb-3 p-3 rounded-3 d-flex align-items-center gap-3"
+             style="background: rgba(200,131,42,0.06); border: 1px solid rgba(200,131,42,0.15);">
+            <span class="fs-4">@ViewBag.LevelIcon</span>
+            <div class="flex-grow-1">
+                <span class="fw-bold text-dark" style="font-family:'Cinzel',serif;">@ViewBag.LevelName</span>
+                <div class="progress mt-1" style="height: 8px;">
+                    <div class="progress-bar" role="progressbar"
+                         style="width: @ViewBag.ProgressPercent%; background: var(--egy-primary);"
+                         aria-valuenow="@ViewBag.CurrentXP" aria-valuemin="0" aria-valuemax="@ViewBag.NextLevelXP">
+                    </div>
+                </div>
+            </div>
+            <span class="small text-muted d-none d-sm-inline">@ViewBag.CurrentXP / @ViewBag.NextLevelXP XP</span>
+            <span class="small fw-bold" style="color: var(--egy-primary);">@ViewBag.ProgressPercent%</span>
+        </div>
+    }
+
     <!-- MODERN HERO BANNER -->
     <div class="trip-hero-card mb-4 p-4 p-md-5 rounded-4 shadow-sm border-0 position-relative overflow-hidden" style="background: linear-gradient(135deg, #1E120A 0%, #2D1A0E 50%, #3B2314 100%); color: #fff;">
         <div class="position-relative z-2">

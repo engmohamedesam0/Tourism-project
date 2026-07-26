@@ -85,6 +85,8 @@
                         <th>@Localizer["TouristAdmin_Missions"].Value</th>
                         <th>@Localizer["TouristAdmin_Trips"].Value</th>
                         <th>@Localizer["TouristAdmin_Status"].Value</th>
+                        <th>@Localizer["TouristAdmin_Level"].Value</th>
+                        <th>@Localizer["TouristAdmin_XP"].Value</th>
                         <th class="pe-4 text-end">@Localizer["TouristAdmin_Actions"].Value</th>
                     </tr>
                 </thead>
@@ -140,6 +142,26 @@
                             </td>
                             <td>
                                 <span class="badge-status-custom @statusClass">@item.Status</span>
+                            </td>
+                            <td>
+                                @{
+                                    var progress = (ViewBag.ProgressDict as Dictionary<int, Tourist_Project_MVC.Models.UserProgress>);
+                                    var touristProgress = progress != null && progress.ContainsKey(item.Id) ? progress[item.Id] : null;
+                                }
+                                @if (touristProgress != null)
+                                {
+                                    var li = Tourist_Project_MVC.Models.LevelDefinitions.GetLevel(touristProgress.CurrentXP);
+                                    <span class="badge" style="background: rgba(200,131,42,0.12); color: var(--egy-dark); border: 1px solid rgba(200,131,42,0.28); font-size: 0.75rem;">
+                                        @li.Icon @li.Name
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">—</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="small fw-semibold">@(touristProgress?.CurrentXP.ToString("N0") ?? "0")</span>
                             </td>
                             <td class="pe-4 text-end">
                                 @if (User.Identity.IsAuthenticated)

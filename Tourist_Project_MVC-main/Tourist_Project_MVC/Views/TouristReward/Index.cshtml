@@ -32,6 +32,33 @@
         </div>
     </div>
 
+    @if (Model.Progress != null)
+    {
+        var nextLevelXP = LevelDefinitions.GetNextLevelXP(Model.Progress.CurrentXP);
+        var progressPercent = nextLevelXP > 0 ? (double)Model.Progress.CurrentXP / nextLevelXP * 100 : 100;
+        <div class="card border-0 shadow-sm rounded-4 mb-4 p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <span class="fs-3">@LevelDefinitions.GetLevel(Model.Progress.CurrentXP).Icon</span>
+                <div>
+                    <div class="fw-bold" style="font-family:'Cinzel',serif; color:var(--egy-dark);">
+                        Level @Model.Progress.CurrentLevel — @LevelDefinitions.GetLevel(Model.Progress.CurrentXP).Name
+                    </div>
+                    <div class="small text-muted">@Model.Progress.CurrentXP / @nextLevelXP XP to next level <i class="bi bi-arrow-up-right ms-1 text-gold"></i></div>
+                    <span class="ms-auto fw-bold text-gold">@progressPercent.ToString("F0")%</span>
+                </div>
+            </div>
+            <div class="progress mb-3" style="height: 12px;">
+                <div class="progress-bar" role="progressbar"
+                     style="width: @progressPercent%; background: var(--egy-primary);"
+                     aria-valuenow="@Model.Progress.CurrentXP" aria-valuemin="0" aria-valuemax="@nextLevelXP">
+                </div>
+            </div>
+            <div class="d-flex flex-wrap gap-3 align-items-center">
+                <span class="small text-muted"><i class="bi bi-award-fill me-1" style="color:var(--egy-accent);"></i> @Model.MyBadges.Count badge@(Model.MyBadges.Count != 1 ? "s" : "") earned</span>
+            </div>
+        </div>
+    }
+
     @if (!string.IsNullOrEmpty(TempData["RewardMessage"] as string))
     {
         var msgType = TempData["RewardMessageType"] as string ?? "info";
@@ -223,30 +250,6 @@
         <h3 class="section-title mb-4" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
             <i class="bi bi-trophy me-2 text-gold"></i> Achievements & Badges
         </h3>
-
-        @if (Model.Progress != null)
-        {
-            <div class="card border-0 shadow-sm rounded-4 mb-4 p-4">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <span class="fs-3">@LevelDefinitions.GetLevel(Model.Progress.CurrentXP).Icon</span>
-                    <div>
-                        <div class="fw-bold" style="font-family:'Cinzel',serif; color:var(--egy-dark);">
-                            Level @Model.Progress.CurrentLevel — @LevelDefinitions.GetLevel(Model.Progress.CurrentXP).Name
-                        </div>
-                        <div class="small text-muted">@Model.Progress.CurrentXP / @LevelDefinitions.GetNextLevelXP(Model.Progress.CurrentXP) XP to next level</div>
-                    </div>
-                </div>
-                <div class="progress mb-3" style="height: 12px;">
-                    <div class="progress-bar" role="progressbar"
-                         style="width: @(LevelDefinitions.GetNextLevelXP(Model.Progress.CurrentXP) > Model.Progress.CurrentXP ? (double)Model.Progress.CurrentXP / LevelDefinitions.GetNextLevelXP(Model.Progress.CurrentXP) * 100 : 100)%; background: var(--egy-primary);"
-                         aria-valuenow="@Model.Progress.CurrentXP" aria-valuemin="0" aria-valuemax="@LevelDefinitions.GetNextLevelXP(Model.Progress.CurrentXP)">
-                    </div>
-                </div>
-                <div class="d-flex flex-wrap gap-3 align-items-center">
-                    <span class="small text-muted"><i class="bi bi-award-fill me-1" style="color:var(--egy-accent);"></i> @Model.MyBadges.Count badge@(Model.MyBadges.Count != 1 ? "s" : "") earned</span>
-                </div>
-            </div>
-        }
 
         <!-- Badge Filter -->
         <div class="d-flex flex-wrap gap-2 mb-4">

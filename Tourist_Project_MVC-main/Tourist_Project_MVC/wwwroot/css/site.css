@@ -160,6 +160,121 @@ h6,
     font-size: 0.78rem;
 }
 
+.tourist-level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(200, 131, 42, 0.12);
+    color: var(--egy-dark);
+    border: 1px solid rgba(200, 131, 42, 0.28);
+    padding: 0.35rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* Reusable premium classes extracted from About page */
+.section-tag {
+    display: inline-block;
+    color: var(--egy-primary);
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.about-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--egy-dark);
+}
+
+.about-text-lead {
+    font-size: 1.05rem;
+    color: #555555;
+    line-height: 1.8;
+}
+
+.title-accent-line {
+    width: 60px;
+    height: 3px;
+    background: var(--egy-primary);
+    border-radius: 999px;
+}
+
+.value-card-premium {
+    background: #ffffff;
+    border: 1px solid rgba(30, 18, 10, 0.08);
+    border-radius: 20px;
+    padding: 36px 28px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+    transition: all 0.35s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.value-card-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--egy-primary), var(--egy-accent));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.value-card-premium:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(30, 18, 10, 0.12);
+    border-color: rgba(200, 131, 42, 0.3);
+}
+
+.value-card-premium:hover::before {
+    opacity: 1;
+}
+
+.value-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(200, 131, 42, 0.15) 0%, rgba(232, 160, 69, 0.25) 100%);
+    color: var(--egy-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    transition: transform 0.3s ease;
+}
+
+.value-card-premium:hover .value-icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+    background: var(--egy-primary);
+    color: #ffffff;
+}
+
+.value-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: var(--egy-dark);
+}
+
+.value-text {
+    font-size: 0.95rem;
+    color: #666666;
+    line-height: 1.6;
+}
+
+.story-content-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid rgba(200, 131, 42, 0.15);
+    box-shadow: 0 10px 30px rgba(30, 18, 10, 0.05);
+}
+
 .utility-link {
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;

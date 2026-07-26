@@ -75,6 +75,49 @@
                     </div>
                 </div>
 
+                @if (ViewBag.DetailProgress is Tourist_Project_MVC.Models.UserProgress progress)
+                {
+                    var nextLevelXP = Tourist_Project_MVC.Models.LevelDefinitions.GetNextLevelXP(progress.CurrentXP);
+                    var progressPercent = nextLevelXP > 0 ? (double)progress.CurrentXP / nextLevelXP * 100 : 100;
+                    var earnedBadges = (ViewBag.DetailBadges as List<Tourist_Project_MVC.Models.UserBadge>) ?? new();
+                    var featured = earnedBadges.FirstOrDefault(ub => ub.IsFeatured)?.Badge;
+                    var levelInfo = Tourist_Project_MVC.Models.LevelDefinitions.GetLevel(progress.CurrentXP);
+                    <div class="card border-0 shadow-sm rounded-4 mb-5 p-4" style="background: linear-gradient(135deg, #1E120A 0%, #2D1A0E 50%, #3B2314 100%); color: #fff;">
+                        <div class="d-flex align-items-center gap-4 flex-wrap">
+                            <div class="text-center">
+                                <span class="fs-1">@levelInfo.Icon</span>
+                                <div class="fw-bold mt-1" style="font-family:'Cinzel',serif; color: #F59E0B;">@levelInfo.Name</div>
+                                <div class="small text-white-50">Level @progress.CurrentLevel</div>
+                            </div>
+                            <div class="flex-grow-1" style="min-width: 200px;">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="small text-white-50">XP Progress</span>
+                                    <span class="small fw-bold" style="color: #F59E0B;">@progress.CurrentXP / @nextLevelXP (@progressPercent.ToString("F0")%)</span>
+                                </div>
+                                <div class="progress" style="height: 10px; background: rgba(255,255,255,0.15);">
+                                    <div class="progress-bar" role="progressbar"
+                                         style="width: @progressPercent%; background: var(--egy-primary);"
+                                         aria-valuenow="@progress.CurrentXP" aria-valuemin="0" aria-valuemax="@nextLevelXP">
+                                    </div>
+                                </div>
+                                <div class="small text-white-50 mt-1">
+                                    @(nextLevelXP - progress.CurrentXP) XP remaining to next level
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                @if (featured != null)
+                                {
+                                    <div class="fs-2">@featured.Icon</div>
+                                    <div class="small text-white-50">@featured.Name</div>
+                                }
+                                <div class="mt-2 small fw-bold" style="color: #F59E0B;">
+                                    <i class="bi bi-award-fill me-1"></i> @earnedBadges.Count Badge@(earnedBadges.Count != 1 ? "s" : "")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
                 <!-- Personal Information -->
                 <div class="details-section mb-5">
                     <h5 class="section-title mb-4 font-cinzel text-dark-egy">

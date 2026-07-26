@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -12,11 +15,13 @@ namespace Tourist_Project_MVC.Controllers
     {
         private readonly ITouristRepository _repo;
         private readonly TouristContext _context;
+        private readonly IGamificationService _gamificationService;
 
-        public TouristController(ITouristRepository repo, TouristContext context)
+        public TouristController(ITouristRepository repo, TouristContext context, IGamificationService gamificationService)
         {
             _repo = repo;
             _context = context;
+            _gamificationService = gamificationService;
         }
 
         public IActionResult Index(string? search, string? nationality)
@@ -61,13 +66,26 @@ namespace Tourist_Project_MVC.Controllers
                 new StatBoxItem { IconClass = "bi-graph-up", Color = "purple", Value = pctActive.ToString("N0") + "%", Label = "% Active" }
             };
 
-            return View(all);
+            var touristList = all.ToList();
+            var touristIds = touristList.Select(t => t.Id).ToList();
+            var progressDict = _context.UserProgress
+                .Where(up => touristIds.Contains(up.TouristId))
+                .ToDictionary(up => up.TouristId, up => up);
+            ViewBag.ProgressDict = progressDict;
+
+            return View(touristList);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
             var tourist = _repo.GetByIdWithDetails(id);
             if (tourist == null) return NotFound();
+
+            var progress = await _gamificationService.GetOrInitializeProgressAsync(tourist.Id);
+            var badges = await _gamificationService.GetBadgesForTouristAsync(tourist.Id);
+            ViewBag.DetailProgress = progress;
+            ViewBag.DetailBadges = badges;
+
             return View(tourist);
         }
 

@@ -340,6 +340,7 @@
                     <span class="role-badge">
                         <i class="bi bi-patch-check-fill me-1"></i>@(User.IsInRole("Admin") ? Localizer["Role_Admin"].Value : (User.IsInRole("Sponsor") ? Localizer["Role_Sponsor"].Value : (User.Identity.IsAuthenticated ? Localizer["Role_Tourist"].Value : Localizer["Role_Guest"].Value)))
                     </span>
+                    @await Component.InvokeAsync("TouristLevelBadge")
                 </div>
 
                 <div class="utility-right d-flex align-items-center gap-2 flex-wrap justify-content-end">
@@ -496,27 +497,10 @@
                                             <i class="bi bi-star-fill me-2"></i> @Localizer["Nav_AllRewards"].Value
                                         </a>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Sponsor" asp-action="Index">
-                                            <i class="bi bi-building me-2"></i> @Localizer["Nav_Sponsors"].Value
-                                        </a>
-                                    </li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Role" asp-action="ManageAccounts">
                                             <i class="bi bi-person-gear me-2"></i> @Localizer["Nav_Accounts"].Value
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="AdminSupport" asp-action="Index">
-                                            <i class="bi bi-headset me-2"></i> @Localizer["Nav_SupportInbox"].Value
-                                            @await Component.InvokeAsync("AdminNavBadges", new { badge = "support" })
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="SponsorApproval" asp-action="Index">
-                                            <i class="bi bi-bell-fill me-2"></i> @Localizer["Nav_Approvals"].Value
-                                            @await Component.InvokeAsync("AdminNavBadges", new { badge = "approvals" })
                                         </a>
                                     </li>
                                 </ul>
@@ -526,6 +510,33 @@
                                 <a class="nav-link" asp-controller="NearMe" asp-action="Index">
                                     <i class="bi bi-geo-fill"></i> @Localizer["Nav_NearMe"].Value
                                 </a>
+                            </li>
+                            <!-- Support Inbox standalone -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="AdminSupport" asp-action="Index">
+                                    <i class="bi bi-headset me-1"></i> @Localizer["Nav_SupportInbox"].Value
+                                    @await Component.InvokeAsync("AdminNavBadges", new { badge = "support" })
+                                </a>
+                            </li>
+                            <!-- Sponsors dropdown with Approvals submenu -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle position-relative" href="#" id="sponsorDropdown"
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-building me-1"></i> @Localizer["Nav_Sponsors"].Value
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="sponsorDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Sponsor" asp-action="Index">
+                                            <i class="bi bi-building me-2"></i> @Localizer["Nav_Sponsors"].Value
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="SponsorApproval" asp-action="Index">
+                                            <i class="bi bi-bell-fill me-2"></i> @Localizer["Nav_Approvals"].Value
+                                            @await Component.InvokeAsync("AdminNavBadges", new { badge = "approvals" })
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         }
                         else if (User.IsInRole("Sponsor"))
