@@ -63,7 +63,6 @@ namespace Tourist_Project_MVC
             builder.Services.AddScoped<ISiteReviewRepository, SiteReviewRepository>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<ISupportTicketService, SupportTicketService>();
-            builder.Services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
             builder.Services.AddDbContext<TouristContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("CS"),
                     o => o.UseNetTopologySuite()));
@@ -71,8 +70,12 @@ namespace Tourist_Project_MVC
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 12;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit = false;
                 options.User.RequireUniqueEmail = true;
-            }).AddEntityFrameworkStores<TouristContext>();
+            }).AddEntityFrameworkStores<TouristContext>()
+            .AddDefaultTokenProviders();
 
             // JWT bearer scheme for the React Native mobile app (POST /api/auth/login
             // issues the token). This is ADDITIVE — AddIdentity above already set the
@@ -95,12 +98,12 @@ namespace Tourist_Project_MVC
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidateAudience = true,
-                        ValidAudience = builder.Configuration["Jwt:Audience"],
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
                         ValidateLifetime = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
                         ClockSkew = TimeSpan.Zero
                     };
                 });
@@ -120,7 +123,7 @@ namespace Tourist_Project_MVC
             app.UseRouting();
 
             app.UseRequestLocalization();
-
+            app.UseAuthentication();  // ← add this, before UseAuthorization
             app.UseAuthorization();
 
             app.MapStaticAssets();
