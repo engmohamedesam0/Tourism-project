@@ -239,6 +239,14 @@ h6,
     font-size: 1.4rem;
 }
 
+.logo-o {
+    width: 1.15em;
+    height: 1.15em;
+    object-fit: contain;
+    margin: 0 0.03em;
+    transform: translateY(-2px);
+}
+
 #mainNav .nav-link {
     color: rgba(255, 255, 255, 0.8) !important;
     font-size: 0.85rem;

@@ -431,7 +431,7 @@
                 <!-- Brand -->
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index">
                     <img src="~/assets/img/scarab.png" alt="EGYXPLORE Logo" class="brand-icon" />
-                    EGY<span class="brand-gold">XPLORE</span>
+                    <partial name="_EgyxploreWordmark" />
                 </a>
 
                 <!-- Toggler -->
@@ -871,7 +871,7 @@
             </div>
             <hr class="footer-divider" />
             <div class="text-center">
-                <div class="footer-logo mb-2">🏺 EGYXPLORE</div>
+                <div class="footer-logo mb-2">🏺 <partial name="_EgyxploreWordmark" /></div>
                 <p class="mb-0 small text-muted">
                     &copy; @DateTime.Now.Year — @Localizer["Footer_Copyright"].Value
                 </p>

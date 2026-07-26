@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Tourist_Project_MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialPostgres : Migration
+    public partial class InitialUpdate1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -60,6 +60,23 @@ namespace Tourist_Project_MVC.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ChatSessions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TouristId = table.Column<int>(type: "integer", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    MessagesJson = table.Column<string>(type: "text", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatSessions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Destinations",
                 columns: table => new
                 {
@@ -71,6 +88,7 @@ namespace Tourist_Project_MVC.Migrations
                     Category = table.Column<string>(type: "text", nullable: true),
                     Location = table.Column<Point>(type: "geometry", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    PhotoUrls = table.Column<string>(type: "text", nullable: true),
                     TicketPrice = table.Column<decimal>(type: "numeric(10,2)", nullable: true),
                     Rating = table.Column<decimal>(type: "numeric(18,2)", nullable: true),
                     Tags = table.Column<string>(type: "text", nullable: true),
@@ -418,7 +436,7 @@ namespace Tourist_Project_MVC.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SponsorId = table.Column<int>(type: "integer", nullable: false),
+                    SponsorId = table.Column<int>(type: "integer", nullable: true),
                     TouristId = table.Column<int>(type: "integer", nullable: true),
                     Subject = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
@@ -428,7 +446,9 @@ namespace Tourist_Project_MVC.Migrations
                     CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     AdminResponse = table.Column<string>(type: "text", nullable: true),
                     RespondedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    RespondedByAdminId = table.Column<string>(type: "text", nullable: true)
+                    RespondedByAdminId = table.Column<string>(type: "text", nullable: true),
+                    SponsorResponse = table.Column<string>(type: "text", nullable: true),
+                    SponsorRespondedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -438,7 +458,7 @@ namespace Tourist_Project_MVC.Migrations
                         column: x => x.SponsorId,
                         principalTable: "Sponsors",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_SupportTickets_Tourists_TouristId",
                         column: x => x.TouristId,
@@ -846,6 +866,9 @@ namespace Tourist_Project_MVC.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "ChatSessions");
 
             migrationBuilder.DropTable(
                 name: "MenuItems");

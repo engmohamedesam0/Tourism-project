@@ -13,8 +13,8 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    [Migration("20260722101318_MakeSupportTicketSponsorIdNullable")]
-    partial class MakeSupportTicketSponsorIdNullable
+    [Migration("20260726121659_InitialUpdate1")]
+    partial class InitialUpdate1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -275,6 +275,36 @@ namespace Tourist_Project_MVC.Migrations
                     b.ToTable("Branches");
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.ChatSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("MessagesJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TouristId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChatSessions");
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.Destination", b =>
                 {
                     b.Property<int>("Id")
@@ -303,6 +333,9 @@ namespace Tourist_Project_MVC.Migrations
 
                     b.Property<DateTime?>("OpeningHours")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("PhotoUrls")
+                        .HasColumnType("text");
 
                     b.Property<decimal?>("Rating")
                         .HasColumnType("decimal(18, 2)");
