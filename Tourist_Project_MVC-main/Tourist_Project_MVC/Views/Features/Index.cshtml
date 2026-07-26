@@ -1,268 +1,987 @@
 @{
     ViewData["Title"] = "Features";
+    ViewData["FullWidth"] = true;
 }
 
-<div class="features-page inner-page-wrapper">
-    <div class="container px-4 px-lg-5">
-
-        <!-- HERO / TOP CTA -->
-        <section class="text-center py-5">
-            <h1 class="display-4 cinzel-title">@Localizer["Features_Title"].Value</h1>
-            <p class="lead text-muted">
-                @Localizer["Features_Subtitle"].Value
-            </p>
-            <div class="store-badges mt-4 d-flex justify-content-center gap-3 flex-wrap">
-                <!-- TODO: real store listings -->
-                <a href="#" class="store-badge">
-                    <i class="bi bi-apple me-2"></i> App Store
-                </a>
-                <a href="#" class="store-badge">
-                    <i class="bi bi-google-play me-2"></i> Google Play
-                </a>
+<!-- ============================================================
+     HERO SECTION (INSPIRED BY ABOUT PAGE HERO)
+     ============================================================ -->
+<div class="features-hero">
+    <div class="features-hero-bg"></div>
+    <div class="features-hero-overlay"></div>
+    
+    <div class="container position-relative py-5 z-2">
+        <div class="row align-items-center g-5">
+            <!-- Left Text Content -->
+            <div class="col-lg-6 text-center text-lg-start">
+                <span class="features-badge mb-3 animate-fade-down">
+                    <i class="bi bi-cpu-fill me-2"></i>EGYXPLORE INNOVATION
+                </span>
+                
+                <h1 class="features-hero-title mb-4 animate-fade-up">
+                    Discover Egypt <span class="text-gold-gradient">Smarter</span>
+                </h1>
+                
+                <div class="features-hero-lead-wrapper p-4 mb-4 animate-fade-up delay-1">
+                    <p class="features-hero-lead mb-0">
+                        Experience the ancient wonders of Egypt through cutting-edge technology. From AI-powered personalized itineraries to location-aware audio guides and photorealistic AR reconstructions.
+                    </p>
+                </div>
+                
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-3 animate-fade-up delay-2">
+                    <a href="#features-grid" class="btn btn-egy-hero primary-hero-btn">
+                        <i class="bi bi-compass-fill me-2"></i> Explore Features
+                    </a>
+                    <button type="button" id="scrollDemoBtn" class="btn btn-egy-hero secondary-hero-btn">
+                        <i class="bi bi-play-circle-fill me-2"></i> Watch Demo
+                    </button>
+                </div>
             </div>
-        </section>
 
-        <!-- FEATURE SECTIONS -->
-        <section class="features-sections">
-
-            <!-- 1. Indoor Maps -->
-            <div class="row gx-0 mb-5 align-items-center feature-row">
-                <div class="col-lg-6">
-                    <div class="feature-media">
-                        <video class="feature-video" autoplay loop muted playsinline
-                               poster="~/assets/img/demo-image-01.jpg">
-                            <source src="" data-poster="~/assets/img/demo-image-01.jpg" />
+            <!-- Right Hero Video (Smartify Products Video) -->
+            <div class="col-lg-6">
+                <div class="hero-video-card shadow-lg animate-fade-up delay-1" id="heroVideoCard">
+                    <div class="hero-video-wrapper">
+                        <video class="hero-video-player" autoplay loop muted playsinline preload="auto">
+                            <source src="@Url.Content("~/assets/img/Smartify - Products.mp4")" type="video/mp4" />
+                            Your browser does not support HTML5 video.
                         </video>
+                        <div class="hero-video-overlay"></div>
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="featured-text text-center text-lg-start ps-lg-4">
-                        <h3><i class="bi bi-map-fill me-2 text-primary"></i> @Localizer["Features_Feature1_Title"].Value</h3>
-                        <p class="text-black-50">
-                            @Localizer["Features_Feature1_Text"].Value
-                        </p>
+                    <div class="hero-video-badge">
+                        <i class="bi bi-play-fill text-warning me-1"></i>
+                        <span>Smartify Product Demo</span>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- 2. Navigation Mode -->
-            <div class="row gx-0 mb-5 align-items-center feature-row">
-                <div class="col-lg-6 order-lg-last">
-                    <div class="feature-media">
-                        <video class="feature-video" autoplay loop muted playsinline
-                               poster="~/assets/img/demo-image-02.jpg">
-                            <source src="" data-poster="~/assets/img/demo-image-02.jpg" />
-                        </video>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="featured-text text-center text-lg-end pe-lg-4">
-                        <h3><i class="bi bi-signpost-split-fill me-2 text-primary"></i> @Localizer["Features_Feature2_Title"].Value</h3>
-                        <p class="text-black-50">
-                            @Localizer["Features_Feature2_Text"].Value
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. Fun Games -->
-            <div class="row gx-0 mb-5 align-items-center feature-row">
-                <div class="col-lg-6">
-                    <div class="feature-media">
-                        <video class="feature-video" autoplay loop muted playsinline
-                               poster="~/assets/img/bg-masthead.jpg">
-                            <source src="" data-poster="~/assets/img/bg-masthead.jpg" />
-                        </video>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="featured-text text-center text-lg-start ps-lg-4">
-                        <h3><i class="bi bi-controller me-2 text-primary"></i> @Localizer["Features_Feature3_Title"].Value</h3>
-                        <p class="text-black-50">
-                            @Localizer["Features_Feature3_Text"].Value
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4. Camera Scanner -->
-            <div class="row gx-0 mb-5 align-items-center feature-row">
-                <div class="col-lg-6 order-lg-last">
-                    <div class="feature-media">
-                        <video class="feature-video" autoplay loop muted playsinline
-                               poster="~/assets/img/ipad.png">
-                            <source src="" data-poster="~/assets/img/ipad.png" />
-                        </video>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="featured-text text-center text-lg-end pe-lg-4">
-                        <h3><i class="bi bi-camera-fill me-2 text-primary"></i> @Localizer["Features_Feature4_Title"].Value</h3>
-                        <p class="text-black-50">
-                            @Localizer["Features_Feature4_Text"].Value
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 5. AI Assistant -->
-            <div class="row gx-0 mb-5 align-items-center feature-row">
-                <div class="col-lg-6">
-                    <div class="feature-media">
-                        <video class="feature-video" autoplay loop muted playsinline
-                               poster="~/assets/img/demo-image-01.jpg">
-                            <source src="" data-poster="~/assets/img/demo-image-01.jpg" />
-                        </video>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="featured-text text-center text-lg-start ps-lg-4">
-                        <h3><i class="bi bi-stars me-2 text-primary"></i> @Localizer["Features_Feature5_Title"].Value</h3>
-                        <p class="text-black-50">
-                            @Localizer["Features_Feature5_Text"].Value
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 6. P2P Translation -->
-            <div class="row gx-0 mb-5 align-items-center feature-row">
-                <div class="col-lg-6 order-lg-last">
-                    <div class="feature-media">
-                        <video class="feature-video" autoplay loop muted playsinline
-                               poster="~/assets/img/demo-image-02.jpg">
-                            <source src="" data-poster="~/assets/img/demo-image-02.jpg" />
-                        </video>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="featured-text text-center text-lg-end pe-lg-4">
-                        <h3><i class="bi bi-translate me-2 text-primary"></i> @Localizer["Features_Feature6_Title"].Value</h3>
-                        <p class="text-black-50">
-                            @Localizer["Features_Feature6_Text"].Value
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 7. Rewarding System -->
-            <div class="row gx-0 mb-5 align-items-center feature-row">
-                <div class="col-lg-6">
-                    <div class="feature-media">
-                        <video class="feature-video" autoplay loop muted playsinline
-                               poster="~/assets/img/bg-masthead.jpg">
-                            <source src="" data-poster="~/assets/img/bg-masthead.jpg" />
-                        </video>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="featured-text text-center text-lg-start ps-lg-4">
-                        <h3><i class="bi bi-gift-fill me-2 text-primary"></i> @Localizer["Features_Feature7_Title"].Value</h3>
-                        <p class="text-black-50">
-                            @Localizer["Features_Feature7_Text"].Value
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- BOTTOM CTA -->
-        <section class="text-center py-5 border-top">
-            <h2 class="cinzel-title mb-3">@Localizer["Features_BottomTitle"].Value</h2>
-            <p class="text-muted mb-4">@Localizer["Features_BottomText"].Value</p>
-            <div class="store-badges d-flex justify-content-center gap-3 flex-wrap">
-                <!-- TODO: real store listings -->
-                <a href="#" class="store-badge">
-                    <i class="bi bi-apple me-2"></i> App Store
-                </a>
-                <a href="#" class="store-badge">
-                    <i class="bi bi-google-play me-2"></i> Google Play
-                </a>
-            </div>
-        </section>
-
+    <!-- STYLISH BOTTOM DIVIDER -->
+    <div class="hero-shape-divider">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 C480,100 960,100 1440,0 L1440,120 L0,120 Z" fill="#F8FAFC"></path>
+        </svg>
+        <a href="#features-grid" class="divider-arrow-notch" aria-label="Scroll to features">
+            <i class="bi bi-chevron-down"></i>
+        </a>
     </div>
 </div>
 
+<!-- ============================================================
+     STICKY QUICK CATEGORY BAR
+     ============================================================ -->
+<div class="sticky-nav-wrapper">
+    <div class="container">
+        <div class="quick-nav-bar shadow-sm">
+            <a href="#feature-ai-planner" class="quick-nav-item active">
+                <i class="bi bi-cpu"></i> <span>AI Trip Planner</span>
+            </a>
+            <a href="#feature-gis-maps" class="quick-nav-item">
+                <i class="bi bi-map-fill"></i> <span>GIS Maps</span>
+            </a>
+            <a href="#feature-audio-guide" class="quick-nav-item">
+                <i class="bi bi-headphones"></i> <span>Audio Guide</span>
+            </a>
+            <a href="#feature-ar-experience" class="quick-nav-item">
+                <i class="bi bi-bounding-box-circles"></i> <span>AR Experience</span>
+            </a>
+            <a href="#feature-offline-nav" class="quick-nav-item">
+                <i class="bi bi-wifi-off"></i> <span>Offline Mode</span>
+            </a>
+            <a href="#feature-recommendations" class="quick-nav-item">
+                <i class="bi bi-stars"></i> <span>Recommendations</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     MAIN FEATURES CONTENT CONTAINER
+     ============================================================ -->
+<div class="container py-5" id="features-grid">
+
+    <!-- SECTION TITLE -->
+    <div class="text-center mb-5 pb-3">
+        <span class="section-tag mb-2"><i class="bi bi-stars me-2"></i>PLATFORM CAPABILITIES</span>
+        <h2 class="about-section-title text-center mx-auto mb-3" style="max-width: 650px;">
+            Engineered for the Modern Traveler
+        </h2>
+        <div class="title-accent-line mx-auto"></div>
+    </div>
+
+    <!-- FEATURE 1: AI TRIP PLANNER -->
+    <section id="feature-ai-planner" class="feature-card-section mb-5">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <div class="feature-image-card shadow-lg">
+                    <div class="feature-img-wrapper">
+                        <img src="@Url.Content("~/assets/img/egypt_feature1.jpg")" alt="AI Trip Planner" class="img-fluid feature-img" />
+                        <div class="feature-img-overlay"></div>
+                    </div>
+                    <div class="feature-stat-badge">
+                        <i class="bi bi-robot text-warning me-2 fs-5"></i>
+                        <div>
+                            <div class="stat-number">AI Powered</div>
+                            <div class="stat-label">Tailored Itineraries</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-content-card p-4 p-md-5">
+                    <div class="feature-icon-badge mb-3">
+                        <i class="bi bi-cpu-fill"></i>
+                    </div>
+                    <span class="section-tag mb-2">SMART ITINERARY GENERATOR</span>
+                    <h3 class="about-section-title mb-3">AI Trip Planner</h3>
+                    <p class="about-text-lead mb-4">
+                        Our intelligent AI engine analyzes your travel preferences, budget, duration, and interests to generate fully customized, day-by-day itineraries across Egypt in seconds.
+                    </p>
+                    
+                    <div class="feature-highlights-list mb-4">
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Customized itineraries generated in under 30 seconds</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Smart budget & duration optimization algorithms</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Dynamic route adjustments based on live crowd data</span>
+                        </div>
+                    </div>
+
+                    <a href="@Url.Action("Index", "TripPlan")" class="btn btn-egy-gold rounded-pill px-4 py-2 shadow-sm">
+                        <i class="bi bi-magic me-2"></i> Plan My Trip
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURE 2: INTERACTIVE GIS MAPS (ALTERNATING LAYOUT) -->
+    <section id="feature-gis-maps" class="feature-card-section mb-5">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6 order-lg-last">
+                <div class="feature-image-card shadow-lg">
+                    <div class="feature-img-wrapper">
+                        <img src="@Url.Content("~/assets/img/egypt_feature2.jpg")" alt="Interactive GIS Maps" class="img-fluid feature-img" />
+                        <div class="feature-img-overlay"></div>
+                    </div>
+                    <div class="feature-stat-badge">
+                        <i class="bi bi-geo-alt-fill text-warning me-2 fs-5"></i>
+                        <div>
+                            <div class="stat-number">Live GIS</div>
+                            <div class="stat-label">Spatial Navigation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-content-card p-4 p-md-5">
+                    <div class="feature-icon-badge mb-3">
+                        <i class="bi bi-map-fill"></i>
+                    </div>
+                    <span class="section-tag mb-2">PRECISION SPATIAL MAPPING</span>
+                    <h3 class="about-section-title mb-3">Interactive GIS Maps</h3>
+                    <p class="about-text-lead mb-4">
+                        Explore high-definition interactive GIS maps featuring real-time layers for historical sites, verified hotels, local dining, transport hubs, and nearby services.
+                    </p>
+                    
+                    <div class="feature-highlights-list mb-4">
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Spatial points of interest with real-time layer filtering</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Multi-modal navigation including Metro & local transit</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Geofenced notifications for nearby hidden gems</span>
+                        </div>
+                    </div>
+
+                    <a href="@Url.Action("Index", "NearMe")" class="btn btn-egy-gold rounded-pill px-4 py-2 shadow-sm">
+                        <i class="bi bi-compass-fill me-2"></i> Explore Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURE 3: SMART AUDIO GUIDE -->
+    <section id="feature-audio-guide" class="feature-card-section mb-5">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <div class="feature-image-card shadow-lg">
+                    <div class="feature-img-wrapper">
+                        <img src="@Url.Content("~/assets/img/demo-image-01.jpg")" alt="Smart Audio Guide" class="img-fluid feature-img" />
+                        <div class="feature-img-overlay"></div>
+                    </div>
+                    <div class="feature-stat-badge">
+                        <i class="bi bi-soundwave text-warning me-2 fs-5"></i>
+                        <div>
+                            <div class="stat-number">15+ Languages</div>
+                            <div class="stat-label">Location Narrations</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-content-card p-4 p-md-5">
+                    <div class="feature-icon-badge mb-3">
+                        <i class="bi bi-headphones"></i>
+                    </div>
+                    <span class="section-tag mb-2">LOCATION-AWARE AUDIO</span>
+                    <h3 class="about-section-title mb-3">Smart Audio Guide</h3>
+                    <p class="about-text-lead mb-4">
+                        Immerse yourself in history with hands-free audio narrations that trigger automatically as you approach ancient monuments, temples, and museum exhibits.
+                    </p>
+                    
+                    <div class="feature-highlights-list mb-4">
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Automatic location-triggered hands-free audio</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Support for 15+ global languages with native accents</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Narrated by certified Egyptologists & historians</span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-egy-gold rounded-pill px-4 py-2 shadow-sm" onclick="alert('Audio Guide preview available in EGYXPLORE Mobile App!')">
+                        <i class="bi bi-play-fill me-2"></i> Start Listening
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURE 4: AR HISTORICAL EXPERIENCE (ALTERNATING LAYOUT) -->
+    <section id="feature-ar-experience" class="feature-card-section mb-5">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6 order-lg-last">
+                <div class="feature-image-card shadow-lg">
+                    <div class="feature-img-wrapper">
+                        <img src="@Url.Content("~/assets/img/egypt_hero_bg.jpg")" alt="AR Historical Experience" class="img-fluid feature-img" />
+                        <div class="feature-img-overlay"></div>
+                    </div>
+                    <div class="feature-stat-badge">
+                        <i class="bi bi-box-seam text-warning me-2 fs-5"></i>
+                        <div>
+                            <div class="stat-number">3D Overlay</div>
+                            <div class="stat-label">Augmented Reality</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-content-card p-4 p-md-5">
+                    <div class="feature-icon-badge mb-3">
+                        <i class="bi bi-bounding-box-circles"></i>
+                    </div>
+                    <span class="section-tag mb-2">IMMERSIVE RECONSTRUCTION</span>
+                    <h3 class="about-section-title mb-3">AR Historical Experience</h3>
+                    <p class="about-text-lead mb-4">
+                        Step back in time to witness ancient Egyptian temples and monuments restored to their original glory through high-precision augmented reality overlays.
+                    </p>
+                    
+                    <div class="feature-highlights-list mb-4">
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Photorealistic 3D ancient structure reconstructions</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Time-slider overlay comparing ancient vs. present state</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Interactive 360° artifact & hieroglyph deciphering</span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-egy-gold rounded-pill px-4 py-2 shadow-sm" onclick="alert('AR Mode requires camera permission on mobile!')">
+                        <i class="bi bi-eye-fill me-2"></i> Experience AR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURE 5: OFFLINE NAVIGATION -->
+    <section id="feature-offline-nav" class="feature-card-section mb-5">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <div class="feature-image-card shadow-lg">
+                    <div class="feature-img-wrapper">
+                        <img src="@Url.Content("~/assets/img/demo-image-02.jpg")" alt="Offline Navigation" class="img-fluid feature-img" />
+                        <div class="feature-img-overlay"></div>
+                    </div>
+                    <div class="feature-stat-badge">
+                        <i class="bi bi-cloud-arrow-down-fill text-warning me-2 fs-5"></i>
+                        <div>
+                            <div class="stat-number">100% Offline</div>
+                            <div class="stat-label">Zero Data Usage</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-content-card p-4 p-md-5">
+                    <div class="feature-icon-badge mb-3">
+                        <i class="bi bi-wifi-off"></i>
+                    </div>
+                    <span class="section-tag mb-2">DATA-FREE EXPLORATION</span>
+                    <h3 class="about-section-title mb-3">Offline Navigation</h3>
+                    <p class="about-text-lead mb-4">
+                        Download complete vector map packages, POI directories, and audio guides before your trip to enjoy full navigation functionality without roaming data.
+                    </p>
+                    
+                    <div class="feature-highlights-list mb-4">
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Full offline map package downloads per governorate</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Zero mobile internet data consumption while traveling</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>High-precision GPS tracking without cellular signal</span>
+                        </div>
+                    </div>
+
+                    <a href="#" class="btn btn-egy-gold rounded-pill px-4 py-2 shadow-sm" onclick="alert('Offline maps ready for download in profile!')">
+                        <i class="bi bi-download me-2"></i> Download Guides
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURE 6: PERSONALIZED RECOMMENDATIONS (ALTERNATING LAYOUT) -->
+    <section id="feature-recommendations" class="feature-card-section mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6 order-lg-last">
+                <div class="feature-image-card shadow-lg">
+                    <div class="feature-img-wrapper">
+                        <img src="@Url.Content("~/assets/img/bg-masthead.jpg")" alt="Personalized Recommendations" class="img-fluid feature-img" />
+                        <div class="feature-img-overlay"></div>
+                    </div>
+                    <div class="feature-stat-badge">
+                        <i class="bi bi-stars text-warning me-2 fs-5"></i>
+                        <div>
+                            <div class="stat-number">Smart Profile</div>
+                            <div class="stat-label">Machine Learning</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-content-card p-4 p-md-5">
+                    <div class="feature-icon-badge mb-3">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="section-tag mb-2">TASTE-PROFILE MATCHING</span>
+                    <h3 class="about-section-title mb-3">Personalized Recommendations</h3>
+                    <p class="about-text-lead mb-4">
+                        Discover hidden gems, authentic dining, and cultural events tailored specifically to your taste profile as our recommendation engine learns from your journey.
+                    </p>
+                    
+                    <div class="feature-highlights-list mb-4">
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Smart taste profile machine learning engine</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Curated hidden gems, authentic dining & local artisan spots</span>
+                        </div>
+                        <div class="highlight-point">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            <span>Tailored event, festival & bazaar notifications</span>
+                        </div>
+                    </div>
+
+                    <a href="@Url.Action("Index", "Destination")" class="btn btn-egy-gold rounded-pill px-4 py-2 shadow-sm">
+                        <i class="bi bi-person-check-fill me-2"></i> View Recommendations
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOTTOM CTA BANNER (MATCHING ABOUT PAGE TEAM BANNER) -->
+    <section class="mt-5 pt-3">
+        <div class="features-banner-card p-4 p-md-5 text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <span class="section-tag mb-2"><i class="bi bi-rocket-takeoff-fill me-2"></i>START YOUR JOURNEY</span>
+                    <h3 class="team-card-title mb-3">Ready to Experience Egypt Like Never Before?</h3>
+                    <p class="team-card-text mb-4">
+                        Join thousands of smart travelers using EGYXPLORE to design seamless, intelligent, and unforgettable journeys across Egypt.
+                    </p>
+                    <a href="@Url.Action("Index", "TripPlan")" class="btn btn-egy-hero primary-hero-btn px-5 py-3 shadow">
+                        <i class="bi bi-compass-fill me-2"></i> Start Planning Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
 @section Scripts {
-    <style>
-        .features-page {
-            background-color: var(--egy-light);
+<style>
+    /* ============================================================
+       FEATURES PAGE PREMIUM STYLES (MATCHING ABOUT PAGE THEME)
+       ============================================================ */
+
+    /* HERO SECTION */
+    .features-hero {
+        position: relative;
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--egy-dark);
+        margin-top: calc(-1 * var(--nav-offset));
+        padding-top: calc(var(--nav-offset) + 60px);
+        padding-bottom: 120px;
+        overflow: hidden;
+    }
+
+    .features-hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=2000&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.55) contrast(1.1);
+        transform: scale(1.05);
+        transition: transform 10s ease;
+    }
+
+    .features-hero:hover .features-hero-bg {
+        transform: scale(1);
+    }
+
+    .features-hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, rgba(30, 18, 10, 0.88) 0%, rgba(30, 18, 10, 0.65) 50%, rgba(30, 18, 10, 0.95) 100%);
+    }
+
+    .features-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 18px;
+        border-radius: 999px;
+        background: rgba(200, 131, 42, 0.25);
+        border: 1px solid rgba(232, 160, 69, 0.4);
+        color: var(--egy-accent);
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        backdrop-filter: blur(8px);
+    }
+
+    .features-hero-title {
+        font-family: 'Cinzel Decorative', 'Cinzel', serif;
+        font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+        font-weight: 900;
+        color: #ffffff;
+        letter-spacing: 2px;
+        line-height: 1.2;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .text-gold-gradient {
+        background: linear-gradient(135deg, var(--egy-accent) 0%, #ffc06e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .features-hero-lead-wrapper {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .features-hero-lead {
+        font-family: 'Nunito', sans-serif;
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.92);
+        line-height: 1.7;
+        font-weight: 400;
+    }
+
+    /* HERO VIDEO FRAME */
+    .hero-video-card {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 2px solid var(--egy-primary);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        background: #000;
+    }
+
+    .hero-video-wrapper {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        overflow: hidden;
+    }
+
+    .hero-video-player {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-video-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 60%, rgba(30, 18, 10, 0.7) 100%);
+        pointer-events: none;
+    }
+
+    .hero-video-badge {
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
+        background: rgba(30, 18, 10, 0.85);
+        border: 1px solid var(--egy-primary);
+        border-radius: 999px;
+        padding: 8px 18px;
+        backdrop-filter: blur(10px);
+        color: #ffffff;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+    }
+
+    /* HERO BUTTONS */
+    .btn-egy-hero {
+        padding: 14px 32px;
+        border-radius: 999px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .primary-hero-btn {
+        background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%);
+        color: var(--egy-dark) !important;
+        border: none;
+        box-shadow: 0 8px 25px rgba(200, 131, 42, 0.4);
+    }
+
+    .primary-hero-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(232, 160, 69, 0.6);
+        background: linear-gradient(135deg, var(--egy-accent) 0%, #ffc06e 100%);
+    }
+
+    .secondary-hero-btn {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(8px);
+    }
+
+    .secondary-hero-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: #ffffff;
+        transform: translateY(-3px);
+    }
+
+    /* BOTTOM SVG DIVIDER WITH POINTED ARROW */
+    .hero-shape-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+        z-index: 3;
+    }
+
+    .hero-shape-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 70px;
+    }
+
+    .divider-arrow-notch {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 44px;
+        height: 44px;
+        background: #ffffff;
+        border-radius: 50%;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--egy-primary);
+        font-size: 1.3rem;
+        z-index: 4;
+        text-decoration: none !important;
+        animation: bounceNotch 2s infinite;
+    }
+
+    @@keyframes bounceNotch {
+        0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+        40% { transform: translateX(-50%) translateY(6px); }
+        60% { transform: translateX(-50%) translateY(3px); }
+    }
+
+    /* STICKY QUICK CATEGORY BAR */
+    .sticky-nav-wrapper {
+        position: sticky;
+        top: calc(var(--nav-offset) + 8px);
+        z-index: 1000;
+        margin-top: -30px;
+        margin-bottom: 20px;
+    }
+
+    .quick-nav-bar {
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        border-radius: 999px;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        gap: 6px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .quick-nav-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .quick-nav-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--egy-dark);
+        text-decoration: none !important;
+        transition: all 0.25s ease;
+    }
+
+    .quick-nav-item i {
+        color: var(--egy-primary);
+        font-size: 1rem;
+        transition: color 0.25s ease;
+    }
+
+    .quick-nav-item:hover,
+    .quick-nav-item.active {
+        background: var(--egy-dark);
+        color: var(--egy-accent) !important;
+    }
+
+    .quick-nav-item:hover i,
+    .quick-nav-item.active i {
+        color: var(--egy-accent);
+    }
+
+    /* FEATURE CARDS (MATCHING ABOUT PAGE STORY & VALUE CARDS) */
+    .feature-card-section {
+        scroll-margin-top: 150px;
+    }
+
+    .feature-image-card {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        background: #ffffff;
+    }
+
+    .feature-img-wrapper {
+        position: relative;
+        height: 380px;
+        overflow: hidden;
+    }
+
+    .feature-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .feature-image-card:hover .feature-img {
+        transform: scale(1.06);
+    }
+
+    .feature-img-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 50%, rgba(30, 18, 10, 0.65) 100%);
+    }
+
+    .feature-stat-badge {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(30, 18, 10, 0.88);
+        border: 1px solid var(--egy-primary);
+        border-radius: 16px;
+        padding: 10px 18px;
+        backdrop-filter: blur(10px);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+    }
+
+    .feature-stat-badge .stat-number {
+        font-family: 'Cinzel', serif;
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--egy-accent);
+        line-height: 1.1;
+    }
+
+    .feature-stat-badge .stat-label {
+        font-size: 0.72rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.75);
+    }
+
+    .feature-content-card {
+        background: #ffffff;
+        border-radius: 24px;
+        border: 1px solid rgba(200, 131, 42, 0.18);
+        box-shadow: 0 10px 30px rgba(30, 18, 10, 0.05);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .feature-content-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--egy-primary), var(--egy-accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .feature-content-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px rgba(30, 18, 10, 0.1);
+        border-color: rgba(200, 131, 42, 0.35);
+    }
+
+    .feature-content-card:hover::before {
+        opacity: 1;
+    }
+
+    .feature-icon-badge {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(200, 131, 42, 0.15) 0%, rgba(232, 160, 69, 0.25) 100%);
+        color: var(--egy-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+    }
+
+    .section-tag {
+        display: inline-block;
+        color: var(--egy-primary);
+        font-weight: 800;
+        font-size: 0.8rem;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    .about-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--egy-dark);
+    }
+
+    .title-accent-line {
+        width: 60px;
+        height: 3px;
+        background: var(--egy-primary);
+        border-radius: 999px;
+    }
+
+    .about-text-lead {
+        font-size: 1.02rem;
+        color: #555555;
+        line-height: 1.7;
+    }
+
+    .feature-highlights-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .highlight-point {
+        display: flex;
+        align-items: center;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: var(--egy-dark);
+    }
+
+    .btn-egy-gold {
+        background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%);
+        color: var(--egy-dark) !important;
+        font-weight: 700;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-egy-gold:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(232, 160, 69, 0.5);
+    }
+
+    /* BOTTOM BANNER (MATCHING ABOUT PAGE TEAM BANNER) */
+    .features-banner-card {
+        background: linear-gradient(135deg, var(--egy-dark) 0%, #2a1a0e 100%);
+        border-radius: 24px;
+        border: 1px solid var(--egy-primary);
+        box-shadow: 0 15px 35px rgba(30, 18, 10, 0.2);
+        color: #ffffff;
+    }
+
+    .team-card-title {
+        font-family: 'Cinzel', serif;
+        font-size: 2rem;
+        color: var(--egy-accent);
+    }
+
+    .team-card-text {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    /* ANIMATIONS */
+    .animate-fade-up {
+        animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .animate-fade-down {
+        animation: fadeDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .delay-1 { animation-delay: 0.15s; }
+    .delay-2 { animation-delay: 0.3s; }
+
+    @@keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @@keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @@media (max-width: 991.98px) {
+        .features-hero {
+            min-height: 75vh;
+            padding-bottom: 90px;
         }
-
-        .cinzel-title {
-            font-family: 'Cinzel', serif;
-            color: var(--egy-dark);
-            letter-spacing: 1px;
+        .quick-nav-bar {
+            justify-content: flex-start;
+            border-radius: 20px;
         }
+    }
+</style>
 
-        .feature-media {
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 14px 30px rgba(200, 131, 42, 0.18);
-            background: #ece6db;
-            border: 1px solid rgba(200, 131, 42, 0.3);
-        }
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sticky Quick Nav Active Item Sync on Scroll
+        var navItems = Array.from(document.querySelectorAll('.quick-nav-item'));
+        var sections = Array.from(document.querySelectorAll('.feature-card-section'));
 
-        .feature-video {
-            width: 100%;
-            height: 320px;
-            object-fit: cover;
-            display: block;
-            opacity: 0.85;
-            transition: opacity 0.4s ease;
-        }
-
-            .feature-video.playing {
-                opacity: 1;
-            }
-
-        .store-badge {
-            display: inline-flex;
-            align-items: center;
-            background: var(--egy-dark);
-            color: #fff;
-            border: 1px solid var(--egy-primary);
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.25s ease;
-        }
-
-            .store-badge:hover {
-                background: var(--egy-primary);
-                color: #fff;
-                transform: translateY(-2px);
-            }
-    </style>
-
-    <script>
-        // Autoplay-on-scroll: only the section whose <video> is >=50% visible plays.
-        (function () {
-            var videos = Array.from(document.querySelectorAll('.feature-video'));
-            if (!('IntersectionObserver' in window) || !videos.length) {
-                return;
-            }
-
+        if ('IntersectionObserver' in window && navItems.length && sections.length) {
             var observer = new IntersectionObserver(function (entries) {
                 entries.forEach(function (entry) {
-                    var video = entry.target;
                     if (entry.isIntersecting) {
-                        video.classList.add('playing');
-                        var p = video.play();
-                        if (p && typeof p.catch === 'function') {
-                            p.catch(function () { /* autoplay blocked; poster stays */ });
-                        }
-                    } else {
-                        video.classList.remove('playing');
-                        video.pause();
+                        var id = entry.target.getAttribute('id');
+                        navItems.forEach(function (item) {
+                            if (item.getAttribute('href') === '#' + id) {
+                                item.classList.add('active');
+                            } else {
+                                item.classList.remove('active');
+                            }
+                        });
                     }
                 });
-            }, { threshold: 0.5 });
+            }, { threshold: 0.3 });
 
-            videos.forEach(function (v) { observer.observe(v); });
-        })();
-    </script>
+            sections.forEach(function (sec) { observer.observe(sec); });
+        }
+
+        // Scroll to Video Demo button handler
+        var demoBtn = document.getElementById('scrollDemoBtn');
+        var videoCard = document.getElementById('heroVideoCard');
+        if (demoBtn && videoCard) {
+            demoBtn.addEventListener('click', function () {
+                videoCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                videoCard.style.transition = 'box-shadow 0.4s ease, transform 0.4s ease';
+                videoCard.style.boxShadow = '0 0 50px rgba(232, 160, 69, 0.9)';
+                videoCard.style.transform = 'scale(1.03)';
+                setTimeout(function () {
+                    videoCard.style.boxShadow = '';
+                    videoCard.style.transform = '';
+                }, 1600);
+            });
+        }
+    });
+</script>
 }

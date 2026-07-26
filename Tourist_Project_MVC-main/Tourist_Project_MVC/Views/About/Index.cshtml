@@ -168,11 +168,18 @@
 
 </div>
 
-<!-- FLOATING CONTACT BUTTON (RIGHT SIDE) -->
-<button type="button" id="floatingContactFab" class="floating-contact-fab" aria-label="Open Contact Panel">
-    <i class="bi bi-envelope-fill me-2"></i>
-    <span class="fab-text">Contact Us</span>
-</button>
+<!-- DOCKED SLIDING CONTACT TAB (RIGHT SIDE) -->
+<div id="floatingContactFab" class="contact-dock-tab" role="button" tabindex="0" aria-label="Open Contact Panel">
+    <!-- The icon strip always visible -->
+    <div class="dock-tab-icon">
+        <i class="bi bi-envelope-heart-fill"></i>
+    </div>
+    <!-- The label + hint that slides in -->
+    <div class="dock-tab-content">
+        <span class="dock-tab-label">Contact Us</span>
+        <span class="dock-tab-hint">We'd love to hear from you</span>
+    </div>
+</div>
 
 <!-- CONTACT SLIDE-OUT PANEL BACKDROP -->
 <div id="aboutContactBackdrop" class="contact-backdrop"></div>
@@ -615,33 +622,94 @@
         box-shadow: 0 10px 25px rgba(232, 160, 69, 0.5);
     }
 
-    /* FLOATING CONTACT BUTTON */
-    .floating-contact-fab {
+    /* ── DOCKED SLIDING CONTACT TAB ── */
+    .contact-dock-tab {
         position: fixed;
         right: 0;
         top: 50%;
-        transform: translateY(-50%);
+        /* translateX pushes ~70% off-screen; only the icon strip (~46px) peeks out */
+        transform: translateY(-50%) translateX(calc(100% - 46px));
         z-index: 9998;
-        background: linear-gradient(135deg, var(--egy-dark) 0%, #2a1a0e 100%);
-        color: var(--egy-accent);
+        display: flex;
+        align-items: stretch;
+        cursor: pointer;
+        border-radius: 16px 0 0 16px;
+        overflow: hidden;
+        box-shadow: -6px 0 30px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.2);
+        /* Smooth ease-in-out slide */
+        transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 0.42s ease;
+        outline: none;
+        /* Subtle golden left border */
         border: 2px solid var(--egy-primary);
         border-right: none;
-        border-radius: 30px 0 0 30px;
-        padding: 14px 22px;
-        font-weight: 700;
-        font-size: 0.95rem;
-        cursor: pointer;
-        box-shadow: -5px 8px 25px rgba(0, 0, 0, 0.25);
-        display: flex;
-        align-items: center;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        min-height: 80px;
     }
 
-    .floating-contact-fab:hover {
-        background: var(--egy-primary);
-        color: #ffffff;
-        padding-right: 28px;
-        transform: translateY(-50%) translateX(-4px);
+    /* On hover slide fully into view */
+    .contact-dock-tab:hover,
+    .contact-dock-tab:focus-visible {
+        transform: translateY(-50%) translateX(0);
+        box-shadow: -10px 0 40px rgba(200, 131, 42, 0.35), 0 12px 32px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Icon strip — always visible (the ~46px peeking part) */
+    .dock-tab-icon {
+        flex-shrink: 0;
+        width: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(160deg, var(--egy-dark) 0%, #2a1a0e 100%);
+        color: var(--egy-accent);
+        font-size: 1.35rem;
+        padding: 0 4px;
+        /* Subtle pulse to attract attention */
+        animation: dockPulse 3s ease-in-out infinite;
+    }
+
+    @@keyframes dockPulse {
+        0%, 100% { color: var(--egy-accent); }
+        50%       { color: #ffc06e; }
+    }
+
+    /* Content area — revealed on hover */
+    .dock-tab-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 16px 22px 16px 12px;
+        background: linear-gradient(160deg, #1e120a 0%, #2e1c0f 100%);
+        white-space: nowrap;
+        min-width: 160px;
+    }
+
+    .dock-tab-label {
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: var(--egy-accent);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        line-height: 1.2;
+    }
+
+    .dock-tab-hint {
+        font-size: 0.74rem;
+        color: rgba(255, 255, 255, 0.55);
+        margin-top: 4px;
+        font-style: italic;
+    }
+
+    /* Mobile: keep tab but shrink content text */
+    @@media (max-width: 575.98px) {
+        .dock-tab-content {
+            min-width: 120px;
+            padding: 14px 16px 14px 10px;
+        }
+        .dock-tab-hint {
+            display: none;
+        }
     }
 
     /* CONTACT SLIDE-OUT PANEL */
@@ -751,13 +819,6 @@
             min-height: 75vh;
             padding-bottom: 90px;
         }
-        .floating-contact-fab .fab-text {
-            display: none;
-        }
-        .floating-contact-fab {
-            padding: 12px 14px;
-            border-radius: 20px 0 0 20px;
-        }
     }
 </style>
 
@@ -792,7 +853,17 @@
             }
         }
 
-        if (fab) fab.addEventListener('click', openContactPanel);
+        // Docked tab: click opens panel, hover/leave handled purely by CSS
+        if (fab) {
+            fab.addEventListener('click', openContactPanel);
+            // Keyboard accessibility
+            fab.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openContactPanel();
+                }
+            });
+        }
         if (heroContactBtn) heroContactBtn.addEventListener('click', openContactPanel);
         if (teamContactBtn) teamContactBtn.addEventListener('click', openContactPanel);
 
