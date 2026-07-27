@@ -1,0 +1,54 @@
+@model Tourist_Project_MVC.View_Model.AdminDashboardVM
+
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper dark">
+            <i class="bi bi-headset"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Total Tickets</div>
+            <div class="kpi-value">@Model.SupportSection.Total</div>
+            <div class="kpi-sub">All time</div>
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper amber">
+            <i class="bi bi-exclamation-circle-fill"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Open</div>
+            <div class="kpi-value">@Model.SupportSection.Open</div>
+            <div class="kpi-sub">Awaiting response</div>
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper green">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Resolved</div>
+            <div class="kpi-value">@Model.SupportSection.Resolved</div>
+            <div class="kpi-sub">Closed tickets</div>
+        </div>
+    </div>
+</div>
+
+<div class="dash-card">
+    <div class="dash-card-header">
+        <span><i class="bi bi-diagram-3 me-2"></i> Tickets by Status</span>
+    </div>
+    <div class="dash-card-body">
+        @foreach (var row in Model.SupportSection.StatusBreakdown)
+        {
+            <div class="top-branch-item mb-2">
+                <div class="top-branch-icon">
+                    <i class="bi bi-ticket-fill"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">@row.Name</h6>
+                </div>
+                <span class="badge bg-dark">@row.Count</span>
+            </div>
+        }
+    </div>
+</div>

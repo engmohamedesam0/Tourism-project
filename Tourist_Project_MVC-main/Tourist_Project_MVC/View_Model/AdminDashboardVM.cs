@@ -2,26 +2,98 @@ using Tourist_Project_MVC.Models;
 
 namespace Tourist_Project_MVC.View_Model
 {
-    // Platform-wide admin dashboard metrics.
     public class AdminDashboardVM
     {
+        public string ActiveSection { get; set; } = "overview";
+
         public int TotalTourists { get; set; }
         public int TotalSponsors { get; set; }
         public int TotalDestinations { get; set; }
         public int TotalBranches { get; set; }
         public int TotalRewards { get; set; }
-
         public int TotalRedemptions { get; set; }
         public int TotalMissionsCompleted { get; set; }
-
         public bool RatingAvailable { get; set; }
         public double? AverageRating { get; set; }
         public int ReviewCount { get; set; }
-
         public List<MonthlyStatRow> MonthlyStats { get; set; } = new();
         public List<TopRewardRow> DashboardTopRewards { get; set; } = new();
-
-        // Branches for the unfiltered map panel.
         public List<BranchMapPoint> AllBranches { get; set; } = new();
+
+        public TouristSectionVM TouristSection { get; set; } = new();
+        public MissionSectionVM MissionSection { get; set; } = new();
+        public SponsorSectionVM SponsorSection { get; set; } = new();
+        public DestinationSectionVM DestinationSection { get; set; } = new();
+        public RewardSectionVM RewardSection { get; set; } = new();
+        public LevelSectionVM LevelSection { get; set; } = new();
+        public BadgeSectionVM BadgeSection { get; set; } = new();
+        public SupportSectionVM SupportSection { get; set; } = new();
+        public ReviewSectionVM ReviewSection { get; set; } = new();
+
+        public record NameCountRow(string Name, string Icon, int Count);
+    }
+
+    public class TouristSectionVM
+    {
+        public int Total { get; set; }
+        public List<AdminDashboardVM.NameCountRow> NationalityBreakdown { get; set; } = new();
+        public List<AdminDashboardVM.NameCountRow> StatusBreakdown { get; set; } = new();
+    }
+
+    public class MissionSectionVM
+    {
+        public int Total { get; set; }
+        public int Completed { get; set; }
+        public int Pending { get; set; }
+        public List<AdminDashboardVM.NameCountRow> TypeBreakdown { get; set; } = new();
+    }
+
+    public class SponsorSectionVM
+    {
+        public int Total { get; set; }
+        public List<AdminDashboardVM.NameCountRow> TypeBreakdown { get; set; } = new();
+    }
+
+    public class DestinationSectionVM
+    {
+        public int Total { get; set; }
+        public int Active { get; set; }
+        public List<AdminDashboardVM.NameCountRow> CategoryBreakdown { get; set; } = new();
+    }
+
+    public class RewardSectionVM
+    {
+        public int Total { get; set; }
+        public int Available { get; set; }
+        public int TotalRedemptions { get; set; }
+        public List<AdminDashboardVM.NameCountRow> TypeBreakdown { get; set; } = new();
+    }
+
+    public class LevelSectionVM
+    {
+        public int TouristsWithProgress { get; set; }
+        public List<AdminDashboardVM.NameCountRow> LevelDistribution { get; set; } = new();
+    }
+
+    public class BadgeSectionVM
+    {
+        public int TotalBadges { get; set; }
+        public int TotalEarned { get; set; }
+        public List<AdminDashboardVM.NameCountRow> RarityBreakdown { get; set; } = new();
+    }
+
+    public class SupportSectionVM
+    {
+        public int Total { get; set; }
+        public int Open { get; set; }
+        public int Resolved { get; set; }
+        public List<AdminDashboardVM.NameCountRow> StatusBreakdown { get; set; } = new();
+    }
+
+    public class ReviewSectionVM
+    {
+        public int Total { get; set; }
+        public double? AverageRating { get; set; }
+        public List<AdminDashboardVM.NameCountRow> RatingDistribution { get; set; } = new();
     }
 }

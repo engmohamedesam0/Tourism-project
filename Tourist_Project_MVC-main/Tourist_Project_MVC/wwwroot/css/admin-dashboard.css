@@ -626,3 +626,88 @@
         height: 320px;
     }
 }
+
+/* ==========================================
+   ADMIN DASHBOARD SHELL & SIDEBAR NAV
+   ========================================== */
+.admin-dash-shell {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.admin-dash-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: sticky;
+    top: 24px;
+}
+
+.admin-dash-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--egy-dark, #1E120A);
+    background: #ffffff;
+    border: 1px solid rgba(200, 131, 42, 0.12);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.admin-dash-nav-link:hover {
+    background: rgba(200, 131, 42, 0.06);
+    border-color: rgba(200, 131, 42, 0.3);
+    color: var(--egy-primary, #C8832A);
+}
+
+.admin-dash-nav-link.active {
+    background: linear-gradient(135deg, var(--egy-dark, #1E120A) 0%, #3a2212 100%);
+    color: #ffffff;
+    border-color: var(--egy-dark, #1E120A);
+    box-shadow: 0 4px 12px rgba(30, 18, 10, 0.2);
+}
+
+.admin-dash-nav-link.active i {
+    color: var(--egy-accent, #E8A045);
+}
+
+.admin-dash-content {
+    animation: adminDashFadeIn 0.35s ease;
+}
+
+@keyframes adminDashFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 991.98px) {
+    .admin-dash-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-dash-sidebar {
+        position: static;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 8px;
+    }
+
+    .admin-dash-nav-link {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+}

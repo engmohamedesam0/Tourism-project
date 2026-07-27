@@ -1,0 +1,54 @@
+@model Tourist_Project_MVC.View_Model.AdminDashboardVM
+
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper gold">
+            <i class="bi bi-trophy-fill"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Total Missions</div>
+            <div class="kpi-value">@Model.MissionSection.Total</div>
+            <div class="kpi-sub">All missions</div>
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper green">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Completed</div>
+            <div class="kpi-value">@Model.MissionSection.Completed</div>
+            <div class="kpi-sub">Finished by tourists</div>
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper amber">
+            <i class="bi bi-hourglass-split"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Pending</div>
+            <div class="kpi-value">@Model.MissionSection.Pending</div>
+            <div class="kpi-sub">In progress</div>
+        </div>
+    </div>
+</div>
+
+<div class="dash-card">
+    <div class="dash-card-header">
+        <span><i class="bi bi-tags me-2"></i> Missions by Type</span>
+    </div>
+    <div class="dash-card-body">
+        @foreach (var row in Model.MissionSection.TypeBreakdown)
+        {
+            <div class="top-branch-item mb-2">
+                <div class="top-branch-icon">
+                    <i class="bi bi-tag-fill"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">@row.Name</h6>
+                </div>
+                <span class="badge bg-dark">@row.Count</span>
+            </div>
+        }
+    </div>
+</div>

@@ -3,21 +3,69 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tourist_Project_MVC.Data;
+using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [Route("AdminDashboard")]
     public class AdminDashboardController : Controller
     {
         private readonly TouristContext _context;
+        private static readonly string[] Sections = new[]
+        {
+            "overview", "tourists", "missions", "sponsors",
+            "destinations", "rewards", "levels", "badges", "support", "reviews"
+        };
 
         public AdminDashboardController(TouristContext context)
         {
             _context = context;
         }
 
-        public IActionResult Index()
+        [HttpGet("")]
+        [HttpGet("{section}")]
+        public IActionResult Index(string? section, string? tab)
+        {
+            var normalized = (section ?? string.Empty).Trim().ToLowerInvariant();
+            if (!Sections.Contains(normalized))
+            {
+                var cookie = Request.Cookies["AdminDashboard.LastSection"];
+                if (!string.IsNullOrEmpty(cookie) && Sections.Contains(cookie.ToLowerInvariant()))
+                {
+                    normalized = cookie.ToLowerInvariant();
+                }
+                else
+                {
+                    normalized = "overview";
+                }
+            }
+
+            var vm = new AdminDashboardVM { ActiveSection = normalized };
+
+            if (normalized == "overview")
+            {
+                BuildOverview(vm);
+            }
+            else
+            {
+                BuildOverview(vm);
+                BuildSection(vm, normalized);
+            }
+
+            Response.Cookies.Append("AdminDashboard.LastSection", normalized, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = Request.IsHttps,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTimeOffset.UtcNow.AddDays(30)
+            });
+
+            return View("Index", vm);
+        }
+
+        private void BuildOverview(AdminDashboardVM vm)
         {
             var year = DateTime.Now.Year;
 
@@ -90,34 +138,210 @@ namespace Tourist_Project_MVC.Controllers
                 })
                 .ToList();
 
-            var statBoxes = new List<StatBoxItem>
+            vm.TotalTourists = totalTourists;
+            vm.TotalSponsors = totalSponsors;
+            vm.TotalDestinations = totalDestinations;
+            vm.TotalBranches = totalBranches;
+            vm.TotalRewards = totalRewards;
+            vm.TotalRedemptions = totalRedemptions;
+            vm.TotalMissionsCompleted = totalMissionsCompleted;
+            vm.RatingAvailable = ratingAvailable;
+            vm.AverageRating = averageRating;
+            vm.ReviewCount = reviewCount;
+            vm.MonthlyStats = monthlyStats;
+            vm.DashboardTopRewards = dashboardTopRewards;
+            vm.AllBranches = allBranches;
+        }
+
+        private void BuildSection(AdminDashboardVM vm, string section)
+        {
+            switch (section)
             {
-                new StatBoxItem { IconClass = "bi-people-fill", Color = "black", Value = totalTourists.ToString("N0"), Label = "Total Tourists" },
-                new StatBoxItem { IconClass = "bi-building-fill", Color = "black", Value = totalSponsors.ToString("N0"), Label = "Total Sponsors" },
-                new StatBoxItem { IconClass = "bi-geo-alt-fill", Color = "black", Value = totalDestinations.ToString("N0"), Label = "Total Destinations" },
-                new StatBoxItem { IconClass = "bi-gift-fill", Color = "black", Value = totalRewards.ToString("N0"), Label = "Total Rewards" }
-            };
+                case "tourists":
+                    BuildTouristSection(vm);
+                    break;
+                case "missions":
+                    BuildMissionSection(vm);
+                    break;
+                case "sponsors":
+                    BuildSponsorSection(vm);
+                    break;
+                case "destinations":
+                    BuildDestinationSection(vm);
+                    break;
+                case "rewards":
+                    BuildRewardSection(vm);
+                    break;
+                case "levels":
+                    BuildLevelSection(vm);
+                    break;
+                case "badges":
+                    BuildBadgeSection(vm);
+                    break;
+                case "support":
+                    BuildSupportSection(vm);
+                    break;
+                case "reviews":
+                    BuildReviewSection(vm);
+                    break;
+            }
+        }
 
-            var vm = new AdminDashboardVM
-            {
-                TotalTourists = totalTourists,
-                TotalSponsors = totalSponsors,
-                TotalDestinations = totalDestinations,
-                TotalBranches = totalBranches,
-                TotalRewards = totalRewards,
-                TotalRedemptions = totalRedemptions,
-                TotalMissionsCompleted = totalMissionsCompleted,
-                RatingAvailable = ratingAvailable,
-                AverageRating = averageRating,
-                ReviewCount = reviewCount,
-                MonthlyStats = monthlyStats,
-                DashboardTopRewards = dashboardTopRewards,
-                AllBranches = allBranches
-            };
+        private void BuildTouristSection(AdminDashboardVM vm)
+        {
+            vm.TouristSection.Total = _context.Tourists.Count();
 
-            ViewBag.StatBoxes = statBoxes;
+            var nationalityGroups = _context.Tourists
+                .GroupBy(t => t.Nationality)
+                .Select(g => new { Name = g.Key, Count = g.Count() })
+                .OrderByDescending(r => r.Count)
+                .Take(10)
+                .ToList()
+                .Select(r => new AdminDashboardVM.NameCountRow(r.Name, "🌍", r.Count))
+                .ToList();
 
-            return View("Index", vm);
+            var statusGroups = _context.Tourists
+                .GroupBy(t => t.Status ?? "Unknown")
+                .Select(g => new { Name = g.Key, Count = g.Count() })
+                .OrderByDescending(r => r.Count)
+                .ToList()
+                .Select(r => new AdminDashboardVM.NameCountRow(r.Name, r.Name == "Active" ? "✅" : "⏳", r.Count))
+                .ToList();
+
+            vm.TouristSection.NationalityBreakdown = nationalityGroups;
+            vm.TouristSection.StatusBreakdown = statusGroups;
+        }
+
+        private void BuildMissionSection(AdminDashboardVM vm)
+        {
+            vm.MissionSection.Total = _context.Missions.Count();
+            vm.MissionSection.Completed = _context.UserMissions.Count(um => um.Status == "Completed");
+            vm.MissionSection.Pending = _context.UserMissions.Count(um => um.Status != "Completed");
+
+            var typeGroups = _context.Missions
+                .GroupBy(m => m.MissionType)
+                .Select(g => new { Name = g.Key, Count = g.Count() })
+                .OrderByDescending(r => r.Count)
+                .ToList()
+                .Select(r => new AdminDashboardVM.NameCountRow(r.Name, "🎯", r.Count))
+                .ToList();
+
+            vm.MissionSection.TypeBreakdown = typeGroups;
+        }
+
+        private void BuildSponsorSection(AdminDashboardVM vm)
+        {
+            vm.SponsorSection.Total = _context.Sponsors.Count();
+
+            var typeGroups = _context.Sponsors
+                .GroupBy(s => s.Type)
+                .Select(g => new { Name = g.Key, Count = g.Count() })
+                .OrderByDescending(r => r.Count)
+                .ToList()
+                .Select(r => new AdminDashboardVM.NameCountRow(r.Name, "🏢", r.Count))
+                .ToList();
+
+            vm.SponsorSection.TypeBreakdown = typeGroups;
+        }
+
+        private void BuildDestinationSection(AdminDashboardVM vm)
+        {
+            vm.DestinationSection.Total = _context.Destinations.Count();
+            vm.DestinationSection.Active = _context.Destinations.Count(d => d.Status == "Active");
+
+            var categoryGroups = _context.Destinations
+                .Where(d => !string.IsNullOrEmpty(d.Category))
+                .GroupBy(d => d.Category!)
+                .Select(g => new { Name = g.Key, Count = g.Count() })
+                .OrderByDescending(r => r.Count)
+                .ToList()
+                .Select(r => new AdminDashboardVM.NameCountRow(r.Name, "📍", r.Count))
+                .ToList();
+
+            vm.DestinationSection.CategoryBreakdown = categoryGroups;
+        }
+
+        private void BuildRewardSection(AdminDashboardVM vm)
+        {
+            vm.RewardSection.Total = _context.Rewards.Count();
+            vm.RewardSection.Available = _context.Rewards.Count(r => r.Status == "Active");
+            vm.RewardSection.TotalRedemptions = _context.Redemptions.Count();
+
+            var typeGroups = _context.Rewards
+                .GroupBy(r => r.RewardType)
+                .Select(g => new { Name = g.Key, Count = g.Count() })
+                .OrderByDescending(r => r.Count)
+                .ToList()
+                .Select(r => new AdminDashboardVM.NameCountRow(r.Name, "🎁", r.Count))
+                .ToList();
+
+            vm.RewardSection.TypeBreakdown = typeGroups;
+        }
+
+        private void BuildLevelSection(AdminDashboardVM vm)
+        {
+            var progresses = _context.UserProgress.ToList();
+            vm.LevelSection.TouristsWithProgress = progresses.Count;
+
+            var levelGroups = progresses
+                .GroupBy(up => up.CurrentLevel)
+                .Select(g =>
+                {
+                    var def = LevelDefinitions.GetLevelByNumber(g.Key);
+                    return new AdminDashboardVM.NameCountRow($"{def.Icon} {def.Name}", def.Icon, g.Count());
+                })
+                .OrderBy(r => r.Count)
+                .ToList();
+
+            vm.LevelSection.LevelDistribution = levelGroups;
+        }
+
+        private void BuildBadgeSection(AdminDashboardVM vm)
+        {
+            vm.BadgeSection.TotalBadges = _context.Badges.Count();
+            vm.BadgeSection.TotalEarned = _context.UserBadges.Count();
+
+            var rarityGroups = _context.Badges
+                .GroupBy(b => b.Rarity)
+                .Select(g => new { Name = g.Key, Count = g.Count() })
+                .OrderByDescending(r => r.Count)
+                .ToList()
+                .Select(r => new AdminDashboardVM.NameCountRow(r.Name, "🏅", r.Count))
+                .ToList();
+
+            vm.BadgeSection.RarityBreakdown = rarityGroups;
+        }
+
+        private void BuildSupportSection(AdminDashboardVM vm)
+        {
+            var tickets = _context.SupportTickets.ToList();
+            vm.SupportSection.Total = tickets.Count;
+            vm.SupportSection.Open = tickets.Count(t => t.Status == "Open");
+            vm.SupportSection.Resolved = tickets.Count(t => t.Status == "Resolved" || t.Status == "Closed");
+
+            var statusGroups = tickets
+                .GroupBy(t => t.Status)
+                .Select(g => new AdminDashboardVM.NameCountRow(g.Key, "🎫", g.Count()))
+                .OrderByDescending(r => r.Count)
+                .ToList();
+
+            vm.SupportSection.StatusBreakdown = statusGroups;
+        }
+
+        private void BuildReviewSection(AdminDashboardVM vm)
+        {
+            var reviews = _context.Reviews.ToList();
+            vm.ReviewSection.Total = reviews.Count;
+            vm.ReviewSection.AverageRating = reviews.Any() ? reviews.Average(r => r.Rating) : (double?)null;
+
+            var ratingGroups = Enumerable.Range(1, 5)
+                .Select(star => new AdminDashboardVM.NameCountRow(
+                    $"{star} ⭐",
+                    "⭐",
+                    reviews.Count(r => r.Rating == star)))
+                .ToList();
+
+            vm.ReviewSection.RatingDistribution = ratingGroups;
         }
     }
 }

@@ -1,0 +1,54 @@
+@model Tourist_Project_MVC.View_Model.AdminDashboardVM
+
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper purple">
+            <i class="bi bi-gift-fill"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Total Rewards</div>
+            <div class="kpi-value">@Model.RewardSection.Total</div>
+            <div class="kpi-sub">All rewards</div>
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper green">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Available</div>
+            <div class="kpi-value">@Model.RewardSection.Available</div>
+            <div class="kpi-sub">Active offers</div>
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper gold">
+            <i class="bi bi-receipt-fill"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Total Redemptions</div>
+            <div class="kpi-value">@Model.RewardSection.TotalRedemptions</div>
+            <div class="kpi-sub">All-time claims</div>
+        </div>
+    </div>
+</div>
+
+<div class="dash-card">
+    <div class="dash-card-header">
+        <span><i class="bi bi-tags me-2"></i> Rewards by Type</span>
+    </div>
+    <div class="dash-card-body">
+        @foreach (var row in Model.RewardSection.TypeBreakdown)
+        {
+            <div class="top-branch-item mb-2">
+                <div class="top-branch-icon">
+                    <i class="bi bi-tag-fill"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">@row.Name</h6>
+                </div>
+                <span class="badge bg-dark">@row.Count</span>
+            </div>
+        }
+    </div>
+</div>

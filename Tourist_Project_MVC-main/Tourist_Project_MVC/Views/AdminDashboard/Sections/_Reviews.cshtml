@@ -1,0 +1,44 @@
+@model Tourist_Project_MVC.View_Model.AdminDashboardVM
+
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper gold">
+            <i class="bi bi-star-fill"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Total Reviews</div>
+            <div class="kpi-value">@Model.ReviewSection.Total</div>
+            <div class="kpi-sub">All reviews</div>
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper dark">
+            <i class="bi bi-star-half"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Average Rating</div>
+            <div class="kpi-value">@(Model.ReviewSection.AverageRating?.ToString("0.0") ?? "—")</div>
+            <div class="kpi-sub">Out of 5</div>
+        </div>
+    </div>
+</div>
+
+<div class="dash-card">
+    <div class="dash-card-header">
+        <span><i class="bi bi-bar-chart me-2"></i> Rating Distribution</span>
+    </div>
+    <div class="dash-card-body">
+        @foreach (var row in Model.ReviewSection.RatingDistribution)
+        {
+            <div class="top-branch-item mb-2">
+                <div class="top-branch-icon">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">@row.Name</h6>
+                </div>
+                <span class="badge bg-dark">@row.Count</span>
+            </div>
+        }
+    </div>
+</div>

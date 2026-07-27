@@ -4,10 +4,11 @@
     ViewData["Title"] = "Admin Dashboard";
     ViewData["IsHomePage"] = false;
     var currentYear = DateTime.Now.Year;
+    var partialName = "~/Views/AdminDashboard/Sections/_" + char.ToUpperInvariant(Model.ActiveSection[0]) + Model.ActiveSection.Substring(1) + ".cshtml";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/sponsor-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
 }
 
 <div class="dashboard-wrapper">
@@ -39,219 +40,43 @@
             </div>
         </div>
 
-        <!-- TOP KPI CARDS GRID -->
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-icon-wrapper blue">
-                    <i class="bi bi-people-fill"></i>
-                </div>
-                <div>
-                    <div class="kpi-label">Total Tourists</div>
-                    <div class="kpi-value">@Model.TotalTourists</div>
-                    <div class="kpi-sub">Registered users</div>
-                </div>
-            </div>
-
-            <div class="kpi-card">
-                <div class="kpi-icon-wrapper green">
-                    <i class="bi bi-building-fill"></i>
-                </div>
-                <div>
-                    <div class="kpi-label">Total Sponsors</div>
-                    <div class="kpi-value">@Model.TotalSponsors</div>
-                    <div class="kpi-sub">Active partners</div>
-                </div>
-            </div>
-
-            <div class="kpi-card">
-                <div class="kpi-icon-wrapper gold">
-                    <i class="bi bi-geo-alt-fill"></i>
-                </div>
-                <div>
-                    <div class="kpi-label">Total Destinations</div>
-                    <div class="kpi-value">@Model.TotalDestinations</div>
-                    <div class="kpi-sub">Listed locations</div>
-                </div>
-            </div>
-
-            <div class="kpi-card">
-                <div class="kpi-icon-wrapper purple">
-                    <i class="bi bi-gift-fill"></i>
-                </div>
-                <div>
-                    <div class="kpi-label">Total Rewards</div>
-                    <div class="kpi-value">@Model.TotalRewards</div>
-                    <div class="kpi-sub">Available offers</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- STAT BOX ROW -->
-        @await Html.PartialAsync("_StatBoxRow", (List<Tourist_Project_MVC.View_Model.StatBoxItem>)ViewBag.StatBoxes)
-
-        <!-- MAIN DASHBOARD GRID (3 COLUMNS) -->
-        <div class="dashboard-main-grid">
-
-            <!-- LEFT COLUMN (MAP FILTERS) -->
-            <aside class="dash-sidebar">
-                <div class="dash-card">
-                    <div class="dash-card-header">
-                        <span><i class="bi bi-funnel me-2"></i> Map Filters</span>
-                    </div>
-                    <div class="dash-card-body">
-                        <div class="chips-filter-group">
-                            <button class="chip-btn chip-active" onclick="filterMap('all')">
-                                <span>All Branches</span>
-                                <i class="bi bi-check-lg"></i>
-                            </button>
-                            <button class="chip-btn" onclick="filterMap('active')">
-                                <span>High Activity</span>
-                                <i class="bi bi-graph-up"></i>
-                            </button>
-                            <button class="chip-btn" onclick="filterMap('recent')">
-                                <span>Recently Added</span>
-                                <i class="bi bi-clock-history"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <!-- ADMIN DASHBOARD SHELL -->
+        <div class="admin-dash-shell">
+            <aside class="admin-dash-sidebar">
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="overview" class="admin-dash-nav-link @(Model.ActiveSection == "overview" ? "active" : "")">
+                    <i class="bi bi-speedometer2"></i> Overview
+                </a>
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="tourists" class="admin-dash-nav-link @(Model.ActiveSection == "tourists" ? "active" : "")">
+                    <i class="bi bi-people-fill"></i> Tourists
+                </a>
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="missions" class="admin-dash-nav-link @(Model.ActiveSection == "missions" ? "active" : "")">
+                    <i class="bi bi-trophy-fill"></i> Missions
+                </a>
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="sponsors" class="admin-dash-nav-link @(Model.ActiveSection == "sponsors" ? "active" : "")">
+                    <i class="bi bi-building-fill"></i> Sponsors
+                </a>
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="destinations" class="admin-dash-nav-link @(Model.ActiveSection == "destinations" ? "active" : "")">
+                    <i class="bi bi-geo-alt-fill"></i> Destinations
+                </a>
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="rewards" class="admin-dash-nav-link @(Model.ActiveSection == "rewards" ? "active" : "")">
+                    <i class="bi bi-gift-fill"></i> Rewards
+                </a>
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="levels" class="admin-dash-nav-link @(Model.ActiveSection == "levels" ? "active" : "")">
+                    <i class="bi bi-bar-chart-steps"></i> Levels
+                </a>
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="badges" class="admin-dash-nav-link @(Model.ActiveSection == "badges" ? "active" : "")">
+                    <i class="bi bi-award-fill"></i> Badges
+                </a>
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="support" class="admin-dash-nav-link @(Model.ActiveSection == "support" ? "active" : "")">
+                    <i class="bi bi-headset"></i> Support
+                </a>
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="reviews" class="admin-dash-nav-link @(Model.ActiveSection == "reviews" ? "active" : "")">
+                    <i class="bi bi-star-fill"></i> Reviews
+                </a>
             </aside>
 
-            <!-- CENTER COLUMN (INTERACTIVE MAP) -->
-            <main class="dash-center-column">
-                <div class="dash-map-card">
-                    <div class="map-card-bar">
-                        <div class="map-card-title">
-                            <i class="bi bi-map"></i> Platform Network Map
-                        </div>
-                        <div class="map-live-indicator">
-                            <div class="live-dot"></div>
-                            LIVE GIS DATA
-                        </div>
-                    </div>
-                    <div class="dash-map-container" id="dashboardMap">
-                        <div class="map-watermark">
-                            <h2><partial name="_EgyxploreWordmark" /></h2>
-                        </div>
-                    </div>
-                </div>
-            </main>
-
-            <!-- RIGHT COLUMN (RATING & HIGHLIGHTS) -->
-            <aside class="dash-widgets">
-                <div class="dash-card rating-widget-card">
-                    <div class="dash-card-header justify-content-center border-0 bg-transparent pb-0">
-                        <span><i class="bi bi-star me-2"></i> AI Satisfaction</span>
-                    </div>
-                    <div class="dash-card-body">
-                        @if (Model.RatingAvailable)
-                        {
-                            <div class="rating-gauge-wrapper" style="--rating: @(Model.AverageRating / 5.0)">
-                                <div class="rating-gauge">
-                                    <div class="rating-gauge-value">@Model.AverageRating?.ToString("0.0")</div>
-                                </div>
-                            </div>
-                            <div class="rating-stars">
-                                @for (int i = 1; i <= 5; i++)
-                                {
-                                    if (i <= Math.Round(Model.AverageRating ?? 0))
-                                    {
-                                        <i class="bi bi-star-fill"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-star"></i>
-                                    }
-                                }
-                            </div>
-                            <div class="kpi-sub mt-2">@Model.ReviewCount reviews</div>
-                        }
-                        else
-                        {
-                            <div class="text-muted mt-3 mb-3">
-                                <i class="bi bi-info-circle display-4 d-block mb-2 text-black-50"></i>
-                                No ratings available yet.
-                            </div>
-                        }
-                    </div>
-                </div>
-
-                <div class="dash-card top-performing-card">
-                    <div class="dash-card-header bg-transparent">
-                        <span><i class="bi bi-trophy me-2"></i> Highlights</span>
-                    </div>
-                    <div class="dash-card-body">
-                        <div class="kpi-label mb-2">Missions Completed</div>
-                        <div class="top-branch-item">
-                            <div class="top-branch-icon">
-                                <i class="bi bi-flag-fill"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">
-                                    @Model.TotalMissionsCompleted.ToString("N0")
-                                </h6>
-                                <span class="text-muted" style="font-size: 0.75rem;">Platform-wide completions</span>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <div class="kpi-label mb-2">Total Redemptions</div>
-                            <div class="top-branch-item">
-                                <div class="top-branch-icon">
-                                    <i class="bi bi-receipt-fill"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">
-                                        @Model.TotalRedemptions.ToString("N0")
-                                    </h6>
-                                    <span class="text-muted" style="font-size: 0.75rem;">All-time claims</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-        </div>
-
-        <!-- BOTTOM CHARTS GRID -->
-        <div class="charts-grid">
-            <div class="chart-card">
-                <div class="dash-card-header">
-                    <span><i class="bi bi-graph-up me-2"></i> Monthly Performance</span>
-                </div>
-                <div class="chart-body-wrapper">
-                    <canvas id="monthlyTrendChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <div class="dash-card-header">
-                    <span><i class="bi bi-bar-chart me-2"></i> Top Rewards by Claims</span>
-                </div>
-                <div class="chart-body-wrapper">
-                    @if (Model.DashboardTopRewards.Any())
-                    {
-                        <canvas id="topRewardsChart"></canvas>
-                    }
-                    else
-                    {
-                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
-                            <div class="text-center">
-                                <i class="bi bi-inbox display-4 d-block mb-2 text-black-50"></i>
-                                No reward data available
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <div class="dash-card-header">
-                    <span><i class="bi bi-pie-chart me-2"></i> Engagement Split</span>
-                </div>
-                <div class="chart-body-wrapper">
-                    <canvas id="engagementPieChart"></canvas>
-                </div>
+            <div class="admin-dash-content">
+                @await Html.PartialAsync(partialName, Model)
             </div>
         </div>
 
@@ -259,183 +84,181 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // --- 1. Initialize Map ---
-        (function () {
-            window.allBranchLatlngs = [@foreach (var b in Model.AllBranches) {<text>[@b.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture), @b.Lng.ToString(System.Globalization.CultureInfo.InvariantCulture)],</text>}];
+    @if (Model.ActiveSection == "overview")
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // --- 1. Initialize Map ---
+            (function () {
+                window.allBranchLatlngs = [@foreach (var b in Model.AllBranches) {<text>[@b.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture), @b.Lng.ToString(System.Globalization.CultureInfo.InvariantCulture)],</text>}];
 
-            var dashboardMap = EGYMaps.initWfsMap({
-                mapElId: 'dashboardMap',
-                layer: 'branches',
-                propMap: {
-                    id: ['Id', 'id', 'SponsorId'],
-                    name: ['Name', 'name', 'branch_name']
-                },
-                markerStyle: {
-                    radius: 9,
-                    fillColor: '#C8832A',
-                    color: '#fff',
-                    weight: 2,
-                    opacity: 1,
-                    fillOpacity: 0.9
-                },
-                popupHtml: function (ctx) {
-                    var p = ctx.attributes || {};
-                    var name = p['Name'] || p['name'] || p['branch_name'] || 'Unnamed Branch';
-                    return '<div style="text-align:center;">' +
-                           '<strong style="color:#1E120A;font-family:Cinzel,serif;font-size:1.1em;">' + name + '</strong>' +
-                           '<br><span style="color:#C8832A;font-size:0.85em;"><i class="bi bi-shield-check"></i> Verified Partner</span>' +
-                           '</div>';
-                },
-                onLayerReady: function () {
-                    // Auto-zoom to fit all platform branches
-                    if (window.allBranchLatlngs && window.allBranchLatlngs.length && dashboardMap && dashboardMap.fitBounds) {
-                        dashboardMap.fitBounds(window.allBranchLatlngs);
-                    }
-                }
-            });
-
-            // Map Filter functionality (UI simulation)
-            window.filterMap = function (filterType) {
-                document.querySelectorAll('.chip-btn').forEach(btn => btn.classList.remove('chip-active'));
-                event.currentTarget.classList.add('chip-active');
-            };
-        })();
-
-        // --- 2. Initialize Charts ---
-        (function () {
-            Chart.defaults.font.family = "'Nunito', sans-serif";
-            Chart.defaults.color = '#1E120A';
-
-            var themePrimary = '#C8832A'; // Gold
-            var themeDark = '#1E120A';    // Dark
-            var themeLight = 'rgba(200, 131, 42, 0.1)';
-
-            // 1. Monthly Trend Chart
-            var monthLabels = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => $"\"{r.MonthLabel}\"")))];
-            var redemptionsData = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => r.Redemptions)))];
-            var viewsData = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => r.Views)))];
-
-            var ctxTrend = document.getElementById('monthlyTrendChart');
-            if (ctxTrend) {
-                new Chart(ctxTrend, {
-                    type: 'line',
-                    data: {
-                        labels: monthLabels,
-                        datasets: [
-                            {
-                                label: 'Redemptions',
-                                data: redemptionsData,
-                                borderColor: themePrimary,
-                                backgroundColor: themeLight,
-                                borderWidth: 3,
-                                pointBackgroundColor: '#fff',
-                                pointBorderColor: themePrimary,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                                fill: true,
-                                tension: 0.4
-                            },
-                            {
-                                label: 'Views',
-                                data: viewsData,
-                                borderColor: themeDark,
-                                backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                pointRadius: 3,
-                                tension: 0.4
-                            }
-                        ]
+                var dashboardMap = EGYMaps.initWfsMap({
+                    mapElId: 'dashboardMap',
+                    layer: 'branches',
+                    propMap: {
+                        id: ['Id', 'id', 'SponsorId'],
+                        name: ['Name', 'name', 'branch_name']
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                labels: { usePointStyle: true, boxWidth: 8 }
-                            }
-                        },
-                        scales: {
-                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
-                            x: { grid: { display: false } }
-                        },
-                        interaction: {
-                            mode: 'index',
-                            intersect: false,
+                    markerStyle: {
+                        radius: 9,
+                        fillColor: '#C8832A',
+                        color: '#fff',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.9
+                    },
+                    popupHtml: function (ctx) {
+                        var p = ctx.attributes || {};
+                        var name = p['Name'] || p['name'] || p['branch_name'] || 'Unnamed Branch';
+                        return '<div style="text-align:center;">' +
+                               '<strong style="color:#1E120A;font-family:Cinzel,serif;font-size:1.1em;">' + name + '</strong>' +
+                               '<br><span style="color:#C8832A;font-size:0.85em;"><i class="bi bi-shield-check"></i> Verified Partner</span>' +
+                               '</div>';
+                    },
+                    onLayerReady: function () {
+                        if (window.allBranchLatlngs && window.allBranchLatlngs.length && dashboardMap && dashboardMap.fitBounds) {
+                            dashboardMap.fitBounds(window.allBranchLatlngs);
                         }
                     }
                 });
-            }
 
-            // 2. Top Rewards Bar Chart
-            @if (Model.DashboardTopRewards.Any())
-            {
-                <text>
-                var rewardLabels = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => $"\"{r.RewardTitle}\"")))];
-                var rewardData = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => r.Redemptions)))];
+                window.filterMap = function (filterType) {
+                    document.querySelectorAll('.chip-btn').forEach(btn => btn.classList.remove('chip-active'));
+                    event.currentTarget.classList.add('chip-active');
+                };
+            })();
 
-                var ctxRewards = document.getElementById('topRewardsChart');
-                if (ctxRewards) {
-                    new Chart(ctxRewards, {
-                        type: 'bar',
+            // --- 2. Initialize Charts ---
+            (function () {
+                Chart.defaults.font.family = "'Nunito', sans-serif";
+                Chart.defaults.color = '#1E120A';
+
+                var themePrimary = '#C8832A';
+                var themeDark = '#1E120A';
+                var themeLight = 'rgba(200, 131, 42, 0.1)';
+
+                var monthLabels = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => $"\"{r.MonthLabel}\"")))];
+                var redemptionsData = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => r.Redemptions)))];
+                var viewsData = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => r.Views)))];
+
+                var ctxTrend = document.getElementById('monthlyTrendChart');
+                if (ctxTrend) {
+                    new Chart(ctxTrend, {
+                        type: 'line',
                         data: {
-                            labels: rewardLabels,
-                            datasets: [{
-                                label: 'Total Claims',
-                                data: rewardData,
-                                backgroundColor: themePrimary,
-                                borderRadius: 6,
-                                barThickness: 24
-                            }]
+                            labels: monthLabels,
+                            datasets: [
+                                {
+                                    label: 'Redemptions',
+                                    data: redemptionsData,
+                                    borderColor: themePrimary,
+                                    backgroundColor: themeLight,
+                                    borderWidth: 3,
+                                    pointBackgroundColor: '#fff',
+                                    pointBorderColor: themePrimary,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 6,
+                                    fill: true,
+                                    tension: 0.4
+                                },
+                                {
+                                    label: 'Views',
+                                    data: viewsData,
+                                    borderColor: themeDark,
+                                    backgroundColor: 'transparent',
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    pointRadius: 3,
+                                    tension: 0.4
+                                }
+                            ]
                         },
                         options: {
-                            indexAxis: 'y',
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
-                                legend: { display: false }
+                                legend: {
+                                    position: 'top',
+                                    labels: { usePointStyle: true, boxWidth: 8 }
+                                }
                             },
                             scales: {
-                                x: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
-                                y: { grid: { display: false } }
+                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+                                x: { grid: { display: false } }
+                            },
+                            interaction: {
+                                mode: 'index',
+                                intersect: false,
                             }
                         }
                     });
                 }
-                </text>
-            }
 
-            // 3. Engagement Pie Chart
-            var ctxPie = document.getElementById('engagementPieChart');
-            if (ctxPie) {
-                new Chart(ctxPie, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Redemptions', 'Views'],
-                        datasets: [{
-                            data: [@Model.TotalRedemptions, @Model.TotalMissionsCompleted],
-                            backgroundColor: [themePrimary, themeDark],
-                            borderWidth: 2,
-                            borderColor: '#ffffff',
-                            hoverOffset: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: { padding: 20, usePointStyle: true }
+                @if (Model.DashboardTopRewards.Any())
+                {
+                    <text>
+                    var rewardLabels = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => $"\"{r.RewardTitle}\"")))];
+                    var rewardData = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => r.Redemptions)))];
+
+                    var ctxRewards = document.getElementById('topRewardsChart');
+                    if (ctxRewards) {
+                        new Chart(ctxRewards, {
+                            type: 'bar',
+                            data: {
+                                labels: rewardLabels,
+                                datasets: [{
+                                    label: 'Total Claims',
+                                    data: rewardData,
+                                    backgroundColor: themePrimary,
+                                    borderRadius: 6,
+                                    barThickness: 24
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y',
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false }
+                                },
+                                scales: {
+                                    x: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+                                    y: { grid: { display: false } }
+                                }
                             }
-                        },
-                        cutout: '70%'
+                        });
                     }
-                });
-            }
-        })();
-    </script>
+                    </text>
+                }
+
+                var ctxPie = document.getElementById('engagementPieChart');
+                if (ctxPie) {
+                    new Chart(ctxPie, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Redemptions', 'Views'],
+                            datasets: [{
+                                data: [@Model.TotalRedemptions, @Model.TotalMissionsCompleted],
+                                backgroundColor: [themePrimary, themeDark],
+                                borderWidth: 2,
+                                borderColor: '#ffffff',
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: { padding: 20, usePointStyle: true }
+                                }
+                            },
+                            cutout: '70%'
+                        }
+                    });
+                }
+            })();
+        </script>
+    }
 }

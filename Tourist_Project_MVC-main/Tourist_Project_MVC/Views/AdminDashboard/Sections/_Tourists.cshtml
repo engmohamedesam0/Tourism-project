@@ -1,0 +1,64 @@
+@model Tourist_Project_MVC.View_Model.AdminDashboardVM
+
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper blue">
+            <i class="bi bi-people-fill"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Total Tourists</div>
+            <div class="kpi-value">@Model.TouristSection.Total</div>
+            <div class="kpi-sub">Registered users</div>
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-icon-wrapper green">
+            <i class="bi bi-person-check-fill"></i>
+        </div>
+        <div>
+            <div class="kpi-label">Active Tourists</div>
+            <div class="kpi-value">@Model.TouristSection.StatusBreakdown.FirstOrDefault(r => r.Name == "Active")?.Count ?? 0</div>
+            <div class="kpi-sub">Currently active</div>
+        </div>
+    </div>
+</div>
+
+<div class="dash-card mb-4">
+    <div class="dash-card-header">
+        <span><i class="bi bi-globe me-2"></i> Top Nationalities</span>
+    </div>
+    <div class="dash-card-body">
+        @foreach (var row in Model.TouristSection.NationalityBreakdown)
+        {
+            <div class="top-branch-item mb-2">
+                <div class="top-branch-icon">
+                    <i class="bi bi-flag-fill"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">@row.Name</h6>
+                </div>
+                <span class="badge bg-dark">@row.Count</span>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="dash-card">
+    <div class="dash-card-header">
+        <span><i class="bi bi-diagram-3 me-2"></i> Status Distribution</span>
+    </div>
+    <div class="dash-card-body">
+        @foreach (var row in Model.TouristSection.StatusBreakdown)
+        {
+            <div class="top-branch-item mb-2">
+                <div class="top-branch-icon">
+                    <i class="bi bi-circle-fill"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">@row.Name</h6>
+                </div>
+                <span class="badge bg-dark">@row.Count</span>
+            </div>
+        }
+    </div>
+</div>

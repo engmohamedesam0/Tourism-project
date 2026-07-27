@@ -16,7 +16,10 @@
                 <a asp-action="Create" class="btn btn-success px-4">
                     <i class="bi bi-plus-lg me-1"></i> + @Localizer["RewardAdmin_AddNew"].Value
                 </a>
-                }
+                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="rewards" class="btn btn-outline-dark px-4">
+                    <i class="bi bi-speedometer2 me-1"></i> 📊 View Reward Dashboard
+                </a>
+            }
             }
         
     </div>

@@ -102,6 +102,9 @@
   <data name="Nav_AdminDashboard" xml:space="preserve">
     <value>لوحة التحكم</value>
   </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>لوحة التحكم</value>
+  </data>
   <data name="Nav_SupportInbox" xml:space="preserve">
     <value>صندوق الدعم</value>
   </data>
