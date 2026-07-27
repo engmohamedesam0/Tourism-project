@@ -68,6 +68,7 @@ builder.Services.Configure<RequestLocalizationOptions>(o =>
             builder.Services.AddScoped<IBadgeRepository, BadgeRepository>();
             builder.Services.AddScoped<IUserBadgeRepository, UserBadgeRepository>();
             builder.Services.AddScoped<IUserProgressRepository, UserProgressRepository>();
+            builder.Services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
             builder.Services.AddScoped<IGamificationService, GamificationService>();
             builder.Services.AddDbContext<TouristContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("CS"),
