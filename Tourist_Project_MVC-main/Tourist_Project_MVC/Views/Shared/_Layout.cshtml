@@ -72,7 +72,7 @@
         border-radius: 12px;
         font-size: 1.4rem;
         color: #ffffff;
-        background: var(--egy-primary);
+        background: var(--egy-dark);
         margin-bottom: 16px;
         }
 
@@ -104,15 +104,16 @@
         display: block;
         }
 
-        /* Per-card accent colors (colored square icon). Reuses the site's
-           ochre/gold palette plus a few complementary tones for variety. */
-        .stat-blue   .stat-icon { background: #2f6fed; }
-        .stat-green  .stat-icon { background: #2e9e5b; }
-        .stat-gold   .stat-icon { background: var(--egy-primary); }
-        .stat-purple .stat-icon { background: #8b5cf6; }
-        .stat-teal   .stat-icon { background: #0d9488; }
-        .stat-red    .stat-icon { background: #e0533d; }
-        .stat-amber  .stat-icon { background: #e8a045; }
+        /* Per-card accent colors — unified dark tone for all variants. */
+        .stat-blue   .stat-icon,
+        .stat-green  .stat-icon,
+        .stat-gold   .stat-icon,
+        .stat-purple .stat-icon,
+        .stat-teal   .stat-icon,
+        .stat-red    .stat-icon,
+        .stat-amber  .stat-icon {
+        background: var(--egy-dark);
+        }
 
         .stats-section .stat-card {
         background: rgba(255, 255, 255, 0.04);
@@ -150,6 +151,7 @@
         .stats-section .stat-icon {
         font-size: 2.5rem;
         color: #C8832A;
+        background: var(--egy-primary);
         margin-bottom: 20px;
         display: block;
         }
@@ -511,14 +513,7 @@
                                     <i class="bi bi-geo-fill"></i> @Localizer["Nav_NearMe"].Value
                                 </a>
                             </li>
-                            <!-- Support Inbox standalone -->
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="AdminSupport" asp-action="Index">
-                                    <i class="bi bi-headset me-1"></i> @Localizer["Nav_SupportInbox"].Value
-                                    @await Component.InvokeAsync("AdminNavBadges", new { badge = "support" })
-                                </a>
-                            </li>
-                            <!-- Sponsors dropdown with Approvals submenu -->
+                            <!-- Sponsors dropdown with Approvals + Support Inbox submenu -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle position-relative" href="#" id="sponsorDropdown"
                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -536,7 +531,19 @@
                                             @await Component.InvokeAsync("AdminNavBadges", new { badge = "approvals" })
                                         </a>
                                     </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="AdminSupport" asp-action="Index">
+                                            <i class="bi bi-headset me-2"></i> @Localizer["Nav_SupportInbox"].Value
+                                            @await Component.InvokeAsync("AdminNavBadges", new { badge = "support" })
+                                        </a>
+                                    </li>
                                 </ul>
+                            </li>
+                            <!-- Admin Dashboard -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="AdminDashboard" asp-action="Index">
+                                    <i class="bi bi-speedometer2 me-1"></i> @Localizer["Nav_AdminDashboard"].Value
+                                </a>
                             </li>
                         }
                         else if (User.IsInRole("Sponsor"))

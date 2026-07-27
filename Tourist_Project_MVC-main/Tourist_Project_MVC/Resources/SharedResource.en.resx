@@ -99,6 +99,9 @@
   <data name="Nav_Accounts" xml:space="preserve">
     <value>Accounts</value>
   </data>
+  <data name="Nav_AdminDashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
   <data name="Nav_SupportInbox" xml:space="preserve">
     <value>Support Inbox</value>
   </data>
