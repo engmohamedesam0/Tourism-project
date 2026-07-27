@@ -244,7 +244,7 @@ namespace Tourist_Project_MVC.Services
             };
 
             var destinations = await context.Destinations
-                .Where(d => string.IsNullOrWhiteSpace(d.PhotoUrls))
+                // .Where(d => string.IsNullOrWhiteSpace(d.PhotoUrls))
                 .ToListAsync();
 
             foreach (var dest in destinations)
@@ -269,15 +269,15 @@ namespace Tourist_Project_MVC.Services
 
                     await using var stream = await response.Content.ReadAsStreamAsync();
                     using var doc = await JsonDocument.ParseAsync(stream);
-                    if (doc.RootElement.TryGetProperty("originalimage", out var origImg) &&
-                        origImg.TryGetProperty("source", out var src))
-                    {
-                        dest.PhotoUrls = src.GetString();
-                    }
-                    else if (doc.RootElement.TryGetProperty("thumbnail", out var thumb) &&
-                             thumb.TryGetProperty("source", out var thumbSrc))
+                    if (doc.RootElement.TryGetProperty("thumbnail", out var thumb) &&
+                        thumb.TryGetProperty("source", out var thumbSrc))
                     {
                         dest.PhotoUrls = thumbSrc.GetString();
+                    }
+                    else if (doc.RootElement.TryGetProperty("originalimage", out var origImg) &&
+                             origImg.TryGetProperty("source", out var src))
+                    {
+                        dest.PhotoUrls = src.GetString();
                     }
                     else
                     {
