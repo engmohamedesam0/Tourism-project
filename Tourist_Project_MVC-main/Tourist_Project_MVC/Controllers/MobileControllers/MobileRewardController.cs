@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tourist_Project_MVC.Data;
+using Tourist_Project_MVC.DTOs;
 using Tourist_Project_MVC.Repositories;
 
 namespace Tourist_Project_MVC.Controllers.MobileControllers
@@ -17,16 +18,28 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             _context = context;
             this.reward = reward;
         }
-        [Authorize]
-        [HttpGet]
+        //[Authorize]
+        [HttpGet("AllRewards")]
         public IActionResult AllRewards()
         {
-            var missions = reward.GetAll();
-            if (missions != null)
+            var rewards = reward.GetAll();
+            if (rewards == null)
             {
-                return Ok(missions);
+                return BadRequest(new { message = "Unable to retrieve rewards." });
             }
-            return BadRequest(new { message = "Unable to retrieve rewards." });
+            var rewardDto = rewards.Select(r => new RewardDTO
+            {
+                Id = r.Id,
+                Type = r.RewardType,
+                Title = r.Title,
+                Desc = r.Description,
+                Points = r.PointsRequired,
+                Quntity = r.QuantityAvailable,
+                Expiration = r.ExpirationDate,
+                Status = r.Status
+            }).ToList();
+            return Ok(rewardDto);
+
         }
     }
 }
