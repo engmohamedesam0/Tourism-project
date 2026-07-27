@@ -65,6 +65,10 @@
     };
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
+}
+
 <div class="container-fluid mt-4 destination-admin-page">
 
     <!-- Page Header -->
@@ -80,17 +84,16 @@
             </p>
         </div>
 
-        @if (isAdmin)
-        {
-            <a asp-action="Create" class="btn btn-success destination-add-btn">
-                <i class="bi bi-plus-lg me-1"></i>
-                @Localizer["Destination_AddBtn"].Value
-            </a>
-            <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="destinations" class="btn btn-outline-dark destination-add-btn">
-                <i class="bi bi-speedometer2 me-1"></i>
-                📊 View Destination Dashboard
-            </a>
-        }
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            @await Html.PartialAsync("_AdminModuleToggle", null, new ViewDataDictionary(ViewData) { { "AdminModule", "destinations" }, { "ActiveView", "Data" } })
+            @if (isAdmin)
+            {
+                <a asp-action="Create" class="btn btn-success destination-add-btn">
+                    <i class="bi bi-plus-lg me-1"></i>
+                    @Localizer["Destination_AddBtn"].Value
+                </a>
+            }
+        </div>
     </div>
 
     @if (!string.IsNullOrEmpty(TempData["DestinationMessage"] as string))

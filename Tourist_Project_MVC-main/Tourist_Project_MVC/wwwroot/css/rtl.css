@@ -141,11 +141,7 @@
 }
 
 /* AI widget */
-[dir="rtl"] .ai-widget-panel {
-    right: 22px;
-    left: auto;
-}
-
+/* Panel positioning is handled by JS (left/top), footer layout only */
 [dir="rtl"] .ai-widget-footer {
     flex-direction: row-reverse;
 }
@@ -166,11 +162,6 @@
 
 /* Mobile adjustments */
 @media (max-width: 575.98px) {
-    [dir="rtl"] .ai-widget-panel {
-        right: 10px;
-        left: 10px;
-    }
-
     [dir="rtl"] .trip-timeline {
         padding-right: 16px;
     }

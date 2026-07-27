@@ -1,0 +1,34 @@
+@* 
+    Reusable Segmented Switch Toggle for Admin Module Pages
+    Allows switching seamlessly between Dashboard View and Data View
+*@
+@{
+    string module = (ViewData["AdminModule"]?.ToString() ?? "overview").ToLowerInvariant();
+    string activeView = (ViewData["ActiveView"]?.ToString() ?? "Data").ToLowerInvariant();
+
+    string dashboardUrl = Url.Action("Index", "AdminDashboard", new { section = module == "overview" ? "overview" : module }) ?? "#";
+    string dataUrl = module switch
+    {
+        "tourists" => Url.Action("Index", "Tourist"),
+        "missions" => Url.Action("Index", "Mission"),
+        "sponsors" => Url.Action("Index", "Sponsor"),
+        "destinations" => Url.Action("Index", "Destination"),
+        "rewards" => Url.Action("Index", "Reward"),
+        "support" => Url.Action("Index", "AdminSupport"),
+        "reviews" => Url.Action("Index", "AdminDashboard", new { section = "reviews" }),
+        _ => Url.Action("Index", "Tourist")
+    };
+
+    bool isDashboard = activeView == "dashboard";
+}
+
+<div class="admin-segmented-switch" role="group" aria-label="View Switcher">
+    <a href="@dashboardUrl" class="segmented-btn @(isDashboard ? "active" : "")" title="Analytics & Charts">
+        <i class="bi bi-grid-1x2-fill"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="@dataUrl" class="segmented-btn @(!isDashboard ? "active" : "")" title="Data Table & List">
+        <i class="bi bi-table"></i>
+        <span>Data View</span>
+    </a>
+</div>

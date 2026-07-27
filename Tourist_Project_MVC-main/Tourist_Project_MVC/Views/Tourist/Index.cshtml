@@ -3,9 +3,13 @@
     ViewData["Title"] = Localizer["TouristAdmin_Title"].Value;
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
+}
+
 <div class="container-fluid mt-4 px-md-4">
     <!-- Header Section -->
-    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4 page-header-section">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 page-header-section">
         <div>
             <h2 class="page-title text-uppercase mb-1">
                 <span class="header-icon">🧳</span> @Localizer["TouristAdmin_Heading"].Value
@@ -14,15 +18,15 @@
                 @Localizer["TouristAdmin_Total"].Value: <span class="badge bg-secondary">@ViewBag.AllCount</span> @Localizer["TouristAdmin_TotalTourists"].Value
             </p>
         </div>
-        @if (User.IsInRole("Admin"))
-        {
-            <a asp-action="Create" class="btn btn-egy-success px-4 py-2 shadow-sm">
-                <i class="bi bi-plus-lg me-1"></i> @Localizer["TouristAdmin_Add"].Value
-            </a>
-            <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="tourists" class="btn btn-outline-dark px-4 py-2 shadow-sm">
-                <i class="bi bi-speedometer2 me-1"></i> @Localizer["TouristAdmin_ViewDashboard"].Value
-            </a>
-        }
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            @await Html.PartialAsync("_AdminModuleToggle", null, new ViewDataDictionary(ViewData) { { "AdminModule", "tourists" }, { "ActiveView", "Data" } })
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Create" class="btn btn-egy-success px-4 py-2 shadow-sm">
+                    <i class="bi bi-plus-lg me-1"></i> @Localizer["TouristAdmin_Add"].Value
+                </a>
+            }
+        </div>
     </div>
 
     <!-- Stat boxes -->
