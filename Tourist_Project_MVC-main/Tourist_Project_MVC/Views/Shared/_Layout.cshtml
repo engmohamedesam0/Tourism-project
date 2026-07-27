@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>@ViewData["Title"] - EGYXPLORE</title>
+    <title>@ViewData["Title"] - @Localizer["Site_Title"].Value</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="~/assets/favicon.ico" asp-append-version="true" />
@@ -327,7 +327,7 @@
     <!-- GLOBAL LOADER -->
     <div id="global-loader">
         <div class="loader-container">
-            <img src="~/assets/img/scarab.png" alt="Loading..." class="loader-logo-fixed" />
+            <img src="~/assets/img/scarab.png" alt="@Localizer["Ai_Loading"].Value" class="loader-logo-fixed" />
             <div class="spinner-ring"></div>
         </div>
     </div>
@@ -857,7 +857,7 @@
         <div class="container">
             <div class="row g-4 mb-4">
                 <div class="col-6 col-md-3">
-                    <h6 class="footer-col-header">EXPLORE</h6>
+                    <h6 class="footer-col-header">@Localizer["Footer_Explore"].Value</h6>
                     <ul class="list-unstyled mb-0">
                         <li><a asp-controller="Explore" asp-action="Index">Explore Egypt</a></li>
                         <li><a asp-controller="NearMe" asp-action="Index">Near Me</a></li>
@@ -865,7 +865,7 @@
                     </ul>
                 </div>
                 <div class="col-6 col-md-3">
-                    <h6 class="footer-col-header">ACCOUNT</h6>
+                    <h6 class="footer-col-header">@Localizer["Footer_Account"].Value</h6>
                     <ul class="list-unstyled mb-0">
                         <li><a asp-controller="TouristProfile" asp-action="Index">My Profile</a></li>
                         <li><a asp-controller="TouristReward" asp-action="Index">Points & Rewards</a></li>
@@ -874,13 +874,13 @@
                     </ul>
                 </div>
                 <div class="col-6 col-md-3">
-                    <h6 class="footer-col-header">SUPPORT</h6>
+                    <h6 class="footer-col-header">@Localizer["Footer_Support"].Value</h6>
                     <ul class="list-unstyled mb-0">
                         <li><a asp-controller="TouristSupport" asp-action="Index">Support</a></li>
                     </ul>
                 </div>
                 <div class="col-6 col-md-3">
-                    <h6 class="footer-col-header">COMPANY</h6>
+                    <h6 class="footer-col-header">@Localizer["Footer_Company"].Value</h6>
                     <ul class="list-unstyled mb-0">
                         <li><a asp-controller="About" asp-action="Index">About Us</a></li>
                         <li><a asp-controller="Features" asp-action="Index">Features</a></li>
@@ -966,11 +966,11 @@
     <div class="notification-widget-panel" id="notificationPanel" aria-hidden="true">
         <div class="notification-widget-header">
             <h5 class="notification-widget-title">
-                <i class="bi bi-bell-fill me-2"></i> Notifications
+                <i class="bi bi-bell-fill me-2"></i> @Localizer["Nav_Notifications"].Value
             </h5>
             <div class="d-flex align-items-center gap-2">
                 <button type="button" class="notification-mark-all-read" id="markAllReadBtn">
-                    <i class="bi bi-check2-all me-1"></i> Mark all as read
+                    <i class="bi bi-check2-all me-1"></i> @Localizer["Nav_MarkAllRead"].Value
                 </button>
                 <button type="button" class="notification-widget-close" aria-label="Close">
                     <i class="bi bi-x-lg"></i>

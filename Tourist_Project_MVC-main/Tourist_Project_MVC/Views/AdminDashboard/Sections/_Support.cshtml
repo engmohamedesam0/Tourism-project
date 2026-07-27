@@ -6,9 +6,9 @@
             <i class="bi bi-headset"></i>
         </div>
         <div>
-            <div class="kpi-label">Total Tickets</div>
+            <div class="kpi-label">@Localizer["Dash_TotalTickets"].Value</div>
             <div class="kpi-value">@Model.SupportSection.Total</div>
-            <div class="kpi-sub">All time</div>
+            <div class="kpi-sub">@Localizer["Dash_AllTime"].Value</div>
         </div>
     </div>
     <div class="kpi-card">
@@ -16,9 +16,9 @@
             <i class="bi bi-exclamation-circle-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Open</div>
+            <div class="kpi-label">@Localizer["Dash_Open"].Value</div>
             <div class="kpi-value">@Model.SupportSection.Open</div>
-            <div class="kpi-sub">Awaiting response</div>
+            <div class="kpi-sub">@Localizer["Dash_AwaitingResponse"].Value</div>
         </div>
     </div>
     <div class="kpi-card">
@@ -26,16 +26,16 @@
             <i class="bi bi-check-circle-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Resolved</div>
+            <div class="kpi-label">@Localizer["Dash_Resolved"].Value</div>
             <div class="kpi-value">@Model.SupportSection.Resolved</div>
-            <div class="kpi-sub">Closed tickets</div>
+            <div class="kpi-sub">@Localizer["Dash_ClosedTickets"].Value</div>
         </div>
     </div>
 </div>
 
 <div class="dash-card">
     <div class="dash-card-header">
-        <span><i class="bi bi-diagram-3 me-2"></i> Tickets by Status</span>
+        <span><i class="bi bi-diagram-3 me-2"></i> @Localizer["Dash_TicketsByStatus"].Value</span>
     </div>
     <div class="dash-card-body">
         @foreach (var row in Model.SupportSection.StatusBreakdown)

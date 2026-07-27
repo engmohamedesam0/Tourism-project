@@ -35,10 +35,10 @@
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div>
                     <span class="badge px-3 py-2 rounded-pill text-uppercase fw-bold tracking-wider mb-2 d-inline-flex align-items-center gap-2" style="background: rgba(200, 131, 42, 0.25); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 0.78rem;">
-                        <i class="bi bi-compass-fill"></i> Tailored Journey Planner
+                        <i class="bi bi-compass-fill"></i> @Localizer["Trip_HeroBadge"].Value
                     </span>
-                    <h1 class="display-5 fw-bold mb-2" style="font-family:'Cinzel', serif; color: #F59E0B; letter-spacing: 0.5px;">Craft Your Egyptian Odyssey</h1>
-                    <p class="text-white opacity-90 mb-0" style="max-width: 720px; font-size: 1.1rem; line-height: 1.6;">Select world-class destinations, organize your day-by-day itinerary, and visualize your custom trip route in real time.</p>
+                    <h1 class="display-5 fw-bold mb-2" style="font-family:'Cinzel', serif; color: #F59E0B; letter-spacing: 0.5px;">@Localizer["Trip_HeroTitle"].Value</h1>
+                    <p class="text-white opacity-90 mb-0" style="max-width: 720px; font-size: 1.1rem; line-height: 1.6;">@Localizer["Trip_HeroDesc"].Value</p>
                 </div>
                 @if (tourist != null)
                 {
@@ -62,7 +62,7 @@
         <div class="mb-5">
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h3 class="section-title mb-0" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
-                    <i class="bi bi-journal-bookmark me-2 text-gold"></i>My Saved Trips
+                    <i class="bi bi-journal-bookmark me-2 text-gold"></i>@Localizer["Trip_MySavedTrips"].Value
                 </h3>
                 <span class="badge rounded-pill px-3 py-2 fw-semibold" style="background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; font-size: 0.85rem;">
                     @myTrips.Count() Saved Expedition@(myTrips.Count() > 1 ? "s" : "")
@@ -128,9 +128,9 @@
 
         <div class="builder-section-header mb-4">
             <h3 class="fw-bold mb-1" style="font-family:'Cinzel',serif; color:#0F172A;">
-                <i class="bi bi-magic me-2 text-gold"></i>Trip Creation Studio
+                <i class="bi bi-magic me-2 text-gold"></i>@Localizer["Trip_CreationStudio"].Value
             </h3>
-            <p class="text-secondary mb-0" style="font-size: 1rem;">Set your trip parameters, pick your favorite Egyptian destinations, and build a custom schedule.</p>
+            <p class="text-secondary mb-0" style="font-size: 1rem;">@Localizer["Trip_SetParameters"].Value</p>
         </div>
 
         <!-- MAP & FILTERS PANEL -->
@@ -140,8 +140,8 @@
                     <!-- Planning Filter Bar -->
                     <div class="filter-bar h-100 d-flex flex-column justify-content-between p-3 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0;">
                         <div>
-                            <h5 class="fw-bold mb-3" style="font-family:'Cinzel',serif; color:#0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
-                                <i class="bi bi-sliders me-2 text-gold"></i>Filters & Budget
+<h5 class="fw-bold mb-3" style="font-family:'Cinzel',serif; color:#0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
+                                <i class="bi bi-sliders me-2 text-gold"></i> @Localizer["Trip_FiltersBudget"].Value
                             </h5>
                             
                             <div class="filter-field mb-3">
@@ -209,13 +209,13 @@
                 <div class="col-lg-8 col-xl-9">
                     <div class="map-wrapper-card h-100 position-relative rounded-3 overflow-hidden shadow-sm" style="border: 1px solid #CBD5E1; min-height: 400px;">
                         <div class="map-badge-overlay position-absolute top-0 end-0 m-3 z-3 px-3 py-1 rounded-pill bg-dark text-white small shadow-sm" style="opacity: 0.95;">
-                            <i class="bi bi-geo-alt me-1 text-gold"></i> Interactive Explorer Map
+                            <i class="bi bi-geo-alt me-1 text-gold"></i> @Localizer["Trip_InteractiveMap"].Value
                         </div>
                         <div id="tripBuilderMap" class="trip-builder-map h-100" style="min-height: 400px;">
                             <div class="map-watermark">
                                 <i class="bi bi-map text-gold" style="font-size: 2.5rem;"></i>
-                                <p class="mb-0 mt-1 small text-dark fw-semibold">Interactive Map Loading</p>
-                                <small class="text-muted">Selected stops render dynamically</small>
+                                <p class="mb-0 mt-1 small text-dark fw-semibold">@Localizer["Trip_MapLoading"].Value</p>
+                                <small class="text-muted">@Localizer["Trip_MapHint"].Value</small>
                             </div>
                         </div>
                     </div>
@@ -229,7 +229,7 @@
             <div class="col-lg-5 col-xl-5">
                 <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: #fff; border: 1px solid #E2E8F0 !important;">
                     <h4 class="mb-3 d-flex align-items-center gap-2" style="font-family:'Cinzel',serif; color:#0F172A;">
-                        <span class="step-num-badge">1</span> Pick Destinations
+                        <span class="step-num-badge">1</span> @Localizer["Trip_PickDestinations"].Value
                     </h4>
                     
                     <div class="mb-3">
@@ -258,10 +258,10 @@
                     </div>
 
                     <div class="destination-picker p-2 rounded-3">
-                        <div id="tripEmptyFilter" class="text-muted small p-3 text-center" style="display:none">
-                            <i class="bi bi-exclamation-circle text-gold fs-4 d-block mb-1"></i>
-                            No destinations match your filters.
-                        </div>
+<div id="tripEmptyFilter" class="text-muted small p-3 text-center" style="display:none">
+                             <i class="bi bi-exclamation-circle text-gold fs-4 d-block mb-1"></i>
+                             @Localizer["Trip_NoMatch"].Value
+                         </div>
                         @for (int i = 0; i < Model.Stops.Count; i++)
                         {
                             <div class="picker-row p-3 mb-2 rounded-3"
@@ -328,15 +328,15 @@
             <div class="col-lg-7 col-xl-7">
                 <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: #fff; border: 1px solid #E2E8F0 !important;">
                     <h4 class="mb-3 d-flex align-items-center gap-2" style="font-family:'Cinzel',serif; color:#0F172A;">
-                        <span class="step-num-badge">2</span> Your Live Itinerary
+                        <span class="step-num-badge">2</span> @Localizer["Trip_LiveItinerary"].Value
                     </h4>
                     <div class="itinerary-board p-3 rounded-3 h-100" id="itineraryBoard">
                         <div class="text-center text-muted py-5" id="emptyHint">
                             <div class="mb-3">
                                 <i class="bi bi-pin-map text-gold" style="font-size: 3rem; opacity: 0.7;"></i>
                             </div>
-                            <h5 class="fw-bold text-dark mb-1">No Destinations Selected</h5>
-                            <p class="small text-muted mb-0">Select destinations on the left picker to craft your step-by-step Egyptian travel route.</p>
+                            <h5 class="fw-bold text-dark mb-1">@Localizer["Trip_NoDestinations"].Value</h5>
+                            <p class="small text-muted mb-0">@Localizer["Trip_NoDestinationsDesc"].Value</p>
                         </div>
                     </div>
                 </div>

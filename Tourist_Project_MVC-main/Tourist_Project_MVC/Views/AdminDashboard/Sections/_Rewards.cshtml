@@ -6,9 +6,9 @@
             <i class="bi bi-gift-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Total Rewards</div>
+            <div class="kpi-label">@Localizer["Dash_TotalRewards"].Value</div>
             <div class="kpi-value">@Model.RewardSection.Total</div>
-            <div class="kpi-sub">All rewards</div>
+            <div class="kpi-sub">@Localizer["Dash_AllMissions"].Value</div>
         </div>
     </div>
     <div class="kpi-card">
@@ -16,9 +16,9 @@
             <i class="bi bi-check-circle-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Available</div>
+            <div class="kpi-label">@Localizer["Dash_Active"].Value</div>
             <div class="kpi-value">@Model.RewardSection.Available</div>
-            <div class="kpi-sub">Active offers</div>
+            <div class="kpi-sub">@Localizer["Dash_AvailableOffers"].Value</div>
         </div>
     </div>
     <div class="kpi-card">
@@ -26,16 +26,16 @@
             <i class="bi bi-receipt-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Total Redemptions</div>
+            <div class="kpi-label">@Localizer["Dash_TotalRedemptions"].Value</div>
             <div class="kpi-value">@Model.RewardSection.TotalRedemptions</div>
-            <div class="kpi-sub">All-time claims</div>
+            <div class="kpi-sub">@Localizer["Dash_AllTimeClaims"].Value</div>
         </div>
     </div>
 </div>
 
 <div class="dash-card">
     <div class="dash-card-header">
-        <span><i class="bi bi-tags me-2"></i> Rewards by Type</span>
+        <span><i class="bi bi-tags me-2"></i> @Localizer["Dash_RewardsByType"].Value</span>
     </div>
     <div class="dash-card-body">
         @foreach (var row in Model.RewardSection.TypeBreakdown)

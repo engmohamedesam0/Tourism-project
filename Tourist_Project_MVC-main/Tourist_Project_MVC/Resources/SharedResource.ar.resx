@@ -2467,4 +2467,310 @@
   <data name="TripDetails_AddSelected" xml:space="preserve">
     <value>إضافة المحدد</value>
   </data>
+  <data name="TouristAdmin_TotalTourists" xml:space="preserve">
+    <value>إجمالي السائحين</value>
+  </data>
+  <data name="TouristAdmin_Level" xml:space="preserve">
+    <value>المستوى</value>
+  </data>
+  <data name="TouristAdmin_XP" xml:space="preserve">
+    <value>نقاط الخبرة</value>
+  </data>
+  <data name="TouristAdmin_NotSpecified" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="Site_Title" xml:space="preserve">
+    <value>EGYXPLORE</value>
+  </data>
+  <data name="Nav_Notifications" xml:space="preserve">
+    <value>الإشعارات</value>
+  </data>
+  <data name="Nav_MarkAllRead" xml:space="preserve">
+    <value>تحديد الكل كمقروء</value>
+  </data>
+  <data name="Footer_Explore" xml:space="preserve">
+    <value>استكشف</value>
+  </data>
+  <data name="Footer_Account" xml:space="preserve">
+    <value>الحساب</value>
+  </data>
+  <data name="Footer_Support" xml:space="preserve">
+    <value>الدعم</value>
+  </data>
+  <data name="Footer_Company" xml:space="preserve">
+    <value>الشركة</value>
+  </data>
+  <data name="Ai_Loading" xml:space="preserve">
+    <value>جارٍ التحميل...</value>
+  </data>
+  <data name="AdminDashboard_Heading" xml:space="preserve">
+    <value>لوحة التحكم</value>
+  </data>
+  <data name="AdminDashboard_Administrator" xml:space="preserve">
+    <value>المسؤول</value>
+  </data>
+  <data name="Nav_Overview" xml:space="preserve">
+    <value>نظرة عامة</value>
+  </data>
+  <data name="Nav_Levels" xml:space="preserve">
+    <value>المستويات</value>
+  </data>
+  <data name="Nav_Badges" xml:space="preserve">
+    <value>الشارات</value>
+  </data>
+  <data name="Nav_Reviews" xml:space="preserve">
+    <value>المراجعات</value>
+  </data>
+  <data name="Dash_TotalTourists" xml:space="preserve">
+    <value>إجمالي السائحين</value>
+  </data>
+  <data name="Dash_RegisteredUsers" xml:space="preserve">
+    <value>مستخدمون مسجلون</value>
+  </data>
+  <data name="Dash_ActiveTourists" xml:space="preserve">
+    <value>سائحون نشطون</value>
+  </data>
+  <data name="Dash_CurrentlyActive" xml:space="preserve">
+    <value>نشطون حالياً</value>
+  </data>
+  <data name="Dash_TopNationalities" xml:space="preserve">
+    <value>أعلى الجنسيات</value>
+  </data>
+  <data name="Dash_StatusDistribution" xml:space="preserve">
+    <value>توزيع الحالة</value>
+  </data>
+  <data name="Dash_TotalSponsors" xml:space="preserve">
+    <value>إجمالي الرعاة</value>
+  </data>
+  <data name="Dash_RegisteredPartners" xml:space="preserve">
+    <value>شركاء مسجلون</value>
+  </data>
+  <data name="Dash_SponsorsByType" xml:space="preserve">
+    <value>الرعاة حسب النوع</value>
+  </data>
+  <data name="Dash_TotalDestinations" xml:space="preserve">
+    <value>إجمالي الوجهات</value>
+  </data>
+  <data name="Dash_ListedLocations" xml:space="preserve">
+    <value>مواقع مدرجة</value>
+  </data>
+  <data name="Dash_Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="Dash_ReadyForTourists" xml:space="preserve">
+    <value>جاهز للسائحين</value>
+  </data>
+  <data name="Dash_DestinationsByCategory" xml:space="preserve">
+    <value>الوجهات حسب الفئة</value>
+  </data>
+  <data name="Dash_TotalMissions" xml:space="preserve">
+    <value>إجمالي المهام</value>
+  </data>
+  <data name="Dash_AllMissions" xml:space="preserve">
+    <value>جميع المهام</value>
+  </data>
+  <data name="Dash_Completed" xml:space="preserve">
+    <value>مكتملة</value>
+  </data>
+  <data name="Dash_FinishedByTourists" xml:space="preserve">
+    <value>أنهاها السائحون</value>
+  </data>
+  <data name="Dash_Pending" xml:space="preserve">
+    <value>معلّقة</value>
+  </data>
+  <data name="Dash_InProgress" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
+  <data name="Dash_MissionsByType" xml:space="preserve">
+    <value>المهام حسب النوع</value>
+  </data>
+  <data name="Dash_TouristsWithProgress" xml:space="preserve">
+    <value>سائحون لديهم تقدم</value>
+  </data>
+  <data name="Dash_TrackedUsers" xml:space="preserve">
+    <value>مستخدمون متتبعون</value>
+  </data>
+  <data name="Dash_LevelDistribution" xml:space="preserve">
+    <value>توزيع المستويات</value>
+  </data>
+  <data name="Dash_TotalBadges" xml:space="preserve">
+    <value>إجمالي الشارات</value>
+  </data>
+  <data name="Dash_AvailableBadges" xml:space="preserve">
+    <value>شارات متاحة</value>
+  </data>
+  <data name="Dash_TotalEarned" xml:space="preserve">
+    <value>إجمالي المكتسبة</value>
+  </data>
+  <data name="Dash_UserAchievements" xml:space="preserve">
+    <value>إنجازات المستخدم</value>
+  </data>
+  <data name="Dash_BadgesByRarity" xml:space="preserve">
+    <value>الشارات حسب الندرة</value>
+  </data>
+  <data name="Dash_TotalTickets" xml:space="preserve">
+    <value>إجمالي التذاكر</value>
+  </data>
+  <data name="Dash_AllTime" xml:space="preserve">
+    <value>جميع الأوقات</value>
+  </data>
+  <data name="Dash_Open" xml:space="preserve">
+    <value>مفتوح</value>
+  </data>
+  <data name="Dash_AwaitingResponse" xml:space="preserve">
+    <value>بانتظار الرد</value>
+  </data>
+  <data name="Dash_Resolved" xml:space="preserve">
+    <value>تم الحل</value>
+  </data>
+  <data name="Dash_ClosedTickets" xml:space="preserve">
+    <value>تذاكر مغلقة</value>
+  </data>
+  <data name="Dash_TicketsByStatus" xml:space="preserve">
+    <value>التذاكر حسب الحالة</value>
+  </data>
+  <data name="Dash_TotalReviews" xml:space="preserve">
+    <value>إجمالي المراجعات</value>
+  </data>
+  <data name="Dash_AllReviews" xml:space="preserve">
+    <value>جميع المراجعات</value>
+  </data>
+  <data name="Dash_AverageRating" xml:space="preserve">
+    <value>متوسط التقييم</value>
+  </data>
+  <data name="Dash_OutOf5" xml:space="preserve">
+    <value>من 5</value>
+  </data>
+  <data name="Dash_RatingDistribution" xml:space="preserve">
+    <value>توزيع التقييمات</value>
+  </data>
+  <data name="Dash_MapFilters" xml:space="preserve">
+    <value>مرشحات الخريطة</value>
+  </data>
+  <data name="Dash_AllBranches" xml:space="preserve">
+    <value>جميع الفروع</value>
+  </data>
+  <data name="Dash_HighActivity" xml:space="preserve">
+    <value>نشاط عالٍ</value>
+  </data>
+  <data name="Dash_RecentlyAdded" xml:space="preserve">
+    <value>أُضيف مؤخراً</value>
+  </data>
+  <data name="Dash_PlatformMap" xml:space="preserve">
+    <value>خريطة شبكة المنصة</value>
+  </data>
+  <data name="Dash_LiveGisData" xml:space="preserve">
+    <value>بيانات GIS مباشرة</value>
+  </data>
+  <data name="Dash_AiSatisfaction" xml:space="preserve">
+    <value>رضا الذكاء الاصطناعي</value>
+  </data>
+  <data name="Dash_Highlights" xml:space="preserve">
+    <value>أبرز المعلومات</value>
+  </data>
+  <data name="Dash_MissionsCompleted" xml:space="preserve">
+    <value>المهام المكتملة</value>
+  </data>
+  <data name="Dash_PlatformWide" xml:space="preserve">
+    <value>إكمالات على مستوى المنصة</value>
+  </data>
+  <data name="Dash_TotalRedemptions" xml:space="preserve">
+    <value>إجمالي الاستردادات</value>
+  </data>
+  <data name="Dash_AllTimeClaims" xml:space="preserve">
+    <value>مطالبات جميع الأوقات</value>
+  </data>
+  <data name="Dash_MonthlyPerformance" xml:space="preserve">
+    <value>الأداء الشهري</value>
+  </data>
+  <data name="Dash_TopRewardsClaims" xml:space="preserve">
+    <value>أفضل المكافآت بالطلبات</value>
+  </data>
+  <data name="Dash_EngagementSplit" xml:space="preserve">
+    <value>تقسيم التفاعل</value>
+  </data>
+  <data name="Dash_NoRewardData" xml:space="preserve">
+    <value>لا توجد بيانات مكافآت متاحة</value>
+  </data>
+  <data name="Dash_RewardsByType" xml:space="preserve">
+    <value>المكافآت حسب النوع</value>
+  </data>
+  <data name="Profile_NotProvided" xml:space="preserve">
+    <value>غير متوفر</value>
+  </data>
+  <data name="Profile_DefaultLanguage" xml:space="preserve">
+    <value>الافتراضي (إنجليزي)</value>
+  </data>
+  <data name="Profile_NotSet" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="Reward_HeroTitle" xml:space="preserve">
+    <value>المكافآت المصرية الملكية</value>
+  </data>
+  <data name="Reward_HeroDesc" xml:space="preserve">
+    <value>استبدل نقاط سفرك بم vouchers حصرية وتجارب فروع محلية متميزة وعروض شريكة.</value>
+  </data>
+  <data name="Reward_UnlockPerks" xml:space="preserve">
+    <value>افتح المكافآت الملكية</value>
+  </data>
+  <data name="Reward_PerksDesc" xml:space="preserve">
+    <value>اكسب نقاطاً بزيارة المعالم الأثرية واكتب مراجعات لفتح تجارب عالية المستوى!</value>
+  </data>
+  <data name="Trip_HeroBadge" xml:space="preserve">
+    <value>مخطط الرحلة المخصص</value>
+  </data>
+  <data name="Trip_HeroTitle" xml:space="preserve">
+    <value>صمم مغامرتك المصرية</value>
+  </data>
+  <data name="Trip_HeroDesc" xml:space="preserve">
+    <value>اختر وجهات عالمية المستوى، ونظّم جدولك اليومي، وتخيّل مسار رحلتك المخصصة في الوقت الفعلي.</value>
+  </data>
+  <data name="Trip_MySavedTrips" xml:space="preserve">
+    <value>رحلاتي المحفوظة</value>
+  </data>
+  <data name="Trip_CreationStudio" xml:space="preserve">
+    <value>استوديو إنشاء الرحلات</value>
+  </data>
+  <data name="Trip_SetParameters" xml:space="preserve">
+    <value>ضع معلمات رحلتك، واختر وجهاتك المصرية المفضلة، وبنِ جدولاً مخصصاً.</value>
+  </data>
+  <data name="Trip_FiltersBudget" xml:space="preserve">
+    <value>المرشحات والميزانية</value>
+  </data>
+  <data name="Trip_PickDestinations" xml:space="preserve">
+    <value>اختر الوجهات</value>
+  </data>
+  <data name="Trip_LiveItinerary" xml:space="preserve">
+    <value>جدولك الزمني الحي</value>
+  </data>
+  <data name="Trip_NoDestinations" xml:space="preserve">
+    <value>لم يتم اختيار أي وجهات</value>
+  </data>
+  <data name="Trip_NoDestinationsDesc" xml:space="preserve">
+    <value>اختر وجهات من المحدد على اليسار لبناء مسار رحلتك المصرية خطوة بخطوة.</value>
+  </data>
+  <data name="Trip_NoMatch" xml:space="preserve">
+    <value>لا توجد وجهات تتطابق مع مرشحاتك.</value>
+  </data>
+  <data name="Trip_InteractiveMap" xml:space="preserve">
+    <value>خريطة المستكشف التفاعلية</value>
+  </data>
+  <data name="Trip_MapLoading" xml:space="preserve">
+    <value>جارٍ تحميل الخريطة التفاعلية</value>
+  </data>
+  <data name="Trip_MapHint" xml:space="preserve">
+    <value>تتوقف المحددة ديناميكياً</value>
+  </data>
+  <data name="Trip_Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="TouristAdmin_ViewDashboard" xml:space="preserve">
+    <value>عرض لوحة تحكم السائحين</value>
+  </data>
+  <data name="TouristAdmin_Profile" xml:space="preserve">
+    <value>ملف السائح</value>
+  </data>
+  <data name="TouristAdmin_PersonalInfo" xml:space="preserve">
+    <value>المعلومات الشخصية</value>
+  </data>
 </root>

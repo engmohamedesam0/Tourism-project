@@ -2467,4 +2467,310 @@
   <data name="TripDetails_AddSelected" xml:space="preserve">
     <value>Add Selected</value>
   </data>
+  <data name="TouristAdmin_TotalTourists" xml:space="preserve">
+    <value>Total Tourists</value>
+  </data>
+  <data name="TouristAdmin_Level" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="TouristAdmin_XP" xml:space="preserve">
+    <value>XP</value>
+  </data>
+  <data name="TouristAdmin_NotSpecified" xml:space="preserve">
+    <value>Not specified</value>
+  </data>
+  <data name="Site_Title" xml:space="preserve">
+    <value>EGYXPLORE</value>
+  </data>
+  <data name="Nav_Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="Nav_MarkAllRead" xml:space="preserve">
+    <value>Mark all as read</value>
+  </data>
+  <data name="Footer_Explore" xml:space="preserve">
+    <value>EXPLORE</value>
+  </data>
+  <data name="Footer_Account" xml:space="preserve">
+    <value>ACCOUNT</value>
+  </data>
+  <data name="Footer_Support" xml:space="preserve">
+    <value>SUPPORT</value>
+  </data>
+  <data name="Footer_Company" xml:space="preserve">
+    <value>COMPANY</value>
+  </data>
+  <data name="Ai_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="AdminDashboard_Heading" xml:space="preserve">
+    <value>Admin Dashboard</value>
+  </data>
+  <data name="AdminDashboard_Administrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="Nav_Overview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="Nav_Levels" xml:space="preserve">
+    <value>Levels</value>
+  </data>
+  <data name="Nav_Badges" xml:space="preserve">
+    <value>Badges</value>
+  </data>
+  <data name="Nav_Reviews" xml:space="preserve">
+    <value>Reviews</value>
+  </data>
+  <data name="Dash_TotalTourists" xml:space="preserve">
+    <value>Total Tourists</value>
+  </data>
+  <data name="Dash_RegisteredUsers" xml:space="preserve">
+    <value>Registered users</value>
+  </data>
+  <data name="Dash_ActiveTourists" xml:space="preserve">
+    <value>Active Tourists</value>
+  </data>
+  <data name="Dash_CurrentlyActive" xml:space="preserve">
+    <value>Currently active</value>
+  </data>
+  <data name="Dash_TopNationalities" xml:space="preserve">
+    <value>Top Nationalities</value>
+  </data>
+  <data name="Dash_StatusDistribution" xml:space="preserve">
+    <value>Status Distribution</value>
+  </data>
+  <data name="Dash_TotalSponsors" xml:space="preserve">
+    <value>Total Sponsors</value>
+  </data>
+  <data name="Dash_RegisteredPartners" xml:space="preserve">
+    <value>Registered partners</value>
+  </data>
+  <data name="Dash_SponsorsByType" xml:space="preserve">
+    <value>Sponsors by Type</value>
+  </data>
+  <data name="Dash_TotalDestinations" xml:space="preserve">
+    <value>Total Destinations</value>
+  </data>
+  <data name="Dash_ListedLocations" xml:space="preserve">
+    <value>Listed locations</value>
+  </data>
+  <data name="Dash_Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Dash_ReadyForTourists" xml:space="preserve">
+    <value>Ready for tourists</value>
+  </data>
+  <data name="Dash_DestinationsByCategory" xml:space="preserve">
+    <value>Destinations by Category</value>
+  </data>
+  <data name="Dash_TotalMissions" xml:space="preserve">
+    <value>Total Missions</value>
+  </data>
+  <data name="Dash_AllMissions" xml:space="preserve">
+    <value>All missions</value>
+  </data>
+  <data name="Dash_Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="Dash_FinishedByTourists" xml:space="preserve">
+    <value>Finished by tourists</value>
+  </data>
+  <data name="Dash_Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Dash_InProgress" xml:space="preserve">
+    <value>In progress</value>
+  </data>
+  <data name="Dash_MissionsByType" xml:space="preserve">
+    <value>Missions by Type</value>
+  </data>
+  <data name="Dash_TouristsWithProgress" xml:space="preserve">
+    <value>Tourists with Progress</value>
+  </data>
+  <data name="Dash_TrackedUsers" xml:space="preserve">
+    <value>Tracked users</value>
+  </data>
+  <data name="Dash_LevelDistribution" xml:space="preserve">
+    <value>Level Distribution</value>
+  </data>
+  <data name="Dash_TotalBadges" xml:space="preserve">
+    <value>Total Badges</value>
+  </data>
+  <data name="Dash_AvailableBadges" xml:space="preserve">
+    <value>Available badges</value>
+  </data>
+  <data name="Dash_TotalEarned" xml:space="preserve">
+    <value>Total Earned</value>
+  </data>
+  <data name="Dash_UserAchievements" xml:space="preserve">
+    <value>User achievements</value>
+  </data>
+  <data name="Dash_BadgesByRarity" xml:space="preserve">
+    <value>Badges by Rarity</value>
+  </data>
+  <data name="Dash_TotalTickets" xml:space="preserve">
+    <value>Total Tickets</value>
+  </data>
+  <data name="Dash_AllTime" xml:space="preserve">
+    <value>All time</value>
+  </data>
+  <data name="Dash_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Dash_AwaitingResponse" xml:space="preserve">
+    <value>Awaiting response</value>
+  </data>
+  <data name="Dash_Resolved" xml:space="preserve">
+    <value>Resolved</value>
+  </data>
+  <data name="Dash_ClosedTickets" xml:space="preserve">
+    <value>Closed tickets</value>
+  </data>
+  <data name="Dash_TicketsByStatus" xml:space="preserve">
+    <value>Tickets by Status</value>
+  </data>
+  <data name="Dash_TotalReviews" xml:space="preserve">
+    <value>Total Reviews</value>
+  </data>
+  <data name="Dash_AllReviews" xml:space="preserve">
+    <value>All reviews</value>
+  </data>
+  <data name="Dash_AverageRating" xml:space="preserve">
+    <value>Average Rating</value>
+  </data>
+  <data name="Dash_OutOf5" xml:space="preserve">
+    <value>Out of 5</value>
+  </data>
+  <data name="Dash_RatingDistribution" xml:space="preserve">
+    <value>Rating Distribution</value>
+  </data>
+  <data name="Dash_MapFilters" xml:space="preserve">
+    <value>Map Filters</value>
+  </data>
+  <data name="Dash_AllBranches" xml:space="preserve">
+    <value>All Branches</value>
+  </data>
+  <data name="Dash_HighActivity" xml:space="preserve">
+    <value>High Activity</value>
+  </data>
+  <data name="Dash_RecentlyAdded" xml:space="preserve">
+    <value>Recently Added</value>
+  </data>
+  <data name="Dash_PlatformMap" xml:space="preserve">
+    <value>Platform Network Map</value>
+  </data>
+  <data name="Dash_LiveGisData" xml:space="preserve">
+    <value>LIVE GIS DATA</value>
+  </data>
+  <data name="Dash_AiSatisfaction" xml:space="preserve">
+    <value>AI Satisfaction</value>
+  </data>
+  <data name="Dash_Highlights" xml:space="preserve">
+    <value>Highlights</value>
+  </data>
+  <data name="Dash_MissionsCompleted" xml:space="preserve">
+    <value>Missions Completed</value>
+  </data>
+  <data name="Dash_PlatformWide" xml:space="preserve">
+    <value>Platform-wide completions</value>
+  </data>
+  <data name="Dash_TotalRedemptions" xml:space="preserve">
+    <value>Total Redemptions</value>
+  </data>
+  <data name="Dash_AllTimeClaims" xml:space="preserve">
+    <value>All-time claims</value>
+  </data>
+  <data name="Dash_MonthlyPerformance" xml:space="preserve">
+    <value>Monthly Performance</value>
+  </data>
+  <data name="Dash_TopRewardsClaims" xml:space="preserve">
+    <value>Top Rewards by Claims</value>
+  </data>
+  <data name="Dash_EngagementSplit" xml:space="preserve">
+    <value>Engagement Split</value>
+  </data>
+  <data name="Dash_NoRewardData" xml:space="preserve">
+    <value>No reward data available</value>
+  </data>
+  <data name="Dash_RewardsByType" xml:space="preserve">
+    <value>Rewards by Type</value>
+  </data>
+  <data name="Profile_NotProvided" xml:space="preserve">
+    <value>Not provided</value>
+  </data>
+  <data name="Profile_DefaultLanguage" xml:space="preserve">
+    <value>English (default)</value>
+  </data>
+  <data name="Profile_NotSet" xml:space="preserve">
+    <value>Not set</value>
+  </data>
+  <data name="Reward_HeroTitle" xml:space="preserve">
+    <value>Royal Egyptian Rewards</value>
+  </data>
+  <data name="Reward_HeroDesc" xml:space="preserve">
+    <value>Exchange your travel points for exclusive vouchers, premium local branch experiences, and partner discounts.</value>
+  </data>
+  <data name="Reward_UnlockPerks" xml:space="preserve">
+    <value>Unlock Royal Perks</value>
+  </data>
+  <data name="Reward_PerksDesc" xml:space="preserve">
+    <value>Earn points by visiting archaeological landmarks and write reviews to unlock high-tier experiences!</value>
+  </data>
+  <data name="Trip_HeroBadge" xml:space="preserve">
+    <value>Tailored Journey Planner</value>
+  </data>
+  <data name="Trip_HeroTitle" xml:space="preserve">
+    <value>Craft Your Egyptian Odyssey</value>
+  </data>
+  <data name="Trip_HeroDesc" xml:space="preserve">
+    <value>Select world-class destinations, organize your day-by-day itinerary, and visualize your custom trip route in real time.</value>
+  </data>
+  <data name="Trip_MySavedTrips" xml:space="preserve">
+    <value>My Saved Trips</value>
+  </data>
+  <data name="Trip_CreationStudio" xml:space="preserve">
+    <value>Trip Creation Studio</value>
+  </data>
+  <data name="Trip_SetParameters" xml:space="preserve">
+    <value>Set your trip parameters, pick your favorite Egyptian destinations, and build a custom schedule.</value>
+  </data>
+  <data name="Trip_FiltersBudget" xml:space="preserve">
+    <value>Filters &amp; Budget</value>
+  </data>
+  <data name="Trip_PickDestinations" xml:space="preserve">
+    <value>Pick Destinations</value>
+  </data>
+  <data name="Trip_LiveItinerary" xml:space="preserve">
+    <value>Your Live Itinerary</value>
+  </data>
+  <data name="Trip_NoDestinations" xml:space="preserve">
+    <value>No Destinations Selected</value>
+  </data>
+  <data name="Trip_NoDestinationsDesc" xml:space="preserve">
+    <value>Select destinations on the left picker to craft your step-by-step Egyptian travel route.</value>
+  </data>
+  <data name="Trip_NoMatch" xml:space="preserve">
+    <value>No destinations match your filters.</value>
+  </data>
+  <data name="Trip_InteractiveMap" xml:space="preserve">
+    <value>Interactive Explorer Map</value>
+  </data>
+  <data name="Trip_MapLoading" xml:space="preserve">
+    <value>Interactive Map Loading</value>
+  </data>
+  <data name="Trip_MapHint" xml:space="preserve">
+    <value>Selected stops render dynamically</value>
+  </data>
+  <data name="Trip_Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="TouristAdmin_ViewDashboard" xml:space="preserve">
+    <value>View Tourist Dashboard</value>
+  </data>
+  <data name="TouristAdmin_Profile" xml:space="preserve">
+    <value>Tourist Profile</value>
+  </data>
+  <data name="TouristAdmin_PersonalInfo" xml:space="preserve">
+    <value>Personal Information</value>
+  </data>
 </root>

@@ -7,9 +7,9 @@
             <i class="bi bi-people-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Total Tourists</div>
+            <div class="kpi-label">@Localizer["Dash_TotalTourists"].Value</div>
             <div class="kpi-value">@Model.TotalTourists</div>
-            <div class="kpi-sub">Registered users</div>
+            <div class="kpi-sub">@Localizer["Dash_RegisteredUsers"].Value</div>
         </div>
     </div>
 
@@ -18,9 +18,9 @@
             <i class="bi bi-building-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Total Sponsors</div>
+            <div class="kpi-label">@Localizer["Dash_TotalSponsors"].Value</div>
             <div class="kpi-value">@Model.TotalSponsors</div>
-            <div class="kpi-sub">Active partners</div>
+            <div class="kpi-sub">@Localizer["Dash_ActivePartners"].Value</div>
         </div>
     </div>
 
@@ -29,9 +29,9 @@
             <i class="bi bi-geo-alt-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Total Destinations</div>
+            <div class="kpi-label">@Localizer["Dash_TotalDestinations"].Value</div>
             <div class="kpi-value">@Model.TotalDestinations</div>
-            <div class="kpi-sub">Listed locations</div>
+            <div class="kpi-sub">@Localizer["Dash_ListedLocations"].Value</div>
         </div>
     </div>
 
@@ -40,9 +40,9 @@
             <i class="bi bi-gift-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Total Rewards</div>
+            <div class="kpi-label">@Localizer["Dash_TotalRewards"].Value</div>
             <div class="kpi-value">@Model.TotalRewards</div>
-            <div class="kpi-sub">Available offers</div>
+            <div class="kpi-sub">@Localizer["Dash_AvailableOffers"].Value</div>
         </div>
     </div>
 </div>
@@ -57,20 +57,20 @@
     <aside class="dash-sidebar">
         <div class="dash-card">
             <div class="dash-card-header">
-                <span><i class="bi bi-funnel me-2"></i> Map Filters</span>
+                <span><i class="bi bi-funnel me-2"></i> @Localizer["Dash_MapFilters"].Value</span>
             </div>
             <div class="dash-card-body">
                 <div class="chips-filter-group">
                     <button class="chip-btn chip-active" onclick="filterMap('all')">
-                        <span>All Branches</span>
+                        <span>@Localizer["Dash_AllBranches"].Value</span>
                         <i class="bi bi-check-lg"></i>
                     </button>
                     <button class="chip-btn" onclick="filterMap('active')">
-                        <span>High Activity</span>
+                        <span>@Localizer["Dash_HighActivity"].Value</span>
                         <i class="bi bi-graph-up"></i>
                     </button>
                     <button class="chip-btn" onclick="filterMap('recent')">
-                        <span>Recently Added</span>
+                        <span>@Localizer["Dash_RecentlyAdded"].Value</span>
                         <i class="bi bi-clock-history"></i>
                     </button>
                 </div>
@@ -83,11 +83,11 @@
         <div class="dash-map-card">
             <div class="map-card-bar">
                 <div class="map-card-title">
-                    <i class="bi bi-map"></i> Platform Network Map
+                    <i class="bi bi-map"></i> @Localizer["Dash_PlatformMap"].Value
                 </div>
                 <div class="map-live-indicator">
                     <div class="live-dot"></div>
-                    LIVE GIS DATA
+                    @Localizer["Dash_LiveGisData"].Value
                 </div>
             </div>
             <div class="dash-map-container" id="dashboardMap">
@@ -102,7 +102,7 @@
     <aside class="dash-widgets">
         <div class="dash-card rating-widget-card">
             <div class="dash-card-header justify-content-center border-0 bg-transparent pb-0">
-                <span><i class="bi bi-star me-2"></i> AI Satisfaction</span>
+                <span><i class="bi bi-star me-2"></i> @Localizer["Dash_AiSatisfaction"].Value</span>
             </div>
             <div class="dash-card-body">
                 @if (Model.RatingAvailable)
@@ -139,10 +139,10 @@
 
         <div class="dash-card top-performing-card">
             <div class="dash-card-header bg-transparent">
-                <span><i class="bi bi-trophy me-2"></i> Highlights</span>
+                <span><i class="bi bi-trophy me-2"></i> @Localizer["Dash_Highlights"].Value</span>
             </div>
             <div class="dash-card-body">
-                <div class="kpi-label mb-2">Missions Completed</div>
+                <div class="kpi-label mb-2">@Localizer["Dash_MissionsCompleted"].Value</div>
                 <div class="top-branch-item">
                     <div class="top-branch-icon">
                         <i class="bi bi-flag-fill"></i>
@@ -151,11 +151,11 @@
                         <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">
                             @Model.TotalMissionsCompleted.ToString("N0")
                         </h6>
-                        <span class="text-muted" style="font-size: 0.75rem;">Platform-wide completions</span>
+                        <span class="text-muted" style="font-size: 0.75rem;">@Localizer["Dash_PlatformWide"].Value</span>
                     </div>
                 </div>
                 <div class="mt-3">
-                    <div class="kpi-label mb-2">Total Redemptions</div>
+                    <div class="kpi-label mb-2">@Localizer["Dash_TotalRedemptions"].Value</div>
                     <div class="top-branch-item">
                         <div class="top-branch-icon">
                             <i class="bi bi-receipt-fill"></i>
@@ -164,7 +164,7 @@
                             <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">
                                 @Model.TotalRedemptions.ToString("N0")
                             </h6>
-                            <span class="text-muted" style="font-size: 0.75rem;">All-time claims</span>
+                            <span class="text-muted" style="font-size: 0.75rem;">@Localizer["Dash_AllTimeClaims"].Value</span>
                         </div>
                     </div>
                 </div>
@@ -178,7 +178,7 @@
 <div class="charts-grid">
     <div class="chart-card">
         <div class="dash-card-header">
-            <span><i class="bi bi-graph-up me-2"></i> Monthly Performance</span>
+            <span><i class="bi bi-graph-up me-2"></i> @Localizer["Dash_MonthlyPerformance"].Value</span>
         </div>
         <div class="chart-body-wrapper">
             <canvas id="monthlyTrendChart"></canvas>
@@ -187,7 +187,7 @@
 
     <div class="chart-card">
         <div class="dash-card-header">
-            <span><i class="bi bi-bar-chart me-2"></i> Top Rewards by Claims</span>
+            <span><i class="bi bi-bar-chart me-2"></i> @Localizer["Dash_TopRewardsClaims"].Value</span>
         </div>
         <div class="chart-body-wrapper">
             @if (Model.DashboardTopRewards.Any())
@@ -199,7 +199,7 @@
                 <div class="d-flex align-items-center justify-content-center h-100 text-muted">
                     <div class="text-center">
                         <i class="bi bi-inbox display-4 d-block mb-2 text-black-50"></i>
-                        No reward data available
+                        @Localizer["Dash_NoRewardData"].Value
                     </div>
                 </div>
             }
@@ -208,7 +208,7 @@
 
     <div class="chart-card">
         <div class="dash-card-header">
-            <span><i class="bi bi-pie-chart me-2"></i> Engagement Split</span>
+            <span><i class="bi bi-pie-chart me-2"></i> @Localizer["Dash_EngagementSplit"].Value</span>
         </div>
         <div class="chart-body-wrapper">
             <canvas id="engagementPieChart"></canvas>

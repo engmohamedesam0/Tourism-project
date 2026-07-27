@@ -6,9 +6,9 @@
             <i class="bi bi-people-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Total Tourists</div>
+            <div class="kpi-label">@Localizer["Dash_TotalTourists"].Value</div>
             <div class="kpi-value">@Model.TouristSection.Total</div>
-            <div class="kpi-sub">Registered users</div>
+            <div class="kpi-sub">@Localizer["Dash_RegisteredUsers"].Value</div>
         </div>
     </div>
     <div class="kpi-card">
@@ -16,16 +16,16 @@
             <i class="bi bi-person-check-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Active Tourists</div>
+            <div class="kpi-label">@Localizer["Dash_ActiveTourists"].Value</div>
             <div class="kpi-value">@Model.TouristSection.StatusBreakdown.FirstOrDefault(r => r.Name == "Active")?.Count ?? 0</div>
-            <div class="kpi-sub">Currently active</div>
+            <div class="kpi-sub">@Localizer["Dash_CurrentlyActive"].Value</div>
         </div>
     </div>
 </div>
 
 <div class="dash-card mb-4">
     <div class="dash-card-header">
-        <span><i class="bi bi-globe me-2"></i> Top Nationalities</span>
+        <span><i class="bi bi-globe me-2"></i> @Localizer["Dash_TopNationalities"].Value</span>
     </div>
     <div class="dash-card-body">
         @foreach (var row in Model.TouristSection.NationalityBreakdown)
@@ -45,7 +45,7 @@
 
 <div class="dash-card">
     <div class="dash-card-header">
-        <span><i class="bi bi-diagram-3 me-2"></i> Status Distribution</span>
+        <span><i class="bi bi-diagram-3 me-2"></i> @Localizer["Dash_StatusDistribution"].Value</span>
     </div>
     <div class="dash-card-body">
         @foreach (var row in Model.TouristSection.StatusBreakdown)

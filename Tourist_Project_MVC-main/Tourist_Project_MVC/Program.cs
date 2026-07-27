@@ -46,13 +46,14 @@ namespace Tourist_Project_MVC
             });
 
             builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-            builder.Services.Configure<RequestLocalizationOptions>(o =>
-            {
-                o.SetDefaultCulture("en");
-                o.AddSupportedCultures("en", "ar", "es");
-                o.AddSupportedUICultures("en", "ar", "es");
-                o.RequestCultureProviders = new[] { new CookieRequestCultureProvider() };
-            });
+builder.Services.Configure<RequestLocalizationOptions>(o =>
+             {
+                 o.SetDefaultCulture("en");
+                 o.DefaultRequestCulture = new RequestCulture("en");
+                 o.AddSupportedCultures("en", "ar", "es");
+                 o.AddSupportedUICultures("en", "ar", "es");
+                 o.RequestCultureProviders = new[] { new CookieRequestCultureProvider() };
+             });
 
             builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
             builder.Services.AddScoped<ITouristRepository, TouristRepository>();

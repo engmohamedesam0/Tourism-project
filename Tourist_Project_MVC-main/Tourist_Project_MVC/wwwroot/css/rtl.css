@@ -179,3 +179,260 @@
         right: -22px;
     }
 }
+
+/* =============================================
+   ADMIN DASHBOARD RTL
+   ============================================= */
+[dir="rtl"] .admin-dash-shell {
+    direction: rtl;
+}
+
+[dir="rtl"] .admin-dash-sidebar {
+    order: 2;
+}
+
+[dir="rtl"] .admin-dash-content {
+    order: 1;
+}
+
+[dir="rtl"] .admin-dash-nav-link {
+    text-align: right;
+}
+
+[dir="rtl"] .chip-btn {
+    text-align: right;
+}
+
+[dir="rtl"] .dash-header-card::before {
+    left: auto;
+    right: 0;
+    border-radius: 18px 0 0 18px;
+}
+
+[dir="rtl"] .kpi-grid {
+    direction: rtl;
+}
+
+[dir="rtl"] .dashboard-main-grid {
+    direction: rtl;
+}
+
+[dir="rtl"] .charts-grid {
+    direction: rtl;
+}
+
+/* =============================================
+   REWARD PAGE RTL
+   ============================================= */
+[dir="rtl"] .rewards-hero-card {
+    direction: rtl;
+}
+
+[dir="rtl"] .rewards-hero-card .d-flex.justify-content-between {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .filter-bar {
+    direction: rtl;
+}
+
+[dir="rtl"] .reward-card {
+    direction: rtl;
+}
+
+[dir="rtl"] .reward-card-desc {
+    direction: rtl;
+}
+
+[dir="rtl"] .custom-premium-table th {
+    text-align: right;
+}
+
+[dir="rtl"] .custom-premium-table td {
+    text-align: right;
+}
+
+[dir="rtl"] .badge-status-active,
+[dir="rtl"] .badge-status-inactive,
+[dir="rtl"] .badge-status-draft {
+    text-align: right;
+}
+
+/* =============================================
+   TRIP BUILDER RTL
+   ============================================= */
+[dir="rtl"] .trip-page-container {
+    direction: rtl;
+}
+
+[dir="rtl"] .trip-hero-card .d-flex.justify-content-between {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .builder-section-header h3 {
+    direction: rtl;
+}
+
+[dir="rtl"] .filter-bar {
+    direction: rtl;
+}
+
+[dir="rtl"] .picker-row {
+    direction: rtl;
+}
+
+[dir="rtl"] .picker-row .d-flex.justify-content-between {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .itinerary-board {
+    direction: rtl;
+}
+
+[dir="rtl"] .itinerary-stop {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .itinerary-order {
+    order: 2;
+}
+
+[dir="rtl"] .itinerary-stop > div {
+    order: 1;
+}
+
+[dir="rtl"] .itinerary-preview {
+    direction: rtl;
+    padding-right: 0;
+    padding-left: 1.5rem;
+}
+
+[dir="rtl"] .itinerary-preview li {
+    text-align: right;
+}
+
+[dir="rtl"] .trip-stop-pill {
+    margin: 2px 0 2px 4px;
+}
+
+[dir="rtl"] .trip-card-date {
+    direction: rtl;
+}
+
+[dir="rtl"] .trip-card-title {
+    direction: rtl;
+}
+
+/* =============================================
+   TOURIST PROFILE RTL
+   ============================================= */
+[dir="rtl"] .value-card-premium {
+    direction: rtl;
+}
+
+[dir="rtl"] .value-card-premium .d-flex.justify-content-between {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .stat-card {
+    direction: rtl;
+}
+
+[dir="rtl"] .modal-header {
+    direction: rtl;
+}
+
+[dir="rtl"] .modal-footer {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .form-check form-switch {
+    direction: rtl;
+}
+
+/* =============================================
+   TOURIST DETAILS RTL
+   ============================================= */
+[dir="rtl"] .details-card {
+    direction: rtl;
+}
+
+[dir="rtl"] .details-section .detail-rows-container {
+    direction: rtl;
+}
+
+[dir="rtl"] .details-section .row.align-items-center {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .custom-sub-table th {
+    text-align: right;
+}
+
+[dir="rtl"] .custom-sub-table td {
+    text-align: right;
+}
+
+[dir="rtl"] .btn-back-custom {
+    direction: rtl;
+}
+
+[dir="rtl"] .btn-back-custom:hover {
+    transform: translateX(3px);
+}
+
+/* =============================================
+   TOURIST INDEX TABLE RTL
+   ============================================= */
+[dir="rtl"] .custom-tourist-table {
+    direction: rtl;
+}
+
+[dir="rtl"] .custom-tourist-table th {
+    text-align: right;
+}
+
+[dir="rtl"] .custom-tourist-table td {
+    text-align: right;
+}
+
+[dir="rtl"] .badge-nationality {
+    direction: rtl;
+}
+
+[dir="rtl"] .badge-points {
+    direction: rtl;
+}
+
+[dir="rtl"] .badge-status-custom {
+    direction: rtl;
+}
+
+[dir="rtl"] .btn-action-view,
+[dir="rtl"] .btn-action-edit,
+[dir="rtl"] .btn-action-delete {
+    direction: rtl;
+}
+
+/* =============================================
+   NOTIFICATION PANEL RTL
+   ============================================= */
+[dir="rtl"] .notification-widget-panel {
+    right: auto;
+    left: 22px;
+}
+
+[dir="rtl"] .notification-widget-header {
+    flex-direction: row-reverse;
+}
+
+/* =============================================
+   REWARDS PAGE FILTER RTL
+   ============================================= */
+[dir="rtl"] .rewards-page-container .filter-bar {
+    direction: rtl;
+}
+
+[dir="rtl"] .rewards-page-container .badge-filter {
+    direction: rtl;
+}

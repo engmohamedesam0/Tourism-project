@@ -706,8 +706,42 @@
         padding-bottom: 8px;
     }
 
-    .admin-dash-nav-link {
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
+.admin-dash-nav-link {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* RTL overrides */
+[dir="rtl"] .dash-header-card::before {
+    left: auto;
+    right: 0;
+    border-radius: 18px 0 0 18px;
+}
+
+[dir="rtl"] .admin-dash-shell {
+    direction: rtl;
+}
+
+[dir="rtl"] .admin-dash-sidebar {
+    order: 2;
+}
+
+[dir="rtl"] .admin-dash-content {
+    order: 1;
+}
+
+[dir="rtl"] .chip-btn {
+    text-align: right;
+}
+
+[dir="rtl"] .dashboard-main-grid {
+    direction: rtl;
+}
+
+[dir="rtl"] .charts-grid {
+    direction: rtl;
+}
+
+[dir="rtl"] .kpi-grid {
+    direction: rtl;
 }

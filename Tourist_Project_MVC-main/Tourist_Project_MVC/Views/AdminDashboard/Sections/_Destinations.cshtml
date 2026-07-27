@@ -6,9 +6,9 @@
             <i class="bi bi-geo-alt-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Total Destinations</div>
+            <div class="kpi-label">@Localizer["Dash_TotalDestinations"].Value</div>
             <div class="kpi-value">@Model.DestinationSection.Total</div>
-            <div class="kpi-sub">Listed locations</div>
+            <div class="kpi-sub">@Localizer["Dash_ListedLocations"].Value</div>
         </div>
     </div>
     <div class="kpi-card">
@@ -16,16 +16,16 @@
             <i class="bi bi-check-circle-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Active</div>
+            <div class="kpi-label">@Localizer["Dash_Active"].Value</div>
             <div class="kpi-value">@Model.DestinationSection.Active</div>
-            <div class="kpi-sub">Ready for tourists</div>
+            <div class="kpi-sub">@Localizer["Dash_ReadyForTourists"].Value</div>
         </div>
     </div>
 </div>
 
 <div class="dash-card">
     <div class="dash-card-header">
-        <span><i class="bi bi-tags me-2"></i> Destinations by Category</span>
+        <span><i class="bi bi-tags me-2"></i> @Localizer["Dash_DestinationsByCategory"].Value</span>
     </div>
     <div class="dash-card-body">
         @foreach (var row in Model.DestinationSection.CategoryBreakdown)

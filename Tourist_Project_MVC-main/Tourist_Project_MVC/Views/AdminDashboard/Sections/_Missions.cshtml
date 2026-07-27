@@ -6,9 +6,9 @@
             <i class="bi bi-trophy-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Total Missions</div>
+            <div class="kpi-label">@Localizer["Dash_TotalMissions"].Value</div>
             <div class="kpi-value">@Model.MissionSection.Total</div>
-            <div class="kpi-sub">All missions</div>
+            <div class="kpi-sub">@Localizer["Dash_AllMissions"].Value</div>
         </div>
     </div>
     <div class="kpi-card">
@@ -16,9 +16,9 @@
             <i class="bi bi-check-circle-fill"></i>
         </div>
         <div>
-            <div class="kpi-label">Completed</div>
+            <div class="kpi-label">@Localizer["Dash_Completed"].Value</div>
             <div class="kpi-value">@Model.MissionSection.Completed</div>
-            <div class="kpi-sub">Finished by tourists</div>
+            <div class="kpi-sub">@Localizer["Dash_FinishedByTourists"].Value</div>
         </div>
     </div>
     <div class="kpi-card">
@@ -26,16 +26,16 @@
             <i class="bi bi-hourglass-split"></i>
         </div>
         <div>
-            <div class="kpi-label">Pending</div>
+            <div class="kpi-label">@Localizer["Dash_Pending"].Value</div>
             <div class="kpi-value">@Model.MissionSection.Pending</div>
-            <div class="kpi-sub">In progress</div>
+            <div class="kpi-sub">@Localizer["Dash_InProgress"].Value</div>
         </div>
     </div>
 </div>
 
 <div class="dash-card">
     <div class="dash-card-header">
-        <span><i class="bi bi-tags me-2"></i> Missions by Type</span>
+        <span><i class="bi bi-tags me-2"></i> @Localizer["Dash_MissionsByType"].Value</span>
     </div>
     <div class="dash-card-body">
         @foreach (var row in Model.MissionSection.TypeBreakdown)

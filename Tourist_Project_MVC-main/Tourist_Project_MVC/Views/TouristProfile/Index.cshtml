@@ -101,7 +101,7 @@
                 </div>
                 <div class="col-sm-6">
                     <label class="form-label small text-muted">Phone Number</label>
-                    <p class="fw-semibold mb-0">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Not provided" : Model.PhoneNumber)</p>
+                    <p class="fw-semibold mb-0">@(string.IsNullOrEmpty(Model.PhoneNumber) ? Localizer["Profile_NotProvided"].Value : Model.PhoneNumber)</p>
                 </div>
                 <div class="col-sm-6">
                     <label class="form-label small text-muted">Account Status</label>
@@ -111,7 +111,7 @@
                 </div>
                 <div class="col-sm-6">
                     <label class="form-label small text-muted">Preferred Language</label>
-                    <p class="fw-semibold mb-0">@(string.IsNullOrEmpty(Model.PreferredLanguage) ? "English (default)" : Model.PreferredLanguage)</p>
+                    <p class="fw-semibold mb-0">@(string.IsNullOrEmpty(Model.PreferredLanguage) ? Localizer["Profile_DefaultLanguage"].Value : Model.PreferredLanguage)</p>
                 </div>
                 <div class="col-sm-6">
                     <label class="form-label small text-muted">Travel Interests</label>
@@ -125,7 +125,7 @@
                         }
                         else
                         {
-                            <span class="text-muted small">Not set</span>
+                            <span class="text-muted small">@Localizer["Profile_NotSet"].Value</span>
                         }
                     </div>
                 </div>
