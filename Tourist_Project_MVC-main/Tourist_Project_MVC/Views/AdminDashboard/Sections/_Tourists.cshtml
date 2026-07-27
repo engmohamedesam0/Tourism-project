@@ -1,64 +1,417 @@
 @model Tourist_Project_MVC.View_Model.AdminDashboardVM
 
-<div class="kpi-grid">
-    <div class="kpi-card">
-        <div class="kpi-icon-wrapper blue">
-            <i class="bi bi-people-fill"></i>
-        </div>
+<style>
+    .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 2.5rem; }
+    .kpi-card { background: #fff; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.04); display: flex; align-items: center; gap: 1.25rem; border: 1px solid rgba(0,0,0,0.02); opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .kpi-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
+    .kpi-card.animate-in { opacity: 1; transform: translateY(0); }
+    .kpi-icon-wrapper { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; transition: transform 0.3s; }
+    .kpi-card:hover .kpi-icon-wrapper { transform: scale(1.1); }
+    
+    .kpi-icon-wrapper.blue { background: linear-gradient(135deg, rgba(13, 110, 253, 0.15), rgba(13, 110, 253, 0.05)); color: #0d6efd; }
+    .kpi-icon-wrapper.green { background: linear-gradient(135deg, rgba(25, 135, 84, 0.15), rgba(25, 135, 84, 0.05)); color: #198754; }
+    .kpi-icon-wrapper.purple { background: linear-gradient(135deg, rgba(111, 66, 193, 0.15), rgba(111, 66, 193, 0.05)); color: #6f42c1; }
+    .kpi-icon-wrapper.orange { background: linear-gradient(135deg, rgba(253, 126, 20, 0.15), rgba(253, 126, 20, 0.05)); color: #fd7e14; }
+    
+    .kpi-label { font-size: 0.9rem; color: #6c757d; font-weight: 600; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-value { font-size: 2rem; font-weight: 800; color: #2b3445; line-height: 1.2; }
+    .kpi-sub { font-size: 0.8rem; color: #adb5bd; margin-top: 0.4rem; font-weight: 500; }
+    
+    .dash-card { background: #fff; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.02); margin-bottom: 2.5rem; opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .dash-card.animate-in { opacity: 1; transform: translateY(0); }
+    .dash-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; font-weight: 700; color: #2b3445; font-size: 1.2rem; }
+    .chart-container { position: relative; height: 350px; width: 100%; }
+    
+    .leaderboard-list { list-style: none; padding: 0; margin: 0; }
+    .leaderboard-item { display: flex; align-items: center; padding: 1rem 0; border-bottom: 1px solid #f8f9fa; opacity: 0; transition: opacity 0.5s ease-out; }
+    .leaderboard-item.animate-in { opacity: 1; }
+    .leaderboard-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .leaderboard-item:first-child { padding-top: 0; }
+    .leaderboard-rank { width: 32px; height: 32px; border-radius: 50%; background: #f8f9fa; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: #6c757d; margin-right: 1.25rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+    .leaderboard-rank.top-1 { background: linear-gradient(135deg, #ffd700, #fbc02d); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .leaderboard-rank.top-2 { background: linear-gradient(135deg, #e0e0e0, #bdbdbd); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .leaderboard-rank.top-3 { background: linear-gradient(135deg, #cd7f32, #a65e2e); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .leaderboard-info { flex-grow: 1; }
+    .leaderboard-name { font-weight: 600; color: #2b3445; margin: 0; font-size: 0.95rem; }
+    .leaderboard-score { font-weight: 800; color: #0d6efd; font-size: 1.1rem; }
+    
+    .activity-list { list-style: none; padding: 0; margin: 0; position: relative; }
+    .activity-list::before { content: ''; position: absolute; left: 23px; top: 0; bottom: 0; width: 2px; background: rgba(0,0,0,0.05); }
+    .activity-item { display: flex; gap: 1.25rem; margin-bottom: 2rem; position: relative; z-index: 1; opacity: 0; transform: translateX(-20px); transition: all 0.5s ease-out; }
+    .activity-item.animate-in { opacity: 1; transform: translateX(0); }
+    .activity-item:last-child { margin-bottom: 0; }
+    .activity-icon { width: 48px; height: 48px; border-radius: 50%; background: #fff; border: 3px solid #f8f9fa; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    .activity-content { flex-grow: 1; padding-top: 0.4rem; }
+    .activity-title { font-weight: 700; color: #2b3445; margin: 0 0 0.3rem 0; font-size: 1rem; }
+    .activity-desc { color: #6c757d; font-size: 0.9rem; margin: 0; font-weight: 500; }
+    .activity-time { color: #adb5bd; font-size: 0.8rem; font-weight: 600; display: inline-block; margin-top: 0.4rem; }
+    
+    /* Layout tweaks */
+    .premium-row { display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px; }
+    .premium-col { padding-right: 15px; padding-left: 15px; width: 100%; }
+</style>
+
+<div class="analytics-grid">
+    <div class="kpi-card" style="transition-delay: 100ms;">
+        <div class="kpi-icon-wrapper blue"><i class="bi bi-people-fill"></i></div>
         <div>
-            <div class="kpi-label">@Localizer["Dash_TotalTourists"].Value</div>
-            <div class="kpi-value">@Model.TouristSection.Total</div>
-            <div class="kpi-sub">@Localizer["Dash_RegisteredUsers"].Value</div>
+            <div class="kpi-label">Total Tourists</div>
+            <div class="kpi-value counter" data-target="@Model.TouristSection.Total">0</div>
+            <div class="kpi-sub"><span class="text-success"><i class="bi bi-arrow-up-right"></i> @Model.TouristSection.GrowthPercentage%</span> vs last month</div>
         </div>
     </div>
-    <div class="kpi-card">
-        <div class="kpi-icon-wrapper green">
-            <i class="bi bi-person-check-fill"></i>
-        </div>
+    <div class="kpi-card" style="transition-delay: 200ms;">
+        <div class="kpi-icon-wrapper green"><i class="bi bi-person-check-fill"></i></div>
         <div>
-            <div class="kpi-label">@Localizer["Dash_ActiveTourists"].Value</div>
-            <div class="kpi-value">@Model.TouristSection.StatusBreakdown.FirstOrDefault(r => r.Name == "Active")?.Count ?? 0</div>
-            <div class="kpi-sub">@Localizer["Dash_CurrentlyActive"].Value</div>
+            <div class="kpi-label">Active Tourists</div>
+            <div class="kpi-value counter" data-target="@Model.TouristSection.Active">0</div>
+            <div class="kpi-sub">Retention: @Model.TouristSection.RetentionRate%</div>
+        </div>
+    </div>
+    <div class="kpi-card" style="transition-delay: 300ms;">
+        <div class="kpi-icon-wrapper purple"><i class="bi bi-clock-history"></i></div>
+        <div>
+            <div class="kpi-label">Avg Session</div>
+            <div class="kpi-value">@Model.TouristSection.AverageSessionDuration</div>
+            <div class="kpi-sub">Across all active users</div>
+        </div>
+    </div>
+    <div class="kpi-card" style="transition-delay: 400ms;">
+        <div class="kpi-icon-wrapper orange"><i class="bi bi-check2-all"></i></div>
+        <div>
+            <div class="kpi-label">Avg Missions</div>
+            <div class="kpi-value counter" data-target="@Model.TouristSection.AverageMissionsCompleted">0</div>
+            <div class="kpi-sub">Per tourist</div>
         </div>
     </div>
 </div>
 
-<div class="dash-card mb-4">
-    <div class="dash-card-header">
-        <span><i class="bi bi-globe me-2"></i> @Localizer["Dash_TopNationalities"].Value</span>
-    </div>
-    <div class="dash-card-body">
-        @foreach (var row in Model.TouristSection.NationalityBreakdown)
-        {
-            <div class="top-branch-item mb-2">
-                <div class="top-branch-icon">
-                    <i class="bi bi-flag-fill"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">@row.Name</h6>
-                </div>
-                <span class="badge bg-dark">@row.Count</span>
+<!-- Primary Charts Row (Important in Middle Focus) -->
+<div class="row">
+    <!-- Status Chart (Pie) -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="dash-card h-100" style="transition-delay: 200ms; margin-bottom: 2.5rem;">
+            <div class="dash-card-header">
+                <span><i class="bi bi-pie-chart-fill text-primary me-2"></i> Tourist Status</span>
             </div>
-        }
+            <div class="chart-container" style="height: 350px;">
+                <canvas id="touristStatusPieChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Most Visited Destinations (Horizontal Bar) -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="dash-card h-100" style="transition-delay: 300ms; margin-bottom: 2.5rem;">
+            <div class="dash-card-header">
+                <span><i class="bi bi-map-fill text-danger me-2"></i> Most Visited Destinations</span>
+            </div>
+            <div class="chart-container" style="height: 350px;">
+                <canvas id="destinationsChart"></canvas>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="dash-card">
-    <div class="dash-card-header">
-        <span><i class="bi bi-diagram-3 me-2"></i> @Localizer["Dash_StatusDistribution"].Value</span>
-    </div>
-    <div class="dash-card-body">
-        @foreach (var row in Model.TouristSection.StatusBreakdown)
-        {
-            <div class="top-branch-item mb-2">
-                <div class="top-branch-icon">
-                    <i class="bi bi-circle-fill"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">@row.Name</h6>
-                </div>
-                <span class="badge bg-dark">@row.Count</span>
+<!-- Secondary Charts Row -->
+<div class="row">
+    <div class="col-12">
+        <div class="dash-card" style="transition-delay: 400ms;">
+            <div class="dash-card-header">
+                <span><i class="bi bi-globe2 text-success me-2"></i> Tourist Nationalities</span>
             </div>
-        }
+            <div class="chart-container" style="height: 350px;">
+                <canvas id="nationalityChart"></canvas>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Leaderboards & Activities Row -->
+<div class="row">
+    <div class="col-lg-4">
+        <div class="dash-card h-100" style="transition-delay: 500ms; margin-bottom: 2.5rem;">
+            <div class="dash-card-header">
+                <span><i class="bi bi-star-fill text-warning me-2"></i> Top Points</span>
+            </div>
+            <ul class="leaderboard-list">
+                @for (int i = 0; i < Model.TouristSection.TopTouristsByPoints.Count; i++)
+                {
+                    var tourist = Model.TouristSection.TopTouristsByPoints[i];
+                    <li class="leaderboard-item" style="transition-delay: @((i+1)*100)ms;">
+                        <div class="leaderboard-rank @(i < 3 ? $"top-{i+1}" : "")">@(i+1)</div>
+                        <div class="leaderboard-info">
+                            <h6 class="leaderboard-name">@tourist.Name</h6>
+                        </div>
+                        <div class="leaderboard-score">@tourist.Value <span style="font-size: 0.75rem; color:#6c757d; font-weight: 600;">pts</span></div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="dash-card h-100" style="transition-delay: 600ms; margin-bottom: 2.5rem;">
+            <div class="dash-card-header">
+                <span><i class="bi bi-award-fill text-info me-2"></i> Top Badges</span>
+            </div>
+            <ul class="leaderboard-list">
+                @for (int i = 0; i < Model.TouristSection.TopTouristsByBadges.Count; i++)
+                {
+                    var tourist = Model.TouristSection.TopTouristsByBadges[i];
+                    <li class="leaderboard-item" style="transition-delay: @((i+1)*100)ms;">
+                        <div class="leaderboard-rank @(i < 3 ? $"top-{i+1}" : "")">@(i+1)</div>
+                        <div class="leaderboard-info">
+                            <h6 class="leaderboard-name">@tourist.Name</h6>
+                        </div>
+                        <div class="leaderboard-score">@tourist.Value <span style="font-size: 0.75rem; color:#6c757d; font-weight: 600;">bdg</span></div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="dash-card h-100" style="transition-delay: 700ms; margin-bottom: 2.5rem;">
+            <div class="dash-card-header">
+                <span><i class="bi bi-lightning-charge-fill text-success me-2"></i> Recent Activity</span>
+            </div>
+            <ul class="activity-list">
+                @for (int i = 0; i < Model.TouristSection.RecentActivities.Count; i++)
+                {
+                    var act = Model.TouristSection.RecentActivities[i];
+                    <li class="activity-item" style="transition-delay: @((i+1)*150)ms;">
+                        <div class="activity-icon @act.Color">
+                            <i class="bi @act.Icon"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h6 class="activity-title">@act.Title</h6>
+                            <p class="activity-desc">@act.Description</p>
+                            <span class="activity-time"><i class="bi bi-clock me-1"></i> @act.TimeAgo</span>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Staggered Animations
+        setTimeout(() => {
+            document.querySelectorAll('.kpi-card, .dash-card, .leaderboard-item, .activity-item').forEach(el => {
+                el.classList.add('animate-in');
+            });
+            
+            // Premium Counter Animation
+            const counters = document.querySelectorAll('.counter');
+            const speed = 150; 
+
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+                    
+                    if(count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 15);
+                    } else {
+                        counter.innerText = target.toLocaleString(); // Add commas
+                    }
+                };
+                updateCount();
+            });
+        }, 100);
+
+        // Global Chart Styling
+        Chart.defaults.font.family = "'Inter', 'Segoe UI', system-ui, sans-serif";
+        Chart.defaults.color = '#8392a5';
+        Chart.defaults.scale.grid.color = 'rgba(0,0,0,0.04)';
+        Chart.defaults.scale.grid.borderColor = 'transparent';
+        
+        // 1. Status Chart (Pie Chart)
+        const ctxStatusPie = document.getElementById('touristStatusPieChart').getContext('2d');
+        const activeCount = @Model.TouristSection.Active;
+        const inactiveCount = @Model.TouristSection.Inactive;
+        const suspendedCount = @Model.TouristSection.Suspended;
+        
+        new Chart(ctxStatusPie, {
+            type: 'pie',
+            data: {
+                labels: ['Active', 'Inactive', 'Suspended'],
+                datasets: [{
+                    data: [activeCount, inactiveCount, suspendedCount],
+                    backgroundColor: [
+                        'rgba(25, 135, 84, 0.85)',  // Success Green
+                        'rgba(173, 181, 189, 0.85)', // Secondary Gray
+                        'rgba(220, 53, 69, 0.85)'    // Danger Red
+                    ],
+                    hoverBackgroundColor: [
+                        'rgba(25, 135, 84, 1)',
+                        'rgba(173, 181, 189, 1)',
+                        'rgba(220, 53, 69, 1)'
+                    ],
+                    borderWidth: 3,
+                    borderColor: '#ffffff',
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                    duration: 1500,
+                    easing: 'easeOutBounce'
+                },
+                layout: {
+                    padding: 10
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            font: { size: 13, weight: '600' },
+                            color: '#2b3445'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                        titleColor: '#2b3445',
+                        bodyColor: '#2b3445',
+                        bodyFont: { size: 14, weight: 'bold' },
+                        borderColor: 'rgba(0,0,0,0.08)',
+                        borderWidth: 1,
+                        padding: 12,
+                        boxPadding: 6,
+                        usePointStyle: true,
+                        callbacks: {
+                            labelTextColor: function() { return '#2b3445'; }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. Destinations Chart (Horizontal Bar with Premium Gradient)
+        const ctxDest = document.getElementById('destinationsChart').getContext('2d');
+        const destLabels = @Html.Raw(Json.Serialize(Model.TouristSection.TopDestinations.Select(x => x.Name)));
+        const destData = @Html.Raw(Json.Serialize(Model.TouristSection.TopDestinations.Select(x => x.Count)));
+        const maxVisits = Math.max(...destData, 1);
+        
+        // Create gradient
+        let gradientDest = ctxDest.createLinearGradient(0, 0, 600, 0);
+        gradientDest.addColorStop(0, 'rgba(13, 110, 253, 0.6)');
+        gradientDest.addColorStop(1, 'rgba(13, 110, 253, 1)');
+        
+        new Chart(ctxDest, {
+            type: 'bar',
+            data: {
+                labels: destLabels,
+                datasets: [{
+                    label: 'Visits',
+                    data: destData,
+                    backgroundColor: gradientDest,
+                    borderRadius: 6,
+                    barPercentage: 0.6,
+                    hoverBackgroundColor: 'rgba(10, 88, 202, 1)'
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 1400,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                        titleColor: '#2b3445',
+                        bodyColor: '#2b3445',
+                        borderColor: 'rgba(0,0,0,0.08)',
+                        borderWidth: 1,
+                        padding: 14,
+                        callbacks: {
+                            labelTextColor: function() { return '#2b3445'; },
+                            afterLabel: function(context) {
+                                const val = context.raw;
+                                const perc = ((val / maxVisits) * 100).toFixed(1);
+                                return `Percentage of Top: ${perc}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { beginAtZero: true, grid: { drawBorder: false }, ticks: { font: { weight: '600' } } },
+                    y: { grid: { display: false }, ticks: { font: { weight: '600', color: '#2b3445' } } }
+                }
+            }
+        });
+        
+        // 3. Nationalities Chart (Bar Chart with Highlight)
+        const ctxNat = document.getElementById('nationalityChart').getContext('2d');
+        const natLabels = @Html.Raw(Json.Serialize(Model.TouristSection.NationalityBreakdown.Select(x => x.Name)));
+        const natData = @Html.Raw(Json.Serialize(Model.TouristSection.NationalityBreakdown.Select(x => x.Count)));
+        
+        // Premium gradient for the top nationality
+        let topGrad = ctxNat.createLinearGradient(0, 0, 0, 400);
+        topGrad.addColorStop(0, 'rgba(25, 135, 84, 1)');
+        topGrad.addColorStop(1, 'rgba(25, 135, 84, 0.4)');
+        
+        const bgColors = natData.map((d, i) => i === 0 ? topGrad : 'rgba(13, 110, 253, 0.2)');
+        const borderColors = natData.map((d, i) => i === 0 ? 'rgba(25, 135, 84, 1)' : 'rgba(13, 110, 253, 0.4)');
+        
+        new Chart(ctxNat, {
+            type: 'bar',
+            data: {
+                labels: natLabels,
+                datasets: [{
+                    label: 'Tourists',
+                    data: natData,
+                    backgroundColor: bgColors,
+                    borderColor: borderColors,
+                    borderWidth: { top: 2, right: 2, left: 2, bottom: 0 },
+                    borderRadius: { topLeft: 8, topRight: 8, bottomLeft: 0, bottomRight: 0 },
+                    barPercentage: 0.5,
+                    hoverBackgroundColor: natData.map((d, i) => i === 0 ? topGrad : 'rgba(13, 110, 253, 0.4)')
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 1600,
+                    easing: 'easeOutElastic'
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                        titleColor: '#2b3445',
+                        bodyColor: '#2b3445',
+                        borderColor: 'rgba(0,0,0,0.08)',
+                        borderWidth: 1,
+                        padding: 14,
+                        callbacks: {
+                            labelTextColor: function() { return '#2b3445'; }
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { borderDash: [4, 4] }, ticks: { font: { weight: '600' } } },
+                    x: { grid: { display: false }, ticks: { font: { weight: '600', color: '#2b3445' } } }
+                }
+            }
+        });
+    });
+</script>

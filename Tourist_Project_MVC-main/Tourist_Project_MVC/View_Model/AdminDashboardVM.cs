@@ -36,9 +36,34 @@ namespace Tourist_Project_MVC.View_Model
     public class TouristSectionVM
     {
         public int Total { get; set; }
+        public int Active { get; set; }
+        public int Inactive { get; set; }
+        public int Suspended { get; set; }
+        
+        public double GrowthPercentage { get; set; }
+        public double RetentionRate { get; set; }
+        public string AverageSessionDuration { get; set; } = "0m";
+        public double AverageMissionsCompleted { get; set; }
+        
         public List<AdminDashboardVM.NameCountRow> NationalityBreakdown { get; set; } = new();
         public List<AdminDashboardVM.NameCountRow> StatusBreakdown { get; set; } = new();
+        
+        public List<int> ActiveHistory { get; set; } = new();
+        public List<int> InactiveHistory { get; set; } = new();
+        public List<int> SuspendedHistory { get; set; } = new();
+        public List<string> MonthsLabels { get; set; } = new();
+        
+        public List<AdminDashboardVM.NameCountRow> TopDestinations { get; set; } = new();
+        
+        public List<TopTouristRow> TopTouristsByPoints { get; set; } = new();
+        public List<TopTouristRow> TopTouristsByBadges { get; set; } = new();
+        public List<TopTouristRow> TopTouristsByLevel { get; set; } = new();
+        
+        public List<RecentActivityRow> RecentActivities { get; set; } = new();
     }
+
+    public record TopTouristRow(string Name, int Value, string Icon, string Subtext = "");
+    public record RecentActivityRow(string Title, string Description, string TimeAgo, string Icon, string Color);
 
     public class MissionSectionVM
     {
