@@ -189,10 +189,29 @@ namespace Tourist_Project_MVC.Controllers
 
         private void BuildTouristSection(AdminDashboardVM vm)
         {
-            vm.TouristSection.Total = _context.Tourists.Count();
+            var allTourists = _context.Tourists
+                .Include(t => t.UserMissions)
+                .Include(t => t.UserProgress)
+                .Include(t => t.UserBadges)
+                .ToList();
 
-            var nationalityGroups = _context.Tourists
-                .GroupBy(t => t.Nationality)
+            vm.TouristSection.Total = allTourists.Count();
+            
+            var active = allTourists.Count(t => t.Status == "Active");
+            var inactive = allTourists.Count(t => t.Status == "Inactive");
+            var suspended = allTourists.Count(t => t.Status == "Suspended");
+            
+            vm.TouristSection.Active = active;
+            vm.TouristSection.Inactive = inactive;
+            vm.TouristSection.Suspended = suspended;
+
+            vm.TouristSection.GrowthPercentage = 12.5; // Mock data
+            vm.TouristSection.RetentionRate = 85.2; // Mock data
+            vm.TouristSection.AverageSessionDuration = "14m 30s"; // Mock data
+            vm.TouristSection.AverageMissionsCompleted = allTourists.Any() ? Math.Round(allTourists.Average(t => t.UserMissions?.Count ?? 0), 1) : 0;
+
+            var nationalityGroups = allTourists
+                .GroupBy(t => string.IsNullOrEmpty(t.Nationality) ? "Unknown" : t.Nationality)
                 .Select(g => new { Name = g.Key, Count = g.Count() })
                 .OrderByDescending(r => r.Count)
                 .Take(10)
@@ -200,16 +219,64 @@ namespace Tourist_Project_MVC.Controllers
                 .Select(r => new AdminDashboardVM.NameCountRow(r.Name, "🌍", r.Count))
                 .ToList();
 
-            var statusGroups = _context.Tourists
-                .GroupBy(t => t.Status ?? "Unknown")
-                .Select(g => new { Name = g.Key, Count = g.Count() })
-                .OrderByDescending(r => r.Count)
-                .ToList()
-                .Select(r => new AdminDashboardVM.NameCountRow(r.Name, r.Name == "Active" ? "✅" : "⏳", r.Count))
-                .ToList();
+            var statusGroups = new List<AdminDashboardVM.NameCountRow>
+            {
+                new AdminDashboardVM.NameCountRow("Active", "✅", active),
+                new AdminDashboardVM.NameCountRow("Inactive", "💤", inactive),
+                new AdminDashboardVM.NameCountRow("Suspended", "🚫", suspended)
+            };
 
             vm.TouristSection.NationalityBreakdown = nationalityGroups;
             vm.TouristSection.StatusBreakdown = statusGroups;
+            
+            // Mock Line Chart Data
+            var months = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+            vm.TouristSection.MonthsLabels = months.Take(DateTime.Now.Month).ToList();
+            
+            var rnd = new Random(42);
+            for(int i=0; i<vm.TouristSection.MonthsLabels.Count; i++) {
+                vm.TouristSection.ActiveHistory.Add(rnd.Next(50, 200) + (i * 10));
+                vm.TouristSection.InactiveHistory.Add(rnd.Next(10, 50));
+                vm.TouristSection.SuspendedHistory.Add(rnd.Next(0, 10));
+            }
+
+            // Top Destinations (mocking visits)
+            var destinations = _context.Destinations.Take(10).ToList();
+            foreach(var dest in destinations) {
+                vm.TouristSection.TopDestinations.Add(new AdminDashboardVM.NameCountRow(dest.Name, "📍", rnd.Next(100, 1000)));
+            }
+            vm.TouristSection.TopDestinations = vm.TouristSection.TopDestinations.OrderByDescending(x => x.Count).ToList();
+
+            // Top Tourists by Points
+            vm.TouristSection.TopTouristsByPoints = allTourists
+                .OrderByDescending(t => t.point_Balance)
+                .Take(5)
+                .Select(t => new TopTouristRow(t.Name, t.point_Balance, "⭐", "Points"))
+                .ToList();
+
+            // Top Tourists by Badges
+            vm.TouristSection.TopTouristsByBadges = allTourists
+                .OrderByDescending(t => t.UserBadges?.Count ?? 0)
+                .Take(5)
+                .Select(t => new TopTouristRow(t.Name, t.UserBadges?.Count ?? 0, "🏅", "Badges"))
+                .ToList();
+
+            // Top Tourists by Level
+            vm.TouristSection.TopTouristsByLevel = allTourists
+                .OrderByDescending(t => t.UserProgress?.CurrentLevel ?? 0)
+                .Take(5)
+                .Select(t => new TopTouristRow(t.Name, t.UserProgress?.CurrentLevel ?? 0, "🏆", "Level"))
+                .ToList();
+                
+            // Recent Activities
+            vm.TouristSection.RecentActivities = new List<RecentActivityRow>
+            {
+                new RecentActivityRow("New Registration", "John Doe joined the platform", "2 hours ago", "bi-person-plus", "text-success"),
+                new RecentActivityRow("Mission Completed", "Sarah Smith completed 'Pyramids Tour'", "5 hours ago", "bi-check-circle", "text-primary"),
+                new RecentActivityRow("Reward Claimed", "Ahmed Ali claimed 'Free Coffee'", "1 day ago", "bi-gift", "text-warning"),
+                new RecentActivityRow("Destination Visited", "Maria visited 'Luxor Temple'", "1 day ago", "bi-geo-alt", "text-info"),
+                new RecentActivityRow("Level Up", "Omar reached Level 5", "2 days ago", "bi-trophy", "text-danger"),
+            };
         }
 
         private void BuildMissionSection(AdminDashboardVM vm)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tourist_Project_MVC.Data;
@@ -9,6 +10,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MobileRewardController : ControllerBase
     {
         private readonly TouristContext _context;
@@ -18,7 +20,6 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             _context = context;
             this.reward = reward;
         }
-        //[Authorize]
         [HttpGet("AllRewards")]
         public IActionResult AllRewards()
         {
