@@ -7,21 +7,20 @@ namespace Tourist_Project_MVC.Controllers
     public class MapController : Controller
     {
         private readonly IConfiguration _config;
-        private readonly IArcGisAppTokenService _tokenService;
 
-        public MapController(IConfiguration config, IArcGisAppTokenService tokenService)
+        public MapController(IConfiguration config)
         {
             _config = config;
-            _tokenService = tokenService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMapConfig()
+        public IActionResult GetMapConfig()
         {
-            var token = await _tokenService.GetAccessTokenAsync();
+            var token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+
             return Json(new
             {
-                apiKey = token ?? string.Empty,
+                apiKey = token,
                 destinationsLayerUrl = _config["ArcGIS:DestinationsLayerUrl"] ?? string.Empty,
                 branchesLayerUrl = _config["ArcGIS:BranchesLayerUrl"] ?? string.Empty
             });
