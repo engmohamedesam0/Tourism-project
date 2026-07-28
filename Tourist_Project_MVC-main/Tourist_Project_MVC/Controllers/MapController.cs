@@ -18,10 +18,20 @@ namespace Tourist_Project_MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMapConfig()
         {
-            var token = await _tokenService.GetAccessTokenAsync();
+            string token = string.Empty;
+            try
+            {
+                token = await _tokenService.GetAccessTokenAsync();
+            }
+            catch
+            {
+                // Fallback to static API key if OAuth is not configured or fails
+                token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+            }
+
             return Json(new
             {
-                apiKey = token ?? string.Empty,
+                apiKey = token,
                 destinationsLayerUrl = _config["ArcGIS:DestinationsLayerUrl"] ?? string.Empty,
                 branchesLayerUrl = _config["ArcGIS:BranchesLayerUrl"] ?? string.Empty
             });

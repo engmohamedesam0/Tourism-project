@@ -199,12 +199,29 @@ var EGYMaps = (function () {
             openPopupAt: function (lat, lng, title) {
                 if (!view) return;
                 var point = new Point({ longitude: lng, latitude: lat, spatialReference: { wkid: 4326 } });
-                view.popup = {
-                    location: point,
-                    title: title || '',
-                    content: ''
-                };
-                view.openPopup();
+                
+                // Find graphic at this location
+                var targetGraphic = null;
+                if (graphicsByFeature) {
+                    graphicsByFeature.forEach(function (g) {
+                        if (g.geometry && Math.abs(g.geometry.latitude - lat) < 0.0001 && Math.abs(g.geometry.longitude - lng) < 0.0001) {
+                            targetGraphic = g;
+                        }
+                    });
+                }
+
+                if (targetGraphic && targetGraphic.popupTemplate) {
+                    view.popup.open({
+                        location: point,
+                        features: [targetGraphic]
+                    });
+                } else {
+                    view.popup.open({
+                        location: point,
+                        title: title || '',
+                        content: 'No additional details available.'
+                    });
+                }
             }
         };
 
@@ -232,24 +249,64 @@ var EGYMaps = (function () {
                 return;
             }
 
+            var customPopup = new PopupTemplate({
+                title: "{English_Name}",
+                content: [
+                    {
+                        type: "fields",
+                        fieldInfos: [
+                            { fieldName: "Governorate", label: "Governorate" },
+                            { fieldName: "Category", label: "Category" },
+                            { fieldName: "TicketRequired", label: "Ticket Required" },
+                            { fieldName: "Description", label: "Description" }
+                        ]
+                    },
+                    {
+                        type: "custom",
+                        outFields: ["Images"],
+                        creator: function (event) {
+                            var rawUrls = event.graphic.attributes.Images;
+                            var div = document.createElement("div");
+                            
+                            if (!rawUrls || rawUrls.trim() === "") {
+                                div.innerHTML = '<i>No images available for this location.</i>';
+                                return div;
+                            }
+                            
+                            var urlArray = String(rawUrls).split("|");
+                            var htmlOutput = "";
+                            for (var i = 0; i < urlArray.length; i++) {
+                                var currentUrl = urlArray[i].trim();
+                                if (currentUrl !== "") {
+                                    htmlOutput += '<img src="' + currentUrl + '" style="max-width:100%; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" /><br/>';
+                                }
+                            }
+                            
+                            div.innerHTML = htmlOutput;
+                            return div;
+                        }
+                    }
+                ]
+            });
+
             sourceLayer = new FeatureLayer({
                 url: layerUrl,
                 outFields: ['*'],
-                popupTemplate: new PopupTemplate({
-                    title: '{name}',
-                    content: function (event) {
-                        var feature = event.graphic;
-                        var html = popupHtml({ attributes: feature.attributes, properties: feature.attributes }, propMap);
-                        return html || '';
-                    }
-                })
+                popupTemplate: customPopup
             });
 
             map.add(sourceLayer);
             sourceLayer.visible = false;
 
             try {
+                await sourceLayer.load();
                 await view.whenLayerView(sourceLayer).ready;
+                
+                // If the layer didn't bring its own Arcade popup from ArcGIS Online, generate a default one
+                if (!sourceLayer.popupTemplate) {
+                    sourceLayer.popupTemplate = sourceLayer.createPopupTemplate();
+                }
+
                 var query = sourceLayer.createQuery();
                 query.where = '1=1';
                 query.outFields = ['*'];
