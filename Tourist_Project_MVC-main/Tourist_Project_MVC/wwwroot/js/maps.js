@@ -30,6 +30,8 @@ var EGYMaps = (function () {
         notice.textContent = msg || '\u26A0 Couldn\u2019t load live layer';
     }
 
+    /*
+    // UNUSED: Replaced by custom JavaScript image renderer
     function _buildPopupHtml(feature, propMap) {
         var p = feature.attributes || {};
         var id = _firstDefined(p, propMap.id, []);
@@ -45,6 +47,7 @@ var EGYMaps = (function () {
         }
         return lines.join('<br>');
     }
+    */
 
     function _firstDefined(p, keys, fallback) {
         for (var i = 0; i < keys.length; i++) {
@@ -107,7 +110,7 @@ var EGYMaps = (function () {
         var EsriMap, MapView, FeatureLayer, GraphicsLayer, Graphic, Point, PopupTemplate, TextSymbol, Extent;
 
         var propMap = opts.propMap || {};
-        var popupHtml = opts.popupHtml || _buildPopupHtml;
+        // var popupHtml = opts.popupHtml || _buildPopupHtml; // UNUSED
         var markerStyle = opts.markerStyle || { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 };
         var onLayerReady = opts.onLayerReady || null;
 

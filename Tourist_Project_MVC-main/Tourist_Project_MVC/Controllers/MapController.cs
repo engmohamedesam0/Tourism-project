@@ -7,27 +7,16 @@ namespace Tourist_Project_MVC.Controllers
     public class MapController : Controller
     {
         private readonly IConfiguration _config;
-        private readonly IArcGisAppTokenService _tokenService;
 
-        public MapController(IConfiguration config, IArcGisAppTokenService tokenService)
+        public MapController(IConfiguration config)
         {
             _config = config;
-            _tokenService = tokenService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMapConfig()
+        public IActionResult GetMapConfig()
         {
-            string token = string.Empty;
-            try
-            {
-                token = await _tokenService.GetAccessTokenAsync();
-            }
-            catch
-            {
-                // Fallback to static API key if OAuth is not configured or fails
-                token = _config["ArcGIS:ApiKey"] ?? string.Empty;
-            }
+            var token = _config["ArcGIS:ApiKey"] ?? string.Empty;
 
             return Json(new
             {

@@ -29,17 +29,15 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
     private readonly IConfiguration _config;
     private readonly ILogger<ArcGISSyncService> _logger;
     private readonly JsonSerializerOptions _jsonOptions;
-    private readonly IArcGisAppTokenService _tokenService;
     private static readonly ConcurrentDictionary<string, Dictionary<string, string>> _fieldCache = new();
     private static readonly SemaphoreSlim _fieldCacheLock = new(1, 1);
 
-    public ArcGISSyncService(IHttpClientFactory clientFactory, IConfiguration config, ILogger<ArcGISSyncService> logger, IArcGisAppTokenService tokenService)
+    public ArcGISSyncService(IHttpClientFactory clientFactory, IConfiguration config, ILogger<ArcGISSyncService> logger)
     {
         _clientFactory = clientFactory;
         _config = config;
         _logger = logger;
         _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        _tokenService = tokenService;
     }
 
     private string? DestinationsLayerUrl => _config["ArcGIS:DestinationsLayerUrl"];
@@ -144,15 +142,11 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
         var list = destinations.ToList();
         if (!list.Any()) return ArcGISSyncResult.Ok();
 
-        string token;
-        try
+        string token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(token))
         {
-            token = await _tokenService.GetAccessTokenAsync(ct);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "ArcGIS destinations sync skipped: unable to acquire access token");
-            return ArcGISSyncResult.Failed("Unable to acquire ArcGIS access token.");
+            _logger.LogError("ArcGIS destinations sync skipped: API Key is missing");
+            return ArcGISSyncResult.Failed("API Key is missing.");
         }
 
         try
@@ -304,15 +298,11 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
         var list = branches.ToList();
         if (!list.Any()) return ArcGISSyncResult.Ok();
 
-        string token;
-        try
+        string token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(token))
         {
-            token = await _tokenService.GetAccessTokenAsync(ct);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "ArcGIS branches sync skipped: unable to acquire access token");
-            return ArcGISSyncResult.Failed("Unable to acquire ArcGIS access token.");
+            _logger.LogError("ArcGIS branches sync skipped: API Key is missing");
+            return ArcGISSyncResult.Failed("API Key is missing.");
         }
 
         try
