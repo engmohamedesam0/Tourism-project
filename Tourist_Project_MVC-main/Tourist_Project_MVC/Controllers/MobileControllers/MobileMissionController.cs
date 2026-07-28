@@ -54,6 +54,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 }).ToList();
                 return Ok(missionDto);
         }
+
         [HttpPost("Complete")]
         public async Task<IActionResult> CompleteMission([FromBody] CompleteMissionDto dto)
         {
@@ -90,6 +91,40 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 message="Mission Completed successfully",
                 pointsEarned = userMission.PointsEarned
             });
+        }
+        
+        [HttpGet("MyCompleted")]
+        public async Task <IActionResult> MyCompletedMissions()
+        {
+            var applicationUser = await _userManager.GetUserAsync(User);
+            if(applicationUser == null)
+            {
+                return Unauthorized();
+            }
+            var tourist = _touristRepo.GetOrCreateByApplicationUser(applicationUser);
+
+            var completed = await _context.UserMissions
+                .Where(um => um.TouristId == tourist.Id)
+                .Select(um => um.MissionId)
+                .ToListAsync();
+            return Ok(completed);
+        }
+
+        [HttpGet("MyBalance")]
+        public async Task <IActionResult> MyPointsBalance()
+        {
+            var applicationUser = await _userManager.GetUserAsync(User);
+            if (applicationUser == null)
+            {
+                return Unauthorized();
+            }
+
+            var tourist = _touristRepo.GetOrCreateByApplicationUser(applicationUser);
+
+            var total = await _context.UserMissions
+                .Where(um => um.TouristId == tourist.Id)
+                .SumAsync(pt => pt.PointsEarned);
+            return Ok(new { TotalBalance = total });
         }
     }
 }
