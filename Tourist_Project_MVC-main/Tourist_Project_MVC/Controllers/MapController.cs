@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Tourist_Project_MVC.Services;
 
 namespace Tourist_Project_MVC.Controllers
 {
@@ -22,7 +21,8 @@ namespace Tourist_Project_MVC.Controllers
             {
                 apiKey = token,
                 destinationsLayerUrl = _config["ArcGIS:DestinationsLayerUrl"] ?? string.Empty,
-                branchesLayerUrl = _config["ArcGIS:BranchesLayerUrl"] ?? string.Empty
+                branchesLayerUrl = _config["ArcGIS:BranchesLayerUrl"] ?? string.Empty,
+                portalId = _config["ArcGIS:PortalId"] ?? string.Empty
             });
         }
     }
