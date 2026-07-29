@@ -8,6 +8,7 @@ using System.Text;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.DTOs;
 using Tourist_Project_MVC.Models;
+using Tourist_Project_MVC.Repositories;
 
 namespace Tourist_Project_MVC.Controllers.MobileControllers
 {
@@ -22,6 +23,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
         private readonly ILogger<MobileAccountController> logger;
         private readonly IConfiguration _config;
         private readonly TouristContext _context;
+        private readonly ITouristRepository _touristRepo;
         public MobileAccountController
             (
             UserManager<ApplicationUser> userManager,
@@ -29,7 +31,8 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             RoleManager<IdentityRole> roleManager,
             ILogger<MobileAccountController> logger,
             IConfiguration config,
-            TouristContext context
+            TouristContext context,
+            ITouristRepository touristRepo
             )
         {
             this.userManager = userManager;
@@ -38,6 +41,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             this.logger = logger;
             _config = config;
             _context = context;
+            _touristRepo = touristRepo;
         }
 
         [HttpPost("register")]
@@ -73,6 +77,21 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 var roleErrors = string.Join(" ", roleResult.Errors.Select(e => e.Description));
                 logger.LogWarning("Failed to assign 'User' role to {Email}: {Errors}", user.Email, roleErrors);
             }
+
+            var tourist = new Tourist
+            {
+                Name = $"{dto.FirstName} {dto.LastName}".Trim(),
+                Email = dto.Email,
+                Nationality = dto.Country,
+                Password = String.Empty,
+                RegisterDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
+                Status = "Active",
+                point_Balance = 0,
+                ApplicationUserId = user.Id
+            };
+            _touristRepo.Add(tourist);
+            _touristRepo.Save();
+
             return Ok(await BuildAuthResponse(user, "Registration successful."));
         }
         [HttpPost("login")]

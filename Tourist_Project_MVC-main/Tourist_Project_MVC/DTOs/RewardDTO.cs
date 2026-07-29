@@ -11,4 +11,8 @@
         public DateTime Expiration { get; set; }
         public string Status { get; set; }
     }
+    public class RedeemRewardDto
+    {
+        public int RewardId { get; set; }
+    }
 }
