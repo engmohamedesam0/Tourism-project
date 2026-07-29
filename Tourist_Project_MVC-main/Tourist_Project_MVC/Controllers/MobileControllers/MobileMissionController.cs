@@ -85,7 +85,11 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 Completed_At = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified)
             };
             _context.UserMissions.Add(userMission);
+
+            tourist.point_Balance += mission.PointsReward;
+            
             await _context.SaveChangesAsync();
+            
             return Ok(new
             {
                 message="Mission Completed successfully",
@@ -121,9 +125,8 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
 
             var tourist = _touristRepo.GetOrCreateByApplicationUser(applicationUser);
 
-            var total = await _context.UserMissions
-                .Where(um => um.TouristId == tourist.Id)
-                .SumAsync(pt => pt.PointsEarned);
+            var total = tourist.point_Balance;
+
             return Ok(new { TotalBalance = total });
         }
     }
