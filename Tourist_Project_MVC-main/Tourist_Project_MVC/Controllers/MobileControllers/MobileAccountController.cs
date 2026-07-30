@@ -101,6 +101,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 return BadRequest(new AuthResponseDto { Success = false, Message = "Invalid input." });
 
             var user = await userManager.FindByEmailAsync(dto.Email);
+
             if (user == null)
                 return Unauthorized(new AuthResponseDto { Success = false, Message = "Invalid email or password." });
 
