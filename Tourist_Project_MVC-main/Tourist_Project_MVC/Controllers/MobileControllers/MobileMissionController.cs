@@ -40,7 +40,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
 
             if (missions == null)
             {
-                return BadRequest(new { message = "Unable to retrieve missions." });
+                return NotFound(new { message = "Unable to retrieve missions." });
             }
 
             var missionDto = missions.Select(m => new MissionDTO
@@ -59,7 +59,9 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
         public async Task<IActionResult> CompleteMission([FromBody] CompleteMissionDto dto)
         {
             var allClaims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+
             var applicationUser = await _userManager.GetUserAsync(User);
+            
             if(applicationUser == null)
             {
                 return Unauthorized();
@@ -67,6 +69,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             var tourist = _touristRepo.GetOrCreateByApplicationUser(applicationUser);
 
             var mission = await _context.Missions.FindAsync(dto.MissionId);
+
             if(mission == null)
             {
                 return NotFound(new { message = "Mission not found" });
@@ -85,7 +88,11 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 Completed_At = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified)
             };
             _context.UserMissions.Add(userMission);
+
+            tourist.point_Balance += mission.PointsReward;
+            
             await _context.SaveChangesAsync();
+            
             return Ok(new
             {
                 message="Mission Completed successfully",
@@ -121,9 +128,8 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
 
             var tourist = _touristRepo.GetOrCreateByApplicationUser(applicationUser);
 
-            var total = await _context.UserMissions
-                .Where(um => um.TouristId == tourist.Id)
-                .SumAsync(pt => pt.PointsEarned);
+            var total = tourist.point_Balance;
+
             return Ok(new { TotalBalance = total });
         }
     }

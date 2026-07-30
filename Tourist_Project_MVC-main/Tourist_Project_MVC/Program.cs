@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Tourist_Project_MVC.Controllers.Middlewares;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
@@ -46,7 +47,7 @@ namespace Tourist_Project_MVC
             });
 
             builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-builder.Services.Configure<RequestLocalizationOptions>(o =>
+            builder.Services.Configure<RequestLocalizationOptions>(o =>
              {
                  o.SetDefaultCulture("en");
                  o.DefaultRequestCulture = new RequestCulture("en");
@@ -135,6 +136,7 @@ builder.Services.Configure<RequestLocalizationOptions>(o =>
             app.UseRequestLocalization();
             app.UseAuthentication();  // ← add this, before UseAuthorization
             app.UseAuthorization();
+            app.UseMiddleware<UserExistsMiddleware>();
 
             app.MapStaticAssets();
             app.MapControllerRoute(
