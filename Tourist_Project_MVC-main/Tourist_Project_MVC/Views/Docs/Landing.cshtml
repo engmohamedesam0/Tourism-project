@@ -1,0 +1,103 @@
+@model IReadOnlyList<Tourist_Project_MVC.Services.DocSection>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Help Center — Docs";
+    ViewData["FullWidth"] = true;
+}
+
+@section Styles {
+    <link href="~/css/docs.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/docs.js" asp-append-version="true"></script>
+}
+
+<div class="docs-shell">
+    <!-- Mobile sidebar toggle (visible below md) -->
+    <div class="px-3 d-block d-md-none">
+        <button type="button" id="docsSidebarToggle" class="btn btn-outline-secondary docs-mobile-toggle" aria-expanded="false" aria-controls="docsSidebar">
+            <i class="bi bi-list me-2"></i> Docs Menu
+        </button>
+    </div>
+
+    <!-- Backdrop for mobile sidebar -->
+    <div id="docsSidebarBackdrop" class="docs-sidebar-backdrop"></div>
+
+    <!-- LEFT SIDEBAR -->
+    <aside id="docsSidebar" class="docs-sidebar">
+        <a asp-controller="Docs" asp-action="Index" class="docs-sidebar-brand">
+            <i class="bi bi-book-half"></i> EGYXPLORE Docs
+        </a>
+
+        @foreach (var section in Model)
+        {
+            <div class="docs-sidebar-section">
+                <div class="docs-sidebar-section-title">@(section.Title)</div>
+                <ul class="docs-sidebar-list">
+                    @foreach (var article in section.Articles)
+                    {
+                        <li>
+                            <a asp-controller="Docs" asp-action="Article"
+                               asp-route-section="@article.Section"
+                               asp-route-slug="@article.Slug">
+                                 @article.Title
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="docs-main">
+        <!-- Top search bar (local to docs shell) -->
+        <div class="docs-topbar">
+            <div class="docs-search-wrap">
+                <i class="bi bi-search search-icon"></i>
+                <input type="search" id="docsSearchInput" class="form-control" placeholder="Search docs..." autocomplete="off" />
+                <div id="docsSearchResults" class="docs-search-results"></div>
+            </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="docs-breadcrumb">
+            <span class="current">Docs</span>
+        </nav>
+
+        <!-- Landing -->
+        <div class="docs-article">
+            <h1 class="docs-title">Help Center</h1>
+            <p class="docs-description">Choose a guide below to get started.</p>
+            <hr class="docs-divider" />
+
+            <div class="row g-4 mt-2">
+                @foreach (var section in Model)
+                {
+                    var firstArticle = section.Articles.FirstOrDefault();
+                    if (firstArticle == null) continue;
+
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--radius-lg);">
+                            <div class="card-body p-4">
+                                <h2 class="docs-title" style="font-size: 1.35rem;">@(section.Title)</h2>
+                                <p class="docs-description">
+                                    Explore guides for @(section.Title.ToLower()) to learn how to get the most out of EGYXPLORE.
+                                </p>
+                                <a asp-controller="Docs" asp-action="Article"
+                                   asp-route-section="@firstArticle.Section"
+                                   asp-route-slug="@firstArticle.Slug"
+                                   class="btn btn-primary mt-2">
+                                    <i class="bi bi-book-half me-1"></i> Start reading
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- No right TOC on landing -->
+</div>

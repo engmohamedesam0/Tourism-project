@@ -70,6 +70,7 @@ builder.Services.Configure<RequestLocalizationOptions>(o =>
             builder.Services.AddScoped<IUserProgressRepository, UserProgressRepository>();
             builder.Services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
             builder.Services.AddScoped<IGamificationService, GamificationService>();
+            builder.Services.AddSingleton<IDocContentProvider, DocsService>();
             builder.Services.AddDbContext<TouristContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("CS"),
                     o => o.UseNetTopologySuite()));
