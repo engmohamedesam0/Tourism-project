@@ -36,6 +36,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
         public IActionResult AllRewards()
         {
             var rewards = reward.GetAll();
+
             if (rewards == null)
             {
                 return BadRequest(new { message = "Unable to retrieve rewards." });
