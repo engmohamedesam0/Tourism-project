@@ -131,6 +131,7 @@ namespace Tourist_Project_MVC
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseRequestLocalization();
