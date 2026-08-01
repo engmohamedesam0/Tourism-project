@@ -119,6 +119,19 @@ builder.Services.Configure<RequestLocalizationOptions>(o =>
 
             var app = builder.Build();
 
+            try
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var context = scope.ServiceProvider.GetRequiredService<TouristContext>();
+                    context.Database.Migrate();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"[Program] Migration failed: {ex.Message}");
+            }
+
             // JSON-driven, idempotent sample-data seeding (see Services/DbInitializer.cs
             // and the SeedData/ folder). Safe to run on every startup: each table is
             // only populated when empty.

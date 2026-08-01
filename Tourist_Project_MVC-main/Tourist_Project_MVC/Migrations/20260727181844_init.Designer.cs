@@ -13,8 +13,8 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    [Migration("20260726121659_InitialUpdate1")]
-    partial class InitialUpdate1
+    [Migration("20260727181844_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -240,6 +240,52 @@ namespace Tourist_Project_MVC.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.Badge", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("LevelRequired")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Rarity")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("RewardType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("RewardValue")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("XPRequired")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Badges");
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.Branch", b =>
@@ -924,6 +970,35 @@ namespace Tourist_Project_MVC.Migrations
                     b.ToTable("TripPlans");
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.UserBadge", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BadgeId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EarnedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("TouristId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BadgeId");
+
+                    b.HasIndex("TouristId");
+
+                    b.ToTable("UserBadges");
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.UserMission", b =>
                 {
                     b.Property<int>("Id")
@@ -955,6 +1030,43 @@ namespace Tourist_Project_MVC.Migrations
                     b.HasIndex("TouristId");
 
                     b.ToTable("UserMissions");
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.UserProgress", b =>
+                {
+                    b.Property<int>("TouristId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CompletedMissions")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CompletedTrips")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CurrentLevel")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CurrentXP")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastLoginDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("LoginStreak")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ReviewsCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UploadedPhotos")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VisitedPlaces")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TouristId");
+
+                    b.ToTable("UserProgress");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1240,6 +1352,25 @@ namespace Tourist_Project_MVC.Migrations
                     b.Navigation("Tourist");
                 });
 
+            modelBuilder.Entity("Tourist_Project_MVC.Models.UserBadge", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.Badge", "Badge")
+                        .WithMany("UserBadges")
+                        .HasForeignKey("BadgeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tourist_Project_MVC.Models.Tourist", "Tourist")
+                        .WithMany("UserBadges")
+                        .HasForeignKey("TouristId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Badge");
+
+                    b.Navigation("Tourist");
+                });
+
             modelBuilder.Entity("Tourist_Project_MVC.Models.UserMission", b =>
                 {
                     b.HasOne("Tourist_Project_MVC.Models.Mission", "Mission")
@@ -1257,6 +1388,22 @@ namespace Tourist_Project_MVC.Migrations
                     b.Navigation("Mission");
 
                     b.Navigation("Tourist");
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.UserProgress", b =>
+                {
+                    b.HasOne("Tourist_Project_MVC.Models.Tourist", "Tourist")
+                        .WithOne("UserProgress")
+                        .HasForeignKey("Tourist_Project_MVC.Models.UserProgress", "TouristId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tourist");
+                });
+
+            modelBuilder.Entity("Tourist_Project_MVC.Models.Badge", b =>
+                {
+                    b.Navigation("UserBadges");
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.Branch", b =>
@@ -1300,7 +1447,11 @@ namespace Tourist_Project_MVC.Migrations
 
                     b.Navigation("TripPlans");
 
+                    b.Navigation("UserBadges");
+
                     b.Navigation("UserMissions");
+
+                    b.Navigation("UserProgress");
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.TripPlan", b =>
