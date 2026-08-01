@@ -15,7 +15,7 @@
             <span>@Localizer["Hero_Badge_Live"].Value</span>
         </div>
         <h1 class="hero-title">
-            <span class="hero-title-line">EGY</span><span class="hero-title-accent">XPLORE</span>
+            <span class="hero-title-line">EGY</span><span class="hero-title-accent">XPL<img src="~/assets/img/gold-scarab.png" alt="O" class="hero-scarab-o" />RE</span>
         </h1>
         <p class="hero-subtitle">@Localizer["Hero_Subtitle"].Value</p>
         <div class="hero-cta-group">
@@ -423,6 +423,7 @@
     line-height: 1;
     margin-bottom: 0.35em;
     text-shadow: 0 4px 40px rgba(0,0,0,0.5);
+    white-space: nowrap;
 }
 
 .hero-title-accent {
@@ -430,6 +431,25 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    display: inline-flex;
+    align-items: center;
+}
+
+.hero-scarab-o {
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    object-fit: contain;
+    vertical-align: middle;
+    margin: 0 0.02em;
+    -webkit-text-fill-color: initial;
+    filter: drop-shadow(0 0 8px rgba(200,131,42,0.7));
+    animation: scarab-glow 2.5s ease-in-out infinite;
+}
+
+@@keyframes scarab-glow {
+    0%, 100% { filter: drop-shadow(0 0 6px rgba(200,131,42,0.6)); }
+    50% { filter: drop-shadow(0 0 16px rgba(248,185,90,0.9)); }
 }
 
 .hero-subtitle {

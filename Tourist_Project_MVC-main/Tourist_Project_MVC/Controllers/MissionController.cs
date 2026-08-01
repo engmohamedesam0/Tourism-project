@@ -10,7 +10,7 @@ using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User,Admin")]
     public class MissionController : Controller
     {
         private readonly IMissionRepository missionRepo;
@@ -75,6 +75,7 @@ namespace Tourist_Project_MVC.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             MissionWithDeptListVM mission = new MissionWithDeptListVM();
@@ -85,6 +86,7 @@ namespace Tourist_Project_MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(MissionWithDeptListVM missionFromReq)
         {
             if (ModelState.IsValid)
@@ -106,6 +108,7 @@ namespace Tourist_Project_MVC.Controllers
             return View(missionFromReq);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
             Mission missionFromDb = missionRepo.GetById(id);
@@ -129,6 +132,7 @@ namespace Tourist_Project_MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(MissionWithDeptListVM missionFromReq)
         {
             if (ModelState.IsValid)
@@ -152,6 +156,7 @@ namespace Tourist_Project_MVC.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             Mission missionFromDb = missionRepo.GetById(id);
@@ -160,6 +165,7 @@ namespace Tourist_Project_MVC.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteConfirmed(int id)
         {
             missionRepo.Delete(id);

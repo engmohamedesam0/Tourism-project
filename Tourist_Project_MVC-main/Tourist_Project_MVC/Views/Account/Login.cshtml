@@ -1,11 +1,22 @@
-﻿@model Tourist_Project_MVC.View_Model.LoginViewModel
+@model Tourist_Project_MVC.View_Model.LoginViewModel
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = "Login";
+    ViewData["FullWidth"] = true;
+
+    string getLoc(string key, string fallback) {
+        var val = Localizer[key]?.Value;
+        if (string.IsNullOrWhiteSpace(val) || val.Equals(key, StringComparison.OrdinalIgnoreCase)) {
+            return fallback;
+        }
+        return val;
+    }
 }
 
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
 
 <div class="auth-page-wrapper">
     <div class="auth-shell">
@@ -38,7 +49,7 @@
 
                     <div class="form-field">
                         <label asp-for="UserName">
-                            @Localizer["Login_EmailOrUsername"].Value
+                            @getLoc("Login_EmailOrUsername", "Email or Username")
                         </label>
 
                         <div class="input-wrap">
@@ -66,7 +77,7 @@
 
                     <div class="form-field">
                         <label asp-for="UserPassword">
-                            @Localizer["Login_Password"].Value
+                            @getLoc("Login_Password", "Password")
                         </label>
 
                         <div class="input-wrap">
@@ -124,11 +135,11 @@
                     <div class="form-options-row">
                         <label class="remember-checkbox">
                             <input asp-for="RememberMe" />
-                            <span>@Html.DisplayNameFor(model => model.RememberMe)</span>
+                            <span>Remember me</span>
                         </label>
 
                         <a asp-action="Reset" class="forgot-link">
-                            @Localizer["Login_ForgotPassword"].Value
+                            @getLoc("Login_ForgotPassword", "Forgot password?")
                         </a>
                     </div>
 
@@ -136,7 +147,7 @@
                             class="btn-premium-login"
                             id="loginSubmitBtn">
 
-                        <span>@Localizer["Login_Submit"].Value</span>
+                        <span>@getLoc("Login_Submit", "Sign In")</span>
 
                         <svg class="btn-arrow"
                              viewBox="0 0 24 24"
@@ -153,7 +164,7 @@
                     </button>
                 </form>
 
-                <div class="auth-divider"><span>OR CONTINUE WITH</span></div>
+                <div class="auth-divider"><span>Or continue with</span></div>
 
                 <div class="social-login-row">
                     <button type="button"
@@ -185,8 +196,8 @@
                 </div>
 
                 <div class="register-prompt">
-                    @Localizer["Login_NeedAccount"].Value
-                    <a asp-action="Register">Register <span>&rarr;</span></a>
+                    @getLoc("Login_NeedAccount", "Don't have an account?")
+                    <a asp-action="Register">Sign Up <span>&rarr;</span></a>
                 </div>
 
             </div>

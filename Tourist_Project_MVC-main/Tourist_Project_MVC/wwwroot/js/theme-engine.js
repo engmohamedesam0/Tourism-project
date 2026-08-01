@@ -3,7 +3,10 @@
 
     var STORAGE_KEY = 'egyxplore-theme';
     var SYSTEM_DARK = window.matchMedia('(prefers-color-scheme: dark)');
-    var toggleBtn = document.getElementById('themeToggle');
+    var toggleBtn = null;
+    var svgElement = null;
+    var svgDuration = 4.7;
+    var svgAnimating = false;
 
     function getEffectiveTheme() {
         var stored = localStorage.getItem(STORAGE_KEY) || 'system';
@@ -26,12 +29,13 @@
     }
 
     function updateToggleTitle(mode) {
+        toggleBtn = toggleBtn || document.getElementById('themeToggle');
         if (!toggleBtn) return;
-        var title = 'Light mode';
-        if (mode === 'dark') title = 'Dark mode';
-        else if (mode === 'system') title = 'System preference';
+        var effective = getEffectiveTheme();
+        var title = effective === 'dark' ? 'Switch to Light mode' : 'Switch to Dark mode';
         toggleBtn.setAttribute('title', title);
-        toggleBtn.setAttribute('aria-checked', mode === 'dark' ? 'true' : 'false');
+        toggleBtn.setAttribute('aria-label', title);
+        toggleBtn.setAttribute('aria-checked', effective === 'dark' ? 'true' : 'false');
     }
 
     function dispatchThemeChange() {
@@ -42,39 +46,120 @@
         }));
     }
 
+    function getSvgElement() {
+        if (svgElement && document.body.contains(svgElement)) return svgElement;
+        var el = document.getElementById('themeToggleSvg');
+        if (!el) return null;
+        if (el.tagName && el.tagName.toLowerCase() === 'svg') {
+            svgElement = el;
+        } else if (el.contentDocument && el.contentDocument.documentElement) {
+            svgElement = el.contentDocument.documentElement;
+        }
+        return svgElement;
+    }
+
+    function setThemeFrame(theme, animate) {
+        var svg = getSvgElement();
+        if (!svg) return;
+        var targetTime = theme === 'dark' ? 0 : svgDuration * 0.496454;
+
+        if (typeof svg.setCurrentTime !== 'function') return;
+
+        if (animate === false) {
+            try {
+                if (typeof svg.pauseAnimations === 'function') svg.pauseAnimations();
+                svg.setCurrentTime(targetTime);
+            } catch (err) {}
+            return;
+        }
+
+        if (svgAnimating) return;
+        svgAnimating = true;
+
+        var startTime = null;
+        var startCurrentTime = 0;
+        try {
+            startCurrentTime = svg.getCurrentTime();
+        } catch (e) {
+            startCurrentTime = theme === 'dark' ? svgDuration * 0.496454 : 0;
+        }
+        var duration = 400;
+
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var elapsed = timestamp - startTime;
+            var progress = Math.min(elapsed / duration, 1);
+            var eased = progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+            var currentTime = startCurrentTime + (targetTime - startCurrentTime) * eased;
+            try {
+                svg.setCurrentTime(currentTime);
+            } catch (e) {}
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                try {
+                    svg.setCurrentTime(targetTime);
+                    if (typeof svg.pauseAnimations === 'function') svg.pauseAnimations();
+                } catch (e) {}
+                svgAnimating = false;
+            }
+        }
+
+        try {
+            if (typeof svg.unpauseAnimations === 'function') svg.unpauseAnimations();
+        } catch (e) {}
+        requestAnimationFrame(step);
+    }
+
     function toggle() {
         var current = getStoredMode();
-        var cycle = ['light', 'dark', 'system'];
-        var next = cycle[(cycle.indexOf(current) + 1) % cycle.length];
-        localStorage.setItem(STORAGE_KEY, next);
-        applyTheme(getEffectiveTheme());
-        syncMode(next);
-        updateToggleTitle(next);
+        var effective = getEffectiveTheme();
+        var nextMode;
+        if (current === 'system') {
+            nextMode = effective === 'dark' ? 'light' : 'dark';
+        } else {
+            nextMode = current === 'dark' ? 'light' : 'dark';
+        }
+        localStorage.setItem(STORAGE_KEY, nextMode);
+        var newEffective = getEffectiveTheme();
+        applyTheme(newEffective);
+        syncMode(nextMode);
+        updateToggleTitle(nextMode);
         dispatchThemeChange();
+        setThemeFrame(newEffective, true);
     }
 
     function init() {
+        toggleBtn = document.getElementById('themeToggle');
         var stored = getStoredMode();
-        applyTheme(getEffectiveTheme());
+        var effective = getEffectiveTheme();
+        applyTheme(effective);
         syncMode(stored);
         updateToggleTitle(stored);
+        setThemeFrame(effective, false);
     }
 
-    // System preference listener
     SYSTEM_DARK.addEventListener('change', function () {
         if (getStoredMode() === 'system') {
-            applyTheme(getEffectiveTheme());
+            var effective = getEffectiveTheme();
+            applyTheme(effective);
             syncMode('system');
+            updateToggleTitle('system');
             dispatchThemeChange();
+            setThemeFrame(effective, true);
         }
     });
 
-    // Toggle click
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', toggle);
-    }
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('#themeToggle');
+        if (btn) {
+            e.preventDefault();
+            toggle();
+        }
+    });
 
-    // Chart.js adapter
     window.addEventListener('themechange', function (e) {
         var isDark = e.detail.theme === 'dark';
         try {
@@ -82,17 +167,13 @@
                 Chart.defaults.color = isDark ? '#E8DDD0' : '#333333';
                 Chart.defaults.borderColor = isDark ? 'rgba(200,131,42,0.12)' : 'rgba(30,18,10,0.08)';
             }
-        } catch (err) {
-            // Chart.js not loaded or version mismatch — ignore
-        }
+        } catch (err) {}
 
-        // Notify ArcGIS maps if present
         if (window.__egyxploreThemeChange) {
             window.__egyxploreThemeChange(isDark);
         }
     });
 
-    // Initialize on DOM ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {

@@ -3,9 +3,9 @@
 }
 <style>
   .new-brand-mark {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    letter-spacing: 2px;
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    letter-spacing: 0;
     display: inline-flex;
     align-items: center;
     gap: 2px;
@@ -15,20 +15,21 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.1em;
-    height: 1.1em;
+    width: 1.5em;
+    height: 1.5em;
     margin: 0 1px;
     position: relative;
     top: 1px;
   }
-  .new-brand-mark .scarab svg { width: 100%; height: 100%; }
+  .new-brand-mark .scarab img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 3px rgba(200,131,42,0.5));
+  }
 </style>
 <span class="egyxplore-wordmark @extraClass new-brand-mark">
     EGY<span class="accent">XPL</span><span class="scarab">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="11" fill="#c8832a"/>
-            <path d="M12 6c-3 0-5 2.2-5 5.2 0 3 2.2 5.6 5 5.6s5-2.6 5-5.6C17 8.2 15 6 12 6z" fill="#2c1a0e"/>
-            <path d="M12 4v3M12 17v3M4 12h3M17 12h3" stroke="#2c1a0e" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
+        <img src="~/assets/img/gold-scarab.png" alt="O" />
     </span><span class="accent">RE</span>
 </span>

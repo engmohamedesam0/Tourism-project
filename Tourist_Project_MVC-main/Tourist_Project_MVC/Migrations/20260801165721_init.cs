@@ -422,6 +422,28 @@ namespace Tourist_Project_MVC.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Favorites",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TouristId = table.Column<int>(type: "integer", nullable: false),
+                    ItemType = table.Column<int>(type: "integer", nullable: false),
+                    ItemId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Favorites", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Favorites_Tourists_TouristId",
+                        column: x => x.TouristId,
+                        principalTable: "Tourists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reviews",
                 columns: table => new
                 {
@@ -793,6 +815,12 @@ namespace Tourist_Project_MVC.Migrations
                 column: "SponsorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Favorites_TouristId_ItemType_ItemId",
+                table: "Favorites",
+                columns: new[] { "TouristId", "ItemType", "ItemId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MenuItems_SponsorId",
                 table: "MenuItems",
                 column: "SponsorId");
@@ -953,6 +981,9 @@ namespace Tourist_Project_MVC.Migrations
 
             migrationBuilder.DropTable(
                 name: "ChatSessions");
+
+            migrationBuilder.DropTable(
+                name: "Favorites");
 
             migrationBuilder.DropTable(
                 name: "MenuItems");
