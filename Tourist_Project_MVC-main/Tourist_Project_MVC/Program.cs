@@ -7,11 +7,13 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Tourist_Project_MVC.Controllers.HubNotifications;
 using Tourist_Project_MVC.Controllers.Middlewares;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.Services;
+using CloudinaryDotNet;
 namespace Tourist_Project_MVC
 {
     public class Program
@@ -116,7 +118,46 @@ namespace Tourist_Project_MVC
                         NameClaimType = ClaimTypes.NameIdentifier,
                         RoleClaimType = ClaimTypes.Role
                     };
+                    // ADD THIS BLOCK:
+                    // This tells the auth middleware to read the token from the query string 
+                    // when a client connects to the SignalR hub.
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+
+                            if (!String.IsNullOrEmpty(accessToken) &&
+                                path.StartsWithSegments("/notificationHub"))
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("MobileApp", policy =>
+                {
+                    policy
+                        .SetIsOriginAllowed(_ => true)  // dev only — accepts any origin
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+            builder.Services.AddSignalR();
+
+            var cloudinaryAccount = new Account(
+            builder.Configuration["Cloudinary:CloudName"],
+            builder.Configuration["Cloudinary:ApiKey"],
+            builder.Configuration["Cloudinary:ApiSecret"]
+            );
+            var cloudinary = new Cloudinary(cloudinaryAccount);
+            cloudinary.Api.Secure = true; // forces HTTPS URLs back from uploads
+
+            builder.Services.AddSingleton(cloudinary);
 
             var app = builder.Build();
 
@@ -132,6 +173,8 @@ namespace Tourist_Project_MVC
             }
             app.UseRouting();
 
+            app.UseCors("MobileApp");
+
             app.UseRequestLocalization();
             app.UseAuthentication();  // ← add this, before UseAuthorization
             app.UseAuthorization();
@@ -142,7 +185,7 @@ namespace Tourist_Project_MVC
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
-
+            app.MapHub<NotificationHub>("/notificationHub");
             app.Run();
         }
     }

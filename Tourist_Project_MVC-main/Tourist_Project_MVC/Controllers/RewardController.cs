@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
+using System.Reflection;
+using Tourist_Project_MVC.Controllers.HubNotifications;
 using Tourist_Project_MVC.Data;
+using Tourist_Project_MVC.DTOs;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.View_Model;
@@ -15,16 +19,18 @@ namespace Tourist_Project_MVC.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITouristRepository _touristRepo;
         private readonly TouristContext _context;
-
+        private readonly IHubContext<NotificationHub> _hubContext;
         public RewardController(IRewardRepository repo, ISponsorRepository SponserRepo,
             UserManager<ApplicationUser> userManager, ITouristRepository touristRepo,
-            TouristContext context)
+            TouristContext context,
+            IHubContext<NotificationHub> hubContext)
         {
             _repo = repo;
             this.SponserRepo = SponserRepo;
             _userManager = userManager;
             _touristRepo = touristRepo;
             _context = context;
+            _hubContext = hubContext;
         }
         public IActionResult Index(string? search, string? rewardType)
         {
@@ -106,7 +112,7 @@ namespace Tourist_Project_MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(AddNewRewardVM NewReward)
+        public async Task<IActionResult >Create(AddNewRewardVM NewReward)
         {
             if (ModelState.IsValid)
             {
@@ -122,6 +128,19 @@ namespace Tourist_Project_MVC.Controllers
                 };
                 _repo.Add(Reward);
                 _repo.Save();
+
+                await _hubContext.Clients.All.SendAsync("RewardAdded", new RewardDTO
+                {
+                    Id = Reward.Id,
+                    Type = Reward.RewardType,
+                    Title = Reward.Title,
+                    Desc = Reward.Description,
+                    Points = Reward.PointsRequired,
+                    Quntity = Reward.QuantityAvailable,
+                    Expiration = Reward.ExpirationDate,
+                    Status = Reward.Status
+                });
+                NewReward.Sponsors = SponserRepo.GetAll();
                 return RedirectToAction("Index");
             }
             NewReward.Sponsors = SponserRepo.GetAll();
@@ -150,7 +169,7 @@ namespace Tourist_Project_MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(AddNewRewardVM rewardVM)
+        public async Task <IActionResult > Edit(AddNewRewardVM rewardVM)
         {
             if (ModelState.IsValid)
             {
@@ -167,6 +186,17 @@ namespace Tourist_Project_MVC.Controllers
                 };
                 _repo.Update(Reward);
                 _repo.Save();
+                await _hubContext.Clients.All.SendAsync("RewardUpdated", new RewardDTO
+                {
+                    Id = Reward.Id,
+                    Type = Reward.RewardType,
+                    Title = Reward.Title,
+                    Desc = Reward.Description,
+                    Points = Reward.PointsRequired,
+                    Quntity = Reward.QuantityAvailable,
+                    Expiration = Reward.ExpirationDate,
+                    Status = Reward.Status
+                });
                 return RedirectToAction("Index");
             }
             rewardVM.Sponsors = SponserRepo.GetAll();
@@ -182,10 +212,11 @@ namespace Tourist_Project_MVC.Controllers
 
         [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task <IActionResult >DeleteConfirmed(int id)
         {
             _repo.Delete(id);
             _repo.Save();
+            await _hubContext.Clients.All.SendAsync("RewardDeleted", id);
             return RedirectToAction("Index");
         }
     }

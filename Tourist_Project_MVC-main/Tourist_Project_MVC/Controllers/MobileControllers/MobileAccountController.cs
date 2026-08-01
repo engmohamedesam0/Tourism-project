@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql.BackendMessages;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -9,7 +14,6 @@ using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.DTOs;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
-
 namespace Tourist_Project_MVC.Controllers.MobileControllers
 {
 
@@ -17,13 +21,15 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
     [ApiController]
     public class MobileAccountController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManagerr;
         private readonly ILogger<MobileAccountController> logger;
         private readonly IConfiguration _config;
         private readonly TouristContext _context;
         private readonly ITouristRepository _touristRepo;
+        private readonly Cloudinary _cloudinary;
+
         public MobileAccountController
             (
             UserManager<ApplicationUser> userManager,
@@ -32,12 +38,14 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             ILogger<MobileAccountController> logger,
             IConfiguration config,
             TouristContext context,
-            ITouristRepository touristRepo
+            ITouristRepository touristRepo,
+            Cloudinary cloudinary
             )
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-            this.roleManager = roleManager;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManagerr = roleManager;
+            _cloudinary = cloudinary;
             this.logger = logger;
             _config = config;
             _context = context;
@@ -50,7 +58,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             if (!ModelState.IsValid)
                 return BadRequest(new AuthResponseDto { Success = false, Message = "Invalid input." });
 
-            var existingUser = await userManager.FindByEmailAsync(dto.Email);
+            var existingUser = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUser != null)
                 return Conflict(new AuthResponseDto { Success = false, Message = "Email already registered." });
 
@@ -64,14 +72,14 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 Nationality = dto.Country,
             };
 
-            var result = await userManager.CreateAsync(user, dto.Password);
+            var result = await _userManager.CreateAsync(user, dto.Password);
 
             if (!result.Succeeded)
             {
                 var errors = string.Join(" ", result.Errors.Select(e => e.Description));
                 return BadRequest(new AuthResponseDto { Success = false, Message = errors });
             }
-            var roleResult = await userManager.AddToRoleAsync(user, "User");
+            var roleResult = await _userManager.AddToRoleAsync(user, "User");
             if (!roleResult.Succeeded)
             {
                 var roleErrors = string.Join(" ", roleResult.Errors.Select(e => e.Description));
@@ -100,22 +108,47 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             if (!ModelState.IsValid)
                 return BadRequest(new AuthResponseDto { Success = false, Message = "Invalid input." });
 
-            var user = await userManager.FindByEmailAsync(dto.Email);
+            var user = await _userManager.FindByEmailAsync(dto.Email);
 
             if (user == null)
                 return Unauthorized(new AuthResponseDto { Success = false, Message = "Invalid email or password." });
 
-            var result = await signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: true);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: true);
 
             if (!result.Succeeded)
                 return Unauthorized(new AuthResponseDto { Success = false, Message = "Invalid email or password." });
 
             return Ok(await BuildAuthResponse(user, "Login successful."));
         }
+        
+        [HttpPost("UploadAvatar")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task <IActionResult> UploadAvatar(IFormFile file)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null) return Unauthorized();
+            if (file == null || file.Length == 0) return BadRequest();
+
+            using var stream = file.OpenReadStream();
+            var uploadParams = new ImageUploadParams
+            {
+                File = new FileDescription(file.FileName, stream),
+                PublicId = $"avatars/{user.Id}",
+                Overwrite = true
+            };
+            var result = await _cloudinary.UploadAsync(uploadParams);
+
+            user.ProfilePicturePath = result.SecureUrl.ToString();
+            await _userManager.UpdateAsync(user);
+
+            return Ok(new {user = MapToUserDto(user)}
+            );
+        }
 
         private async Task<string> GenerateJwtToken(ApplicationUser user)
         {
-            var userRoles = await userManager.GetRolesAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
             var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
@@ -147,7 +180,8 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             LastName = user.LastName,
             Email = user.Email,
             Phone = user.PhoneNumber,
-            Country = user.Nationality // note: property is now "Nationality" per your model, see #3 below
+            Country = user.Nationality,
+            ProfilePicturePath = user.ProfilePicturePath
         };
 
         private async Task<AuthResponseDto> BuildAuthResponse(ApplicationUser user, string message)
