@@ -1,0 +1,242 @@
+@model Tourist_Project_MVC.View_Model.DocViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = Model.Article.Title + " — Docs";
+    ViewData["FullWidth"] = true;
+    var currentArticle = Model.Article;
+}
+
+@section Styles {
+    <link href="~/css/docs.css" rel="stylesheet" asp-append-version="true" />
+}
+<style>
+    /* Page Header Enhancement */
+    .docs-page-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid rgba(30, 18, 10, 0.05);
+    }
+    
+    .docs-page-header h1 {
+        margin: 0 0 0.5rem 0;
+        color: var(--egy-dark);
+        font-family: 'Cinzel', serif;
+    }
+    
+    .docs-page-header .article-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        color: var(--egy-text-muted);
+        font-size: 0.9rem;
+    }
+    
+    .docs-page-header .article-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    
+    /* Enhanced Article Content */
+    .docs-article {
+        background: #ffffff;
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(30, 18, 10, 0.08);
+    }
+    
+    /* Improved Prev/Next Navigation */
+    .docs-pagination {
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(30, 18, 10, 0.08);
+    }
+    
+    .docs-pagination a {
+        background: #ffffff;
+        border: 1px solid rgba(200, 131, 42, 0.2);
+        color: var(--egy-primary);
+        font-weight: 600;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.75rem 1.25rem;
+        border-radius: var(--radius-md);
+    }
+    
+    .docs-pagination a:hover {
+        background: rgba(200, 131, 42, 0.05);
+        border-color: var(--egy-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Feedback Section */
+    .docs-feedback {
+        margin-top: 2.5rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(30, 18, 10, 0.08);
+        text-align: center;
+    }
+    
+    .docs-feedback h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: var(--egy-dark);
+    }
+    
+    .docs-feedback .btn {
+        margin: 0.25rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        border-radius: var(--radius-sm);
+    }
+    
+    .docs-feedback .btn-outline-primary {
+        border-color: var(--egy-primary);
+        color: var(--egy-primary);
+    }
+    
+    .docs-feedback .btn-outline-primary:hover {
+        background-color: var(--egy-primary);
+        color: white;
+    }
+    
+    /* Mobile Enhancements */
+    @@media (max-width: 767.98px) {
+        .docs-page-header {
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .docs-article {
+            padding: 1.5rem;
+        }
+        
+        .docs-feedback {
+            padding: 1rem;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script src="~/js/docs.js" asp-append-version="true"></script>
+}
+
+<div class="docs-shell">
+    <!-- Mobile sidebar toggle (visible below md) -->
+    <div class="px-3 d-block d-md-none">
+        <button type="button" id="docsSidebarToggle" class="btn btn-outline-secondary docs-mobile-toggle" aria-expanded="false" aria-controls="docsSidebar">
+            <i class="bi bi-list me-2"></i> Docs Menu
+        </button>
+    </div>
+
+    <!-- Backdrop for mobile sidebar -->
+    <div id="docsSidebarBackdrop" class="docs-sidebar-backdrop"></div>
+
+    <!-- LEFT SIDEBAR -->
+    <aside id="docsSidebar" class="docs-sidebar">
+        <a asp-controller="Docs" asp-action="Index" class="docs-sidebar-brand">
+            <i class="bi bi-book-half"></i> EGYXPLORE Docs
+        </a>
+
+        @foreach (var section in Model.Sections)
+        {
+            <div class="docs-sidebar-section">
+                <div class="docs-sidebar-section-title">@(section.Title)</div>
+                <ul class="docs-sidebar-list">
+                    @foreach (var article in section.Articles)
+                    {
+                        var isActive = article.Section.Equals(currentArticle.Section, StringComparison.OrdinalIgnoreCase)
+                            && article.Slug.Equals(currentArticle.Slug, StringComparison.OrdinalIgnoreCase);
+                        <li>
+                            <a asp-controller="Docs" asp-action="Article"
+                               asp-route-section="@article.Section"
+                               asp-route-slug="@article.Slug"
+                               class="@(isActive ? "active" : "")">
+                                @article.Title
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="docs-main">
+        <!-- Top search bar (local to docs shell) -->
+        <div class="docs-topbar">
+            <div class="docs-search-wrap">
+                <i class="bi bi-search search-icon"></i>
+                <input type="search" id="docsSearchInput" class="form-control" placeholder="Search docs..." autocomplete="off" />
+                <div id="docsSearchResults" class="docs-search-results"></div>
+            </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="docs-breadcrumb">
+            <a asp-controller="Docs" asp-action="Index">Docs</a>
+            <span class="sep"><i class="bi bi-chevron-right"></i></span>
+            <span class="current">@currentArticle.Title</span>
+        </nav>
+
+        <!-- Article -->
+        <article class="docs-article">
+            <h1 class="docs-title">@currentArticle.Title</h1>
+            @if (!string.IsNullOrEmpty(currentArticle.Description))
+            {
+                <p class="docs-description">@currentArticle.Description</p>
+                <hr class="docs-divider" />
+            }
+
+            @Html.Raw(currentArticle.HtmlContent)
+        </article>
+
+        <!-- Prev / Next -->
+        <nav class="docs-pagination" aria-label="Doc pagination">
+            @if (Model.PrevArticle != null)
+            {
+                <a asp-controller="Docs" asp-action="Article" asp-route-section="@Model.PrevArticle.Section" asp-route-slug="@Model.PrevArticle.Slug">
+                    <span class="label"><i class="bi bi-arrow-left"></i> Previous</span>
+                    <span>@Model.PrevArticle.Title</span>
+                </a>
+            }
+            else
+            {
+                <span></span>
+            }
+
+            @if (Model.NextArticle != null)
+            {
+                <a asp-controller="Docs" asp-action="Article" asp-route-section="@Model.NextArticle.Section" asp-route-slug="@Model.NextArticle.Slug" class="next">
+                    <span class="label">Next <i class="bi bi-arrow-right"></i></span>
+                    <span>@Model.NextArticle.Title</span>
+                </a>
+            }
+        </nav>
+    </div>
+
+    <!-- RIGHT TOC -->
+    @if (currentArticle.Headings.Any())
+    {
+        <nav class="docs-toc" aria-label="On this page">
+            <div class="docs-toc-title">On This Page</div>
+            <ul>
+                @foreach (var h in currentArticle.Headings.Where(h => h.Level <= 3))
+                {
+                    <li>
+                        <a href="#@h.Id" class="level-@h.Level">@h.Text</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>

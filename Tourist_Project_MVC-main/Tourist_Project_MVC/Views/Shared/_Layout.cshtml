@@ -547,6 +547,11 @@
                                     <i class="bi bi-speedometer2 me-1"></i> @Localizer["Nav_AdminDashboard"].Value
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Docs" asp-action="Index">
+                                    <i class="bi bi-book-fill"></i> @Localizer["Nav_Docs"].Value
+                                </a>
+                            </li>
                         }
                         else if (User.IsInRole("Sponsor"))
                         {
@@ -569,6 +574,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="SponsorPortal" asp-action="Reports">
                                     <i class="bi bi-bar-chart-fill"></i> @Localizer["Nav_Reports"].Value
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Docs" asp-action="Index">
+                                    <i class="bi bi-book-fill"></i> @Localizer["Nav_Docs"].Value
                                 </a>
                             </li>
                             @await Component.InvokeAsync("SupportBell")
@@ -606,6 +616,11 @@
                                     <i class="bi bi-info-circle-fill"></i> @Localizer["Nav_About"].Value
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Docs" asp-action="Index">
+                                    <i class="bi bi-book-fill"></i> @Localizer["Nav_Docs"].Value
+                                </a>
+                            </li>
                         }
                         else
                         {
@@ -628,6 +643,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="About" asp-action="Index">
                                     <i class="bi bi-info-circle-fill"></i> @Localizer["Nav_About"].Value
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Docs" asp-action="Index">
+                                    <i class="bi bi-book-fill"></i> @Localizer["Nav_Docs"].Value
                                 </a>
                             </li>
                         }

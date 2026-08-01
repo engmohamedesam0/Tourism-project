@@ -2773,4 +2773,7 @@
   <data name="TouristAdmin_PersonalInfo" xml:space="preserve">
     <value>Personal Information</value>
   </data>
+  <data name="Nav_Docs" xml:space="preserve">
+    <value>Docs</value>
+  </data>
 </root>

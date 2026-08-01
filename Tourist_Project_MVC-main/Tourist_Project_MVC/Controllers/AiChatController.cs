@@ -24,9 +24,8 @@ namespace Tourist_Project_MVC.Controllers
     //     cookie it holds automatically; a bearer token is never attached
     //     automatically by anything, so the same attack doesn't apply.
     //
-    // Deliberately NOT [Authorize]: anonymous visitors (browser or app) can
-    // still ask about Egyptian history and places. Only *saving* a trip
-    // requires a signed-in Tourist, which AiChatService enforces on its own.
+    // Anonymous website visitors can still ask general questions. When a bearer
+    // token is supplied by mobile, however, it must be valid and belong to a User.
     public class AiChatController : Controller
     {
         private readonly IAiChatService _aiChatService;
@@ -54,8 +53,7 @@ namespace Tourist_Project_MVC.Controllers
 
         private async Task<Tourist?> ResolveTouristAsync(CancellationToken ct = default)
         {
-            var hasBearerToken = Request.Headers.TryGetValue("Authorization", out var authHeader)
-                && authHeader.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
+            var hasBearerToken = HasBearerToken();
 
             var hasIdentityCookie = Request.Cookies.ContainsKey(".AspNetCore.Identity.Application");
 
@@ -98,6 +96,12 @@ namespace Tourist_Project_MVC.Controllers
             return _touristRepo.GetOrCreateByApplicationUser(appUser);
         }
 
+        private bool HasBearerToken()
+        {
+            return Request.Headers.TryGetValue("Authorization", out var authHeader)
+                && authHeader.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Send([FromForm] AiChatRequestVM request, CancellationToken ct)
         {
@@ -109,6 +113,16 @@ namespace Tourist_Project_MVC.Controllers
             }
 
             var tourist = await ResolveTouristAsync(ct);
+            if (HasBearerToken() && tourist == null)
+                return Unauthorized(new { error = "Invalid or expired session." });
+
+            if (request.ChatSessionId.HasValue && tourist != null)
+            {
+                var session = await _chatSessionRepo.GetByIdAsync(request.ChatSessionId.Value);
+                if (session == null || session.TouristId != tourist.Id)
+                    return NotFound();
+            }
+
             var result = await _aiChatService.GetReplyAsync(request, tourist, ct);
             return Json(result);
         }
@@ -118,7 +132,11 @@ namespace Tourist_Project_MVC.Controllers
         {
             var tourist = await ResolveTouristAsync(ct);
             if (tourist == null)
+            {
+                if (HasBearerToken())
+                    return Unauthorized(new { error = "Invalid or expired session." });
                 return Json(Array.Empty<object>());
+            }
 
             var sessions = _chatSessionRepo.GetByTouristId(tourist.Id)
                 .Select(s => new { s.Id, s.Title, s.UpdatedDate })
@@ -131,7 +149,11 @@ namespace Tourist_Project_MVC.Controllers
         {
             var tourist = await ResolveTouristAsync(ct);
             if (tourist == null)
+            {
+                if (HasBearerToken())
+                    return Unauthorized(new { error = "Invalid or expired session." });
                 return Json(new { error = "Unauthorized" });
+            }
 
             var session = await _chatSessionRepo.GetByIdAsync(id);
             if (session == null || session.TouristId != tourist.Id)
