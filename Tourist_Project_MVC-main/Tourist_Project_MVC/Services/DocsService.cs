@@ -58,7 +58,7 @@ namespace Tourist_Project_MVC.Services
             return null;
         }
 
-        public async Task<IReadOnlyList<DocSearchResult>> SearchAsync(string query, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<DocSearchResult>> SearchAsync(string query, string? section = null, CancellationToken cancellationToken = default)
         {
             await EnsureLoadedAsync(cancellationToken);
             if (string.IsNullOrWhiteSpace(query))
@@ -68,7 +68,13 @@ namespace Tourist_Project_MVC.Services
             var results = new List<DocSearchResult>();
             var queryTerms = q.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-            foreach (var article in _articlesByKey.Values)
+            var candidateArticles = _articlesByKey.Values.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(section))
+            {
+                candidateArticles = candidateArticles.Where(a => a.Section.Equals(section, StringComparison.OrdinalIgnoreCase));
+            }
+
+            foreach (var article in candidateArticles)
             {
                 var haystack = ($"{article.Title} {article.Description} {StripHtml(article.HtmlContent)}").ToLowerInvariant();
                 bool matchesAll = queryTerms.All(term => haystack.Contains(term));
@@ -202,6 +208,8 @@ namespace Tourist_Project_MVC.Services
 
             var title = string.Empty;
             var description = string.Empty;
+            var category = string.Empty;
+            var tags = new List<string>();
             var order = 999;
 
             foreach (var line in frontMatter.Split('\n'))
@@ -229,6 +237,16 @@ namespace Tourist_Project_MVC.Services
                     case "description":
                         description = value;
                         break;
+                    case "category":
+                        category = value;
+                        break;
+                    case "tags":
+                        var rawTags = value.Trim('[', ']');
+                        tags = rawTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                                       .Select(t => t.Trim('\'', '"'))
+                                       .Where(t => !string.IsNullOrWhiteSpace(t))
+                                       .ToList();
+                        break;
                     case "order":
                         int.TryParse(value, out order);
                         break;
@@ -241,7 +259,13 @@ namespace Tourist_Project_MVC.Services
                 return null;
             }
 
+            if (string.IsNullOrWhiteSpace(category))
+            {
+                category = SectionTitles.TryGetValue(section, out var t) ? t : Titleize(section);
+            }
+
             var html = Markdig.Markdown.ToHtml(body, _pipeline);
+            html = ApplyAutolinks(html, section);
             var headings = ExtractHeadings(html);
 
             return new DocArticle
@@ -250,10 +274,75 @@ namespace Tourist_Project_MVC.Services
                 Slug = slug,
                 Title = title,
                 Description = description,
+                Category = category,
+                Tags = tags,
                 Order = order,
                 HtmlContent = html,
                 Headings = headings
             };
+        }
+
+        private static string ApplyAutolinks(string html, string section)
+        {
+            var isSponsor = section.Equals("sponsors", StringComparison.OrdinalIgnoreCase);
+            var linkMap = isSponsor
+                ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["Dashboard"] = "/SponsorPortal/Dashboard",
+                    ["Rewards"]   = "/SponsorReward/Index",
+                    ["Branches"]  = "/SponsorBranch/Index"
+                }
+                : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["Trip Planner"] = "/TripPlan/Index",
+                    ["Explore"]      = "/Explore/Index",
+                    ["Rewards"]      = "/TouristReward/Index",
+                    ["Profile"]      = "/TouristProfile/Index",
+                    ["Support"]      = "/TouristSupport/Index"
+                };
+
+            // Process HTML tokens safely so we don't modify inside <a>, <code>, <pre>, or HTML tags
+            var tokenPattern = @"(<a\b[^>]*>.*?</a>|<code\b[^>]*>.*?</code>|<pre\b[^>]*>.*?</pre>|<h[1-6]\b[^>]*>.*?</h[1-6]>|<[^>]+>)";
+            var parts = Regex.Split(html, tokenPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            var usedTerms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var sb = new StringBuilder();
+
+            foreach (var part in parts)
+            {
+                if (string.IsNullOrEmpty(part))
+                    continue;
+
+                if (part.StartsWith("<"))
+                {
+                    sb.Append(part);
+                    continue;
+                }
+
+                var text = part;
+                foreach (var kvp in linkMap)
+                {
+                    var term = kvp.Key;
+                    var url = kvp.Value;
+
+                    if (usedTerms.Contains(term))
+                        continue;
+
+                    var regex = new Regex($@"\b({Regex.Escape(term)})\b", RegexOptions.IgnoreCase);
+                    if (regex.IsMatch(text))
+                    {
+                        text = regex.Replace(text, m =>
+                        {
+                            usedTerms.Add(term);
+                            return $"<a class=\"docs-inline-link\" href=\"{url}\">{m.Value} <svg class=\"inline-arrow\" viewBox=\"0 0 16 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 12L12 4M12 4H6M12 4V10\"/></svg></a>";
+                        }, 1);
+                    }
+                }
+
+                sb.Append(text);
+            }
+
+            return sb.ToString();
         }
 
         private static List<DocHeading> ExtractHeadings(string html)

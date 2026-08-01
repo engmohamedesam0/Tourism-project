@@ -1,0 +1,36 @@
+.favorite-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 2px 8px rgba(30, 18, 10, 0.15);
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s ease;
+}
+
+.favorite-btn:active {
+    transform: scale(0.9);
+}
+
+.favorite-btn-icon {
+    font-size: 1.15rem;
+    color: var(--egy-text-muted, #6b7280);
+    transition: color 0.15s ease;
+}
+
+.favorite-btn.is-favorited .favorite-btn-icon {
+    color: var(--egy-danger, #a16468);
+}
+
+.favorite-btn-burst {
+    position: absolute;
+    inset: -14px;
+    width: 68px;
+    height: 68px;
+    pointer-events: none;
+}

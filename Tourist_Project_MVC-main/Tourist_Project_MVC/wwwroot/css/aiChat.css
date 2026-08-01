@@ -468,8 +468,8 @@
 }
 
 /* ============================================================
-   RESIZE HANDLE — Premium grip dots
-   ============================================================ */
+    RESIZE HANDLE — Premium grip dots
+    ============================================================ */
 .ai-resize-handle-se {
     position: absolute;
     bottom: 0;
@@ -505,8 +505,8 @@
 }
 
 /* ============================================================
-   MOBILE RESPONSIVENESS
-   ============================================================ */
+    MOBILE RESPONSIVENESS
+    ============================================================ */
 @media (max-width: 575.98px) {
     .ai-widget-panel {
         width: calc(100% - 28px);
@@ -531,8 +531,8 @@
 }
 
 /* ============================================================
-   NOTIFICATION WIDGET (preserved, unmodified)
-   ============================================================ */
+    NOTIFICATION WIDGET (preserved, unmodified)
+    ============================================================ */
 .notification-badge {
     position: absolute;
     top: -4px;
@@ -553,6 +553,40 @@
     background: var(--egy-dark);
     color: var(--egy-light);
     box-shadow: 0 8px 22px rgba(30, 18, 10, 0.35);
+    position: fixed;
+}
+
+.notification-bell-icon-wrapper {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: top center;
+}
+
+.notification-bell-icon {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Static by default; swinging motion animation on hover and active click */
+.notification-fab:hover .notification-bell-icon-wrapper,
+.notification-fab:focus .notification-bell-icon-wrapper,
+.notification-fab:active .notification-bell-icon-wrapper {
+    animation: bellRingingSwing 0.75s ease-in-out infinite;
+}
+
+@keyframes bellRingingSwing {
+    0% { transform: rotate(0deg); }
+    15% { transform: rotate(18deg); }
+    30% { transform: rotate(-16deg); }
+    45% { transform: rotate(12deg); }
+    60% { transform: rotate(-10deg); }
+    75% { transform: rotate(6deg); }
+    90% { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
 }
 
 .notification-fab:hover,
@@ -579,6 +613,7 @@
     text-align: center;
     border: 2px solid #fff;
     font-family: 'Nunito', sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .notification-widget-panel {
@@ -730,5 +765,93 @@
         width: 52px;
         height: 52px;
         font-size: 1.3rem;
+    }
+}
+
+[data-theme="dark"] .ai-widget-panel {
+    background: var(--bg-surface, #1A120B);
+    border-color: rgba(200, 131, 42, 0.35);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4),
+                0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .ai-widget-header {
+    background: var(--bg-navbar-solid, #0F0A06);
+}
+
+[data-theme="dark"] .ai-menu-dropdown {
+    background: var(--bg-surface-elevated, #231911);
+    border-color: rgba(200, 131, 42, 0.2);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4),
+                0 2px 6px rgba(200, 131, 42, 0.1);
+}
+
+[data-theme="dark"] .ai-widget-close {
+    color: rgba(232, 221, 208, 0.8);
+}
+
+[data-theme="dark"] .ai-widget-close:hover,
+[data-theme="dark"] .ai-widget-close:focus {
+    color: var(--text-inverse, #E8DDD0);
+}
+
+[data-theme="dark"] .ai-menu-btn {
+    color: rgba(232, 221, 208, 0.8);
+}
+
+[data-theme="dark"] .ai-menu-btn:hover,
+[data-theme="dark"] .ai-menu-btn:focus {
+    color: var(--text-inverse, #E8DDD0);
+}
+
+[data-theme="dark"] .ai-chat-msg-assistant .ai-chat-bubble {
+    background: var(--bg-surface-elevated, #231911);
+    border-color: rgba(200, 131, 42, 0.25);
+    color: var(--text-primary, #E8DDD0);
+}
+
+[data-theme="dark"] .ai-chat-msg-error .ai-chat-bubble {
+    background: rgba(179, 38, 30, 0.18);
+    color: #E7B8BB;
+    border-color: rgba(179, 38, 30, 0.35);
+}
+
+[data-theme="dark"] .ai-widget-footer {
+    background: var(--bg-surface-elevated, #231911);
+    border-top-color: rgba(200, 131, 42, 0.25);
+}
+
+[data-theme="dark"] .ai-widget-footer .form-control {
+    background-color: var(--bg-input, #1A120B);
+    border-color: rgba(200, 131, 42, 0.25);
+    color: var(--text-primary, #E8DDD0);
+}
+
+[data-theme="dark"] .ai-widget-footer .form-control::placeholder {
+    color: var(--text-muted, #8B7D6B);
+}
+
+[data-theme="dark"] .notification-widget-panel {
+    background: var(--bg-surface, #1A120B);
+    border-color: rgba(200, 131, 42, 0.35);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .notification-widget-body {
+    color: var(--text-primary, #E8DDD0);
+}
+
+[data-theme="dark"] .notification-item {
+    color: var(--text-primary, #E8DDD0);
+}
+
+[data-theme="dark"] .notification-widget-body .text-muted {
+    color: var(--text-muted, #8B7D6B) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
     }
 }

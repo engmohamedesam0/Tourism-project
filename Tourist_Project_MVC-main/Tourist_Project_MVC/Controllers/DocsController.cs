@@ -45,12 +45,12 @@ namespace Tourist_Project_MVC.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] string q, CancellationToken cancellationToken)
+        public async Task<IActionResult> Search([FromQuery] string q, [FromQuery] string? section, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(q))
                 return Json(System.Array.Empty<DocSearchResult>());
 
-            var results = await _provider.SearchAsync(q, cancellationToken);
+            var results = await _provider.SearchAsync(q, section, cancellationToken);
             return Json(results);
         }
 

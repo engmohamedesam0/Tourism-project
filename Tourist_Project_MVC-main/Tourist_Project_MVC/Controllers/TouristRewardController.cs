@@ -17,13 +17,15 @@ namespace Tourist_Project_MVC.Controllers
         private readonly IRewardRepository _rewardRepo;
         private readonly TouristContext _context;
         private readonly IGamificationService _gamificationService;
+        private readonly IFavoriteRepository _favoriteRepo;
 
-        public TouristRewardController(ITouristRepository touristRepo, IRewardRepository rewardRepo, TouristContext context, IGamificationService gamificationService)
+        public TouristRewardController(ITouristRepository touristRepo, IRewardRepository rewardRepo, TouristContext context, IGamificationService gamificationService, IFavoriteRepository favoriteRepo)
         {
             _touristRepo = touristRepo;
             _rewardRepo = rewardRepo;
             _context = context;
             _gamificationService = gamificationService;
+            _favoriteRepo = favoriteRepo;
         }
 
         public async Task<IActionResult> Index()
@@ -67,6 +69,15 @@ namespace Tourist_Project_MVC.Controllers
                 MyBadges = badges,
                 Progress = progress
             };
+
+            if (User.IsInRole("User"))
+            {
+                var touristUser = _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId);
+                if (touristUser != null)
+                {
+                    ViewBag.FavoritedRewardIds = _favoriteRepo.GetFavoritedItemIds(touristUser.Id, FavoriteItemType.Reward);
+                }
+            }
 
             var rewardReviews = _context.SiteReviews
                 .Include(r => r.Tourist)

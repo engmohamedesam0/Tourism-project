@@ -1,0 +1,9 @@
+@model Tourist_Project_MVC.View_Model.FavoriteButtonVM
+<button type="button"
+        class="favorite-btn @(Model.IsFavorited ? "is-favorited" : "")"
+        data-item-type="@Model.ItemType"
+        data-item-id="@Model.ItemId"
+        aria-pressed="@Model.IsFavorited.ToString().ToLower()"
+        aria-label="@(Model.IsFavorited ? "Remove from favorites" : "Add to favorites")">
+    <i class="bi @(Model.IsFavorited ? "bi-heart-fill" : "bi-heart") favorite-btn-icon"></i>
+</button>

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -158,6 +158,12 @@ namespace Tourist_Project_MVC.Controllers
                         var loginTourist = _touristRepo.GetOrCreateByApplicationUser(user);
                         var today = DateTime.Today;
                         var progress = await _gamificationService.GetOrInitializeProgressAsync(loginTourist.Id);
+                        
+                        // Set TempData for Welcome SVG overlay
+                        bool isFirstLogin = progress.LastLoginDate == null;
+                        TempData["ShowWelcome"] = true;
+                        TempData["IsFirstLogin"] = isFirstLogin;
+
                         if (progress.LastLoginDate == null || progress.LastLoginDate.Value < today.AddDays(-1))
                         {
                             progress.LoginStreak = progress.LastLoginDate.HasValue && progress.LastLoginDate.Value == today.AddDays(-1)

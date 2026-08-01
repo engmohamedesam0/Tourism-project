@@ -15,6 +15,8 @@ namespace Tourist_Project_MVC.Services
         public string Slug { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public List<string> Tags { get; set; } = new();
         public int Order { get; set; }
         public string HtmlContent { get; set; } = string.Empty;
         public List<DocHeading> Headings { get; set; } = new();

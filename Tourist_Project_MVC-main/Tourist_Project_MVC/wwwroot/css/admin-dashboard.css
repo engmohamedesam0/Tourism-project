@@ -487,3 +487,91 @@
         justify-content: center;
     }
 }
+
+[data-theme="dark"] {
+    --dash-bg: #1A120B;
+    --dash-card-bg: #1A120B;
+    --dash-border: rgba(200,131,42,0.15);
+    --dash-border-hover: rgba(200,131,42,0.25);
+    --dash-text-primary: #E8DDD0;
+    --dash-text-secondary: #A89B8C;
+    --dash-text-muted: #8B7D6B;
+    --dash-primary-light: rgba(200, 131, 42, 0.12);
+    --dash-primary-glow: rgba(200, 131, 42, 0.35);
+    --dash-blue-bg: rgba(37, 99, 235, 0.15);
+    --dash-green-bg: rgba(16, 185, 129, 0.15);
+    --dash-purple-bg: rgba(139, 92, 246, 0.15);
+    --dash-amber-bg: rgba(245, 158, 11, 0.15);
+    --dash-rose-bg: rgba(244, 63, 94, 0.15);
+    --dash-shadow-sm: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+    --dash-shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.3), 0 2px 6px -1px rgba(0, 0, 0, 0.2);
+    --dash-shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.4), 0 4px 12px -2px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .admin-segmented-switch {
+    background: rgba(200,131,42,0.08);
+    border-color: rgba(200,131,42,0.15);
+}
+
+[data-theme="dark"] .admin-segmented-switch .segmented-btn.active {
+    background: #231911;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+}
+
+[data-theme="dark"] .map-card-bar {
+    background: rgba(26,18,11,0.5);
+}
+
+[data-theme="dark"] .top-branch-item {
+    background: rgba(200,131,42,0.06);
+    border-color: rgba(200,131,42,0.12);
+}
+
+[data-theme="dark"] .top-branch-item:hover {
+    background: rgba(200,131,42,0.1);
+}
+
+[data-theme="dark"] .top-branch-icon {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+[data-theme="dark"] .kpi-card,
+[data-theme="dark"] .dash-card,
+[data-theme="dark"] .dash-map-card {
+    background: var(--dash-card-bg);
+    border-color: var(--dash-border);
+}
+
+[data-theme="dark"] .dash-card-header {
+    background: rgba(200, 131, 42, 0.06);
+    border-color: var(--dash-border);
+}
+
+[data-theme="dark"] .dash-card-body {
+    border-color: var(--dash-border);
+}
+
+[data-theme="dark"] .leaderboard-rank {
+    background: var(--bg-surface-elevated) !important;
+    color: var(--dash-text-secondary) !important;
+}
+
+[data-theme="dark"] .activity-icon {
+    background: var(--bg-surface-elevated);
+    border-color: var(--dash-border);
+}
+
+[data-theme="dark"] .kpi-icon-wrapper.dark {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .dashboard-wrapper .text-muted {
+    color: var(--dash-text-muted) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

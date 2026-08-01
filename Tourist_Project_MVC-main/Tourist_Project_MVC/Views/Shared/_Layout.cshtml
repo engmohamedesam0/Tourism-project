@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar" ? "rtl" : "ltr")">
 <head>
+    <script>
+        (function() {
+            var theme = localStorage.getItem('egyxplore-theme') || 'system';
+            var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme-mode', theme);
+        })();
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>@ViewData["Title"] - @Localizer["Site_Title"].Value</title>
@@ -21,178 +29,33 @@
     <!-- ArcGIS JS API -->
     <script type="module" src="https://js.arcgis.com/5.1/"></script>
 
+    <!-- Lottie Web -->
+    <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
+
     <!-- Base Stylesheet -->
     <link href="~/css/styles.css" rel="stylesheet" asp-append-version="true" />
     <!-- Custom Egyptian Theme -->
     <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+    <!-- Theme Toggle -->
+    <link href="~/css/theme-toggle.css" rel="stylesheet" asp-append-version="true" />
     <!-- AI Assistant Widget -->
     <link href="~/css/aiChat.css" rel="stylesheet" asp-append-version="true" />
     @if (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar")
     {
         <link href="~/css/rtl.css" rel="stylesheet" asp-append-version="true" />
     }
+    <link href="~/css/favorites.css" rel="stylesheet" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 
 
     <style>
         /* =============================================
-           STAT-BOX (reusable stat cards: Home hero,
-           About values, Tourist rewards, Admin/Sponsor
-           data pages — one consistent white treatment)
+           INNER PAGES
            ============================================= */
-        .stats-section {
-        background: linear-gradient(135deg, #1a0f00 0%, var(--egy-dark) 50%, #1a0f00 100%);
-        padding: 100px 0;
-        border-top: 2px solid #C8832A;
-        border-bottom: 2px solid #C8832A;
-        }
-
-        .stat-card {
-        background: #ffffff;
-        border: 1px solid rgba(30, 18, 10, 0.08);
-        border-radius: 14px;
-        padding: 22px 22px 20px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-        height: 100%;
-        position: relative;
-        }
-
-        .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 14px 30px rgba(30, 18, 10, 0.12);
-        border-color: var(--egy-primary);
-        }
-
-        /* Small colored square icon — accent tone set per card below. */
-        .stat-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 46px;
-        height: 46px;
-        border-radius: 12px;
-        font-size: 1.4rem;
-        color: #ffffff;
-        background: var(--egy-dark);
-        margin-bottom: 16px;
-        }
-
-        .stat-number {
-        font-family: 'Cinzel', serif;
-        font-size: 2.1rem;
-        font-weight: 900;
-        color: var(--egy-dark);
-        line-height: 1.1;
-        display: inline-block;
-        }
-
-        .stat-suffix {
-        font-family: 'Cinzel', serif;
-        font-size: 1.3rem;
-        font-weight: 900;
-        color: var(--egy-primary);
-        margin-left: 2px;
-        display: inline;
-        }
-
-        .stat-label {
-        font-family: 'Nunito', sans-serif;
-        font-size: 0.8rem;
-        color: #6b7280;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        margin-top: 6px;
-        display: block;
-        }
-
-        /* Per-card accent colors — unified dark tone for all variants. */
-        .stat-blue   .stat-icon,
-        .stat-green  .stat-icon,
-        .stat-gold   .stat-icon,
-        .stat-purple .stat-icon,
-        .stat-teal   .stat-icon,
-        .stat-red    .stat-icon,
-        .stat-amber  .stat-icon {
-        background: var(--egy-dark);
-        }
-
-        .stats-section .stat-card {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(200, 131, 42, 0.25);
-        border-radius: 16px;
-        padding: 45px 25px 35px;
-        transition: all 0.4s ease;
-        position: relative;
-        overflow: hidden;
-        }
-
-        .stats-section .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, transparent, #C8832A, transparent);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-        }
-
-        .stats-section .stat-card:hover {
-        background: rgba(200, 131, 42, 0.08);
-        border-color: #C8832A;
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(200, 131, 42, 0.15);
-        }
-
-        .stats-section .stat-card:hover::before {
-        opacity: 1;
-        }
-
-        .stats-section .stat-icon {
-        font-size: 2.5rem;
-        color: #C8832A;
-        background: var(--egy-primary);
-        margin-bottom: 20px;
-        display: block;
-        }
-
-        .stats-section .stat-number {
-        font-family: 'Cinzel', sans-serif;
-        font-size: 3.5rem;
-        font-weight: 900;
-        color: #E8A045;
-        letter-spacing: 2px;
-        display: inline;
-        line-height: 1;
-        }
-
-        .stats-section .stat-suffix {
-        font-family: 'Cinzel', sans-serif;
-        font-size: 2rem;
-        font-weight: 900;
-        color: #C8832A;
-        display: inline;
-        }
-
-        .stats-section .stat-label {
-        font-family: 'Nunito', sans-serif;
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.55);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-top: 12px;
-        display: block;
-        }
-
-        /* =============================================
-        INNER PAGES
-        ============================================= */
         .inner-page-wrapper {
         padding-top: var(--nav-offset);
         min-height: 80vh;
-        background-color: #F8FAFC;
+        background-color: var(--bg-body);
         font-family: 'Nunito', sans-serif;
         }
 
@@ -209,12 +72,12 @@
 
         /* Tables */
         .table thead {
-        background-color: var(--egy-dark);
-        color: white;
+        background-color: var(--bg-table-header);
+        color: var(--text-inverse);
         }
 
         .table thead th {
-        font-family: 'Cinzel', sans-serif;
+        font-family: 'Cinzel', serif;
         letter-spacing: 1px;
         text-transform: uppercase;
         font-size: 0.8rem;
@@ -222,9 +85,9 @@
 
         /* Page Title */
         .page-title {
-        color: var(--egy-dark);
-        font-family: 'Cinzel', sans-serif;
-        border-bottom: 2px solid #C8832A;
+        color: var(--text-heading);
+        font-family: 'Cinzel', serif;
+        border-bottom: 2px solid var(--egy-primary);
         padding-bottom: 8px;
         margin-bottom: 20px;
         text-transform: uppercase;
@@ -234,12 +97,12 @@
         /* Add / Create (.btn-success) is styled in site.css with the EGY green tokens. */
 
         /* =============================================
-        FOOTER
-        ============================================= */
+           FOOTER
+           ============================================= */
         .main-footer {
-        background-color: var(--egy-dark);
-        color: #f0d9b5;
-        border-top: 3px solid #C8832A;
+        background-color: var(--bg-footer);
+        color: var(--text-inverse);
+        border-top: 3px solid var(--egy-primary);
         padding: 20px 0;
         font-family: 'Nunito', sans-serif;
         letter-spacing: 1px;
@@ -247,7 +110,7 @@
 
         .footer-logo {
         font-family: 'Cinzel Decorative', cursive;
-        color: #E8A045;
+        color: var(--egy-accent);
         font-size: 1.2rem;
         }
 
@@ -275,7 +138,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(26, 15, 0, 0.75);
+            background-color: var(--bg-loader);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             z-index: 999999;
@@ -306,7 +169,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            border: 6px dotted #C8832A;
+            border: 6px dotted var(--egy-primary);
             border-radius: 50%;
             animation: spin-ring 2s linear infinite;
             z-index: 1;
@@ -358,6 +221,8 @@
                                    placeholder="@Localizer["Search_Placeholder"].Value" aria-label="@Localizer["Search_Aria"].Value" />
                         </div>
                     </form>
+
+                    @await Html.PartialAsync("_ThemeToggle")
 
                     <!-- Language switcher (sets .AspNetCore.Culture cookie) -->
                     <div class="dropdown lang-switcher">
@@ -601,16 +466,21 @@
                                     <i class="bi bi-geo-fill"></i> @Localizer["Nav_NearMe"].Value
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="TouristReward" asp-action="Index">
-                                    <i class="bi bi-gift-fill"></i> @Localizer["Nav_Rewards"].Value
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Features" asp-action="Index">
-                                    <i class="bi bi-phone-fill"></i> @Localizer["Nav_Features"].Value
-                                </a>
-                            </li>
+<li class="nav-item">
+                                    <a class="nav-link" asp-controller="TouristReward" asp-action="Index">
+                                        <i class="bi bi-gift-fill"></i> @Localizer["Nav_Rewards"].Value
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Favorite" asp-action="Index">
+                                        <i class="bi bi-heart"></i> @Localizer["Nav_Favorites"].Value
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Features" asp-action="Index">
+                                        <i class="bi bi-phone-fill"></i> @Localizer["Nav_Features"].Value
+                                    </a>
+                                </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="About" asp-action="Index">
                                     <i class="bi bi-info-circle-fill"></i> @Localizer["Nav_About"].Value
@@ -686,9 +556,9 @@
             var loaded = false;
 
             var notifEmptyHtml =
-                '<div class="text-center py-4 text-muted w-100">' +
-                    '<i class="bi bi-bell-slash" style="font-size:2rem;"></i>' +
-                    '<p class="mb-0 mt-2">You\'re all caught up 🏺</p>' +
+                '<div class="text-center py-5 text-muted w-100 d-flex flex-column align-items-center justify-content-center">' +
+                    '<object type="image/svg+xml" data="/lottie/No Notification.svg" style="width: 120px; height: 120px; margin-bottom: 15px; pointer-events: none;"></object>' +
+                    '<h6 class="mb-0 mt-2 fw-bold" style="color: var(--egy-primary);">You\'re all caught up 🏺</h6>' +
                 '</div>';
 
             function openNotif() {
@@ -1031,8 +901,19 @@
     <script src="~/js/maps.js" asp-append-version="true"></script>
     <!-- Grayscale Script -->
     <script src="~/js/scripts.js" asp-append-version="true"></script>
+    <!-- Theme Engine -->
+    <script src="~/js/theme-engine.js" asp-append-version="true"></script>
+    <!-- Success Lottie -->
+    <script src="~/js/success-lottie.js" asp-append-version="true"></script>
+    <!-- Favorites JS -->
+    <script src="~/js/favorites.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        window.__egyxploreNewBadges = @Html.Raw(TempData["NewBadges"] != null ? System.Text.Json.JsonSerializer.Serialize(TempData["NewBadges"]) : "null");
+        window.__egyxploreNewBadgesIcon = @Html.Raw(TempData["NewBadgesIcon"] != null ? System.Text.Json.JsonSerializer.Serialize(TempData["NewBadgesIcon"]) : "null");
+    </script>
 
     <script>
         window.hideGlobalLoader = function () {
@@ -1043,6 +924,71 @@
             window.hideGlobalLoader();
         });
     </script>
+
+    @if (TempData["ShowWelcome"] as bool? == true)
+    {
+        var isFirst = TempData["IsFirstLogin"] as bool? == true;
+        var welcomeMsg = isFirst ? "Welcome to Our Community" : "Welcome Back";
+        <div id="welcome-overlay" class="welcome-overlay">
+            <div class="welcome-content">
+                <object type="image/svg+xml" data="~/lottie/Welcome.svg" class="welcome-svg"></object>
+                <h2 class="welcome-text">@welcomeMsg</h2>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    var overlay = document.getElementById('welcome-overlay');
+                    if (overlay) {
+                        overlay.style.opacity = '0';
+                        setTimeout(function() { overlay.remove(); }, 500);
+                    }
+                }, 3000); // Overlay disappears after 3 seconds
+            });
+        </script>
+        <style>
+            .welcome-overlay {
+                position: fixed;
+                top: 0; left: 0; width: 100vw; height: 100vh;
+                background: rgba(10, 5, 0, 0.7);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                z-index: 9999999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: opacity 0.5s ease;
+            }
+            .welcome-content {
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .welcome-svg {
+                width: 90vw;
+                max-width: 500px;
+                height: auto;
+            }
+            .welcome-text {
+                font-family: 'Cinzel Decorative', serif;
+                font-size: clamp(2rem, 5vw, 3.5rem);
+                font-weight: 700;
+                background: linear-gradient(135deg, #f5c77e 0%, #C8832A 50%, #E8A045 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin: 0;
+                opacity: 0;
+                transform: translateY(20px);
+                animation: welcome-text-anim 1s ease forwards 0.5s;
+            }
+            @@keyframes welcome-text-anim {
+                to { opacity: 1; transform: translateY(0); }
+            }
+        </style>
+    }
 
 </body>
 </html>

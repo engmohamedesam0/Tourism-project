@@ -70,6 +70,7 @@ namespace Tourist_Project_MVC
             builder.Services.AddScoped<IUserBadgeRepository, UserBadgeRepository>();
             builder.Services.AddScoped<IUserProgressRepository, UserProgressRepository>();
             builder.Services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
+            builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
             builder.Services.AddScoped<IGamificationService, GamificationService>();
             builder.Services.AddSingleton<IDocContentProvider, DocsService>();
             builder.Services.AddDbContext<TouristContext>(options =>
@@ -138,6 +139,7 @@ namespace Tourist_Project_MVC
             app.UseAuthorization();
             app.UseMiddleware<UserExistsMiddleware>();
 
+            app.UseStaticFiles();
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",

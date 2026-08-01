@@ -734,3 +734,409 @@
     border-radius: 5px;
     color: var(--docs-text);
 }
+
+/* ==========================================================================
+   Dark Mode (data-theme="dark")
+   ========================================================================== */
+
+[data-theme="dark"] .docs-shell {
+    --docs-text: #E8DDD0;
+    --docs-text-secondary: #A89B8C;
+    --docs-text-tertiary: #8B7D6B;
+    --docs-border: rgba(200, 131, 42, 0.12);
+    --docs-border-strong: rgba(200, 131, 42, 0.2);
+    --docs-bg: #1A120B;
+    --docs-bg-subtle: #231911;
+    --docs-bg-hover: rgba(200, 131, 42, 0.08);
+    --docs-accent-tint: rgba(200, 131, 42, 0.15);
+}
+
+[data-theme="dark"] .docs-sidebar-backdrop {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .docs-sidebar.open {
+    box-shadow: 12px 0 32px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .docs-article pre {
+    background: #0F0A06;
+    color: #E8DDD0;
+}
+
+[data-theme="dark"] .docs-copy-btn {
+    background: rgba(200, 131, 42, 0.15);
+    color: rgba(232, 221, 208, 0.75);
+}
+
+[data-theme="dark"] .docs-copy-btn:hover {
+    background: rgba(200, 131, 42, 0.25);
+    color: var(--text-inverse, #E8DDD0);
+}
+
+[data-theme="dark"] .docs-copy-btn.copied {
+    background: rgba(52, 199, 89, 0.25);
+    color: #63e685;
+}
+
+[data-theme="dark"] .docs-search-results {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(200,131,42,0.12);
+}
+
+[data-theme="dark"] .callout-tip strong {
+    color: #34c759;
+}
+
+[data-theme="dark"] .callout-warning strong {
+    color: #ff9f0a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
+/* ==========================================================================
+   EGYXPLORE — Docs Premium Redesign Enhancements
+   ========================================================================== */
+
+/* Global Transition Rule */
+.docs-shell, .docs-shell * {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.2s ease;
+}
+
+.docs-shell img, .docs-shell pre, .docs-shell .docs-hero::after, .docs-shell iframe {
+    transition: none !important;
+}
+
+/* Page Load Fade In Animation */
+.docs-shell {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: docsShellFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes docsShellFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hero Section */
+.docs-hero {
+    border-radius: 24px;
+    padding: 56px 48px;
+    margin-bottom: 32px;
+    background: linear-gradient(135deg, var(--egy-dark, #1E120A) 0%, #2a1c10 100%);
+    color: #f5f0e8;
+    position: relative;
+    overflow: hidden;
+}
+
+.docs-hero::after {
+    content: "";
+    position: absolute;
+    inset: -40% -20% auto auto;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(200, 131, 42, 0.35), transparent 70%);
+    pointer-events: none;
+}
+
+.docs-hero-category {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--egy-accent, #E8A045);
+    margin-bottom: 12px;
+}
+
+.docs-hero-title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #f5f0e8;
+}
+
+.docs-hero-description {
+    font-size: 1.1rem;
+    color: rgba(245, 240, 232, 0.78);
+    max-width: 640px;
+    margin-bottom: 0;
+}
+
+.docs-hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.docs-hero-tag {
+    font-size: 0.78rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(200, 131, 42, 0.16);
+    border: 1px solid rgba(200, 131, 42, 0.35);
+    color: var(--egy-accent, #E8A045);
+}
+
+@media (max-width: 767.98px) {
+    .docs-hero {
+        padding: 32px 24px;
+    }
+    .docs-hero-title {
+        font-size: 1.7rem;
+    }
+}
+
+/* Search & Filter Bar */
+.docs-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 16px;
+    padding: 10px 14px;
+    background: var(--docs-bg-subtle, #fbfbfd);
+    box-shadow: inset 0 0 0 1px var(--docs-border, rgba(0, 0, 0, 0.09));
+    transition: box-shadow 0.15s ease;
+}
+
+.docs-search:focus-within {
+    box-shadow: inset 0 0 0 1.5px var(--egy-primary, #C8832A);
+}
+
+.docs-search input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.92rem;
+    outline: none;
+    color: var(--docs-text, #1d1d1f);
+}
+
+.docs-search-icon-btn,
+.docs-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: var(--docs-text-secondary, #6e6e73);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.docs-search-icon-btn:hover,
+.docs-filter-btn:hover,
+.docs-filter-btn[aria-expanded="true"] {
+    background: rgba(200, 131, 42, 0.1);
+    color: var(--egy-primary, #C8832A);
+}
+
+.docs-filter-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 14px;
+    background: var(--docs-bg, #ffffff);
+    border: 1px solid var(--docs-border, rgba(0, 0, 0, 0.14));
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+    min-width: 160px;
+    padding: 6px;
+}
+
+.docs-filter-menu.show {
+    display: block;
+}
+
+.docs-filter-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--docs-text, #1d1d1f);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.docs-filter-item:hover,
+.docs-filter-item.active {
+    background: rgba(200, 131, 42, 0.12);
+    color: var(--egy-primary, #C8832A);
+    font-weight: 600;
+}
+
+/* Card Grid on Landing Page */
+.docs-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+    margin: 28px 0 40px;
+}
+
+.doc-card {
+    display: block;
+    border-radius: 22px;
+    padding: 24px;
+    background: var(--docs-bg, #ffffff);
+    box-shadow: inset 0 0 0 1px var(--docs-border, rgba(0, 0, 0, 0.09));
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+
+.doc-card:hover {
+    transform: translateY(-6px);
+    box-shadow: inset 0 0 0 1px var(--egy-primary, #C8832A), 0 16px 32px rgba(30, 18, 10, 0.12);
+}
+
+.doc-card-category {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--egy-primary, #C8832A);
+}
+
+.doc-card h3 {
+    margin: 8px 0 6px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--docs-text, #1d1d1f);
+}
+
+.doc-card p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--docs-text-secondary, #6e6e73);
+}
+
+/* Collapsible Sidebar Section Header */
+.docs-sidebar-toggle-section {
+    background: transparent;
+    border: none;
+    color: var(--docs-text-tertiary, #86868b);
+    cursor: pointer;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.docs-sidebar-toggle-section:hover {
+    color: var(--egy-primary, #C8832A);
+    background: rgba(200, 131, 42, 0.1);
+}
+
+.docs-sidebar-toggle-section svg {
+    transition: transform 0.2s ease;
+}
+
+.docs-sidebar-section.collapsed .docs-sidebar-toggle-section svg {
+    transform: rotate(-90deg);
+}
+
+.docs-sidebar-section.collapsed .docs-sidebar-list {
+    display: none;
+}
+
+/* Autolink Styling */
+.docs-inline-link {
+    color: var(--egy-primary, #C8832A);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    transition: color 0.15s ease;
+    border-bottom: 1px dotted var(--egy-primary, #C8832A);
+}
+
+.docs-inline-link:hover {
+    color: var(--egy-accent, #E8A045);
+    border-bottom-style: solid;
+}
+
+.docs-inline-link .inline-arrow {
+    transition: transform 0.15s ease;
+}
+
+.docs-inline-link:hover .inline-arrow {
+    transform: translate(2px, -2px);
+}
+
+/* Floating PDF Download Button */
+.docs-download-pdf {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--egy-dark, #1E120A);
+    color: #f5f0e8;
+    border: 1px solid rgba(200, 131, 42, 0.4);
+    box-shadow: 0 8px 24px rgba(30, 18, 10, 0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.docs-download-pdf:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 32px rgba(30, 18, 10, 0.4);
+    background: #2a1c10;
+    color: var(--egy-accent, #E8A045);
+}
+
+.docs-download-pdf-progress {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--egy-primary, #C8832A);
+    display: none;
+}
+
+.docs-download-pdf.downloading .docs-download-pdf-progress {
+    display: block;
+    animation: docsPdfSpin 1s linear infinite;
+}
+
+.docs-download-pdf.success {
+    background: #2e7d32;
+    border-color: #4caf50;
+    color: #fff;
+}
+
+.docs-download-pdf.error {
+    background: #c62828;
+    border-color: #ef5350;
+    color: #fff;
+}
+
+@keyframes docsPdfSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
