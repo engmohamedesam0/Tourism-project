@@ -59,12 +59,14 @@ namespace Tourist_Project_MVC.Controllers
             var vm = new TouristProfileVM
             {
                 Id = tourist.Id,
-                Name = tourist.Name,
+                Name = appUserDetails != null
+                    ? $"{appUserDetails.FirstName} {appUserDetails.LastName}".Trim()
+                    : "Unknown",
                 FirstName = appUserDetails?.FirstName,
                 LastName = appUserDetails?.LastName,
-                Email = tourist.Email ?? appUserDetails?.Email ?? string.Empty,
+                Email = appUserDetails?.Email ?? string.Empty,
                 PhoneNumber = appUserDetails?.PhoneNumber,
-                Nationality = tourist.Nationality,
+                Nationality = appUserDetails?.Nationality ?? string.Empty,
                 RegisterDate = tourist.RegisterDate,
                 Status = tourist.Status,
                 PointBalance = tourist.point_Balance,
@@ -148,9 +150,9 @@ namespace Tourist_Project_MVC.Controllers
             {
                 FirstName = appUserDetails?.FirstName ?? string.Empty,
                 LastName = appUserDetails?.LastName ?? string.Empty,
-                Email = tourist.Email ?? appUserDetails?.Email ?? string.Empty,
+                Email = appUserDetails?.Email ?? string.Empty,
                 PhoneNumber = appUserDetails?.PhoneNumber ?? string.Empty,
-                Nationality = tourist.Nationality,
+                Nationality = appUserDetails?.Nationality ?? string.Empty,
                 PreferredLanguage = tourist.PreferredLanguage,
                 TravelInterests = tourist.TravelInterests,
                 NotifyByEmail = tourist.NotifyByEmail,
@@ -222,12 +224,13 @@ namespace Tourist_Project_MVC.Controllers
 
             await _userManager.UpdateAsync(appUserDetails);
 
-            tourist.Nationality = vm.Nationality;
+            // Tourist-specific preferences only — shared profile fields (name,
+            // nationality, email, phone, photo) are owned exclusively by
+            // ApplicationUser and updated above via UserManager.
             tourist.PreferredLanguage = vm.PreferredLanguage;
             tourist.TravelInterests = vm.TravelInterests;
             tourist.NotifyByEmail = vm.NotifyByEmail;
             tourist.NotifyInApp = vm.NotifyInApp;
-            tourist.Name = $"{vm.FirstName} {vm.LastName}".Trim();
 
             _touristRepo.Update(tourist);
             _touristRepo.Save();

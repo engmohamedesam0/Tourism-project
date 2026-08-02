@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -128,7 +129,9 @@ namespace Tourist_Project_MVC.Controllers
 
         public IActionResult Delete(int id)
         {
-            var tourist = _repo.GetById(id);
+            var tourist = _context.Tourists
+                .Include(t => t.ApplicationUser)
+                .FirstOrDefault(t => t.Id == id);
             if (tourist == null) return NotFound();
             return View(tourist);
         }

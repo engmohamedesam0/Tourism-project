@@ -13,6 +13,7 @@ namespace Tourist_Project_MVC.Repositories
             return _context.Tourists
                 .Include(t => t.TripPlans)
                 .Include(t => t.UserMissions)
+                .Include(t => t.ApplicationUser)
                 .ToList();
         }
 
@@ -23,6 +24,7 @@ namespace Tourist_Project_MVC.Repositories
                 .Include(t => t.UserMissions)
                     .ThenInclude(um => um.Mission)
                 .Include(t => t.Redemptions)
+                .Include(t => t.ApplicationUser)
                 .FirstOrDefault(t => t.Id == id);
         }
 
@@ -33,6 +35,7 @@ namespace Tourist_Project_MVC.Repositories
             if (user != null && !string.IsNullOrWhiteSpace(user.Id))
             {
                 var byId = _context.Tourists
+                    .Include(t => t.ApplicationUser)
                     .FirstOrDefault(t => t.ApplicationUserId == user.Id);
                 if (byId != null)
                     return byId;
@@ -42,6 +45,7 @@ namespace Tourist_Project_MVC.Repositories
             {
                 var email = user.Email.ToLower();
                 var byEmail = _context.Tourists
+                    .Include(t => t.ApplicationUser)
                     .FirstOrDefault(t => t.Email != null && t.Email.ToLower() == email);
                 if (byEmail != null)
                 {
@@ -55,14 +59,11 @@ namespace Tourist_Project_MVC.Repositories
 
             var created = new Tourist
             {
-                Name = user?.UserName ?? user?.Email ?? "Tourist",
-                Email = user?.Email ?? string.Empty,
-                Nationality = string.Empty,
-                Password = string.Empty,
                 RegisterDate = DateTime.Now,
                 Status = "Active",
                 point_Balance = 0,
-                ApplicationUserId = user?.Id
+                ApplicationUserId = user?.Id,
+                ApplicationUser = user
             };
 
             Add(created);

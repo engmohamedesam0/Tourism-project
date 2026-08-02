@@ -32,6 +32,7 @@ namespace Tourist_Project_MVC.Services
             var sponsorRedemptions = _context.Redemptions
                 .Include(r => r.Reward)
                 .Include(r => r.Tourist)
+                    .ThenInclude(t => t.ApplicationUser)
                 .Where(r => r.Reward != null && r.Reward.SponsorId == sponsorId)
                 .ToList();
 

@@ -75,7 +75,6 @@ namespace Tourist_Project_MVC.Controllers
                 {
                     UserName = userFromRequest.UserEmail,
                     Email = userFromRequest.UserEmail,
-                    PasswordHash = userFromRequest.Password,
                     PhoneNumber = userFromRequest.PhoneNumber,
                     FirstName = userFromRequest.FirstName,
                     LastName = userFromRequest.LastName,
@@ -109,13 +108,11 @@ namespace Tourist_Project_MVC.Controllers
                           await userManager.AddToRoleAsync(createdUser, "User");
 
                           // Link to (or auto-create) the Tourist record for this account so the
-                          // Trip planner works immediately after registration. Populate it from
-                          // the new shared profile fields where columns match.
+                          // Trip planner works immediately after registration. Shared profile
+                          // fields (name, nationality, email, photo) live exclusively on the
+                          // ApplicationUser identity record — the Tourist record only stores
+                          // tourist-specific data and the FK link.
                           var tourist = _touristRepo.GetOrCreateByApplicationUser(createdUser);
-                          tourist.Name = $"{createdUser.FirstName} {createdUser.LastName}".Trim();
-                          tourist.Nationality = createdUser.Nationality;
-                          tourist.Email = createdUser.Email ?? string.Empty;
-                          _touristRepo.Update(tourist);
                           _touristRepo.Save();
                       }
 

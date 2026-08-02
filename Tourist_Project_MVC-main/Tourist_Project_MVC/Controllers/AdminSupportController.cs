@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -40,6 +41,7 @@ namespace Tourist_Project_MVC.Controllers
                 .ToDictionary(s => s.Id, s => s.Name);
 
             var touristNames = _context.Tourists
+                .Include(t => t.ApplicationUser)
                 .Where(t => touristIds.Contains(t.Id))
                 .ToDictionary(t => t.Id, t => t.Name);
 
@@ -117,7 +119,9 @@ namespace Tourist_Project_MVC.Controllers
 
             if (ticket.TouristId.HasValue)
             {
-                var tourist = _context.Tourists.FirstOrDefault(t => t.Id == ticket.TouristId.Value);
+                var tourist = _context.Tourists
+                    .Include(t => t.ApplicationUser)
+                    .FirstOrDefault(t => t.Id == ticket.TouristId.Value);
                 submitterName = tourist?.Name ?? "Unknown Tourist";
                 submitterType = ticket.SponsorId.HasValue ? "Tourist -> Sponsor" : "Tourist";
             }

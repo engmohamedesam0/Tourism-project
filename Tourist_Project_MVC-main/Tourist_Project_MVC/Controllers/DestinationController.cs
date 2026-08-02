@@ -109,6 +109,7 @@ namespace Tourist_Project_MVC.Controllers
 
             var reviews = _context.SiteReviews
                 .Include(r => r.Tourist)
+                    .ThenInclude(t => t.ApplicationUser)
                 .Where(r => r.DestinationId == id)
                 .OrderByDescending(r => r.CreatedDate)
                 .Take(5)

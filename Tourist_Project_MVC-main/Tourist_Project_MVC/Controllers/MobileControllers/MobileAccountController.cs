@@ -85,10 +85,6 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
 
             var tourist = new Tourist
             {
-                Name = $"{dto.FirstName} {dto.LastName}".Trim(),
-                Email = dto.Email,
-                Nationality = dto.Country,
-                Password = String.Empty,
                 RegisterDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
                 Status = "Active",
                 point_Balance = 0,

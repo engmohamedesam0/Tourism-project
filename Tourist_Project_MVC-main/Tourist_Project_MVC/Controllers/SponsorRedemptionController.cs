@@ -82,6 +82,7 @@ namespace Tourist_Project_MVC.Controllers
             var redemptions = _context.Redemptions
                 .Include(r => r.Reward)
                 .Include(r => r.Tourist)
+                    .ThenInclude(t => t.ApplicationUser)
                 .Include(r => r.Branch)
                 .Where(r => r.Reward != null && r.Reward.SponsorId == sponsorId)
                 .AsQueryable();

@@ -193,6 +193,7 @@ namespace Tourist_Project_MVC.Controllers
                 .Include(t => t.UserMissions)
                 .Include(t => t.UserProgress)
                 .Include(t => t.UserBadges)
+                .Include(t => t.ApplicationUser)
                 .ToList();
 
             vm.TouristSection.Total = allTourists.Count();
