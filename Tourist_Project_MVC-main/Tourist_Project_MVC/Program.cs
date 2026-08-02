@@ -13,7 +13,6 @@ using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.Services;
-using CloudinaryDotNet;
 namespace Tourist_Project_MVC
 {
     public class Program
@@ -150,16 +149,6 @@ namespace Tourist_Project_MVC
                 });
             });
             builder.Services.AddSignalR();
-
-            var cloudinaryAccount = new Account(
-            builder.Configuration["Cloudinary:CloudName"],
-            builder.Configuration["Cloudinary:ApiKey"],
-            builder.Configuration["Cloudinary:ApiSecret"]
-            );
-            var cloudinary = new Cloudinary(cloudinaryAccount);
-            cloudinary.Api.Secure = true; // forces HTTPS URLs back from uploads
-
-            builder.Services.AddSingleton(cloudinary);
 
             var app = builder.Build();
 

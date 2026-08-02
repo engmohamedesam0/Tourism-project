@@ -42,7 +42,6 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManagerr = roleManager;
-            _cloudinary = cloudinary;
             this.logger = logger;
             _config = config;
             _context = context;
@@ -148,7 +147,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 return BadRequest(new { success = false, message = "Only JPG, PNG, and WebP images are allowed." });
             }
 
-            var user = await userManager.GetUserAsync(User);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized(new { success = false, message = "Invalid or expired session." });
 
@@ -174,7 +173,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             }
 
             user.ProfilePicturePath = $"/uploads/profile-pictures/{fileName}";
-            var updateResult = await userManager.UpdateAsync(user);
+            var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
                 System.IO.File.Delete(physicalPath);
