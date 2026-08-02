@@ -1,50 +1,565 @@
-﻿@model Tourist_Project_MVC.View_Model.LoginViewModel
+@model Tourist_Project_MVC.View_Model.LoginViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = "Login";
+    ViewData["FullWidth"] = true;
+
+    string getLoc(string key, string fallback) {
+        var val = Localizer[key]?.Value;
+        if (string.IsNullOrWhiteSpace(val) || val.Equals(key, StringComparison.OrdinalIgnoreCase)) {
+            return fallback;
+        }
+        return val;
+    }
 }
 
-<div class="inner-page-wrapper">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-5">
-                <div class="auth-card">
-                    <h1 class="page-title text-center d-block w-100">@ViewData["Title"]</h1>
-                    <hr class="auth-divider" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
 
-                     <form asp-action="Login" class="auth-form">
-                         <div asp-validation-summary="All" class="text-danger"></div>
-                         <div class="form-group">
-                             <label asp-for="UserName" class="control-label">@Localizer["Login_EmailOrUsername"].Value</label>
-                             <input asp-for="UserName" class="form-control" />
-                             <span asp-validation-for="UserName" class="text-danger"></span>
-                         </div>
-                         <div class="form-group">
-                             <label asp-for="UserPassword" class="control-label">@Localizer["Login_Password"].Value</label>
-                             <input asp-for="UserPassword" class="form-control" />
-                             <span asp-validation-for="UserPassword" class="text-danger"></span>
-                         </div>
-                         <div class="form-group form-check">
-                             <label class="form-check-label">
-                                 <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe)
-                             </label>
-                         </div>
-                         <div class="form-group text-center">
-                             <input type="submit" value="@Localizer["Login_Submit"].Value" class="btn btn-primary px-5" />
-                         </div>
-                     </form>
+<div class="auth-page-wrapper">
+    <div class="auth-shell">
 
-                     <div class="auth-links">
-                         <a asp-action="Register">@Localizer["Login_NeedAccount"].Value</a>
-                         <span class="auth-link-sep">|</span>
-                         <a asp-action="Reset">@Localizer["Login_ForgotPassword"].Value</a>
-                     </div>
+        <!-- =====================================================
+             LEFT — LOGIN FORM
+             Preserving ASP.NET MVC/Razor bindings & structure
+             ===================================================== -->
+        <div class="form-panel">
+
+            <div class="brand-container">
+                <partial name="_EgyxploreWordmark" />
+                <div class="brand-tagline">
+                    Explore. <span class="hi">Experience.</span> Remember.
                 </div>
             </div>
+
+            <div class="login-content">
+
+                <h1 class="welcome-title">Welcome Back!</h1>
+                <p class="welcome-sub">Sign in to continue your adventure</p>
+                <div class="gold-divider"></div>
+
+                <form asp-action="Login" autocomplete="on" id="loginForm" novalidate>
+
+                    <div asp-validation-summary="All"
+                         class="text-danger small mb-3 alert-summary"
+                         role="alert"
+                         aria-live="assertive"></div>
+
+                    <div class="form-field">
+                        <label asp-for="UserName">
+                            @getLoc("Login_EmailOrUsername", "Email or Username")
+                        </label>
+
+                        <div class="input-wrap">
+                            <svg class="field-icon"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8"
+                                 aria-hidden="true">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 20c0-4 3.6-6 8-6s8 2 8 6" stroke-linecap="round"/>
+                            </svg>
+
+                            <input asp-for="UserName"
+                                   placeholder="Enter your email or username"
+                                   autocomplete="username"
+                                   autofocus
+                                   aria-describedby="userNameError" />
+                        </div>
+
+                        <span asp-validation-for="UserName"
+                              id="userNameError"
+                              class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="form-field">
+                        <label asp-for="UserPassword">
+                            @getLoc("Login_Password", "Password")
+                        </label>
+
+                        <div class="input-wrap">
+                            <svg class="field-icon"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8"
+                                 aria-hidden="true">
+                                <rect x="5" y="10" width="14" height="10" rx="2"/>
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/>
+                            </svg>
+
+                            <input asp-for="UserPassword"
+                                   type="password"
+                                   placeholder="Enter your password"
+                                   id="passwordInput"
+                                   autocomplete="current-password"
+                                   aria-describedby="passwordError capslockHint" />
+
+                            <button type="button"
+                                    class="toggle-eye-btn"
+                                    id="togglePwBtn"
+                                    aria-label="Show password"
+                                    aria-pressed="false">
+                                <svg id="eyeIcon"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.8"
+                                     aria-hidden="true">
+                                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <span asp-validation-for="UserPassword"
+                              id="passwordError"
+                              class="text-danger small mt-1 d-block"></span>
+
+                        <div class="capslock-hint" id="capslockHint" role="status">
+                            <svg width="14" height="14"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 aria-hidden="true">
+                                <path d="M12 3l7 7h-4v7H9v-7H5l7-7z"/>
+                            </svg>
+                            Caps Lock is on
+                        </div>
+                    </div>
+
+                    <div class="form-options-row">
+                        <label class="remember-checkbox">
+                            <input asp-for="RememberMe" />
+                            <span>Remember me</span>
+                        </label>
+
+                        <a asp-action="Reset" class="forgot-link">
+                            @getLoc("Login_ForgotPassword", "Forgot password?")
+                        </a>
+                    </div>
+
+                    <button type="submit"
+                            class="btn-premium-login"
+                            id="loginSubmitBtn">
+
+                        <span>@getLoc("Login_Submit", "Sign In")</span>
+
+                        <svg class="btn-arrow"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2.2"
+                             aria-hidden="true">
+                            <path d="M5 12h14M13 6l6 6-6 6"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+
+                        <span class="btn-spinner" aria-hidden="true"></span>
+                    </button>
+                </form>
+
+                <div class="auth-divider"><span>Or continue with</span></div>
+
+                <div class="social-login-row">
+                    <button type="button"
+                            class="social-icon-btn"
+                            aria-label="Continue with Google">
+                        <svg viewBox="0 0 48 48">
+                            <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.6 29.3 35.5 24 35.5 16.5 35.5 10.5 29.5 10.5 22S16.5 8.5 24 8.5c3.7 0 7 1.4 9.5 3.6l5.7-5.7C35.6 3 30.1 1 24 1 11.8 1 2 10.8 2 23s9.8 22 22 22c11 0 21-8 21-22 0-1.5-.1-2.5-.4-3.5z"/>
+                            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 6 1.1 8.2 3l6.2-6.2C34.9 6.5 29.7 4.5 24 4.5c-7.8 0-14.5 4.4-17.7 10.2z"/>
+                            <path fill="#4CAF50" d="M24 44c5.5 0 10.5-1.9 14.3-5.2l-6.6-5.4c-2 1.5-4.7 2.6-7.7 2.6-5.3 0-9.7-3.6-11.3-8.4l-6.5 5C9.4 39.4 16.1 44 24 44z"/>
+                            <path fill="#1976D2" d="M43.6 20.5H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.4l6.6 5.4C41.6 36 44 30 44 23c0-1.5-.1-2.5-.4-2.5z"/>
+                        </svg>
+                    </button>
+
+                    <button type="button"
+                            class="social-icon-btn"
+                            aria-label="Continue with Facebook">
+                        <svg viewBox="0 0 24 24">
+                            <path fill="#1877F2" d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.7 4.53-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/>
+                        </svg>
+                    </button>
+
+                    <button type="button"
+                            class="social-icon-btn"
+                            aria-label="Continue with Apple">
+                        <svg viewBox="0 0 24 24">
+                            <path fill="#111" d="M16.36 1.43c0 1.14-.42 2.2-1.24 3.02-.86.9-2.28 1.6-3.44 1.5-.15-1.1.42-2.28 1.2-3.06.86-.86 2.34-1.5 3.48-1.46zM20.3 17.5c-.56 1.28-.83 1.85-1.55 2.98-1 1.57-2.42 3.52-4.18 3.53-1.56.02-1.96-1.02-4.08-1.01-2.12.01-2.56 1.03-4.12 1.02-1.76-.02-3.1-1.78-4.1-3.35-2.82-4.35-3.12-9.46-1.38-12.18 1.24-1.94 3.2-3.08 5.04-3.08 1.88 0 3.06 1.03 4.62 1.03 1.5 0 2.42-1.03 4.62-1.03 1.64 0 3.38.9 4.62 2.44-4.06 2.22-3.4 8.01.5 9.65z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="register-prompt">
+                    @getLoc("Login_NeedAccount", "Don't have an account?")
+                    <a asp-action="Register">Sign Up <span>&rarr;</span></a>
+                </div>
+
+            </div>
         </div>
+
+
+        <!-- =====================================================
+             RIGHT — DESTINATION HERO
+             ===================================================== -->
+        <div class="hero-panel" id="heroPanel" tabindex="-1">
+
+            <div class="hero-bg-layer is-active"
+                 id="heroBgA"
+                 style="background-image:url('@Url.Content("~/assets/img/for_login/pyramids.png")');">
+            </div>
+
+            <div class="hero-bg-layer"
+                 id="heroBgB">
+            </div>
+
+            <div class="hero-overlay-gradient"></div>
+
+            <button type="button"
+                    class="carousel-nav-btn prev"
+                    id="prevBtn"
+                    aria-label="Previous destination">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2.2"
+                     aria-hidden="true">
+                    <path d="M15 18l-6-6 6-6"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <button type="button"
+                    class="carousel-nav-btn next"
+                    id="nextBtn"
+                    aria-label="Next destination">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2.2"
+                     aria-hidden="true">
+                    <path d="M9 18l6-6-6-6"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <div class="hero-content">
+
+                <div class="hero-content-box">
+                    <h2 class="hero-title">
+                        DISCOVER<br>
+                        YOUR NEXT<br>
+                        <span class="gold-accent">ADVENTURE</span>
+                    </h2>
+
+                    <div class="hero-line-rule"></div>
+
+                    <p class="hero-description" id="heroDescription">
+                        Join us and explore the most breathtaking destinations around the world.
+                        Your unforgettable journey begins here.
+                    </p>
+                </div>
+
+                <div class="hero-bottom-controls">
+                    <div class="thumbnail-strip-row"
+                         id="thumbStrip"
+                         role="tablist"
+                         aria-label="Featured destinations">
+                    </div>
+
+                    <div class="carousel-dots-row" id="dots"></div>
+                </div>
+
+                <p class="sr-only"
+                   id="carouselLiveRegion"
+                   role="status"
+                   aria-live="polite">
+                </p>
+
+            </div>
+        </div>
+
     </div>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+
+<link rel="stylesheet" href="@Url.Content("~/css/login.css")" />
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+(function () {
+    'use strict';
+
+    /* =========================================================
+       DESTINATION CAROUSEL DATA & LOGIC
+       ========================================================= */
+
+    const slides = [
+        {
+            file: 'amr_bn_elas.png',
+            label: 'Amr Ibn Al-Aas Mosque',
+            description: 'Discover one of Cairo’s oldest landmarks and experience a remarkable part of Egypt’s Islamic heritage.'
+        },
+        {
+            file: 'Apo_ELhole.png',
+            label: 'Abu El Hol',
+            description: 'Meet the legendary guardian of the Giza Plateau and experience one of Egypt’s most iconic wonders.'
+        },
+        {
+            file: 'pyramids.png',
+            label: 'Giza Pyramids',
+            description: 'Stand before the timeless pyramids and explore one of the world’s greatest ancient civilizations.'
+        },
+        {
+            file: 'temple.png',
+            label: 'Ancient Temple',
+            description: 'Walk through monumental temples where ancient Egyptian stories still live in stone.'
+        },
+        {
+            file: 'the_geant_musem.png',
+            label: 'Grand Egyptian Museum',
+            description: 'Discover Egypt’s treasures in a spectacular journey through thousands of years of history.'
+        },
+        {
+            file: 'wadi_elkbash.png',
+            label: 'Wadi El Kabash',
+            description: 'Follow the ancient path and uncover the atmosphere of Egypt’s remarkable archaeological heritage.'
+        }
+    ];
+
+    const IMG_DIR = '@Url.Content("~/assets/img/for_login/")';
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let current = 2; // Default to Pyramids
+    let activeLayerIsA = true;
+    let autoplayTimer = null;
+
+    const heroPanel = document.getElementById('heroPanel');
+    const heroBgA = document.getElementById('heroBgA');
+    const heroBgB = document.getElementById('heroBgB');
+    const heroDescription = document.getElementById('heroDescription');
+    const thumbStrip = document.getElementById('thumbStrip');
+    const dotsEl = document.getElementById('dots');
+    const liveRegion = document.getElementById('carouselLiveRegion');
+
+    function slideUrl(index) {
+        return `${IMG_DIR}${encodeURIComponent(slides[index].file)}`;
+    }
+
+    /* Preload images */
+    slides.forEach((slide, index) => {
+        const img = new Image();
+        img.src = slideUrl(index);
+    });
+
+    function renderThumbnails() {
+        thumbStrip.innerHTML = '';
+        dotsEl.innerHTML = '';
+
+        slides.forEach((slide, index) => {
+            const thumb = document.createElement('button');
+            thumb.type = 'button';
+            thumb.className = 'thumb-item' + (index === current ? ' active' : '');
+            thumb.style.backgroundImage = `url("${slideUrl(index)}")`;
+            thumb.title = slide.label;
+            thumb.setAttribute('role', 'tab');
+            thumb.setAttribute('tabindex', '0');
+            thumb.setAttribute('aria-label', slide.label);
+            thumb.setAttribute('aria-selected', index === current ? 'true' : 'false');
+
+            thumb.addEventListener('click', () => goToSlide(index, true));
+
+            thumb.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    goToSlide(index, true);
+                }
+            });
+
+            thumbStrip.appendChild(thumb);
+
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'dot-pill' + (index === current ? ' active' : '');
+            dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+
+            dot.addEventListener('click', () => goToSlide(index, true));
+
+            dotsEl.appendChild(dot);
+        });
+    }
+
+    function updateActiveUI() {
+        [...thumbStrip.children].forEach((element, index) => {
+            element.classList.toggle('active', index === current);
+            element.setAttribute('aria-selected', index === current ? 'true' : 'false');
+        });
+
+        [...dotsEl.children].forEach((element, index) => {
+            element.classList.toggle('active', index === current);
+        });
+
+        if (liveRegion) {
+            liveRegion.textContent = `Showing ${slides[current].label}, image ${current + 1} of ${slides.length}`;
+        }
+    }
+
+    function updateDescription() {
+        const slide = slides[current];
+        heroDescription.classList.add('changing');
+
+        setTimeout(() => {
+            heroDescription.textContent = slide.description;
+            heroDescription.classList.remove('changing');
+        }, 150);
+    }
+
+    function goToSlide(index, isUserAction) {
+        current = (index + slides.length) % slides.length;
+
+        const incoming = activeLayerIsA ? heroBgB : heroBgA;
+        const outgoing = activeLayerIsA ? heroBgA : heroBgB;
+
+        incoming.style.backgroundImage = `url("${slideUrl(current)}")`;
+        incoming.classList.add('is-active');
+        outgoing.classList.remove('is-active');
+
+        activeLayerIsA = !activeLayerIsA;
+
+        updateActiveUI();
+        updateDescription();
+
+        if (isUserAction) {
+            restartAutoplay();
+        }
+    }
+
+    function startAutoplay() {
+        if (prefersReducedMotion) return;
+        stopAutoplay();
+        autoplayTimer = setInterval(() => {
+            goToSlide(current + 1, false);
+        }, 7000);
+    }
+
+    function stopAutoplay() {
+        if (autoplayTimer) {
+            clearInterval(autoplayTimer);
+            autoplayTimer = null;
+        }
+    }
+
+    function restartAutoplay() {
+        stopAutoplay();
+        startAutoplay();
+    }
+
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(current - 1, true));
+    if (nextBtn) nextBtn.addEventListener('click', () => goToSlide(current + 1, true));
+
+    if (heroPanel) {
+        heroPanel.addEventListener('mouseenter', stopAutoplay);
+        heroPanel.addEventListener('mouseleave', startAutoplay);
+        heroPanel.addEventListener('focusin', stopAutoplay);
+        heroPanel.addEventListener('focusout', startAutoplay);
+
+        heroPanel.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                goToSlide(current - 1, true);
+            }
+            if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                goToSlide(current + 1, true);
+            }
+        });
+    }
+
+    renderThumbnails();
+    updateActiveUI();
+
+    if (heroDescription) {
+        heroDescription.textContent = slides[current].description;
+    }
+
+    startAutoplay();
+
+
+    /* =========================================================
+       PASSWORD VISIBILITY TOGGLE
+       ========================================================= */
+
+    const eyeOpenPath = '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>';
+    const eyeClosedPath = '<path d="M3 3l18 18" stroke-linecap="round"/><path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a17.7 17.7 0 0 1-3.2 4.1M6.6 6.6C4 8.3 2 12 2 12s3.6 7 10 7c1.4 0 2.6-.3 3.7-.8M9.5 9.5a3 3 0 0 0 4.2 4.2" stroke-linecap="round" stroke-linejoin="round"/>';
+
+    const pwInput = document.getElementById('passwordInput');
+    const toggleBtn = document.getElementById('togglePwBtn');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    if (pwInput && toggleBtn && eyeIcon) {
+        toggleBtn.addEventListener('click', () => {
+            const isShown = pwInput.type === 'text';
+            pwInput.type = isShown ? 'password' : 'text';
+            eyeIcon.innerHTML = isShown ? eyeOpenPath : eyeClosedPath;
+            toggleBtn.setAttribute('aria-label', isShown ? 'Show password' : 'Hide password');
+            toggleBtn.setAttribute('aria-pressed', String(!isShown));
+        });
+    }
+
+
+    /* =========================================================
+       CAPS LOCK DETECTION
+       ========================================================= */
+
+    const capsHint = document.getElementById('capslockHint');
+
+    if (pwInput && capsHint) {
+        pwInput.addEventListener('keyup', (event) => {
+            const isCaps = typeof event.getModifierState === 'function' && event.getModifierState('CapsLock');
+            capsHint.classList.toggle('visible', !!isCaps);
+        });
+
+        pwInput.addEventListener('blur', () => {
+            capsHint.classList.remove('visible');
+        });
+    }
+
+
+    /* =========================================================
+       PREVENT DOUBLE SUBMISSION & HANDLE VALIDATION
+       ========================================================= */
+
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('loginSubmitBtn');
+
+    if (form && submitBtn) {
+        form.addEventListener('submit', () => {
+            if (
+                form.checkValidity &&
+                window.jQuery &&
+                jQuery.validator &&
+                !jQuery(form).valid()
+            ) {
+                return;
+            }
+
+            submitBtn.classList.add('is-loading');
+            submitBtn.disabled = true;
+        });
+    }
+
+})();
+</script>

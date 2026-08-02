@@ -62,7 +62,7 @@
     <!-- STYLISH BOTTOM DIVIDER -->
     <div class="hero-shape-divider">
         <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,0 C480,100 960,100 1440,0 L1440,120 L0,120 Z" fill="#F8FAFC"></path>
+            <path d="M0,0 C480,100 960,100 1440,0 L1440,120 L0,120 Z" style="fill: var(--bg-body)"></path>
         </svg>
         <a href="#features-grid" class="divider-arrow-notch" aria-label="Scroll to features">
             <i class="bi bi-chevron-down"></i>
@@ -71,40 +71,44 @@
 </div>
 
 <!-- ============================================================
-     STICKY QUICK CATEGORY BAR
-     ============================================================ -->
-<div class="sticky-nav-wrapper">
-    <div class="container">
-        <div class="quick-nav-bar shadow-sm">
-            <a href="#feature-ai-planner" class="quick-nav-item active">
-                <i class="bi bi-cpu"></i> <span>AI Trip Planner</span>
-            </a>
-            <a href="#feature-gis-maps" class="quick-nav-item">
-                <i class="bi bi-map-fill"></i> <span>GIS Maps</span>
-            </a>
-            <a href="#feature-audio-guide" class="quick-nav-item">
-                <i class="bi bi-headphones"></i> <span>Audio Guide</span>
-            </a>
-            <a href="#feature-ar-experience" class="quick-nav-item">
-                <i class="bi bi-bounding-box-circles"></i> <span>AR Experience</span>
-            </a>
-            <a href="#feature-offline-nav" class="quick-nav-item">
-                <i class="bi bi-wifi-off"></i> <span>Offline Mode</span>
-            </a>
-            <a href="#feature-recommendations" class="quick-nav-item">
-                <i class="bi bi-stars"></i> <span>Recommendations</span>
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- ============================================================
      MAIN FEATURES CONTENT CONTAINER
      ============================================================ -->
 <div class="container py-5" id="features-grid">
 
-    <!-- SECTION TITLE -->
-    <div class="text-center mb-5 pb-3">
+    <div class="row g-4 g-lg-5 align-items-start">
+        <!-- VERTICAL STICKY SIDE NAVIGATION (auto-flips to the right in RTL) -->
+        <div class="col-lg-3 col-md-4">
+            <nav class="features-sidenav" id="featuresSidenav" aria-label="Features navigation">
+                <div class="features-sidenav-heading">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Explore Features</span>
+                </div>
+                <a href="#feature-ai-planner" class="features-nav-item active">
+                    <i class="bi bi-cpu"></i><span>AI Trip Planner</span>
+                </a>
+                <a href="#feature-gis-maps" class="features-nav-item">
+                    <i class="bi bi-map-fill"></i><span>GIS Maps</span>
+                </a>
+                <a href="#feature-audio-guide" class="features-nav-item">
+                    <i class="bi bi-headphones"></i><span>Audio Guide</span>
+                </a>
+                <a href="#feature-ar-experience" class="features-nav-item">
+                    <i class="bi bi-bounding-box-circles"></i><span>AR Experience</span>
+                </a>
+                <a href="#feature-offline-nav" class="features-nav-item">
+                    <i class="bi bi-wifi-off"></i><span>Offline Mode</span>
+                </a>
+                <a href="#feature-recommendations" class="features-nav-item">
+                    <i class="bi bi-stars"></i><span>Recommendations</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- FEATURES CONTENT -->
+        <div class="col-lg-9 col-md-8">
+
+            <!-- SECTION TITLE -->
+            <div class="text-center mb-5 pb-3">
         <span class="section-tag mb-2"><i class="bi bi-stars me-2"></i>PLATFORM CAPABILITIES</span>
         <h2 class="about-section-title text-center mx-auto mb-3" style="max-width: 650px;">
             Engineered for the Modern Traveler
@@ -441,6 +445,9 @@
         </div>
     </section>
 
+        </div>
+    </div>
+
     <!-- BOTTOM CTA BANNER (MATCHING ABOUT PAGE TEAM BANNER) -->
     <section class="mt-5 pt-3">
         <div class="features-banner-card p-4 p-md-5 text-center">
@@ -667,7 +674,7 @@
                 transform: translateX(-50%);
                 width: 44px;
                 height: 44px;
-                background: #ffffff;
+                background: var(--bg-surface);
                 border-radius: 50%;
                 box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
                 display: flex;
@@ -699,62 +706,119 @@
                 }
             }
 
-            /* STICKY QUICK CATEGORY BAR */
-            .sticky-nav-wrapper {
+            /* FEATURES SIDE NAVIGATION (VERTICAL STICKY SIDEBAR) */
+            .features-sidenav {
                 position: sticky;
-                top: calc(var(--nav-offset) + 8px);
+                top: calc(var(--nav-offset) + 16px);
                 z-index: 1000;
-                margin-top: -30px;
-                margin-bottom: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                padding: 14px;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(16px);
+                border: 1px solid rgba(200, 131, 42, 0.22);
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(30, 18, 10, 0.06);
             }
 
-            .quick-nav-bar {
-                background: rgba(255, 255, 255, 0.94);
-                backdrop-filter: blur(16px);
-                border: 1px solid rgba(200, 131, 42, 0.25);
-                border-radius: 999px;
-                padding: 8px 12px;
+            .features-sidenav-heading {
                 display: flex;
                 align-items: center;
-                justify-content: space-around;
-                gap: 6px;
-                overflow-x: auto;
-                white-space: nowrap;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .quick-nav-bar::-webkit-scrollbar {
-                display: none;
-            }
-
-            .quick-nav-item {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 18px;
-                border-radius: 999px;
-                font-weight: 700;
-                font-size: 0.85rem;
-                color: var(--egy-dark);
-                text-decoration: none !important;
-                transition: all 0.25s ease;
-            }
-
-            .quick-nav-item i {
+                gap: 10px;
+                padding: 4px 14px 12px;
+                margin-bottom: 4px;
+                border-bottom: 1px solid rgba(200, 131, 42, 0.2);
+                font-family: 'Cinzel', serif;
+                font-size: 0.78rem;
+                font-weight: 800;
+                letter-spacing: 2px;
+                text-transform: uppercase;
                 color: var(--egy-primary);
-                font-size: 1rem;
-                transition: color 0.25s ease;
             }
 
-            .quick-nav-item:hover,
-            .quick-nav-item.active {
-                background: var(--egy-dark);
-                color: var(--egy-accent) !important;
+            .features-sidenav-heading i {
+                font-size: 1.1rem;
             }
 
-            .quick-nav-item:hover i,
-            .quick-nav-item.active i {
-                color: var(--egy-accent);
+            .features-nav-item {
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                border-radius: 14px;
+                font-weight: 700;
+                font-size: 0.9rem;
+                color: var(--text-heading);
+                text-decoration: none !important;
+                border: 1px solid transparent;
+                transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            }
+
+            .features-nav-item i {
+                width: 20px;
+                text-align: center;
+                font-size: 1.05rem;
+                color: var(--egy-primary);
+                transition: color 0.3s ease, transform 0.3s ease;
+            }
+
+            .features-nav-item:hover {
+                background: rgba(200, 131, 42, 0.08);
+                border-color: rgba(200, 131, 42, 0.2);
+                color: var(--egy-primary);
+                transform: translateX(4px);
+            }
+
+            .features-nav-item:hover i {
+                transform: scale(1.12);
+            }
+
+            .features-nav-item.active {
+                background: linear-gradient(135deg, rgba(200, 131, 42, 0.16) 0%, rgba(232, 160, 69, 0.28) 100%);
+                border-color: rgba(200, 131, 42, 0.45);
+                color: var(--egy-primary);
+                box-shadow: 0 6px 18px rgba(200, 131, 42, 0.35), inset 0 0 16px rgba(232, 160, 69, 0.12);
+            }
+
+            .features-nav-item.active::before {
+                content: '';
+                position: absolute;
+                inset-block: 22%;
+                inset-inline-start: 0;
+                width: 4px;
+                border-radius: 999px;
+                background: linear-gradient(180deg, var(--egy-accent) 0%, var(--egy-primary) 100%);
+                box-shadow: 0 0 10px rgba(232, 160, 69, 0.8);
+            }
+
+            .features-nav-item.active i {
+                color: var(--egy-primary);
+            }
+
+            [dir="rtl"] .features-nav-item:hover {
+                transform: translateX(-4px);
+            }
+
+            /* DARK MODE: SIDE NAVIGATION */
+            [data-theme="dark"] .features-sidenav {
+                background: rgba(30, 18, 10, 0.85);
+                border-color: rgba(200, 131, 42, 0.35);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+            }
+
+            [data-theme="dark"] .features-sidenav-heading {
+                border-bottom-color: rgba(200, 131, 42, 0.3);
+            }
+
+            [data-theme="dark"] .features-nav-item:hover {
+                background: rgba(200, 131, 42, 0.14);
+                border-color: rgba(200, 131, 42, 0.3);
+            }
+
+            [data-theme="dark"] .features-nav-item.active {
+                box-shadow: 0 6px 18px rgba(200, 131, 42, 0.25), inset 0 0 16px rgba(232, 160, 69, 0.1);
             }
 
             /* FEATURE CARDS (MATCHING ABOUT PAGE STORY & VALUE CARDS) */
@@ -767,7 +831,7 @@
                 border-radius: 24px;
                 overflow: hidden;
                 border: 1px solid rgba(200, 131, 42, 0.25);
-                background: #ffffff;
+                background: var(--bg-surface);
             }
 
             .feature-img-wrapper {
@@ -823,7 +887,7 @@
             }
 
             .feature-content-card {
-                background: #ffffff;
+                background: var(--bg-surface);
                 border-radius: 24px;
                 border: 1px solid rgba(200, 131, 42, 0.18);
                 box-shadow: 0 10px 30px rgba(30, 18, 10, 0.05);
@@ -989,38 +1053,83 @@
                     min-height: 75vh;
                     padding-bottom: 90px;
                 }
+            }
 
-                .quick-nav-bar {
-                    justify-content: flex-start;
-                    border-radius: 20px;
+            @@media (max-width: 767.98px) {
+                .features-sidenav {
+                    position: static;
+                    flex-direction: row;
+                    overflow-x: auto;
+                    white-space: nowrap;
+                    -webkit-overflow-scrolling: touch;
+                    scrollbar-width: none;
+                    border-radius: 18px;
+                }
+
+                .features-sidenav::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .features-sidenav-heading {
+                    display: none;
+                }
+
+                .features-nav-item {
+                    flex: 0 0 auto;
+                    border-radius: 999px;
+                    padding: 9px 16px;
+                    font-size: 0.82rem;
+                }
+
+                .features-nav-item:hover,
+                [dir="rtl"] .features-nav-item:hover {
+                    transform: none;
+                }
+
+                .features-nav-item.active::before {
+                    display: none;
                 }
             }
         </style>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                // Sticky Quick Nav Active Item Sync on Scroll
-                var navItems = Array.from(document.querySelectorAll('.quick-nav-item'));
+                // Sidebar Active Item Sync on Scroll (scroll-spy)
+                var navItems = Array.from(document.querySelectorAll('.features-nav-item'));
                 var sections = Array.from(document.querySelectorAll('.feature-card-section'));
+
+                var setActiveNav = function (id) {
+                    navItems.forEach(function (item) {
+                        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+                    });
+                };
 
                 if ('IntersectionObserver' in window && navItems.length && sections.length) {
                     var observer = new IntersectionObserver(function (entries) {
                         entries.forEach(function (entry) {
                             if (entry.isIntersecting) {
-                                var id = entry.target.getAttribute('id');
-                                navItems.forEach(function (item) {
-                                    if (item.getAttribute('href') === '#' + id) {
-                                        item.classList.add('active');
-                                    } else {
-                                        item.classList.remove('active');
-                                    }
-                                });
+                                setActiveNav(entry.target.getAttribute('id'));
                             }
                         });
-                    }, { threshold: 0.3 });
+                    }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
 
                     sections.forEach(function (sec) { observer.observe(sec); });
                 }
+
+                // Smooth scroll + instant active state on sidebar click
+                navItems.forEach(function (item) {
+                    item.addEventListener('click', function (e) {
+                        var targetId = this.getAttribute('href');
+                        if (targetId && targetId.charAt(0) === '#') {
+                            var target = document.querySelector(targetId);
+                            if (target) {
+                                e.preventDefault();
+                                setActiveNav(targetId.slice(1));
+                                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }
+                    });
+                });
 
                 // Scroll to Video Demo button handler
                 var demoBtn = document.getElementById('scrollDemoBtn');

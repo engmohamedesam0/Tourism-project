@@ -21,7 +21,7 @@
                 </div>
                 <div class="glass-pill px-4 py-3 rounded-pill d-flex align-items-center gap-3" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25);">
                     <div class="avatar-circle" style="width: 46px; height: 46px; border-radius: 50%; background: #C8832A; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; box-shadow: 0 4px 12px rgba(200, 131, 42, 0.4);">
-                        <i class="bi bi-coin"></i>
+                        <object type="image/svg+xml" data="~/lottie/Bounce Coin.svg" style="width: 32px; height: 32px;"></object>
                     </div>
                     <div>
                         <div class="small text-white-50 text-uppercase fw-semibold" style="font-size: 0.72rem; letter-spacing: 0.5px;">@Localizer["Reward_YourBalance"].Value</div>
@@ -72,8 +72,8 @@
     <div class="row g-4">
         <!-- LEFT FILTER COLUMN -->
         <div class="col-lg-4 col-xl-3">
-            <div class="filter-bar p-4 rounded-4 shadow-sm border-0 position-sticky" style="background: #ffffff; border: 1px solid #E2E8F0 !important; padding: 1.75rem !important; top: 20px;">
-                <h5 class="fw-bold mb-4" style="font-family:'Cinzel',serif; color:#0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
+            <div class="filter-bar p-4 rounded-4 shadow-sm border-0 position-sticky" style="background: var(--bg-surface); border: 1px solid var(--border-subtle) !important; padding: 1.75rem !important; top: 20px;">
+                <h5 class="fw-bold mb-4" style="font-family:'Cinzel',serif; color:var(--text-primary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
                     <i class="bi bi-sliders me-2 text-gold"></i> @Localizer["Reward_FilterHeading"].Value
                 </h5>
 
@@ -117,7 +117,7 @@
 
         <!-- RIGHT REWARDS CONTENT COLUMN -->
         <div class="col-lg-8 col-xl-9">
-            <h4 class="section-title mb-3" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
+            <h4 class="section-title mb-3" style="font-family:'Cinzel',serif; color:var(--text-primary); font-weight: 700;">
                 <i class="bi bi-shop me-2 text-gold"></i> @Localizer["Reward_Available"].Value
             </h4>
 
@@ -203,10 +203,10 @@
     @if (Model.MyRedemptions.Any())
     {
         <div class="mt-5 mb-4">
-            <h3 class="section-title mb-3" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
+            <h3 class="section-title mb-3" style="font-family:'Cinzel',serif; color:var(--text-primary); font-weight: 700;">
                 <i class="bi bi-ticket-perforated me-2 text-gold"></i> @Localizer["Reward_MyVouchers"].Value
             </h3>
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid #E2E8F0 !important;">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid var(--border-subtle) !important;">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0 custom-premium-table">
                         <thead class="table-light">
@@ -247,7 +247,7 @@
 
     <!-- ACHIEVEMENTS & BADGES SECTION -->
     <div class="mt-5 mb-4" id="badges-section">
-        <h3 class="section-title mb-4" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
+        <h3 class="section-title mb-4" style="font-family:'Cinzel',serif; color:var(--text-primary); font-weight: 700;">
             <i class="bi bi-trophy me-2 text-gold"></i> Achievements & Badges
         </h3>
 
@@ -330,7 +330,7 @@
     <style>
         /* OVERRIDE BODY BACKGROUND TO CRISP MODERN NEUTRAL */
         body {
-            background-color: #F8FAFC !important;
+            background-color: var(--bg-body) !important;
         }
 
         .text-gold {
@@ -358,7 +358,7 @@
         .btn-disabled {
             background: #F1F5F9 !important;
             color: #94A3B8 !important;
-            border: 1px solid #E2E8F0 !important;
+            border: 1px solid var(--border-subtle) !important;
             cursor: not-allowed;
             font-weight: 600;
             transition: all 0.25s ease;
@@ -366,7 +366,7 @@
 
         .form-control, .form-select {
             border-radius: 8px !important;
-            border: 1px solid #CBD5E1 !important;
+            border: 1px solid var(--border-medium) !important;
             padding: 0.6rem 0.9rem !important;
         }
 
@@ -376,8 +376,8 @@
         }
 
         .reward-card {
-            background: #ffffff !important;
-            border: 1px solid #E2E8F0 !important;
+            background: var(--bg-surface) !important;
+            border: 1px solid var(--border-subtle) !important;
             border-radius: 16px !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
@@ -390,7 +390,7 @@
         }
 
         .reward-card-title {
-            color: #0F172A !important;
+            color: var(--text-primary) !important;
             font-family: 'Cinzel', serif;
             font-weight: 700;
             font-size: 1.1rem;
@@ -411,8 +411,8 @@
             font-family: 'Cinzel', serif;
             font-weight: bold;
             color: #475569 !important;
-            background-color: #F8FAFC !important;
-            border-bottom: 2px solid #E2E8F0 !important;
+            background-color: var(--bg-body) !important;
+            border-bottom: 2px solid var(--border-subtle) !important;
         }
 
         .custom-premium-table td {
@@ -442,7 +442,7 @@
         .badge-status-draft {
             background: #F1F5F9 !important;
             color: #475569 !important;
-            border: 1px solid #CBD5E1 !important;
+            border: 1px solid var(--border-medium) !important;
             font-weight: 700;
             padding: 5px 12px;
             border-radius: 20px;
@@ -451,8 +451,8 @@
 
         /* Badge Card Styles */
         .badge-card {
-            background: #ffffff !important;
-            border: 1px solid #E2E8F0 !important;
+            background: var(--bg-surface) !important;
+            border: 1px solid var(--border-subtle) !important;
             border-radius: 16px !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
@@ -465,7 +465,7 @@
         }
 
         .badge-card-locked {
-            background: #f8fafc !important;
+            background: var(--bg-body) !important;
         }
 
         .badge-icon {

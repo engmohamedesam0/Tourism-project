@@ -1,7 +1,35 @@
 @{
     var extraClass = ViewData["WordmarkClass"] as string ?? "";
 }
-
-<span class="egyxplore-wordmark@(extraClass)">
-    EGY<span class="brand-gold">XPL<img src="~/assets/img/gold-scarab.png" alt="O" class="logo-o" />RE</span>
+<style>
+  .new-brand-mark {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    letter-spacing: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .new-brand-mark .accent { color: var(--gold, #c8832a); }
+  .new-brand-mark .scarab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0 1px;
+    position: relative;
+    top: 1px;
+  }
+  .new-brand-mark .scarab img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 3px rgba(200,131,42,0.5));
+  }
+</style>
+<span class="egyxplore-wordmark @extraClass new-brand-mark">
+    EGY<span class="accent">XPL</span><span class="scarab">
+        <img src="~/assets/img/gold-scarab.png" alt="O" />
+    </span><span class="accent">RE</span>
 </span>

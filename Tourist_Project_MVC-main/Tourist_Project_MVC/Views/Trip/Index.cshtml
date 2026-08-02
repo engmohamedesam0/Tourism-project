@@ -61,7 +61,7 @@
     {
         <div class="mb-5">
             <div class="d-flex align-items-center justify-content-between mb-3">
-                <h3 class="section-title mb-0" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
+                <h3 class="section-title mb-0" style="font-family:'Cinzel',serif; color:var(--text-primary); font-weight: 700;">
                     <i class="bi bi-journal-bookmark me-2 text-gold"></i>@Localizer["Trip_MySavedTrips"].Value
                 </h3>
                 <span class="badge rounded-pill px-3 py-2 fw-semibold" style="background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; font-size: 0.85rem;">
@@ -127,26 +127,26 @@
         @Html.AntiForgeryToken()
 
         <div class="builder-section-header mb-4">
-            <h3 class="fw-bold mb-1" style="font-family:'Cinzel',serif; color:#0F172A;">
+            <h3 class="fw-bold mb-1" style="font-family:'Cinzel',serif; color:var(--text-primary);">
                 <i class="bi bi-magic me-2 text-gold"></i>@Localizer["Trip_CreationStudio"].Value
             </h3>
             <p class="text-secondary mb-0" style="font-size: 1rem;">@Localizer["Trip_SetParameters"].Value</p>
         </div>
 
         <!-- MAP & FILTERS PANEL -->
-        <div class="card shadow-sm border-0 mb-5 p-4 rounded-4" style="background: #ffffff; border: 1px solid #E2E8F0 !important;">
+        <div class="card shadow-sm border-0 mb-5 p-4 rounded-4" style="background: var(--bg-surface); border: 1px solid var(--border-subtle) !important;">
             <div class="row g-4 align-items-stretch">
                 <div class="col-lg-4 col-xl-3">
                     <!-- Planning Filter Bar -->
-                    <div class="filter-bar h-100 d-flex flex-column justify-content-between p-3 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0;">
+                    <div class="filter-bar h-100 d-flex flex-column justify-content-between p-3 rounded-3" style="background: var(--bg-body); border: 1px solid var(--border-subtle);">
                         <div>
-<h5 class="fw-bold mb-3" style="font-family:'Cinzel',serif; color:#0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
+<h5 class="fw-bold mb-3" style="font-family:'Cinzel',serif; color:var(--text-primary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
                                 <i class="bi bi-sliders me-2 text-gold"></i> @Localizer["Trip_FiltersBudget"].Value
                             </h5>
                             
                             <div class="filter-field mb-3">
                                 <label class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["Trip_Duration"].Value</label>
-                                <div class="p-2 rounded-3 text-center fw-bold fs-5 text-dark" style="background: #ffffff; border: 1px solid #CBD5E1; color: #0F172A !important;" id="tripDuration">—</div>
+                                <div class="p-2 rounded-3 text-center fw-bold fs-5 text-dark" style="background: var(--bg-surface); border: 1px solid var(--border-medium); color: var(--text-primary) !important;" id="tripDuration">—</div>
                             </div>
 
                             <div class="filter-field mb-3">
@@ -207,7 +207,7 @@
                 </div>
 
                 <div class="col-lg-8 col-xl-9">
-                    <div class="map-wrapper-card h-100 position-relative rounded-3 overflow-hidden shadow-sm" style="border: 1px solid #CBD5E1; min-height: 400px;">
+                    <div class="map-wrapper-card h-100 position-relative rounded-3 overflow-hidden shadow-sm" style="border: 1px solid var(--border-medium); min-height: 400px;">
                         <div class="map-badge-overlay position-absolute top-0 end-0 m-3 z-3 px-3 py-1 rounded-pill bg-dark text-white small shadow-sm" style="opacity: 0.95;">
                             <i class="bi bi-geo-alt me-1 text-gold"></i> @Localizer["Trip_InteractiveMap"].Value
                         </div>
@@ -227,8 +227,8 @@
         <div class="row g-4 mb-4">
             <!-- Picker -->
             <div class="col-lg-5 col-xl-5">
-                <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: #fff; border: 1px solid #E2E8F0 !important;">
-                    <h4 class="mb-3 d-flex align-items-center gap-2" style="font-family:'Cinzel',serif; color:#0F172A;">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: var(--bg-surface); border: 1px solid var(--border-subtle) !important;">
+                    <h4 class="mb-3 d-flex align-items-center gap-2" style="font-family:'Cinzel',serif; color:var(--text-primary);">
                         <span class="step-num-badge">1</span> @Localizer["Trip_PickDestinations"].Value
                     </h4>
                     
@@ -326,8 +326,8 @@
 
             <!-- Running itinerary -->
             <div class="col-lg-7 col-xl-7">
-                <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: #fff; border: 1px solid #E2E8F0 !important;">
-                    <h4 class="mb-3 d-flex align-items-center gap-2" style="font-family:'Cinzel',serif; color:#0F172A;">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: var(--bg-surface); border: 1px solid var(--border-subtle) !important;">
+                    <h4 class="mb-3 d-flex align-items-center gap-2" style="font-family:'Cinzel',serif; color:var(--text-primary);">
                         <span class="step-num-badge">2</span> @Localizer["Trip_LiveItinerary"].Value
                     </h4>
                     <div class="itinerary-board p-3 rounded-3 h-100" id="itineraryBoard">
@@ -349,7 +349,7 @@
 <style>
     /* OVERRIDE BODY BACKGROUND TO CRISP MODERN NEUTRAL */
     body {
-        background-color: #F8FAFC !important;
+        background-color: var(--bg-body) !important;
     }
 
     .text-gold {
@@ -402,13 +402,13 @@
     .chip-label {
         display: inline-block;
         padding: 6px 14px;
-        border: 1px solid #CBD5E1;
+        border: 1px solid var(--border-medium);
         border-radius: 20px;
         font-size: 0.82rem;
         font-weight: 600;
         color: #334155;
         cursor: pointer;
-        background: #ffffff;
+        background: var(--bg-surface);
         transition: all 0.2s ease;
         user-select: none;
     }
@@ -420,8 +420,8 @@
     }
 
     .trip-card {
-        background: #ffffff !important;
-        border: 1px solid #E2E8F0 !important;
+        background: var(--bg-surface) !important;
+        border: 1px solid var(--border-subtle) !important;
         border-radius: 16px !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
@@ -434,7 +434,7 @@
     }
 
     .trip-card-title {
-        color: #0F172A !important;
+        color: var(--text-primary) !important;
         font-family: 'Cinzel', serif;
         font-weight: 700;
         font-size: 1.15rem;
@@ -450,7 +450,7 @@
         display: inline-flex;
         align-items: center;
         background: #F1F5F9;
-        border: 1px solid #CBD5E1;
+        border: 1px solid var(--border-medium);
         color: #1E293B;
         border-radius: 20px;
         padding: 4px 12px;
@@ -467,7 +467,7 @@
     .trip-stop-pill:hover {
         background: #FFFBEB;
         border-color: #FCD34D;
-        color: #0F172A;
+        color: var(--text-primary);
     }
 
     .badge-status-active {
@@ -493,7 +493,7 @@
     .badge-status-draft {
         background: #F1F5F9 !important;
         color: #475569 !important;
-        border: 1px solid #CBD5E1 !important;
+        border: 1px solid var(--border-medium) !important;
         font-weight: 700;
         padding: 5px 12px;
         border-radius: 20px;
@@ -513,14 +513,14 @@
     .destination-picker {
         max-height: 400px;
         overflow-y: auto;
-        border: 1px solid #E2E8F0;
-        background: #F8FAFC;
+        border: 1px solid var(--border-subtle);
+        background: var(--bg-body);
         border-radius: 12px;
     }
 
     .picker-row {
-        background: #ffffff;
-        border: 1px solid #E2E8F0 !important;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle) !important;
         border-radius: 10px !important;
         transition: all 0.2s ease;
     }
@@ -531,8 +531,8 @@
     }
 
     .itinerary-board {
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
+        background: var(--bg-body);
+        border: 1px solid var(--border-subtle);
         border-radius: 12px;
         min-height: 360px;
     }
@@ -542,10 +542,10 @@
         align-items: center;
         gap: 14px;
         padding: 14px;
-        background: #ffffff;
+        background: var(--bg-surface);
         border-radius: 12px;
         margin-bottom: 10px;
-        border: 1px solid #E2E8F0;
+        border: 1px solid var(--border-subtle);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
     }
 
@@ -564,7 +564,7 @@
     }
 
     .itinerary-preview li {
-        color: #0F172A;
+        color: var(--text-primary);
     }
 
     .trip-builder-map {

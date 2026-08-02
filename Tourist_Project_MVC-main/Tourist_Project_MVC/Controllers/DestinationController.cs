@@ -20,13 +20,15 @@ namespace Tourist_Project_MVC.Controllers
         private readonly TouristContext _context;
         private readonly IArcGISSyncService _arcgisSync;
         private readonly IGamificationService _gamificationService;
+        private readonly IFavoriteRepository _favoriteRepo;
 
-        public DestinationController(IDestinationRepository repo, TouristContext context, IArcGISSyncService arcgisSync, IGamificationService gamificationService)
+        public DestinationController(IDestinationRepository repo, TouristContext context, IArcGISSyncService arcgisSync, IGamificationService gamificationService, IFavoriteRepository favoriteRepo)
         {
             _repo = repo;
             _context = context;
             _arcgisSync = arcgisSync;
             _gamificationService = gamificationService;
+            _favoriteRepo = favoriteRepo;
         }
 
         // GET: /Destination/Index
@@ -50,6 +52,16 @@ namespace Tourist_Project_MVC.Controllers
             ViewBag.Search = search;
             ViewBag.Status = status;
             ViewBag.Category = category;
+
+            if (User.IsInRole("User"))
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+                var tourist = _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId);
+                if (tourist != null)
+                {
+                    ViewBag.FavoritedDestinationIds = _favoriteRepo.GetFavoritedItemIds(tourist.Id, FavoriteItemType.Destination);
+                }
+            }
 
             // Top stat-box row (real aggregates, query-level).
             var totalVisits = _context.Destinations.Sum(d => (int?)d.Visits) ?? 0;

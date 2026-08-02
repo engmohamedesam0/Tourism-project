@@ -1,4 +1,4 @@
-﻿@model Tourist_Project_MVC.View_Model.SupportTicketVM
+@model Tourist_Project_MVC.View_Model.SupportTicketVM
 
 @{
     ViewData["Title"] = Localizer["TouristSupport_Support"].Value;
@@ -87,9 +87,9 @@
                     <h6 class="fw-bold mb-3"><i class="bi bi-ticket-perforated me-1 text-primary"></i> @Localizer["TouristSupport_YourTickets"].Value</h6>
                     @if (!Model.Tickets.Any())
                     {
-                        <div class="text-center py-4 text-muted">
-                            <i class="bi bi-inbox" style="font-size:2rem;"></i>
-                            <p class="mb-0 mt-2">@Localizer["TouristSupport_NoTickets"].Value</p>
+                        <div class="text-center py-5 text-muted d-flex flex-column align-items-center justify-content-center">
+                            <object type="image/svg+xml" data="~/lottie/Customer Support.svg" style="width: 150px; height: 150px; margin-bottom: 20px; pointer-events: none;"></object>
+                            <p class="mb-0 mt-2 fw-semibold" style="color: var(--egy-primary);">@Localizer["TouristSupport_NoTickets"].Value</p>
                         </div>
                     }
                     else

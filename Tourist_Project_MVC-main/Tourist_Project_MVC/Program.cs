@@ -72,7 +72,9 @@ namespace Tourist_Project_MVC
             builder.Services.AddScoped<IUserBadgeRepository, UserBadgeRepository>();
             builder.Services.AddScoped<IUserProgressRepository, UserProgressRepository>();
             builder.Services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
+            builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
             builder.Services.AddScoped<IGamificationService, GamificationService>();
+            builder.Services.AddSingleton<IDocContentProvider, DocsService>();
             builder.Services.AddDbContext<TouristContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("CS"),
                     o => o.UseNetTopologySuite()));
@@ -161,6 +163,19 @@ namespace Tourist_Project_MVC
 
             var app = builder.Build();
 
+            try
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var context = scope.ServiceProvider.GetRequiredService<TouristContext>();
+                    context.Database.Migrate();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"[Program] Migration failed: {ex.Message}");
+            }
+
             // JSON-driven, idempotent sample-data seeding (see Services/DbInitializer.cs
             // and the SeedData/ folder). Safe to run on every startup: each table is
             // only populated when empty.
@@ -171,6 +186,7 @@ namespace Tourist_Project_MVC
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseCors("MobileApp");
@@ -180,6 +196,7 @@ namespace Tourist_Project_MVC
             app.UseAuthorization();
             app.UseMiddleware<UserExistsMiddleware>();
 
+            app.UseStaticFiles();
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",

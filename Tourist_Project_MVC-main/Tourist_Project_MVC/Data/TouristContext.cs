@@ -29,6 +29,7 @@ namespace Tourist_Project_MVC.Data
         public DbSet<Badge> Badges { get; set; }
         public DbSet<UserBadge> UserBadges { get; set; }
         public DbSet<UserProgress> UserProgress { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
 
         public TouristContext(DbContextOptions<TouristContext> options) : base(options)
         {
@@ -203,6 +204,11 @@ namespace Tourist_Project_MVC.Data
                 .WithMany(b => b.UserBadges)
                 .HasForeignKey(ub => ub.BadgeId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Favorite -> Tourist (polymorphic: ItemType + ItemId reference any deletable row).
+            modelBuilder.Entity<Favorite>()
+                .HasIndex(f => new { f.TouristId, f.ItemType, f.ItemId })
+                .IsUnique();
 
             // NOTE: All sample data is now seeded from JSON via
             // Services/DbInitializer.cs (see Program.cs). The ad-hoc

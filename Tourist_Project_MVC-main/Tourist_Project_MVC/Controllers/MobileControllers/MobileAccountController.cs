@@ -1,6 +1,4 @@
-﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -28,8 +26,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
         private readonly IConfiguration _config;
         private readonly TouristContext _context;
         private readonly ITouristRepository _touristRepo;
-        private readonly Cloudinary _cloudinary;
-
+        private readonly IWebHostEnvironment _environment;
         public MobileAccountController
             (
             UserManager<ApplicationUser> userManager,
@@ -39,7 +36,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             IConfiguration config,
             TouristContext context,
             ITouristRepository touristRepo,
-            Cloudinary cloudinary
+            IWebHostEnvironment environment
             )
         {
             _userManager = userManager;
@@ -50,6 +47,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             _config = config;
             _context = context;
             _touristRepo = touristRepo;
+            _environment = environment;
         }
 
         [HttpPost("register")]
@@ -120,30 +118,85 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
 
             return Ok(await BuildAuthResponse(user, "Login successful."));
         }
-        
-        [HttpPost("UploadAvatar")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task <IActionResult> UploadAvatar(IFormFile file)
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
+        [HttpPost("ProfilePicture")]
+        [RequestSizeLimit(6 * 1024 * 1024)]
+        public async Task<IActionResult> UploadProfilePicture(
+            [FromForm] IFormFile image,
+            CancellationToken cancellationToken)
         {
-            var user = await _userManager.GetUserAsync(User);
+            if (image == null || image.Length == 0)
+                return BadRequest(new { success = false, message = "An image is required." });
 
-            if (user == null) return Unauthorized();
-            if (file == null || file.Length == 0) return BadRequest();
+            const long maximumSize = 5 * 1024 * 1024;
+            if (image.Length > maximumSize)
+                return BadRequest(new { success = false, message = "The image cannot exceed 5 MB." });
 
-            using var stream = file.OpenReadStream();
-            var uploadParams = new ImageUploadParams
+            var allowedTypes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                File = new FileDescription(file.FileName, stream),
-                PublicId = $"avatars/{user.Id}",
-                Overwrite = true
+                [".jpg"] = "image/jpeg",
+                [".jpeg"] = "image/jpeg",
+                [".png"] = "image/png",
+                [".webp"] = "image/webp"
             };
-            var result = await _cloudinary.UploadAsync(uploadParams);
+            var extension = Path.GetExtension(image.FileName);
+            if (!allowedTypes.TryGetValue(extension, out var expectedContentType)
+                || !string.Equals(image.ContentType, expectedContentType, StringComparison.OrdinalIgnoreCase)
+                || !await HasValidImageSignatureAsync(image, extension, cancellationToken))
+            {
+                return BadRequest(new { success = false, message = "Only JPG, PNG, and WebP images are allowed." });
+            }
 
-            user.ProfilePicturePath = result.SecureUrl.ToString();
-            await _userManager.UpdateAsync(user);
+            var user = await userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized(new { success = false, message = "Invalid or expired session." });
 
-            return Ok(new {user = MapToUserDto(user)}
-            );
+            var webRootPath = _environment.WebRootPath
+                ?? Path.Combine(_environment.ContentRootPath, "wwwroot");
+            var uploadsDirectory = Path.Combine(webRootPath, "uploads", "profile-pictures");
+            Directory.CreateDirectory(uploadsDirectory);
+
+            var fileName = $"{Guid.NewGuid():N}{extension.ToLowerInvariant()}";
+            var physicalPath = Path.Combine(uploadsDirectory, fileName);
+            var oldRelativePath = user.ProfilePicturePath;
+
+            try
+            {
+                await using var stream = new FileStream(physicalPath, FileMode.CreateNew);
+                await image.CopyToAsync(stream, cancellationToken);
+            }
+            catch
+            {
+                if (System.IO.File.Exists(physicalPath))
+                    System.IO.File.Delete(physicalPath);
+                throw;
+            }
+
+            user.ProfilePicturePath = $"/uploads/profile-pictures/{fileName}";
+            var updateResult = await userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                System.IO.File.Delete(physicalPath);
+                var errors = string.Join(" ", updateResult.Errors.Select(error => error.Description));
+                logger.LogError("Failed to save profile picture for user {UserId}: {Errors}", user.Id, errors);
+                return StatusCode(500, new { success = false, message = "Could not save the profile picture." });
+            }
+
+            try
+            {
+                DeletePreviousProfilePicture(oldRelativePath, uploadsDirectory);
+            }
+            catch (Exception exception)
+            {
+                logger.LogWarning(exception, "Could not delete the previous profile picture for user {UserId}", user.Id);
+            }
+
+            return Ok(new
+            {
+                success = true,
+                profilePictureUrl = BuildProfilePictureUrl(user.ProfilePicturePath)
+            });
         }
 
         private async Task<string> GenerateJwtToken(ApplicationUser user)
@@ -173,15 +226,63 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private static UserDto MapToUserDto(ApplicationUser user) => new UserDto
+        private string? BuildProfilePictureUrl(string? path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return null;
+
+            return $"{Request.Scheme}://{Request.Host}{path}";
+        }
+
+        private static async Task<bool> HasValidImageSignatureAsync(
+            IFormFile image,
+            string extension,
+            CancellationToken cancellationToken)
+        {
+            var header = new byte[12];
+            await using var stream = image.OpenReadStream();
+            var bytesRead = await stream.ReadAsync(header.AsMemory(0, header.Length), cancellationToken);
+
+            if (extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase)
+                || extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
+            {
+                return bytesRead >= 3 && header[0] == 0xFF && header[1] == 0xD8 && header[2] == 0xFF;
+            }
+
+            if (extension.Equals(".png", StringComparison.OrdinalIgnoreCase))
+            {
+                byte[] signature = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+                return bytesRead >= signature.Length && header.AsSpan(0, signature.Length).SequenceEqual(signature);
+            }
+
+            return bytesRead >= 12
+                && header.AsSpan(0, 4).SequenceEqual("RIFF"u8)
+                && header.AsSpan(8, 4).SequenceEqual("WEBP"u8);
+        }
+
+        private static void DeletePreviousProfilePicture(string? relativePath, string uploadsDirectory)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return;
+
+            var oldFileName = Path.GetFileName(relativePath);
+            if (string.IsNullOrWhiteSpace(oldFileName))
+                return;
+
+            var oldPhysicalPath = Path.Combine(uploadsDirectory, oldFileName);
+            if (System.IO.File.Exists(oldPhysicalPath))
+                System.IO.File.Delete(oldPhysicalPath);
+        }
+
+        private UserDto MapToUserDto(ApplicationUser user) => new UserDto
         {
             Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email,
             Phone = user.PhoneNumber,
-            Country = user.Nationality,
-            ProfilePicturePath = user.ProfilePicturePath
+            Country = user.Nationality, // note: property is now "Nationality" per your model, see #3 below
+            ProfilePictureUrl = BuildProfilePictureUrl(user.ProfilePicturePath)
         };
 
         private async Task<AuthResponseDto> BuildAuthResponse(ApplicationUser user, string message)

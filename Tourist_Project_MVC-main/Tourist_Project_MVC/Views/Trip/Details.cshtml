@@ -75,7 +75,7 @@
     <div class="row g-4">
         <!-- LEFT: Map View -->
         <div class="col-lg-5 col-xl-5">
-            <div class="card border-0 shadow-sm rounded-4 p-2 sticky-top" style="top: 100px; background: #fff; border: 1px solid #E2E8F0 !important;">
+            <div class="card border-0 shadow-sm rounded-4 p-2 sticky-top" style="top: 100px; background: var(--bg-surface); border: 1px solid var(--border-subtle) !important;">
                 <div class="position-relative">
                     <div class="map-badge-overlay position-absolute top-0 end-0 m-3 z-3 px-3 py-1 rounded-pill bg-dark text-white small shadow-sm" style="opacity: 0.95;">
                         <i class="bi bi-geo-alt me-1 text-gold"></i> Route Map
@@ -93,9 +93,9 @@
 
         <!-- RIGHT: Sortable Stop List -->
         <div class="col-lg-7 col-xl-7">
-            <div class="card border-0 shadow-sm rounded-4 p-4" style="background: #fff; border: 1px solid #E2E8F0 !important;">
+            <div class="card border-0 shadow-sm rounded-4 p-4" style="background: var(--bg-surface); border: 1px solid var(--border-subtle) !important;">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h4 class="mb-0" style="font-family:'Cinzel',serif; color:#0F172A; font-weight: 700;">
+                    <h4 class="mb-0" style="font-family:'Cinzel',serif; color:var(--text-primary); font-weight: 700;">
                         <i class="bi bi-signpost-split me-2 text-gold"></i>@Localizer["TripDetails_ItineraryStops"].Value
                     </h4>
                     <span id="stopsCount">
@@ -121,7 +121,7 @@
                             data-lat="@td.Destination?.Location?.Y"
                             data-lng="@td.Destination?.Location?.X"
                             data-id="@td.DestinationId"
-                            style="background: #ffffff; border: 1px solid #E2E8F0 !important; transition: all 0.2s ease;">
+                            style="background: var(--bg-surface); border: 1px solid var(--border-subtle) !important; transition: all 0.2s ease;">
                             
                             <div class="d-flex align-items-center gap-3">
                                 <span class="stop-handle text-muted" title="Drag to reorder" style="cursor: grab; font-size: 1.2rem;"><i class="bi bi-grip-vertical"></i></span>
@@ -203,7 +203,7 @@
                 <div class="modal-body">
                     @if (availableDestsList != null && availableDestsList.Any())
                     {
-                        <div class="filter-bar p-3 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 2;">
+                        <div class="filter-bar p-3 rounded-3" style="background: var(--bg-body); border: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); position: sticky; top: 0; z-index: 2;">
                             <div class="row g-2 align-items-end">
                                 <div class="col-sm-5">
                                     <label for="addStopSearchInput" class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["TripDetails_SearchDestinations"].Value</label>
@@ -272,7 +272,7 @@
 <style>
     /* OVERRIDE BODY BACKGROUND TO CRISP MODERN NEUTRAL */
     body {
-        background-color: #F8FAFC !important;
+        background-color: var(--bg-body) !important;
     }
 
     .text-gold {
@@ -331,7 +331,7 @@
     .badge-status-draft {
         background: #F1F5F9 !important;
         color: #475569 !important;
-        border: 1px solid #CBD5E1 !important;
+        border: 1px solid var(--border-medium) !important;
         font-weight: 700;
         padding: 5px 12px;
         border-radius: 20px;
@@ -349,8 +349,8 @@
     }
 
     .trip-stop-card {
-        background: #ffffff !important;
-        border: 1px solid #E2E8F0 !important;
+        background: var(--bg-surface) !important;
+        border: 1px solid var(--border-subtle) !important;
         border-radius: 12px !important;
         transition: all 0.2s ease !important;
     }
@@ -382,9 +382,9 @@
 
     .add-stop-filter-bar input,
     .add-stop-filter-bar select {
-        border: 1px solid #CBD5E1;
-        background: #ffffff;
-        color: #0F172A;
+        border: 1px solid var(--border-medium);
+        background: var(--bg-surface);
+        color: var(--text-primary);
         font-weight: 500;
     }
 
@@ -399,8 +399,8 @@
         position: sticky;
         top: 0;
         z-index: 2;
-        background: #F8FAFC;
-        border-bottom: 1px solid #E2E8F0;
+        background: var(--bg-body);
+        border-bottom: 1px solid var(--border-subtle);
     }
 </style>
 
@@ -478,7 +478,7 @@
         }
 
         function buildStopCardHtml(stop) {
-            return '<li class="trip-stop-card p-3 mb-3 rounded-3" data-stop-id="' + stop.stopId + '" data-lat="' + stop.lat + '" data-lng="' + stop.lng + '" data-id="' + stop.destinationId + '" style="background: #ffffff; border: 1px solid #E2E8F0 !important; transition: all 0.2s ease;">' +
+            return '<li class="trip-stop-card p-3 mb-3 rounded-3" data-stop-id="' + stop.stopId + '" data-lat="' + stop.lat + '" data-lng="' + stop.lng + '" data-id="' + stop.destinationId + '" style="background: var(--bg-surface); border: 1px solid var(--border-subtle) !important; transition: all 0.2s ease;">' +
                 '<div class="d-flex align-items-center gap-3">' +
                 '<span class="stop-handle text-muted" title="Drag to reorder" style="cursor: grab; font-size: 1.2rem;"><i class="bi bi-grip-vertical"></i></span>' +
                 '<div class="stop-order-badge">' + stop.order + '</div>' +
