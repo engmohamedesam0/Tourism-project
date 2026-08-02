@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Tourist_Project_MVC.Controllers.HubNotifications;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
+using Tourist_Project_MVC.DTOs;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Tourist_Project_MVC.Controllers
 {
@@ -17,13 +21,19 @@ namespace Tourist_Project_MVC.Controllers
         private readonly IDestinationRepository destRepo;
         private readonly TouristContext _context;
         private readonly IGamificationService _gamificationService;
-
-        public MissionController(IMissionRepository missionRepo, IDestinationRepository destRepo, TouristContext context, IGamificationService gamificationService)
+        private readonly IHubContext<NotificationHub> _hubContext;
+        public MissionController(
+            IMissionRepository missionRepo,
+            IDestinationRepository destRepo,
+            TouristContext context,
+            IGamificationService gamificationService,
+            IHubContext<NotificationHub> hubContext)
         {
             this.missionRepo = missionRepo;
             this.destRepo = destRepo;
             _context = context;
             _gamificationService = gamificationService;
+            _hubContext = hubContext;
         }
 
         public IActionResult Index(string? search, string? missionType)
@@ -87,7 +97,7 @@ namespace Tourist_Project_MVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public IActionResult Create(MissionWithDeptListVM missionFromReq)
+        public async Task<IActionResult> Create(MissionWithDeptListVM missionFromReq)
         {
             if (ModelState.IsValid)
             {
@@ -101,10 +111,19 @@ namespace Tourist_Project_MVC.Controllers
                 };
                 missionRepo.Add(mission);
                 missionRepo.Save();
+
+                await _hubContext.Clients.All.SendAsync("MissionAdded", new MissionDTO
+                {
+                    Id = mission.Id,
+                    Title = mission.Title,
+                    Desc = mission.Description,
+                    Points = mission.PointsReward,
+                    MissDestId = mission.DestinationId,
+                    Type = mission.MissionType
+                });
                 return RedirectToAction("Index");
             }
-            List<Destination> destinations = destRepo.GetAll().ToList();
-            missionFromReq.destinations = destinations;
+            missionFromReq.destinations = destRepo.GetAll().ToList();
             return View(missionFromReq);
         }
 
@@ -133,7 +152,7 @@ namespace Tourist_Project_MVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public IActionResult Edit(MissionWithDeptListVM missionFromReq)
+        public async Task <IActionResult > Edit(MissionWithDeptListVM missionFromReq)
         {
             if (ModelState.IsValid)
             {
@@ -148,6 +167,15 @@ namespace Tourist_Project_MVC.Controllers
                 };
                 missionRepo.Update(mission);
                 missionRepo.Save();
+                await _hubContext.Clients.All.SendAsync("MissionUpdated", new MissionDTO
+                {
+                    Id = mission.Id,
+                    Title = mission.Title,
+                    Desc = mission.Description,
+                    Points = mission.PointsReward,
+                    MissDestId = mission.DestinationId,
+                    Type = mission.MissionType
+                });
                 return RedirectToAction("Index");
             }
             List<Destination> destinations = destRepo.GetAll().ToList();
@@ -166,10 +194,11 @@ namespace Tourist_Project_MVC.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult >DeleteConfirmed(int id)
         {
             missionRepo.Delete(id);
             missionRepo.Save();
+            await _hubContext.Clients.All.SendAsync("MissionDeleted", id);
             return RedirectToAction("Index");
         }
 

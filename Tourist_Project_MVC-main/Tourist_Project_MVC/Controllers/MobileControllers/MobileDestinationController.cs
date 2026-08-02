@@ -88,7 +88,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             }
             catch(Exception e)
             {
-                return StatusCode(500, new { message = e.Message, stack = e.StackTrace });
+                return StatusCode(500, new { message = e.Message});
             }
             
         }
