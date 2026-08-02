@@ -140,9 +140,9 @@
                     <!-- Planning Filter Bar -->
                     <div class="filter-bar h-100 d-flex flex-column justify-content-between p-3 rounded-3" style="background: var(--bg-body); border: 1px solid var(--border-subtle);">
                         <div>
-<h5 class="fw-bold mb-3" style="font-family:'Cinzel',serif; color:var(--text-primary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
-                                <i class="bi bi-sliders me-2 text-gold"></i> @Localizer["Trip_FiltersBudget"].Value
-                            </h5>
+                             <h5 class="fw-bold mb-3" style="font-family:'Cinzel',serif; color:var(--text-primary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+                                 <i class="bi bi-sliders me-2 text-gold"></i> @await Html.PartialAsync("_FilterIcon") @Localizer["Trip_FiltersBudget"].Value
+                             </h5>
                             
                             <div class="filter-field mb-3">
                                 <label class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["Trip_Duration"].Value</label>

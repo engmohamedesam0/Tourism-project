@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="560" height="560" viewBox="0 0 560 560"
+     fill="none" role="img" aria-label="Filter icon">
+  <rect x="83.25" y="152.5" width="392.5" height="17.5" rx="8.75" fill="currentColor"/>
+  <circle cx="396.25" cy="161.25" r="38.75" fill="currentColor"/>
+  <rect x="83.25" y="272.375" width="392.5" height="17.5" rx="8.75" fill="currentColor"/>
+  <circle cx="166.25" cy="281.125" r="38.75" fill="currentColor"/>
+  <rect x="83.25" y="392.375" width="392.5" height="17.5" rx="8.75" fill="currentColor"/>
+  <circle cx="314.25" cy="401.125" r="38.75" fill="currentColor"/>
+</svg>

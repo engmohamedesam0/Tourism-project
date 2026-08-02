@@ -57,7 +57,7 @@
     <aside class="dash-sidebar">
         <div class="dash-card">
             <div class="dash-card-header">
-                <span><i class="bi bi-funnel me-2"></i> @Localizer["Dash_MapFilters"].Value</span>
+                <span><i class="bi bi-funnel me-2"></i> @await Html.PartialAsync("_FilterIcon") @Localizer["Dash_MapFilters"].Value</span>
             </div>
             <div class="dash-card-body">
                 <div class="chips-filter-group">

@@ -1674,3 +1674,172 @@ img, video, .esri-view-root, .esri-view-surface, canvas,
 [data-theme="dark"] .bg-primary {
     background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity)) !important;
 }
+
+/* =============================================
+   FILTER ICON (inline SVG) — hover/click animation
+   ============================================= */
+
+.filter-icon-trigger {
+    color: var(--egy-primary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.filter-icon-trigger:hover {
+    transform: scale(1.08);
+}
+
+.filter-icon-trigger:focus-visible {
+    outline: 2px solid var(--egy-primary);
+    outline-offset: 2px;
+}
+
+.filter-icon-svg {
+    width: 28px;
+    height: 28px;
+    display: block;
+}
+
+.filter-icon-bar,
+.filter-icon-dot {
+    fill: currentColor;
+}
+
+/* Dots get their keyframe name by default; animation only plays
+   when animation-duration > 0 (set on interaction below). */
+.filter-icon-dot[data-dot="1"] { animation-name: filter-dot-slide-1; }
+.filter-icon-dot[data-dot="2"] { animation-name: filter-dot-slide-2; }
+.filter-icon-dot[data-dot="3"] { animation-name: filter-dot-slide-3; }
+
+/* Trigger animation on hover / keyboard focus / active (toggle) class */
+.filter-icon-trigger:hover .filter-icon-dot,
+.filter-icon-trigger:focus-within .filter-icon-dot,
+.filter-icon-trigger.active .filter-icon-dot {
+    animation-duration: 1.517s;
+    animation-iteration-count: infinite;
+    animation-fill-mode: forwards;
+}
+
+/* Dot 1 — top bar, slides right → left → right */
+@keyframes filter-dot-slide-1 {
+    0%   { transform: translateX(0); animation-timing-function: cubic-bezier(0.333, 0, 0.088, 1); }
+    33%  { transform: translateX(-230px); animation-timing-function: linear; }
+    55%  { transform: translateX(-230px); animation-timing-function: cubic-bezier(0.333, 0, 0.088, 1); }
+    88%  { transform: translateX(0); animation-timing-function: linear; }
+    100% { transform: translateX(0); }
+}
+
+/* Dot 2 — middle bar, slides left → right → left */
+@keyframes filter-dot-slide-2 {
+    0%   { transform: translateX(0); animation-timing-function: cubic-bezier(0.333, 0, 0.088, 1); }
+    33%  { transform: translateX(226px); animation-timing-function: linear; }
+    55%  { transform: translateX(226px); animation-timing-function: cubic-bezier(0.333, 0, 0.088, 1); }
+    88%  { transform: translateX(0); animation-timing-function: linear; }
+    100% { transform: translateX(0); }
+}
+
+/* Dot 3 — bottom bar, slides right → left → right */
+@keyframes filter-dot-slide-3 {
+    0%   { transform: translateX(0); animation-timing-function: cubic-bezier(0.333, 0, 0.088, 1); }
+    33%  { transform: translateX(-69.5px); animation-timing-function: linear; }
+    55%  { transform: translateX(-69.5px); animation-timing-function: cubic-bezier(0.333, 0, 0.088, 1); }
+    88%  { transform: translateX(0); animation-timing-function: linear; }
+    100% { transform: translateX(0); }
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .filter-icon-trigger .filter-icon-dot {
+        animation: none !important;
+    }
+    .filter-icon-trigger:hover {
+        transform: none;
+    }
+}
+
+/* Dark mode: icon uses theme primary which adapts automatically via currentColor */
+[data-theme="dark"] .filter-icon-trigger {
+    color: var(--egy-primary);
+}
+
+/* ----- Context-specific positioning ----- */
+
+/* Filter bars / filter cards: float icon at top-right corner */
+.filter-bar,
+.filter-card {
+    position: relative;
+}
+
+.filter-bar > .filter-icon-trigger,
+.filter-card > .filter-icon-trigger {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 26px;
+    height: 26px;
+    z-index: 1;
+}
+
+.filter-bar > .filter-icon-trigger .filter-icon-svg,
+.filter-card > .filter-icon-trigger .filter-icon-svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* NearMe chips: inline icon before first chip label */
+.nearme-chips > .filter-icon-trigger {
+    width: 24px;
+    height: 24px;
+    margin-right: 2px;
+}
+.nearme-chips > .filter-icon-trigger .filter-icon-svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Explore category chips: smaller inline icon */
+.category-chips > .filter-icon-trigger {
+    width: 24px;
+    height: 24px;
+    margin-right: 6px;
+}
+.category-chips > .filter-icon-trigger .filter-icon-svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Destination filter title: inline icon, smaller */
+.destination-filter-title .filter-icon-trigger {
+    width: 24px;
+    height: 24px;
+}
+.destination-filter-title .filter-icon-trigger .filter-icon-svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Dashboard map filter headers: inline icon, smaller */
+.dash-card-header .filter-icon-trigger {
+    width: 24px;
+    height: 24px;
+}
+.dash-card-header .filter-icon-trigger .filter-icon-svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* TouristReward filter heading: inline icon inside h5 */
+.filter-bar h5 .filter-icon-trigger {
+    width: 24px;
+    height: 24px;
+}
+.filter-bar h5 .filter-icon-trigger .filter-icon-svg {
+    width: 18px;
+    height: 18px;
+}

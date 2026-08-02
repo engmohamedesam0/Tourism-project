@@ -19,6 +19,7 @@
     </div>
 
     <div class="filter-bar mb-3">
+        @await Html.PartialAsync("_FilterIcon")
         <div class="d-flex gap-2 flex-wrap">
             <a class="btn btn-sm @(string.IsNullOrEmpty(Model.Filter) ? "btn-primary" : "btn-outline-secondary")"
                asp-action="Index" asp-route-filter="">@Localizer["SponsorNotification_All"].Value</a>

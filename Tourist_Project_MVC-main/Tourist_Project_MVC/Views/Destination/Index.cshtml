@@ -110,10 +110,10 @@
     <!-- Filter Bar -->
     <div class="filter-bar destination-filter-bar mb-4">
         <div class="destination-filter-header">
-            <h6 class="destination-filter-title mb-0">
-                <i class="bi bi-funnel-fill"></i>
-                @Localizer["Trip_Filter"].Value
-            </h6>
+             <h6 class="destination-filter-title mb-0 d-flex align-items-center gap-2">
+                 @await Html.PartialAsync("_FilterIcon")
+                 <span>@Localizer["Trip_Filter"].Value</span>
+             </h6>
 
             <div class="destination-filter-summary">
                 <span class="destination-result-count" title="@resultCount / @totalCount">
@@ -138,13 +138,13 @@
                 </label>
                 <form method="get" asp-action="Index" id="filterForm">
                     <div class="input-group">
-                        <span class="input-group-text bg-white">
+                        <span class="input-group-text bg-white border-end-0">
                             <i class="bi bi-search text-muted"></i>
                         </span>
                         <input type="text"
                                id="destinationSearch"
                                name="search"
-                               class="form-control"
+                               class="form-control border-start-0"
                                placeholder="@Localizer["Destination_SearchPlaceholder"].Value"
                                value="@search"
                                autocomplete="off" />
@@ -166,63 +166,31 @@
                         <i class="bi bi-tag text-muted"></i>
                     </span>
                     <select id="destinationCategory"
-                            class="form-select destination-category-select"
-                            aria-label="@Localizer["Destination_Category"].Value">
-                        <option value="@Url.Action("Index", new { search, status })"
-                                selected="@(string.IsNullOrEmpty(category) ? "selected" : null)">
+                            class="form-select"
+                            onchange="window.location.href=this.value">
+                        <option value="@Url.Action("Index", new { search, status })">
                             @Localizer["Destination_AllCategories"].Value
                         </option>
                         @foreach (var cat in categories)
                         {
-                            <option value="@Url.Action("Index", new { search, status, category = cat })"
-                                    selected="@(category == cat ? "selected" : null)">
-                                @cat
-                            </option>
+                            var url = Url.Action("Index", new { search, status, category = cat });
+                            if (category == cat)
+                            {
+                                <option value="@url" selected>@cat</option>
+                            }
+                            else
+                            {
+                                <option value="@url">@cat</option>
+                            }
                         }
                     </select>
                 </div>
             </div>
-
-            @if (hasActiveFilters)
-            {
-                <div class="col-lg-4 col-12">
-                    <span class="form-label small text-muted mb-1 d-block">@Localizer["Trip_Filter"].Value</span>
-                    <div class="destination-active-chips">
-                        @if (!string.IsNullOrWhiteSpace(search))
-                        {
-                            <a class="destination-active-chip"
-                               href="@Url.Action("Index", new { status, category })"
-                               title="@Localizer["Account_ResetTitle"].Value">
-                                <i class="bi bi-search"></i> @search
-                                <i class="bi bi-x-lg"></i>
-                            </a>
-                        }
-                        @if (!string.IsNullOrEmpty(status))
-                        {
-                            <a class="destination-active-chip"
-                               href="@Url.Action("Index", new { search, category })"
-                               title="@Localizer["Account_ResetTitle"].Value">
-                                <i class="bi @GetStatusIcon(status)"></i> @GetStatusLabel(status)
-                                <i class="bi bi-x-lg"></i>
-                            </a>
-                        }
-                        @if (!string.IsNullOrEmpty(category))
-                        {
-                            <a class="destination-active-chip"
-                               href="@Url.Action("Index", new { search, status })"
-                               title="@Localizer["Account_ResetTitle"].Value">
-                                <i class="bi bi-tag"></i> @category
-                                <i class="bi bi-x-lg"></i>
-                            </a>
-                        }
-                    </div>
-                </div>
-            }
         </div>
 
+        <!-- Status Filter Pills -->
         <div class="destination-status-filters mt-3">
-            <span class="form-label small text-muted mb-2 d-block">@Localizer["Destination_Status"].Value</span>
-            <div class="destination-status-group" role="group" aria-label="@Localizer["Destination_Status"].Value">
+            <div class="btn-group btn-group-sm flex-wrap gap-1" role="group">
                 @foreach (var filter in statusFilters)
                 {
                     var isActive = filter.Value is null
@@ -231,8 +199,7 @@
                     var btnClass = isActive ? filter.ActiveBtn : "btn-outline-secondary";
 
                     <a href="@Url.Action("Index", new { search, status = filter.Value, category })"
-                       class="btn @btnClass destination-status-btn"
-                       aria-current="@(isActive ? "page" : null)">
+                       class="btn @btnClass destination-status-chip @(isActive ? "active" : "")">
                         <i class="bi @filter.Icon"></i>
                         <span>@filter.Label</span>
                         <span class="destination-status-count">@filter.Count</span>
@@ -242,678 +209,128 @@
         </div>
     </div>
 
-    @if (Model.Any())
-    {
-        <div class="destination-table-card">
-            <div class="destination-table-card-header">
-                <div class="destination-table-card-title">
-                    <i class="bi bi-list-ul"></i>
-                    @Localizer["Destination_TableDestination"].Value
-                </div>
-                <span class="destination-table-card-meta">
-                    <i class="bi bi-sort-down"></i>
-                    @Localizer["Destination_TableVisits"].Value
-                </span>
-            </div>
+    <!-- Table Section -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table align-middle custom-destination-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">#</th>
+                        <th>@Localizer["Destination_TableDestination"].Value</th>
+                        <th>@Localizer["Destination_Category"].Value</th>
+                        <th>@Localizer["Destination_Rating"].Value</th>
+                        <th>@Localizer["Destination_Status"].Value</th>
+                        <th>@Localizer["Destination_Location"].Value</th>
+                        <th class="pe-4 text-end">@Localizer["Destination_Actions"].Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        var statusClass = GetStatusBadgeClass(item.Status);
+                        var statusIcon  = GetStatusIcon(item.Status);
+                        var statusLabel = GetStatusLabel(item.Status);
+                        var categoryIcon = GetCategoryIcon(item.Category);
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle destinations-table mb-0">
-                    <thead>
                         <tr>
-                            <th scope="col" class="destination-col-num">@Localizer["Destination_TableNum"].Value</th>
-                            <th scope="col">@Localizer["Destination_TableDestination"].Value</th>
-                            <th scope="col" class="d-none d-lg-table-cell">@Localizer["Destination_TableGovernorate"].Value</th>
-                            <th scope="col" class="d-none d-md-table-cell">@Localizer["Destination_TableCategory"].Value</th>
-                            <th scope="col">@Localizer["Destination_TableVisits"].Value</th>
-                            <th scope="col" class="d-none d-sm-table-cell">@Localizer["Destination_TableTicketPrice"].Value</th>
-                            <th scope="col">@Localizer["Destination_TableStatus"].Value</th>
-                            <th scope="col" class="destination-col-actions">@Localizer["Destination_TableActions"].Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @{ var rowIndex = 1; }
-                        @foreach (var item in Model)
-                        {
-                            var statusBadgeClass = GetStatusBadgeClass(item.Status);
-                            var statusIcon = GetStatusIcon(item.Status);
-                            var statusLabel = GetStatusLabel(item.Status);
-                            var categoryIcon = GetCategoryIcon(item.Category);
-                            var descriptionPreview = TruncateText(item.Description);
-                            var isFree = item.TicketPrice is null or 0;
-                            var detailsUrl = Url.Action("Details", new { id = item.Id })!;
+                            <td class="ps-4 fw-semibold text-muted">#@i.ToString("D2")</td>
 
-                            <tr class="destination-row" data-href="@detailsUrl">
-                                <td class="destination-col-num">
-                                    <span class="destination-row-num">@rowIndex.ToString("D2")</span>
-                                </td>
-                                <td>
-                                    <div class="destination-cell-main">
-                                        <div class="destination-avatar" aria-hidden="true">
-                                            <i class="bi @categoryIcon"></i>
-                                        </div>
-                                        <div class="destination-cell-text">
-                                            <a asp-action="Details" asp-route-id="@item.Id" class="destination-name">
-                                                @item.Name
-                                            </a>
-                                            <p class="destination-desc mb-0">@descriptionPreview</p>
-                                            <div class="destination-cell-meta d-lg-none">
-                                                <span><i class="bi bi-geo-alt"></i> @item.City</span>
-                                                @if (!string.IsNullOrWhiteSpace(item.Category))
-                                                {
-                                                    <span class="badge-category badge-category-sm">@item.Category</span>
-                                                }
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="destination-avatar flex-shrink-0">
+                                        @if (item.PhotoUrlList.Any())
+                                        {
+                                            <img src="@item.PhotoUrlList.First()" alt="@item.Name" class="rounded-3" />
+                                        }
+                                        else
+                                        {
+                                            <div class="avatar-placeholder rounded-3">
+                                                <i class="bi bi-image text-muted"></i>
                                             </div>
+                                        }
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark font-cinzel">@item.Name</div>
+                                        <div class="text-muted small" title="@item.Description">
+                                            @TruncateText(item.Description)
                                         </div>
                                     </div>
-                                </td>
-                                <td class="d-none d-lg-table-cell">
-                                    <span class="destination-city">
-                                        <i class="bi bi-geo-alt-fill"></i>
-                                        @item.City
-                                    </span>
-                                </td>
-                                <td class="d-none d-md-table-cell">
-                                    @if (!string.IsNullOrWhiteSpace(item.Category))
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    <i class="bi @categoryIcon me-1 text-primary"></i>
+                                    @(item.Category ?? "—")
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center gap-1">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="fw-bold text-dark">@(item.Rating?.ToString("0.0") ?? "0.0")</span>
+                                    <span class="text-muted small">/ 5.0</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="badge @statusClass">
+                                    <i class="bi @statusIcon me-1"></i>
+                                    @statusLabel
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="text-muted small">
+                                    @if (item.Location != null)
                                     {
-                                        <span class="badge-category">@item.Category</span>
+                                        <i class="bi bi-geo-alt me-1 text-danger"></i>
+                                        <span>@item.Location.Y.ToString("F3"), @item.Location.X.ToString("F3")</span>
                                     }
                                     else
                                     {
                                         <span class="text-muted">—</span>
                                     }
-                                </td>
-                                <td>
-                                    <span class="destination-visits">
-                                        <i class="bi bi-eye-fill"></i>
-                                        @item.Visits.ToString("N0")
-                                    </span>
-                                    @if (item.Rating.HasValue)
-                                    {
-                                        <span class="destination-rating">
-                                            <i class="bi bi-star-fill"></i>
-                                            @item.Rating.Value.ToString("0.0")
-                                        </span>
-                                    }
-                                </td>
-                                <td class="d-none d-sm-table-cell">
-                                    @if (isFree)
-                                    {
-                                        <span class="destination-price destination-price-free">
-                                            @Localizer["Destination_Free"].Value
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="destination-price">@item.TicketPrice?.ToString("C")</span>
-                                    }
-                                </td>
-                                <td>
-                                    <span class="badge-status @statusBadgeClass">
-                                        <i class="bi @statusIcon"></i>
-                                        @statusLabel
-                                    </span>
-                                </td>
-                                <td class="destination-col-actions">
-                                    @if (isAuthenticated)
-                                    {
-                                        <div class="destination-action-group">
-                                            <a asp-action="Details" asp-route-id="@item.Id"
-                                               class="btn btn-sm btn-outline-info destination-action-btn"
-                                               title="@Localizer["Destination_DetailsTitle"].Value">
-                                                <i class="bi bi-eye-fill"></i>
-                                            </a>
+                                </div>
+                            </td>
 
-                                            @if (isAdmin)
-                                            {
-                                                <a asp-action="Edit" asp-route-id="@item.Id"
-                                                   class="btn btn-sm btn-outline-warning destination-action-btn"
-                                                   title="@Localizer["Destination_EditTitle"].Value">
-                                                    <i class="bi bi-pencil-fill"></i>
-                                                </a>
-                                                <a asp-action="Delete" asp-route-id="@item.Id"
-                                                   class="btn btn-sm btn-outline-danger destination-action-btn"
-                                                   title="@Localizer["Destination_DeleteTitle"].Value">
-                                                    <i class="bi bi-trash-fill"></i>
-                                                </a>
-                                            }
-                                        </div>
-                                    }
-                                    else
+                            <td class="pe-4 text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info" title="@Localizer["Destination_DetailsBtn"].Value">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    @if (isAdmin)
                                     {
-                                        <span class="text-muted small">@Localizer["Destination_GuestsOnly"].Value</span>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning" title="@Localizer["Destination_EditBtn"].Value">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="@Localizer["Destination_DeleteBtn"].Value">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
                                     }
-                                </td>
-                            </tr>
-                            rowIndex++;
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                </div>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                    <p class="mb-1 fw-bold">@Localizer["Destination_NoDestinationsFound"].Value</p>
+                                    <small>@Localizer["Destination_TryAdjustingSearch"].Value</small>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    }
-    else
-    {
-        <div class="destination-empty-state">
-            <div class="destination-empty-icon" aria-hidden="true">
-                <i class="bi bi-geo-alt"></i>
-            </div>
-
-            @if (hasActiveFilters)
-            {
-                <h5 class="destination-empty-title">@Localizer["Destination_NoDestinations"].Value</h5>
-                <p class="destination-empty-text text-muted">
-                    @Localizer["Trip_Filter"].Value · @Localizer["Account_ResetTitle"].Value
-                </p>
-                <div class="destination-empty-actions">
-                    <a asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-counterclockwise me-1"></i>
-                        @Localizer["Account_ResetTitle"].Value
-                    </a>
-                </div>
-            }
-            else
-            {
-                <h5 class="destination-empty-title">@Localizer["Destination_NoDestinations"].Value</h5>
-                @if (isAdmin)
-                {
-                    <div class="destination-empty-actions">
-                        <a asp-action="Create" class="btn btn-primary">
-                            <i class="bi bi-plus-lg me-1"></i>
-                            @Localizer["Destination_AddFirst"].Value
-                        </a>
-                    </div>
-                }
-            }
-        </div>
-    }
-
+    </div>
 </div>
-
-@section Scripts {
-<style>
-    .destination-admin-page {
-        padding-bottom: 2rem;
-    }
-
-    /* ── Page header ── */
-    .destination-page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .destination-page-header-text .page-title {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        margin-bottom: 0.35rem;
-    }
-
-    .destination-page-icon {
-        color: var(--egy-primary, #C8832A);
-        font-size: 1.35rem;
-    }
-
-    .destination-page-subtitle {
-        font-size: 0.9rem;
-        color: #6c757d;
-        padding-left: 2px;
-    }
-
-    .destination-add-btn {
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-
-    /* ── Filter bar ── */
-    .filter-bar {
-        background: var(--bg-surface);
-        padding: 16px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-
-    .destination-filter-bar {
-        border: 1px solid rgba(200, 131, 42, 0.12);
-    }
-
-    .destination-filter-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        padding-bottom: 0.75rem;
-        margin-bottom: 0.25rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    }
-
-    .destination-filter-title {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-family: 'Cinzel', serif;
-        color: var(--egy-dark, #2c1810);
-        font-weight: 600;
-    }
-
-    .destination-filter-summary {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .destination-result-count {
-        font-size: 0.875rem;
-        white-space: nowrap;
-    }
-
-    .destination-result-count strong {
-        color: var(--egy-primary, #C8832A);
-    }
-
-    .destination-status-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .destination-status-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.85rem;
-        border-radius: 999px !important;
-        padding: 0.45rem 0.9rem;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .destination-status-btn:hover {
-        transform: translateY(-1px);
-    }
-
-    .destination-status-btn[aria-current="page"] {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-    }
-
-    .destination-status-count {
-        font-size: 0.75rem;
-        font-weight: 700;
-        padding: 0.1rem 0.45rem;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.25);
-    }
-
-    .btn-outline-secondary .destination-status-count {
-        background: rgba(0, 0, 0, 0.06);
-    }
-
-    .destination-active-chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .destination-active-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        padding: 0.35rem 0.65rem;
-        border-radius: 999px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        text-decoration: none;
-        color: var(--egy-primary, #C8832A);
-        background: #FDF6EC;
-        border: 1px solid #E8A045;
-        transition: background-color 0.15s ease;
-    }
-
-    .destination-active-chip:hover {
-        background: #f9edd8;
-        color: var(--egy-dark, #2c1810);
-    }
-
-    .destination-active-chip .bi-x-lg {
-        font-size: 0.65rem;
-        opacity: 0.7;
-    }
-
-    .destination-category-select {
-        cursor: pointer;
-    }
-
-    /* ── Table card ── */
-    .destination-table-card {
-        background: var(--bg-surface);
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        border: 1px solid rgba(200, 131, 42, 0.1);
-        overflow: hidden;
-    }
-
-    .destination-table-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        padding: 0.85rem 1.25rem;
-        background: linear-gradient(135deg, rgba(44, 24, 16, 0.04), rgba(200, 131, 42, 0.08));
-        border-bottom: 1px solid rgba(200, 131, 42, 0.15);
-    }
-
-    .destination-table-card-title {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-family: 'Cinzel', serif;
-        font-weight: 600;
-        color: var(--egy-dark, #2c1810);
-    }
-
-    .destination-table-card-meta {
-        font-size: 0.8rem;
-        color: #6c757d;
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-    }
-
-    .destinations-table thead th {
-        font-size: 0.82rem;
-        letter-spacing: 0.02em;
-        white-space: nowrap;
-    }
-
-    .destination-col-num {
-        width: 3.5rem;
-    }
-
-    .destination-col-actions {
-        width: 8.5rem;
-        white-space: nowrap;
-    }
-
-    .destination-row {
-        cursor: pointer;
-        transition: background-color 0.15s ease;
-    }
-
-    .destination-row:hover {
-        background-color: rgba(200, 131, 42, 0.04);
-    }
-
-    .destination-row-num {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 2rem;
-        height: 2rem;
-        border-radius: 8px;
-        background: rgba(200, 131, 42, 0.1);
-        color: var(--egy-primary, #C8832A);
-        font-weight: 700;
-        font-size: 0.82rem;
-    }
-
-    .destination-cell-main {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-        min-width: 0;
-    }
-
-    .destination-avatar {
-        flex-shrink: 0;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #FDF6EC, #f5e6cc);
-        border: 1px solid rgba(200, 131, 42, 0.25);
-        color: var(--egy-primary, #C8832A);
-        font-size: 1.1rem;
-    }
-
-    .destination-cell-text {
-        min-width: 0;
-        flex: 1;
-    }
-
-    .destination-name {
-        font-weight: 700;
-        color: var(--egy-dark, #2c1810);
-        text-decoration: none;
-        display: block;
-        margin-bottom: 0.15rem;
-    }
-
-    .destination-name:hover {
-        color: var(--egy-primary, #C8832A);
-    }
-
-    .destination-desc {
-        font-size: 0.8rem;
-        color: #6c757d;
-        line-height: 1.4;
-    }
-
-    .destination-cell-meta {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 0.5rem;
-        margin-top: 0.35rem;
-        font-size: 0.78rem;
-        color: #6c757d;
-    }
-
-    .destination-city {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        font-size: 0.88rem;
-        color: #495057;
-    }
-
-    .destination-city .bi {
-        color: var(--egy-primary, #C8832A);
-    }
-
-    .destination-visits {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        font-weight: 600;
-        color: #495057;
-    }
-
-    .destination-visits .bi {
-        color: #6c757d;
-        font-size: 0.85rem;
-    }
-
-    .destination-rating {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.2rem;
-        margin-left: 0.5rem;
-        padding: 0.1rem 0.45rem;
-        border-radius: 999px;
-        background: #fff8e6;
-        color: #b8860b;
-        font-size: 0.75rem;
-        font-weight: 700;
-    }
-
-    .destination-rating .bi {
-        font-size: 0.65rem;
-    }
-
-    .destination-price {
-        font-weight: 600;
-        color: var(--egy-dark, #2c1810);
-    }
-
-    .destination-price-free {
-        display: inline-block;
-        padding: 0.2rem 0.55rem;
-        border-radius: 999px;
-        background: #e8f5e9;
-        color: #2e7d32;
-        font-size: 0.78rem;
-        font-weight: 700;
-    }
-
-    .destination-action-group {
-        display: flex;
-        gap: 0.35rem;
-    }
-
-    .destination-action-btn {
-        padding: 0.25rem 0.45rem;
-    }
-
-    .badge-category {
-        background-color: #FDF6EC;
-        color: #C8832A;
-        border: 1px solid #E8A045;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 0.78rem;
-        font-weight: 600;
-    }
-
-    .badge-category-sm {
-        padding: 2px 8px;
-        font-size: 0.72rem;
-    }
-
-    .badge-status {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-
-    .badge-status-active {
-        background-color: #d4edda;
-        color: #155724;
-    }
-
-    .badge-status-pending {
-        background-color: rgba(228, 198, 98, 0.15);
-        color: #856404;
-    }
-
-    .badge-status-inactive {
-        background-color: #f8d7da;
-        color: #721c24;
-    }
-
-    /* ── Empty state ── */
-    .destination-empty-state {
-        text-align: center;
-        padding: 3.5rem 1.5rem;
-        background: var(--bg-surface);
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        border: 1px dashed rgba(200, 131, 42, 0.3);
-    }
-
-    .destination-empty-icon {
-        width: 4.5rem;
-        height: 4.5rem;
-        margin: 0 auto 1rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #FDF6EC, #f5e6cc);
-        color: var(--egy-primary, #C8832A);
-        font-size: 2rem;
-    }
-
-    .destination-empty-title {
-        font-family: 'Cinzel', serif;
-        color: var(--egy-dark, #2c1810);
-        margin-bottom: 0.5rem;
-    }
-
-    .destination-empty-text {
-        margin-bottom: 1.25rem;
-    }
-
-    .destination-empty-actions {
-        display: flex;
-        justify-content: center;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-    }
-
-    @@media (max-width: 767.98px) {
-        .destination-page-header {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .destination-add-btn {
-            align-self: flex-start;
-        }
-
-        .destination-filter-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .destination-status-btn {
-            flex: 1 1 calc(50% - 0.25rem);
-            justify-content: center;
-        }
-
-        .destination-table-card-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-    }
-</style>
-
-<script>
-    (function () {
-        var filterForm = document.getElementById('filterForm');
-        var searchInput = document.getElementById('destinationSearch');
-        var categorySelect = document.getElementById('destinationCategory');
-
-        if (categorySelect) {
-            categorySelect.addEventListener('change', function () {
-                window.location.href = this.value;
-            });
-        }
-
-        if (filterForm && searchInput) {
-            filterForm.addEventListener('submit', function () {
-                if (!searchInput.value.trim()) {
-                    searchInput.removeAttribute('name');
-                }
-            });
-        }
-
-        document.querySelectorAll('.destination-row[data-href]').forEach(function (row) {
-            row.addEventListener('click', function (event) {
-                if (event.target.closest('a, button, .destination-action-group')) {
-                    return;
-                }
-
-                window.location.href = row.getAttribute('data-href');
-            });
-        });
-    })();
-</script>
-}

@@ -73,9 +73,9 @@
         <!-- LEFT FILTER COLUMN -->
         <div class="col-lg-4 col-xl-3">
             <div class="filter-bar p-4 rounded-4 shadow-sm border-0 position-sticky" style="background: var(--bg-surface); border: 1px solid var(--border-subtle) !important; padding: 1.75rem !important; top: 20px;">
-                <h5 class="fw-bold mb-4" style="font-family:'Cinzel',serif; color:var(--text-primary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
-                    <i class="bi bi-sliders me-2 text-gold"></i> @Localizer["Reward_FilterHeading"].Value
-                </h5>
+            <h5 class="fw-bold mb-4" style="font-family:'Cinzel',serif; color:var(--text-primary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+                <i class="bi bi-sliders me-2 text-gold"></i> @await Html.PartialAsync("_FilterIcon") @Localizer["Reward_FilterHeading"].Value
+            </h5>
 
                 <div class="filter-field mb-4">
                     <label class="form-label fw-bold mb-1.5 small text-uppercase text-muted">@Localizer["Reward_SearchLabel"].Value</label>

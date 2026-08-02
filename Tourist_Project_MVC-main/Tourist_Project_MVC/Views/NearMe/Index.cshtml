@@ -37,7 +37,8 @@
                         </div>
 
                         <div class="input-group search-input-group mb-2">
-                            <span class="input-group-text bg-white border-end-0">
+                            <span class="input-group-text bg-white border-end-0 d-flex align-items-center gap-2">
+                                @await Html.PartialAsync("_FilterIcon")
                                 <i class="bi bi-search text-muted"></i>
                             </span>
                             <input type="text" name="search" id="nearMeSearch" class="form-control border-start-0 ps-1"
@@ -47,11 +48,11 @@
                     </form>
                 </div>
 
-                <!-- Filters section -->
-                <div class="filter-section-wrapper">
-                    <!-- Type chips -->
-                    <div class="nearme-chips">
-                        <span class="chip-label">@Localizer["NearMe_Type"].Value</span>
+                 <!-- Filters section -->
+                 <div class="filter-section-wrapper">
+                     <!-- Type chips -->
+                     <div class="nearme-chips">
+                         <span class="chip-label d-flex align-items-center gap-1">@Localizer["NearMe_Type"].Value</span>
                         <div class="chips-group">
                             <button type="button" class="chip @(string.IsNullOrEmpty(Model.Type) ? "chip-active" : "")"
                                     onclick="setNearMeChip('type', null, this)">@Localizer["NearMe_All"].Value</button>

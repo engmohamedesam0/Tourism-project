@@ -32,7 +32,8 @@
             <div class="col-md-5">
                 <form method="get" asp-action="Index" id="filterForm">
                     <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0">
+                        <span class="input-group-text bg-white border-end-0 d-flex align-items-center gap-2">
+                            @await Html.PartialAsync("_FilterIcon")
                             <i class="bi bi-search text-muted"></i>
                         </span>
                         <input type="text" name="search"

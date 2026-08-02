@@ -204,6 +204,7 @@
                     @if (availableDestsList != null && availableDestsList.Any())
                     {
                         <div class="filter-bar p-3 rounded-3" style="background: var(--bg-body); border: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); position: sticky; top: 0; z-index: 2;">
+                            @await Html.PartialAsync("_FilterIcon")
                             <div class="row g-2 align-items-end">
                                 <div class="col-sm-5">
                                     <label for="addStopSearchInput" class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["TripDetails_SearchDestinations"].Value</label>
