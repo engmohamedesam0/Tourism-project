@@ -435,6 +435,10 @@
     pointer-events: none;
 }
 
+[data-theme="dark"] .dash-map-container {
+    background: var(--bg-body);
+}
+
 /* Leaflet map overrides within map card */
 .dash-map-container .leaflet-container {
     border-radius: 16px;

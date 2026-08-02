@@ -1627,3 +1627,50 @@ img, video, .esri-view-root, .esri-view-surface, canvas,
     margin-right: 0;
     margin-left: 10px;
 }
+
+/* Map popup helpers (theme-aware) */
+.popup-name {
+    color: var(--text-heading);
+    font-family: 'Cinzel', serif;
+    font-size: 1.1em;
+}
+
+.popup-verified {
+    color: var(--egy-primary);
+    font-size: 0.85em;
+}
+
+.text-primary-gold {
+    color: var(--egy-primary) !important;
+}
+
+[data-theme="dark"] .text-primary-gold {
+    color: var(--egy-accent) !important;
+}
+
+/* Dark mode Bootstrap component overrides */
+[data-theme="dark"] .btn-primary {
+    --bs-btn-hover-bg: #b37424;
+    --bs-btn-hover-border-color: #b37424;
+    --bs-btn-focus-shadow-rgb: 200, 131, 42;
+    --bs-btn-active-bg: #b37424;
+    --bs-btn-active-border-color: #b37424;
+}
+
+[data-theme="dark"] .alert-primary {
+    --bs-alert-color: #F5B85A;
+    --bs-alert-bg: rgba(200, 131, 42, 0.14);
+    --bs-alert-border-color: rgba(200, 131, 42, 0.3);
+}
+
+[data-theme="dark"] .alert-primary .alert-link {
+    color: #F5B85A;
+}
+
+[data-theme="dark"] .text-primary {
+    color: rgba(var(--bs-primary-rgb), var(--bs-text-opacity)) !important;
+}
+
+[data-theme="dark"] .bg-primary {
+    background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity)) !important;
+}

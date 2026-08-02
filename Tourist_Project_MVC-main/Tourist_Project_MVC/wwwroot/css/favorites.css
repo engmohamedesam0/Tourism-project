@@ -17,6 +17,23 @@
     transform: scale(0.9);
 }
 
+[data-theme="dark"] .favorite-btn {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .favorite-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+[data-theme="dark"] .favorite-btn-icon {
+    color: var(--text-primary, #E8DDD0);
+}
+
+[data-theme="dark"] .favorite-btn.is-favorited .favorite-btn-icon {
+    color: var(--egy-danger, #a16468);
+}
+
 .favorite-btn-icon {
     font-size: 1.15rem;
     color: var(--egy-text-muted, #6b7280);

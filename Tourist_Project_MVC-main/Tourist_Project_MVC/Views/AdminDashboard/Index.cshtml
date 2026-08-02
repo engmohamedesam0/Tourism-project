@@ -110,14 +110,14 @@
                         opacity: 1,
                         fillOpacity: 0.9
                     },
-                    popupHtml: function (ctx) {
-                        var p = ctx.attributes || {};
-                        var name = p['Name'] || p['name'] || p['branch_name'] || 'Unnamed Branch';
-                        return '<div style="text-align:center;">' +
-                               '<strong style="color:#1E120A;font-family:Cinzel,serif;font-size:1.1em;">' + name + '</strong>' +
-                               '<br><span style="color:#C8832A;font-size:0.85em;"><i class="bi bi-shield-check"></i> Verified Partner</span>' +
-                               '</div>';
-                    },
+                     popupHtml: function (ctx) {
+                         var p = ctx.attributes || {};
+                         var name = p['Name'] || p['name'] || p['branch_name'] || 'Unnamed Branch';
+                         return '<div style="text-align:center;">' +
+                                '<strong class="popup-name">' + name + '</strong>' +
+                                '<br><span class="popup-verified"><i class="bi bi-shield-check"></i> Verified Partner</span>' +
+                                '</div>';
+                     },
                     onLayerReady: function () {
                         if (window.allBranchLatlngs && window.allBranchLatlngs.length && dashboardMap && dashboardMap.fitBounds) {
                             dashboardMap.fitBounds(window.allBranchLatlngs);

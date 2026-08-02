@@ -225,6 +225,18 @@
         box-shadow: var(--shadow-glow-gold);
     }
 
+    [data-theme="dark"] .chip {
+        background: var(--bg-surface-elevated);
+        color: var(--text-primary);
+        border-color: var(--border-medium);
+    }
+
+    [data-theme="dark"] .chip:hover {
+        background: var(--egy-accent);
+        color: var(--egy-dark);
+        border-color: var(--egy-accent);
+    }
+
     /* --- Scrollable List --- */
     .explore-list {
         flex: 1;
@@ -304,9 +316,9 @@
     }
 
     .rating-new {
-        background: rgba(30, 18, 10, 0.04);
-        color: #777;
-        border-color: rgba(0, 0, 0, 0.1);
+        background: rgba(200, 131, 42, 0.06);
+        color: var(--text-muted);
+        border-color: var(--border-subtle);
     }
 
     .badge-category {
@@ -323,7 +335,7 @@
     }
 
     .text-secondary-dark {
-        color: #4a4a4a;
+        color: var(--text-secondary);
         line-height: 1.5;
     }
 
@@ -373,6 +385,14 @@
         position: absolute;
         inset: 0;
         background: repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
+    }
+
+    [data-theme="dark"] .explore-map-panel {
+        background: var(--bg-body);
+    }
+
+    [data-theme="dark"] .explore-map-container {
+        background: var(--bg-surface);
     }
 
     .map-watermark {
@@ -444,7 +464,7 @@
             var cat = _firstDefined(p, explorePropMap.category, ['']);
             var html = '';
             if (name) html += '<strong>' + _esc(name) + '</strong>';
-            if (city) html += '<br><span style="color:#666">' + _esc(city) + '</span>';
+            if (city) html += '<br><span class="text-muted">' + _esc(city) + '</span>';
             if (cat) html += '<br><span class="badge bg-secondary">' + _esc(cat) + '</span>';
             if (id && explorePropMap.detailsUrl) {
                 html += '<br><a href="' + explorePropMap.detailsUrl.replace('{id}', encodeURIComponent(id)) + '" class="btn btn-sm btn-outline-primary mt-1">Details</a>';

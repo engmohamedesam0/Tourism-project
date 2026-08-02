@@ -953,3 +953,200 @@ body {
         gap: 20px;
     }
 }
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+[data-theme="dark"] .auth-page-wrapper {
+    background: #0c1115;
+    color: #E8DDD0;
+}
+
+[data-theme="dark"] .form-panel {
+    background: linear-gradient(135deg, #0f1419 0%, #1a120b 100%);
+}
+
+[data-theme="dark"] .brand-container .egyxplore-wordmark,
+[data-theme="dark"] .brand-container .new-brand-mark,
+[data-theme="dark"] .form-panel .brand-container .new-brand-mark {
+    text-shadow: 0 4px 16px rgba(200, 131, 42, 0.35);
+}
+
+[data-theme="dark"] .brand-tagline {
+    color: #A89B8C;
+}
+
+[data-theme="dark"] .brand-tagline .hi {
+    color: var(--gold-light);
+}
+
+[data-theme="dark"] h1.welcome-title {
+    color: #F5E6D3;
+}
+
+[data-theme="dark"] .welcome-sub {
+    color: #A89B8C;
+}
+
+[data-theme="dark"] .gold-divider {
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+}
+
+[data-theme="dark"] .form-field label {
+    color: #E8DDD0;
+}
+
+[data-theme="dark"] .input-wrap {
+    background: rgba(26, 18, 11, 0.8);
+    border-color: rgba(200, 131, 42, 0.3);
+}
+
+[data-theme="dark"] .input-wrap:focus-within {
+    border-color: var(--gold);
+    background: rgba(35, 25, 17, 0.95);
+}
+
+[data-theme="dark"] .input-wrap .field-icon {
+    color: var(--gold);
+}
+
+[data-theme="dark"] .input-wrap input {
+    color: #E8DDD0;
+}
+
+[data-theme="dark"] .input-wrap input::placeholder {
+    color: #8B7D6B;
+}
+
+[data-theme="dark"] .toggle-eye-btn {
+    color: #A89B8C;
+}
+
+[data-theme="dark"] .toggle-eye-btn:hover {
+    color: var(--gold);
+    background: rgba(200, 131, 42, 0.1);
+}
+
+[data-theme="dark"] .auth-divider {
+    color: #8B7D6B;
+}
+
+[data-theme="dark"] .auth-divider::before,
+[data-theme="dark"] .auth-divider::after {
+    background: rgba(200, 131, 42, 0.2);
+}
+
+[data-theme="dark"] .social-icon-btn {
+    background: rgba(26, 18, 11, 0.6);
+    border-color: rgba(200, 131, 42, 0.25);
+}
+
+[data-theme="dark"] .social-icon-btn:hover {
+    border-color: var(--gold-light);
+}
+
+[data-theme="dark"] .register-prompt {
+    color: #A89B8C;
+}
+
+[data-theme="dark"] .register-prompt a {
+    color: var(--gold);
+}
+
+[data-theme="dark"] .register-prompt a:hover {
+    color: #b87300;
+}
+
+[data-theme="dark"] .hero-panel {
+    background: #0c1115;
+}
+
+[data-theme="dark"] .hero-overlay-gradient {
+    background:
+        linear-gradient(90deg, rgba(5, 9, 12, .96) 0%, rgba(5, 9, 12, .75) 38%, rgba(5, 9, 12, .35) 75%, rgba(5, 9, 12, .25) 100%),
+        linear-gradient(0deg, rgba(4, 7, 9, .88) 0%, rgba(4, 7, 9, .15) 50%, rgba(3, 6, 8, .35) 100%);
+}
+
+[data-theme="dark"] .hero-title {
+    color: #f7f7f7;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, .85);
+}
+
+[data-theme="dark"] .hero-title .gold-accent {
+    color: var(--gold-light);
+}
+
+[data-theme="dark"] .hero-description {
+    color: rgba(255, 255, 255, .92);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, .9);
+}
+
+[data-theme="dark"] .carousel-nav-btn {
+    background: rgba(4, 8, 11, .7);
+    border-color: rgba(255, 255, 255, .3);
+    color: white;
+}
+
+[data-theme="dark"] .carousel-nav-btn:hover {
+    background: rgba(200, 131, 42, .9);
+    border-color: #e9a526;
+}
+
+[data-theme="dark"] .thumb-item {
+    background-color: #1a120b;
+}
+
+[data-theme="dark"] .thumb-item.active {
+    border-color: #e9a526;
+    box-shadow: 0 0 12px rgba(233, 165, 38, .5);
+}
+
+[data-theme="dark"] .dot-pill {
+    background: rgba(255, 255, 255, .35);
+}
+
+[data-theme="dark"] .dot-pill.active {
+    background: #e9a526;
+    box-shadow: 0 0 8px rgba(233, 165, 38, .6);
+}
+
+[data-theme="dark"] .btn-premium-login {
+    background: linear-gradient(135deg, #b37424, #C8832A);
+    box-shadow: 0 6px 16px rgba(190, 120, 10, .35);
+}
+
+[data-theme="dark"] .btn-premium-login:hover {
+    background: linear-gradient(135deg, #C8832A, #E8A045);
+    box-shadow: 0 10px 22px rgba(200, 131, 42, .45);
+}
+
+[data-theme="dark"] .forgot-link {
+    color: var(--gold);
+}
+
+[data-theme="dark"] .forgot-link:hover {
+    color: #b87300;
+}
+
+[data-theme="dark"] .remember-checkbox {
+    color: #E8DDD0;
+}
+
+[data-theme="dark"] .remember-checkbox input {
+    border-color: var(--gold);
+}
+
+[data-theme="dark"] .remember-checkbox input:checked {
+    background: var(--gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-theme="dark"] .auth-shell {
+        animation: none;
+    }
+
+    [data-theme="dark"] .hero-bg-layer {
+        transition: opacity .3s linear;
+        transform: none !important;
+    }
+}
