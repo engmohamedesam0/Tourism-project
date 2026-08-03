@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Tourist_Project_MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -103,13 +103,23 @@ namespace Tourist_Project_MVC.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    ArabicName = table.Column<string>(type: "text", nullable: true),
                     City = table.Column<string>(type: "text", nullable: false),
                     OpeningHours = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    OpenAt = table.Column<int>(type: "integer", nullable: true),
+                    CloseAt = table.Column<int>(type: "integer", nullable: true),
                     Category = table.Column<string>(type: "text", nullable: true),
                     Location = table.Column<Point>(type: "geometry", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     PhotoUrls = table.Column<string>(type: "text", nullable: true),
                     TicketPrice = table.Column<decimal>(type: "numeric(10,2)", nullable: true),
+                    TicketRequired = table.Column<string>(type: "text", nullable: true),
+                    ForeignPrice = table.Column<int>(type: "integer", nullable: true),
+                    StudentForeignPrice = table.Column<int>(type: "integer", nullable: true),
+                    EgyptianPrice = table.Column<int>(type: "integer", nullable: true),
+                    StudentEgyptianPrice = table.Column<int>(type: "integer", nullable: true),
+                    Days = table.Column<string>(type: "text", nullable: true),
+                    Booking = table.Column<string>(type: "text", nullable: true),
                     Rating = table.Column<decimal>(type: "numeric(18,2)", nullable: true),
                     Tags = table.Column<string>(type: "text", nullable: true),
                     Visits = table.Column<int>(type: "integer", nullable: false),
@@ -278,10 +288,6 @@ namespace Tourist_Project_MVC.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Nationality = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
                     IdNumber = table.Column<string>(type: "text", nullable: true),
                     Passport = table.Column<string>(type: "text", nullable: true),
                     point_Balance = table.Column<int>(type: "integer", nullable: false),

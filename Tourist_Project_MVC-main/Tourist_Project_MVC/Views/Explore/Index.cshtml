@@ -5,897 +5,644 @@
     ViewData["IsHomePage"] = true;
 }
 
-@section Styles {
-    <style>
-        /* ============================================================
-           EXPLORE PAGE — Premium Split-Panel Design
-           ============================================================ */
-
-        /* Full-viewport layout */
-        .explore-page {
-            min-height: calc(100vh - var(--nav-offset, 80px));
-            background: var(--bg-body);
-        }
-
-        .explore-page .container-fluid {
-            padding: 0;
-        }
-
-        .explore-page .row.g-0 {
-            min-height: calc(100vh - var(--nav-offset, 80px));
-        }
-
-        /* ---- LEFT PANEL ---- */
-        .explore-list-panel {
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-surface);
-            border-right: 1px solid var(--border-medium);
-            height: calc(100vh - var(--nav-offset, 80px));
-            position: sticky;
-            top: var(--nav-offset, 80px);
-            overflow: hidden;
-        }
-
-        /* ---- HEADER ---- */
-        .explore-header {
-            padding: 1.5rem 1.5rem 0.75rem;
-            background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(200,131,42,0.04) 100%);
-            border-bottom: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-        }
-
-        .explore-header .page-title {
-            font-family: 'Cinzel', serif;
-            font-size: 1.35rem;
-            font-weight: 800;
-            color: var(--text-heading);
-            margin: 0 0 0.15rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .explore-header .page-title .title-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--egy-primary), var(--egy-accent));
-            border-radius: 10px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(200,131,42,0.3);
-        }
-
-        .explore-header .page-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin: 0;
-            padding-left: 0.25rem;
-        }
-
-        /* ---- SEARCH ---- */
-        .explore-search {
-            padding: 0.85rem 1.25rem 0.5rem;
-            flex-shrink: 0;
-        }
-
-        .explore-search .search-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .explore-search .search-icon-wrap {
-            position: absolute;
-            left: 0.9rem;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .explore-search .search-icon-wrap .filter-icon-trigger {
-            width: 20px;
-            height: 20px;
-            pointer-events: all;
-            cursor: pointer;
-        }
-
-        .explore-search .search-icon-wrap .filter-icon-trigger .filter-icon-svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        .explore-search .search-divider {
-            width: 1px;
-            height: 16px;
-            background: var(--border-medium);
-            display: inline-block;
-        }
-
-        .explore-search input[type="text"] {
-            width: 100%;
-            padding: 0.7rem 2.8rem 0.7rem 5.5rem;
-            border: 1.5px solid var(--border-medium);
-            border-radius: 12px;
-            background: var(--bg-input);
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            transition: border-color 0.25s ease, box-shadow 0.25s ease;
-            outline: none;
-        }
-
-        .explore-search input[type="text"]:focus {
-            border-color: var(--egy-primary);
-            box-shadow: 0 0 0 3px rgba(200,131,42,0.12);
-        }
-
-        .explore-search input[type="text"]::placeholder {
-            color: var(--text-muted);
-        }
-
-        .explore-search .search-clear {
-            position: absolute;
-            right: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 0.2rem;
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            width: 22px;
-            height: 22px;
-            transition: background 0.2s, color 0.2s;
-            font-size: 0.75rem;
-        }
-
-        .explore-search .search-clear:hover {
-            background: var(--border-subtle);
-            color: var(--text-primary);
-        }
-
-        .explore-search input[type="text"]:not(:placeholder-shown) ~ .search-clear {
-            display: flex;
-        }
-
-        /* ---- CATEGORY CHIPS ---- */
-        .category-chips {
-            padding: 0.35rem 1.25rem 0.75rem;
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 0.45rem;
-            overflow-x: auto;
-            scrollbar-width: none;
-            flex-shrink: 0;
-        }
-
-        .category-chips::-webkit-scrollbar { display: none; }
-
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.35rem 0.9rem;
-            border-radius: 50px;
-            border: 1.5px solid var(--border-medium);
-            background: var(--bg-surface);
-            color: var(--text-secondary);
-            font-size: 0.775rem;
-            font-weight: 600;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.22s ease;
-            letter-spacing: 0.2px;
-        }
-
-        .chip:hover {
-            border-color: var(--egy-primary);
-            color: var(--egy-primary);
-            background: rgba(200,131,42,0.06);
-            transform: translateY(-1px);
-        }
-
-        .chip.chip-active {
-            background: linear-gradient(135deg, var(--egy-primary), var(--egy-accent));
-            border-color: transparent;
-            color: #fff;
-            box-shadow: 0 4px 14px rgba(200,131,42,0.35);
-        }
-
-        .chip.chip-active:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(200,131,42,0.45);
-        }
-
-        /* ---- RESULTS COUNT ---- */
-        .explore-results-bar {
-            padding: 0.2rem 1.4rem 0.4rem;
-            flex-shrink: 0;
-        }
-
-        .explore-results-count {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .explore-results-count strong {
-            color: var(--egy-primary);
-        }
-
-        /* ---- SCROLLABLE LIST ---- */
-        .explore-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0.5rem 1rem 1.5rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--border-medium) transparent;
-        }
-
-        .explore-list::-webkit-scrollbar { width: 4px; }
-        .explore-list::-webkit-scrollbar-track { background: transparent; }
-        .explore-list::-webkit-scrollbar-thumb {
-            background: var(--border-medium);
-            border-radius: 4px;
-        }
-
-        /* ---- DESTINATION CARD ---- */
-        .explore-card {
-            background: var(--bg-card);
-            border: 1.5px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 1rem 1.1rem;
-            margin-bottom: 0.75rem;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .explore-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: linear-gradient(180deg, var(--egy-primary), var(--egy-accent));
-            border-radius: 3px 0 0 3px;
-            opacity: 0;
-            transition: opacity 0.25s ease;
-        }
-
-        .explore-card:hover,
-        .explore-card.card-highlighted {
-            border-color: var(--egy-primary);
-            box-shadow: 0 6px 24px rgba(200,131,42,0.14);
-            transform: translateX(4px);
-        }
-
-        .explore-card:hover::before,
-        .explore-card.card-highlighted::before {
-            opacity: 1;
-        }
-
-        .explore-card-title {
-            font-family: 'Cinzel', serif;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-heading);
-            margin: 0;
-            line-height: 1.3;
-        }
-
-        .explore-card-city {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 0.2rem;
-        }
-
-        .text-primary-gold {
-            color: var(--egy-primary);
-        }
-
-        .badge-category {
-            display: inline-block;
-            padding: 0.2rem 0.65rem;
-            border-radius: 20px;
-            background: rgba(200,131,42,0.1);
-            border: 1px solid var(--border-medium);
-            color: var(--egy-primary);
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .rating-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.2rem;
-            padding: 0.2rem 0.6rem;
-            background: linear-gradient(135deg, #f59e0b, #f97316);
-            color: #fff;
-            border-radius: 20px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(245,158,11,0.3);
-        }
-
-        .rating-badge.rating-new {
-            background: linear-gradient(135deg, var(--egy-primary), var(--egy-accent));
-            box-shadow: 0 2px 8px rgba(200,131,42,0.3);
-        }
-
-        .explore-card-desc {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            line-height: 1.55;
-            margin: 0.5rem 0 0.6rem;
-        }
-
-        /* ---- TAGS ---- */
-        .explore-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.3rem;
-        }
-
-        .explore-tag {
-            display: inline-block;
-            padding: 0.15rem 0.55rem;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            font-size: 0.68rem;
-            color: var(--text-muted);
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .explore-tag:hover {
-            background: rgba(200,131,42,0.08);
-            border-color: var(--border-medium);
-            color: var(--egy-primary);
-        }
-
-        /* ---- CARD ACTIONS ---- */
-        .explore-card-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
-        }
-
-        .btn-locate {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.3rem;
-            padding: 0.38rem 0.85rem;
-            border: 1.5px solid var(--border-medium);
-            border-radius: 8px;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 0.775rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            flex: 1;
-        }
-
-        .btn-locate:hover {
-            border-color: var(--egy-primary);
-            color: var(--egy-primary);
-            background: rgba(200,131,42,0.06);
-        }
-
-        .btn-gold {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.3rem;
-            padding: 0.38rem 1rem;
-            background: linear-gradient(135deg, var(--egy-primary), var(--egy-accent));
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 0.775rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.22s ease;
-            box-shadow: 0 3px 10px rgba(200,131,42,0.3);
-        }
-
-        .btn-gold:hover {
-            color: #fff;
-            box-shadow: 0 5px 18px rgba(200,131,42,0.45);
-            transform: translateY(-1px);
-        }
-
-        /* ---- EMPTY STATE ---- */
-        .explore-empty-state {
-            text-align: center;
-            padding: 2.5rem 1rem;
-        }
-
-        .explore-empty-state .empty-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
-            opacity: 0.5;
-        }
-
-        .explore-empty-state p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        /* ---- RIGHT MAP PANEL ---- */
-        .explore-map-panel {
-            position: relative;
-        }
-
-        .explore-map-container {
-            position: sticky;
-            top: var(--nav-offset, 80px);
-            height: calc(100vh - var(--nav-offset, 80px));
-            width: 100%;
-            z-index: 1;
-        }
-
-        /* ---- MAP OVERLAY BADGE ---- */
-        .map-overlay-badge {
-            position: absolute;
-            top: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 400;
-            background: var(--bg-card);
-            border: 1px solid var(--border-medium);
-            border-radius: 50px;
-            padding: 0.4rem 1rem;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            box-shadow: var(--shadow-elevated);
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        .map-overlay-badge strong {
-            color: var(--egy-primary);
-        }
-
-        /* ---- MOBILE COLLAPSE ---- */
-        @@media (max-width: 991.98px) {
-            .explore-list-panel {
-                position: relative;
-                top: 0;
-                height: auto;
-                max-height: 55vh;
-            }
-
-            .explore-map-panel {
-                height: 45vh;
-            }
-
-            .explore-map-container {
-                position: relative;
-                top: 0;
-                height: 100%;
-            }
-        }
-
-        /* ---- CUSTOM MARKER POPUP ---- */
-        .leaflet-popup-content-wrapper {
-            border-radius: 12px !important;
-            border: 1px solid var(--border-medium) !important;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
-            padding: 0 !important;
-        }
-
-        .leaflet-popup-content {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .explore-popup {
-            padding: 0.9rem 1rem;
-            min-width: 200px;
-        }
-
-        .explore-popup-name {
-            font-family: 'Cinzel', serif;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-heading);
-            margin-bottom: 0.15rem;
-        }
-
-        .explore-popup-city {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-bottom: 0.6rem;
-        }
-
-        .explore-popup-rating {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.2rem;
-            font-size: 0.72rem;
-            color: #f59e0b;
-            font-weight: 700;
-            margin-bottom: 0.6rem;
-        }
-
-        .explore-popup .btn-gold {
-            width: 100%;
-            font-size: 0.78rem;
-            padding: 0.4rem 0.8rem;
-            border-radius: 8px;
-        }
-
-        /* Animated entrance */
-        @@keyframes cardSlideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-
-        .explore-card {
-            animation: cardSlideIn 0.3s ease both;
-        }
-    </style>
-}
-
 <div class="explore-page">
     <div class="container-fluid">
         <div class="row g-0">
 
-            <!-- ===== LEFT PANEL ===== -->
+            <!-- LEFT PANEL: Navigation, list + filters -->
             <div class="col-lg-5 col-xl-4 explore-list-panel">
 
-                <!-- Header -->
                 <div class="explore-header">
-                    <h2 class="page-title">
-                        <span class="title-icon">🧭</span>
-                        @Localizer["Explore_Title"].Value
-                    </h2>
-                    <p class="page-subtitle">@Localizer["Explore_Subtitle"].Value</p>
+                    <h2 class="page-title mb-1">🧭 @Localizer["Explore_Title"].Value</h2>
+                    <p class="text-muted small mb-0">@Localizer["Explore_Subtitle"].Value</p>
                 </div>
 
-                <!-- Search -->
+                <!-- Search box (reuses Destination admin search pattern) -->
                 <div class="explore-search">
                     <form method="get" asp-action="Index" id="exploreSearchForm">
-                        <div class="search-wrapper">
-                            <span class="search-icon-wrap">
-                                @await Html.PartialAsync("_FilterIcon")
-                                <span class="search-divider"></span>
-                                <i class="bi bi-search text-muted" style="font-size:0.85rem;"></i>
+                        <div class="input-group search-input-group">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="bi bi-search text-muted"></i>
                             </span>
-                            <input type="text"
-                                   name="search"
-                                   id="exploreSearch"
-                                   placeholder="@Localizer["Explore_SearchPlaceholder"].Value"
-                                   value="@ViewBag.Search"
-                                   autocomplete="off" />
-                            <button type="button" class="search-clear" id="searchClearBtn" title="Clear">
-                                <i class="bi bi-x"></i>
-                            </button>
+                            <input type="text" name="search" id="exploreSearch" class="form-control border-start-0 ps-1"
+                                   placeholder="@Localizer["Explore_SearchPlaceholder"].Value" value="@ViewBag.Search" />
                         </div>
                     </form>
                 </div>
 
-                <!-- Category Chips -->
+                <!-- Category filter chips -->
                 <div class="category-chips" id="categoryChips">
-                    <button type="button" class="chip chip-active" data-filter="all">
-                        <i class="bi bi-grid-3x3-gap-fill"></i>@Localizer["Explore_All"].Value
-                    </button>
-                    <button type="button" class="chip" data-filter="Hidden Gems" data-status="Pending">
-                        <i class="bi bi-gem"></i>@Localizer["Explore_HiddenGems"].Value
-                    </button>
-                    <button type="button" class="chip" data-filter="Temples" data-category="Temple">
-                        <i class="bi bi-columns-gap"></i>@Localizer["Explore_Temples"].Value
-                    </button>
-                    <button type="button" class="chip" data-filter="Museums" data-category="Museum">
-                        <i class="bi bi-bank2"></i>@Localizer["Explore_Museums"].Value
-                    </button>
-                    <button type="button" class="chip" data-filter="Nature" data-category="Natural">
-                        <i class="bi bi-tree-fill"></i>@Localizer["Explore_Nature"].Value
-                    </button>
-                    <button type="button" class="chip" data-filter="Adventure" data-category="Archaeological">
-                        <i class="bi bi-compass-fill"></i>@Localizer["Explore_Adventure"].Value
-                    </button>
+                    <button type="button" class="chip chip-active"
+                            data-filter="all">@Localizer["Explore_All"].Value</button>
+                    <button type="button" class="chip" data-filter="Hidden Gems"
+                            data-status="Pending">@Localizer["Explore_HiddenGems"].Value</button>
+                    <button type="button" class="chip" data-filter="Temples"
+                            data-category="Temple">@Localizer["Explore_Temples"].Value</button>
+                    <button type="button" class="chip" data-filter="Museums"
+                            data-category="Museum">@Localizer["Explore_Museums"].Value</button>
+                    <button type="button" class="chip" data-filter="Nature"
+                            data-category="Natural">@Localizer["Explore_Nature"].Value</button>
+                    <button type="button" class="chip" data-filter="Adventure"
+                            data-category="Archaeological">@Localizer["Explore_Adventure"].Value</button>
                 </div>
 
-                <!-- Results count bar -->
-                <div class="explore-results-bar">
-                    <span class="explore-results-count" id="resultsCount">
-                        Showing <strong id="visibleCount">@Model.Count()</strong> destinations
-                    </span>
-                </div>
-
-                <!-- Scrollable list -->
+                <!-- Scrollable destination list -->
                 <div class="explore-list" id="exploreList">
+                    <div id="exploreEmptyFilter" class="text-muted small py-3" style="display:none">No results match
+                        your filters.</div>
 
-                    <!-- Empty state -->
-                    <div id="exploreEmptyFilter" class="explore-empty-state" style="display:none;">
-                        <div class="empty-icon">🔍</div>
-                        <p>No destinations match your filters.</p>
-                    </div>
+                        @foreach (var item in Model)
+                        {
+                            <div class="explore-card" data-id="@item.Id" data-lat="@item.Location.Y" data-lng="@item.Location.X"
+                                 data-category="@item.Category" data-status="@item.Status" data-name="@item.Name">
 
-                    @foreach (var item in Model)
-                    {
-                        <div class="explore-card"
-                             data-id="@item.Id"
-                             data-lat="@item.Location.Y"
-                             data-lng="@item.Location.X"
-                             data-category="@item.Category"
-                             data-status="@item.Status"
-                             data-name="@item.Name">
-
-                            <!-- Title + Rating -->
-                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                <h5 class="explore-card-title">@item.Name</h5>
-                                @if (item.Rating.HasValue)
-                                {
-                                    <span class="rating-badge" title="Average rating">
-                                        <i class="bi bi-star-fill"></i>@item.Rating.Value.ToString("0.0")
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="rating-badge rating-new" title="@Localizer["Explore_NotRated"].Value">
-                                        @Localizer["Explore_New"].Value
-                                    </span>
-                                }
-                            </div>
-
-                            <!-- City -->
-                            <div class="explore-card-city mb-2">
-                                <i class="bi bi-geo-alt-fill text-primary-gold"></i>
-                                @item.City
-                            </div>
-
-                            <!-- Category badge -->
-                            <span class="badge-category">@item.Category</span>
-
-                            <!-- Description -->
-                            <p class="explore-card-desc">
-                                @(item.Description?.Length > 95 ? item.Description.Substring(0, 95) + "…" : item.Description)
-                            </p>
-
-                            <!-- Tags -->
-                            @if (!string.IsNullOrWhiteSpace(item.Tags))
-                            {
-                                <div class="explore-tags mb-2">
-                                    @foreach (var tag in item.Tags.Split(',').Take(4))
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="explore-card-title mb-0">@item.Name</h5>
+                                    @if (item.Rating.HasValue)
                                     {
-                                        <span class="explore-tag">#@tag.Trim()</span>
+                                        <span class="rating-badge" title="Average rating">
+                                            <i class="bi bi-star-fill me-1"></i>@item.Rating.Value.ToString("0.0")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rating-badge rating-new"
+                                              title="@Localizer["Explore_NotRated"].Value">@Localizer["Explore_New"].Value</span>
                                     }
                                 </div>
-                            }
 
-                            <!-- Actions -->
-                            <div class="explore-card-actions">
-                                <button type="button"
-                                        class="btn-locate"
-                                        onclick="flyToDestination(@item.Location.Y, @item.Location.X, '@item.Name', @item.Id)">
-                                    <i class="bi bi-geo-alt"></i> @Localizer["Explore_LocateOnMap"].Value
-                                </button>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn-gold">
-                                    @Localizer["Explore_Details"].Value <i class="bi bi-chevron-right ms-1"></i>
-                                </a>
+                                <div class="explore-card-city text-muted small mb-3">
+                                    <i class="bi bi-geo-alt-fill text-primary-gold me-1"></i>@item.City
+                                </div>
+
+                                <span class="badge-category">@item.Category</span>
+
+                                <p class="explore-card-desc small mt-3 mb-3 text-secondary-dark">
+                                    @(item.Description?.Length > 90 ? item.Description.Substring(0, 90) + "…" :
+                                item.Description)
+                                </p>
+
+                                @if (!string.IsNullOrWhiteSpace(item.Tags))
+                                {
+                                    <div class="explore-tags mb-3">
+                                        @foreach (var tag in item.Tags.Split(','))
+                                        {
+                                            <span class="tag-pill">@tag.Trim()</span>
+                                        }
+                                    </div>
+                                }
+
+                                <div class="explore-card-actions">
+                                    <a asp-controller="Destination" asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-explore-action">
+                                        <i class="bi bi-eye-fill me-1"></i> @Localizer["Explore_Details"].Value
+                                    </a>
+                                </div>
                             </div>
+                        }
+
+                        @if (!Model.Any())
+                        {
+                            <div class="text-center text-muted py-5">
+                                <i class="bi bi-geo-alt" style="font-size: 2.5rem; color: var(--egy-primary);"></i>
+                                <p class="mt-2 mb-0">@Localizer["Explore_NoDestinations"].Value</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- RIGHT PANEL: map placeholder -->
+                <div class="col-lg-7 col-xl-8 explore-map-panel">
+                    <div id="exploreMap" class="explore-map-container">
+                        <div class="map-watermark">
+                            <i class="bi bi-map" style="font-size: 3rem;"></i>
+                            <p class="mb-0 mt-2">@Localizer["Explore_MapPlaceholder"].Value</p>
+                            <small class="text-muted">@Localizer["Explore_MapNote"].Value</small>
                         </div>
-                    }
+                    </div>
                 </div>
 
-            </div><!-- /LEFT PANEL -->
-
-            <!-- ===== RIGHT MAP PANEL ===== -->
-            <div class="col-lg-7 col-xl-8 explore-map-panel">
-                <div id="exploreMap" class="explore-map-container"></div>
-                <div class="map-overlay-badge" id="mapBadge">
-                    <strong id="mapCount">@Model.Count()</strong> places on map
-                </div>
             </div>
-
         </div>
     </div>
-</div>
 
-@section Scripts {
-    <script>
-        var exploreDestinations = [
-            @foreach (var item in Model)
-            {
-                <text>{
-                    id: @item.Id,
-                    name: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(item.Name ?? "")),
-                    lat: @item.Location.Y,
-                    lng: @item.Location.X,
-                    category: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(item.Category ?? "")),
-                    status: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(item.Status ?? "")),
-                    city: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(item.City ?? "")),
-                    rating: @(item.Rating.HasValue ? item.Rating.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null"),
-                    detailsUrl: '@Url.Action("Details", "Explore", new { id = item.Id })'
-                },</text>
-            }
-        ];
-
-        document.addEventListener('DOMContentLoaded', function () {
-
-            /* ── Leaflet map ── */
-            var map = null;
-            var markersGroup = null;
-            var activeMarkerId = null;
-
-            if (typeof L !== 'undefined') {
-                map = L.map('exploreMap', { zoomControl: false }).setView([26.8206, 30.8025], 6);
-                L.control.zoom({ position: 'topright' }).addTo(map);
-
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap contributors',
-                    maxZoom: 18
-                }).addTo(map);
-
-                markersGroup = L.layerGroup().addTo(map);
+    @section Scripts {
+        <style>
+            /* --- Main Layout --- */
+            .explore-page {
+                padding-top: var(--nav-offset);
             }
 
-            /* Gold custom marker icon */
-            function goldIcon(highlighted) {
-                return L.divIcon({
-                    className: '',
-                    html: `<div style="
-                        width:${highlighted ? 36 : 28}px;
-                        height:${highlighted ? 36 : 28}px;
-                        background:linear-gradient(135deg,#C8832A,#E8A045);
-                        border-radius:50% 50% 50% 0;
-                        transform:rotate(-45deg);
-                        border:2px solid #fff;
-                        box-shadow:0 3px 12px rgba(200,131,42,${highlighted ? 0.7 : 0.4});
-                        transition:all 0.3s ease;
-                    "></div>`,
-                    iconSize: [highlighted ? 36 : 28, highlighted ? 36 : 28],
-                    iconAnchor: [highlighted ? 18 : 14, highlighted ? 36 : 28]
-                });
+            .explore-list-panel {
+                background: var(--egy-light);
+                border-right: 1px solid rgba(200, 131, 42, 0.15);
+                height: calc(100vh - var(--nav-offset));
+                display: flex;
+                flex-direction: column;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+                z-index: 10;
             }
 
-            var markerMap = {};
+            .explore-header {
+                padding: 24px 24px 12px;
+            }
 
-            function addMarkers(list) {
-                if (!map) return;
-                markersGroup.clearLayers();
-                markerMap = {};
-                var bounds = L.latLngBounds();
+            .explore-header .page-title {
+                color: var(--egy-dark);
+                font-weight: 700;
+                font-size: 1.5rem;
+            }
 
-                list.forEach(function (item) {
-                    if (!item.lat || !item.lng) return;
+            /* --- Search Input --- */
+            .explore-search {
+                padding: 0 24px 16px;
+            }
 
-                    var ratingHtml = item.rating
-                        ? `<div class="explore-popup-rating"><i class="bi bi-star-fill me-1"></i>${parseFloat(item.rating).toFixed(1)}</div>`
-                        : '';
+            .search-input-group {
+                border-radius: 30px;
+                overflow: hidden;
+                border: 1px solid rgba(200, 131, 42, 0.25);
+                background: var(--bg-surface);
+                box-shadow: var(--shadow-soft);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
 
-                    var popupHtml = `
-                        <div class="explore-popup">
-                            <div class="explore-popup-name">${item.name}</div>
-                            <div class="explore-popup-city"><i class="bi bi-geo-alt-fill me-1" style="color:#C8832A"></i>${item.city}</div>
-                            ${ratingHtml}
-                            <a href="${item.detailsUrl}" class="btn-gold w-100" style="display:block;text-align:center;">View Details <i class="bi bi-chevron-right"></i></a>
-                        </div>`;
+            .search-input-group:focus-within {
+                border-color: var(--egy-primary);
+                box-shadow: 0 0 0 3px rgba(200, 131, 42, 0.15), var(--shadow-soft);
+                transform: translateY(-1px);
+            }
 
-                    var marker = L.marker([item.lat, item.lng], { icon: goldIcon(false) });
-                    marker.addTo(markersGroup);
-                    marker.bindPopup(popupHtml, { maxWidth: 240, minWidth: 210 });
-                    markerMap[item.id] = marker;
-                    bounds.extend([item.lat, item.lng]);
-                });
+            .search-input-group .form-control {
+                border: none;
+                box-shadow: none;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                font-family: 'Nunito', sans-serif;
+                font-size: 0.9rem;
+            }
 
-                if (list.length > 0 && bounds.isValid()) {
-                    map.fitBounds(bounds, { padding: [50, 50] });
+            .search-input-group .input-group-text {
+                border: none;
+                padding-left: 18px;
+            }
+
+            /* --- Filter Chips --- */
+            .category-chips {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 0 24px 20px;
+                border-bottom: 1px solid rgba(200, 131, 42, 0.1);
+            }
+
+            .chip {
+                border: 1px solid rgba(200, 131, 42, 0.25);
+                background: rgba(248, 250, 252, 0.6);
+                color: var(--egy-muted-gold);
+                border-radius: 25px;
+                padding: 6px 14px;
+                font-size: 0.78rem;
+                font-weight: 700;
+                font-family: 'Nunito', sans-serif;
+                cursor: pointer;
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            }
+
+            .chip:hover {
+                background: var(--egy-accent);
+                color: var(--egy-dark);
+                border-color: var(--egy-accent);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 10px rgba(200, 131, 42, 0.15);
+            }
+
+            .chip-active {
+                background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%);
+                color: #fff !important;
+                border-color: transparent;
+                box-shadow: var(--shadow-glow-gold);
+            }
+
+            [data-theme="dark"] .chip {
+                background: var(--bg-surface-elevated);
+                color: var(--text-primary);
+                border-color: var(--border-medium);
+            }
+
+            [data-theme="dark"] .chip:hover {
+                background: var(--egy-accent);
+                color: var(--egy-dark);
+                border-color: var(--egy-accent);
+            }
+
+            /* --- Scrollable List --- */
+            .explore-list {
+                flex: 1;
+                overflow-y: auto;
+                padding: 20px 24px 40px;
+            }
+
+            /* Custom scrollbar for list panel */
+            .explore-list::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .explore-list::-webkit-scrollbar-track {
+                background: rgba(200, 131, 42, 0.03);
+            }
+
+            .explore-list::-webkit-scrollbar-thumb {
+                background: rgba(200, 131, 42, 0.2);
+                border-radius: 3px;
+            }
+
+            .explore-list::-webkit-scrollbar-thumb:hover {
+                background: var(--egy-primary);
+            }
+
+            /* --- Destination Cards --- */
+            .explore-card {
+                background: var(--bg-surface);
+                border: 1px solid rgba(200, 131, 42, 0.12) !important;
+                border-radius: 16px;
+                padding: 20px 22px;
+                margin-bottom: 18px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+                box-shadow: var(--shadow-soft);
+            }
+
+            .explore-card:hover {
+                border-color: var(--egy-primary) !important;
+                transform: translateY(-5px);
+                box-shadow: 0 12px 26px rgba(200, 131, 42, 0.14);
+            }
+
+            .explore-card.active-card {
+                border: 2px solid var(--egy-primary) !important;
+                background: rgba(200, 131, 42, 0.02) !important;
+                box-shadow: 0 8px 20px rgba(200, 131, 42, 0.08);
+            }
+
+            .explore-card-title {
+                font-family: 'Cinzel', serif;
+                color: var(--egy-dark);
+                font-size: 1.1rem;
+                font-weight: 700;
+                line-height: 1.3;
+            }
+
+            .text-primary-gold {
+                color: var(--egy-primary);
+            }
+
+            .rating-badge {
+                background: rgba(200, 131, 42, 0.08);
+                color: var(--egy-muted-gold);
+                border: 1px solid rgba(200, 131, 42, 0.2);
+                border-radius: 20px;
+                padding: 3px 10px;
+                font-size: 0.78rem;
+                font-weight: 700;
+                white-space: nowrap;
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .rating-badge i {
+                color: var(--egy-primary);
+            }
+
+            .rating-new {
+                background: rgba(200, 131, 42, 0.06);
+                color: var(--text-muted);
+                border-color: var(--border-subtle);
+            }
+
+            .badge-category {
+                display: inline-block;
+                background: rgba(200, 131, 42, 0.06);
+                color: var(--egy-muted-gold);
+                font-size: 0.7rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                padding: 3px 10px;
+                border-radius: 12px;
+                border: 1px solid rgba(200, 131, 42, 0.15);
+            }
+
+            .text-secondary-dark {
+                color: var(--text-secondary);
+                line-height: 1.5;
+            }
+
+            .explore-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .tag-pill {
+                background: rgba(200, 131, 42, 0.04);
+                border: 1px solid rgba(200, 131, 42, 0.15);
+                color: var(--egy-muted-gold);
+                border-radius: 10px;
+                padding: 2px 8px;
+                font-size: 0.72rem;
+                font-weight: 600;
+            }
+
+            /* --- Action Buttons --- */
+            .btn-explore-action {
+                border: 1px solid rgba(200, 131, 42, 0.4);
+                color: var(--egy-muted-gold);
+                border-radius: 20px;
+                padding: 5px 16px;
+                font-size: 0.8rem;
+                font-weight: 700;
+                background: transparent;
+                transition: all 0.25s ease;
+            }
+
+            .btn-explore-action:hover {
+                background: var(--egy-primary);
+                border-color: var(--egy-primary);
+                color: #fff;
+                box-shadow: 0 4px 10px rgba(200, 131, 42, 0.2);
+            }
+
+            /* --- Map Panel --- */
+            .explore-map-panel {
+                height: calc(100vh - var(--nav-offset));
+                background: #ece6db;
+                position: relative;
+            }
+
+            .explore-map-container {
+                position: absolute;
+                inset: 0;
+                background: repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
+            }
+
+            [data-theme="dark"] .explore-map-panel {
+                background: var(--bg-body);
+            }
+
+            [data-theme="dark"] .explore-map-container {
+                background: var(--bg-surface);
+            }
+
+            .map-watermark {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                color: var(--egy-muted-gold);
+                opacity: 0.65;
+            }
+
+            /* --- Responsive Styling --- */
+            @@media (max-width: 991.98px) {
+
+                .explore-list-panel,
+                .explore-map-panel {
+                    height: auto;
                 }
 
-                // Update map badge count
-                var mapCount = document.getElementById('mapCount');
-                if (mapCount) mapCount.textContent = list.length;
-            }
-
-            addMarkers(exploreDestinations);
-
-            /* Fly to destination */
-            window.flyToDestination = function (lat, lng, name, id) {
-                if (!map) return;
-                map.flyTo([lat, lng], 14, { duration: 1.3, easeLinearity: 0.4 });
-
-                // Highlight card
-                document.querySelectorAll('.explore-card').forEach(c => c.classList.remove('card-highlighted'));
-                var card = document.querySelector(`.explore-card[data-id="${id}"]`);
-                if (card) {
-                    card.classList.add('card-highlighted');
-                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                .explore-map-panel {
+                    min-height: 360px;
+                    position: relative;
                 }
 
-                // Open marker popup after fly
-                setTimeout(function () {
-                    var marker = markerMap[id];
-                    if (marker) marker.openPopup();
-                }, 1350);
-            };
+                .explore-map-container {
+                    position: relative;
+                    inset: auto;
+                    height: 360px;
+                }
 
-            /* ── Search & filter ── */
-            var searchInput = document.getElementById('exploreSearch');
-            var clearBtn    = document.getElementById('searchClearBtn');
-            var categoryChips = document.querySelectorAll('#categoryChips .chip');
-            var cards       = document.querySelectorAll('.explore-card');
-            var emptyState  = document.getElementById('exploreEmptyFilter');
-            var visibleCountEl = document.getElementById('visibleCount');
+                .explore-list {
+                    max-height: 55vh;
+                }
+            }
+        </style>
 
-            function applyFilters() {
-                var q = (searchInput ? searchInput.value : '').toLowerCase().trim();
-                var activeChip = document.querySelector('#categoryChips .chip-active');
-                var activeCategory = activeChip ? activeChip.getAttribute('data-category') : null;
-                var activeStatus   = activeChip ? activeChip.getAttribute('data-status')   : null;
+        <script>
+            (function () {
+                var chips = document.querySelectorAll('#categoryChips .chip');
+                var cards = Array.from(document.querySelectorAll('#exploreList .explore-card'));
+                var mapInstance = null;
+                var searchFitTimer = null;
+                var explorePropMap = {
+                    id: ['ObjectId', 'id', 'Id', 'destination_id'],
+                    name: ['English_Name', 'name', 'Name', 'destination_name'],
+                    city: ['Governorate', 'city', 'City'],
+                    category: ['category', 'Category'],
+                    status: ['status', 'Status'],
+                    detailsUrl: '/Destination/Details/{id}'
+                };
 
-                var visibleCount = 0;
-                var filteredItems = [];
+                function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-                cards.forEach(function (card, idx) {
-                    var name     = (card.getAttribute('data-name') || '').toLowerCase();
-                    var category = card.getAttribute('data-category');
-                    var status   = card.getAttribute('data-status');
-
-                    var matchesSearch   = !q || name.includes(q);
-                    var matchesCategory = !activeCategory || category === activeCategory;
-                    var matchesStatus   = !activeStatus   || status   === activeStatus;
-
-                    if (matchesSearch && matchesCategory && matchesStatus) {
-                        card.style.display = '';
-                        card.style.animationDelay = (idx * 0.04) + 's';
-                        visibleCount++;
-                        var id   = parseInt(card.getAttribute('data-id'));
-                        var dest = exploreDestinations.find(d => d.id === id);
-                        if (dest) filteredItems.push(dest);
-                    } else {
-                        card.style.display = 'none';
+                function _firstDefined(p, keys, fallback) {
+                    for (var i = 0; i < keys.length; i++) {
+                        var val = p[keys[i]];
+                        if (val !== undefined && val !== null && String(val) !== '') return String(val);
                     }
+                    return fallback[0] || '';
+                }
+
+                /* 
+                // UNUSED: Replaced by custom JavaScript image renderer in maps.js
+                function buildPopup(feature) {
+                    var p = feature.properties || {};
+                    var id = _firstDefined(p, explorePropMap.id, []);
+                    var name = _firstDefined(p, explorePropMap.name, ['Unnamed']);
+                    var city = _firstDefined(p, explorePropMap.city, ['']);
+                    var cat = _firstDefined(p, explorePropMap.category, ['']);
+                    var html = '';
+                    if (name) html += '<strong>' + _esc(name) + '</strong>';
+                    if (city) html += '<br><span class="text-muted">' + _esc(city) + '</span>';
+                    if (cat) html += '<br><span class="badge bg-secondary">' + _esc(cat) + '</span>';
+                    if (id && explorePropMap.detailsUrl) {
+                        html += '<br><a href="' + explorePropMap.detailsUrl.replace('{id}', encodeURIComponent(id)) + '" class="btn btn-sm btn-outline-primary mt-1">Details</a>';
+                    }
+                    return html;
+                }
+                */
+
+                function getExploreSearch() {
+                    var el = document.getElementById('exploreSearch');
+                    return el ? el.value.trim().toLowerCase() : '';
+                }
+
+                function cardMatchesSearch(card, q) {
+                    if (!q) return true;
+                    var name = (card.getAttribute('data-name') || '').toLowerCase();
+                    var cat = (card.getAttribute('data-category') || '').toLowerCase();
+                    return name.indexOf(q) > -1 || cat.indexOf(q) > -1;
+                }
+
+                function explorePredicate(feature) {
+                    var p = feature.properties || {};
+                    var activeFilter = document.querySelector('#categoryChips .chip-active');
+                    var isAll = activeFilter && activeFilter.getAttribute('data-filter') === 'all';
+                    var activeCat = isAll ? null : (activeFilter ? activeFilter.getAttribute('data-category') : null);
+                    var activeStatus = isAll ? null : (activeFilter ? activeFilter.getAttribute('data-status') : null);
+                    var propCat = _firstDefined(p, explorePropMap.category, ['']);
+                    var propStatus = _firstDefined(p, explorePropMap.status, ['']);
+                    var chipMatch = isAll || (activeCat && propCat === activeCat) || (activeStatus && propStatus === activeStatus);
+                    var q = getExploreSearch();
+                    var name = _firstDefined(p, explorePropMap.name, ['']).toLowerCase();
+                    var searchMatch = !q || name.indexOf(q) > -1 || propCat.toLowerCase().indexOf(q) > -1;
+                    return chipMatch && searchMatch;
+                }
+
+                function syncMarkersFromChips() {
+                    if (mapInstance && mapInstance.filterMarkers) {
+                        mapInstance.filterMarkers(explorePredicate);
+                    }
+                }
+
+                function cardMatchesChip(card, activeFilter) {
+                    if (!activeFilter) return true;
+                    var isAll = activeFilter.getAttribute('data-filter') === 'all';
+                    if (isAll) return true;
+                    var category = activeFilter.getAttribute('data-category');
+                    var status = activeFilter.getAttribute('data-status');
+                    if (category) return card.getAttribute('data-category') === category;
+                    if (status) return card.getAttribute('data-status') === status;
+                    return true;
+                }
+
+                function getActiveChip() {
+                    return document.querySelector('#categoryChips .chip-active');
+                }
+
+                function fitExploreBounds() {
+                    if (!mapInstance || !mapInstance.fitBounds) return;
+                    var q = getExploreSearch();
+                    var activeFilter = getActiveChip();
+                    var latlngs = [];
+                    cards.forEach(function (card) {
+                        if (card.style.display === 'none') return;
+                        if (!cardMatchesChip(card, activeFilter)) return;
+                        if (!cardMatchesSearch(card, q)) return;
+                        var lat = parseFloat(card.getAttribute('data-lat'));
+                        var lng = parseFloat(card.getAttribute('data-lng'));
+                        if (!isNaN(lat) && !isNaN(lng)) latlngs.push([lat, lng]);
+                    });
+                    if (latlngs.length === 0) return;
+                    mapInstance.fitBounds(latlngs);
+                }
+
+                function applyFilter(chip) {
+                    cards.forEach(function (card) {
+                        card.style.display = cardMatchesChip(card, chip) ? '' : 'none';
+                    });
+
+                    syncMarkersFromChips();
+                    toggleExploreEmpty();
+                    fitExploreBounds();
+                }
+
+                function toggleExploreEmpty() {
+                    var visible = cards.filter(function (c) { return c.style.display !== 'none'; });
+                    var empty = document.getElementById('exploreEmptyFilter');
+                    if (empty) empty.style.display = visible.length === 0 ? '' : 'none';
+                }
+
+                chips.forEach(function (chip) {
+                    chip.addEventListener('click', function () {
+                        chips.forEach(function (c) { c.classList.remove('chip-active'); });
+                        chip.classList.add('chip-active');
+                        if (chip.getAttribute('data-filter') === 'all') {
+                            cards.forEach(function (c) { c.style.display = ''; });
+                            syncMarkersFromChips();
+                            toggleExploreEmpty();
+                            fitExploreBounds();
+                        } else {
+                            applyFilter(chip);
+                        }
+                    });
                 });
 
-                if (emptyState)  emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-                if (visibleCountEl) visibleCountEl.textContent = visibleCount;
-                addMarkers(filteredItems);
-            }
+                var searchInput = document.getElementById('exploreSearch');
+                if (searchInput) {
+                    searchInput.addEventListener('keyup', function () {
+                        var q = getExploreSearch();
+                        cards.forEach(function (card) {
+                            card.style.display = cardMatchesSearch(card, q) ? '' : 'none';
+                        });
+                        syncMarkersFromChips();
+                        toggleExploreEmpty();
+                        clearTimeout(searchFitTimer);
+                        searchFitTimer = setTimeout(fitExploreBounds, 200);
+                    });
+                    searchInput.addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            searchInput.blur();
+                        }
+                    });
+                }
 
-            if (searchInput) {
-                searchInput.addEventListener('input', applyFilters);
-            }
+                // Bind card click event to pan map and open Leaflet marker popup
+                cards.forEach(function (card) {
+                    card.addEventListener('click', function (e) {
+                        // Do not trigger map pan if they clicked detail button links directly
+                        if (e.target.closest('.btn-explore-action')) return;
 
-            if (clearBtn) {
-                clearBtn.addEventListener('click', function () {
-                    searchInput.value = '';
-                    searchInput.dispatchEvent(new Event('input'));
-                    searchInput.focus();
+                        cards.forEach(function (c) { c.classList.remove('active-card'); });
+                        card.classList.add('active-card');
+
+                        var lat = parseFloat(card.getAttribute('data-lat'));
+                        var lng = parseFloat(card.getAttribute('data-lng'));
+                        var cardId = card.getAttribute('data-id');
+
+                        var name = card.getAttribute('data-name') || '';
+                        if (mapInstance && mapInstance.view && !isNaN(lat) && !isNaN(lng)) {
+                            mapInstance.view.goTo({ center: [lng, lat], zoom: 15 }, { duration: 1000 });
+                            if (mapInstance.openPopupAt) mapInstance.openPopupAt(lat, lng, name);
+                        }
+                    });
                 });
-            }
 
-            categoryChips.forEach(function (chip) {
-                chip.addEventListener('click', function () {
-                    categoryChips.forEach(c => c.classList.remove('chip-active'));
-                    chip.classList.add('chip-active');
-                    applyFilters();
-                });
-            });
-        });
-    </script>
-}
+                function initMap() {
+                    if (mapInstance) return;
+                    mapInstance = EGYMaps.initWfsMap({
+                        mapElId: 'exploreMap',
+                        layer: 'destinations',
+                        propMap: explorePropMap,
+                        // popupHtml: buildPopup, // UNUSED: Replaced by custom JavaScript image renderer in maps.js
+                        markerStyle: { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
+                        onLayerReady: function () {
+                            syncMarkersFromChips();
+                        },
+                        onFeatureClick: function (attrs) {
+                            // attrs contains ArcGIS feature attributes.
+                            // Use the Id field (matches data-id on cards) to find and highlight
+                            // the corresponding destination card.
+                            var featureId = attrs['Id'] || attrs['id'] || attrs['ObjectId'] || attrs['OBJECTID'];
+                            if (featureId === undefined || featureId === null) return;
+                            var matched = null;
+                            cards.forEach(function (card) {
+                                var cardId = card.getAttribute('data-id');
+                                if (String(cardId) === String(featureId)) matched = card;
+                            });
+                            if (!matched) return;
+                            cards.forEach(function (c) { c.classList.remove('active-card'); });
+                            matched.classList.add('active-card');
+                            // Scroll the highlighted card into view within the list panel.
+                            matched.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    });
+                }
+
+                initMap();
+            })();
+        </script>
+    }

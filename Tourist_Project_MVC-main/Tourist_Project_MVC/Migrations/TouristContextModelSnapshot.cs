@@ -356,6 +356,12 @@ namespace Tourist_Project_MVC.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ArabicName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Booking")
+                        .HasColumnType("text");
+
                     b.Property<string>("Category")
                         .HasColumnType("text");
 
@@ -363,8 +369,20 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("CloseAt")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Days")
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
+
+                    b.Property<int?>("EgyptianPrice")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ForeignPrice")
+                        .HasColumnType("integer");
 
                     b.Property<Point>("Location")
                         .IsRequired()
@@ -373,6 +391,9 @@ namespace Tourist_Project_MVC.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("OpenAt")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("OpeningHours")
                         .HasColumnType("timestamp without time zone");
@@ -387,11 +408,20 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("StudentEgyptianPrice")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("StudentForeignPrice")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Tags")
                         .HasColumnType("text");
 
                     b.Property<decimal?>("TicketPrice")
                         .HasColumnType("decimal(10, 2)");
+
+                    b.Property<string>("TicketRequired")
+                        .HasColumnType("text");
 
                     b.Property<int>("Visits")
                         .HasColumnType("integer");
@@ -878,14 +908,14 @@ namespace Tourist_Project_MVC.Migrations
                     b.Property<string>("IdNumber")
                         .HasColumnType("text");
 
-                    b.Property<string>("Passport")
-                        .HasColumnType("text");
-
                     b.Property<bool>("NotifyByEmail")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("NotifyInApp")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Passport")
+                        .HasColumnType("text");
 
                     b.Property<string>("PreferredLanguage")
                         .HasColumnType("text");

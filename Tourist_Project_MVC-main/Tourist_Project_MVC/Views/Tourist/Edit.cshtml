@@ -1,73 +1,172 @@
-@model Tourist_Project_MVC.Models.Tourist
+@model Tourist_Project_MVC.View_Model.EditTouristViewModel
 
 @{
     ViewData["Title"] = Localizer["TouristAdmin_EditTourist"].Value;
 }
 
-@if (User.Identity.IsAuthenticated)
+@if (User.Identity != null && User.Identity.IsAuthenticated)
 {
-    <div class="container mt-5 mb-5" style="max-width: 750px;">
+    <div class="container mt-5 mb-5" style="max-width: 800px;">
         <div class="card shadow-lg border-0 rounded-4 overflow-hidden form-card">
             <!-- Card Header -->
             <div class="card-header py-4 text-center header-gradient">
                 <h3 class="text-white mb-0 font-cinzel">
                     <i class="bi bi-pencil-square me-2"></i> @Localizer["TouristAdmin_EditTourist"].Value
                 </h3>
-                <p class="text-white-50 small mb-0 mt-1">Modify tourist details and status parameters</p>
+                <p class="text-white-50 small mb-0 mt-1">Modify user account details & tourist profile parameters</p>
             </div>
 
             <!-- Card Body -->
             <div class="card-body p-4 p-md-5 bg-white">
-                <form asp-action="Edit" method="post" class="needs-validation">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data" class="needs-validation">
                     @Html.AntiForgeryToken()
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 rounded-3 mb-4 shadow-sm" role="alert"></div>
                     <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ApplicationUserId" />
                     <input type="hidden" asp-for="RegisterDate" />
+                    <input type="hidden" asp-for="ExistingProfilePicturePath" />
 
-                    <div class="row g-4">
-
-                        <!-- ID Number -->
-                        <div class="col-md-6">
-                            <label asp-for="IdNumber" class="form-label fw-bold text-dark-egy">@Localizer["TouristAdmin_IdNumber"].Value</label>
-                            <div class="input-group-custom">
-                                <span class="input-icon"><i class="bi bi-card-list"></i></span>
-                                <input asp-for="IdNumber" class="form-control-custom" placeholder="National identity number" />
+                    <!-- SECTION 1: User Account Details (Users Table - Source of Truth) -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-dark-egy border-bottom pb-2 mb-3 font-cinzel">
+                            <i class="bi bi-person-badge-fill me-2 text-gold"></i> User Account Details <small class="text-muted fs-6 fw-normal">(Users Table)</small>
+                        </h5>
+                        <div class="row g-3">
+                            <!-- First Name -->
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="form-label fw-bold text-dark-egy"></label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-person"></i></span>
+                                    <input asp-for="FirstName" class="form-control-custom" placeholder="First Name" />
+                                </div>
+                                <span asp-validation-for="FirstName" class="text-danger small mt-1 d-block"></span>
                             </div>
-                            <span asp-validation-for="IdNumber" class="text-danger small mt-1 d-block"></span>
+
+                            <!-- Last Name -->
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="form-label fw-bold text-dark-egy"></label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-person"></i></span>
+                                    <input asp-for="LastName" class="form-control-custom" placeholder="Last Name" />
+                                </div>
+                                <span asp-validation-for="LastName" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label fw-bold text-dark-egy"></label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-envelope"></i></span>
+                                    <input asp-for="Email" class="form-control-custom" placeholder="Email" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber" class="form-label fw-bold text-dark-egy"></label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-telephone"></i></span>
+                                    <input asp-for="PhoneNumber" class="form-control-custom" placeholder="Phone Number" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Nationality -->
+                            <div class="col-md-6">
+                                <label asp-for="Nationality" class="form-label fw-bold text-dark-egy"></label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-globe"></i></span>
+                                    <input asp-for="Nationality" class="form-control-custom" placeholder="Nationality" />
+                                </div>
+                                <span asp-validation-for="Nationality" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Profile Picture -->
+                            <div class="col-md-6">
+                                <label asp-for="ProfilePicture" class="form-label fw-bold text-dark-egy"></label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-image"></i></span>
+                                    <input asp-for="ProfilePicture" type="file" class="form-control-custom" accept="image/*" />
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.ExistingProfilePicturePath))
+                                {
+                                    <small class="text-muted d-block mt-1">Current: <a href="@Model.ExistingProfilePicturePath" target="_blank">View image</a></small>
+                                }
+                                <span asp-validation-for="ProfilePicture" class="text-danger small mt-1 d-block"></span>
+                            </div>
                         </div>
+                    </div>
 
-                        <!-- Passport -->
-                        <div class="col-md-6">
-                            <label asp-for="Passport" class="form-label fw-bold text-dark-egy"></label>
-                            <div class="input-group-custom">
-                                <span class="input-icon"><i class="bi bi-file-earmark-person"></i></span>
-                                <input asp-for="Passport" class="form-control-custom" placeholder="Passport number" />
+                    <!-- SECTION 2: Tourist Specific Details (Tourist Table - Source of Truth) -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-dark-egy border-bottom pb-2 mb-3 font-cinzel">
+                            <i class="bi bi-passport me-2 text-gold"></i> Tourist Profile Details <small class="text-muted fs-6 fw-normal">(Tourist Table)</small>
+                        </h5>
+                        <div class="row g-3">
+                            <!-- ID Number -->
+                            <div class="col-md-6">
+                                <label asp-for="IdNumber" class="form-label fw-bold text-dark-egy">@Localizer["TouristAdmin_IdNumber"].Value</label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-card-list"></i></span>
+                                    <input asp-for="IdNumber" class="form-control-custom" placeholder="National identity number" />
+                                </div>
+                                <span asp-validation-for="IdNumber" class="text-danger small mt-1 d-block"></span>
                             </div>
-                            <span asp-validation-for="Passport" class="text-danger small mt-1 d-block"></span>
-                        </div>
 
-                        <!-- Point Balance -->
-                        <div class="col-md-6">
-                            <label asp-for="point_Balance" class="form-label fw-bold text-dark-egy">@Localizer["TouristAdmin_PointBalance"].Value</label>
-                            <div class="input-group-custom">
-                                <span class="input-icon"><i class="bi bi-star"></i></span>
-                                <input asp-for="point_Balance" class="form-control-custom" type="number" placeholder="0" min="0" />
+                            <!-- Passport -->
+                            <div class="col-md-6">
+                                <label asp-for="Passport" class="form-label fw-bold text-dark-egy"></label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-file-earmark-person"></i></span>
+                                    <input asp-for="Passport" class="form-control-custom" placeholder="Passport number" />
+                                </div>
+                                <span asp-validation-for="Passport" class="text-danger small mt-1 d-block"></span>
                             </div>
-                            <span asp-validation-for="point_Balance" class="text-danger small mt-1 d-block"></span>
-                        </div>
 
-                        <!-- Status -->
-                        <div class="col-md-6">
-                            <label asp-for="Status" class="form-label fw-bold text-dark-egy">@Localizer["TouristAdmin_TouristStatus"].Value</label>
-                            <div class="input-group-custom">
-                                <span class="input-icon"><i class="bi bi-shield-check"></i></span>
-                                <select asp-for="Status" class="form-control-custom form-select-custom">
-                                    <option value="Active">🟢 @Localizer["TouristAdmin_StatusActive"].Value</option>
-                                    <option value="Inactive">🔴 @Localizer["TouristAdmin_StatusInactive"].Value</option>
-                                    <option value="Suspended">🟡 @Localizer["TouristAdmin_StatusSuspended"].Value</option>
-                                </select>
+                            <!-- Point Balance -->
+                            <div class="col-md-6">
+                                <label asp-for="point_Balance" class="form-label fw-bold text-dark-egy">@Localizer["TouristAdmin_PointBalance"].Value</label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-star"></i></span>
+                                    <input asp-for="point_Balance" class="form-control-custom" type="number" placeholder="0" min="0" />
+                                </div>
+                                <span asp-validation-for="point_Balance" class="text-danger small mt-1 d-block"></span>
                             </div>
-                            <span asp-validation-for="Status" class="text-danger small mt-1 d-block"></span>
+
+                            <!-- Status -->
+                            <div class="col-md-6">
+                                <label asp-for="Status" class="form-label fw-bold text-dark-egy">@Localizer["TouristAdmin_TouristStatus"].Value</label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-shield-check"></i></span>
+                                    <select asp-for="Status" class="form-control-custom form-select-custom">
+                                        <option value="Active">🟢 @Localizer["TouristAdmin_StatusActive"].Value</option>
+                                        <option value="Inactive">🔴 @Localizer["TouristAdmin_StatusInactive"].Value</option>
+                                        <option value="Suspended">🟡 @Localizer["TouristAdmin_StatusSuspended"].Value</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="Status" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Preferred Language -->
+                            <div class="col-md-6">
+                                <label asp-for="PreferredLanguage" class="form-label fw-bold text-dark-egy"></label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-translate"></i></span>
+                                    <input asp-for="PreferredLanguage" class="form-control-custom" placeholder="e.g. English, Arabic" />
+                                </div>
+                                <span asp-validation-for="PreferredLanguage" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Travel Interests -->
+                            <div class="col-md-6">
+                                <label asp-for="TravelInterests" class="form-label fw-bold text-dark-egy"></label>
+                                <div class="input-group-custom">
+                                    <span class="input-icon"><i class="bi bi-compass"></i></span>
+                                    <input asp-for="TravelInterests" class="form-control-custom" placeholder="e.g. History, Beaches, Food" />
+                                </div>
+                                <span asp-validation-for="TravelInterests" class="text-danger small mt-1 d-block"></span>
+                            </div>
                         </div>
                     </div>
 
@@ -111,6 +210,10 @@
         .font-cinzel {
             font-family: 'Cinzel', serif;
             letter-spacing: 1px;
+        }
+
+        .text-gold {
+            color: var(--egy-primary);
         }
 
         /* Custom Input Styling */

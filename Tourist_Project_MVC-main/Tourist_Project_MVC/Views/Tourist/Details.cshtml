@@ -4,7 +4,7 @@
     ViewData["Title"] = Localizer["TouristAdmin_TouristDetails"].Value;
 }
 
-@if (User.Identity.IsAuthenticated)
+@if (User.Identity != null && User.Identity.IsAuthenticated)
 {
     var completedMissions = Model.UserMissions?.Count(m => m.Status == "Completed") ?? 0;
     var inProgressMissions = Model.UserMissions?.Count(m => m.Status == "In Progress") ?? 0;
@@ -25,11 +25,23 @@
             <!-- Card Header -->
             <div class="card-header py-4 header-gradient">
                 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3">
-                    <div>
-                        <span class="text-white-50 text-uppercase small tracking-wider fw-bold">@Localizer["TouristAdmin_Profile"].Value</span>
-                        <h3 class="text-white mb-0 mt-1 font-cinzel">
-                            <i class="bi bi-person-fill me-2 text-warning-egy"></i> @Model.Name
-                        </h3>
+                    <div class="d-flex align-items-center gap-3">
+                        @if (!string.IsNullOrEmpty(Model.ApplicationUser?.ProfilePicturePath))
+                        {
+                            <img src="@Model.ApplicationUser.ProfilePicturePath" alt="Profile" class="rounded-circle border border-2 border-warning" style="width: 56px; height: 56px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 56px; height: 56px;">
+                                @(Model.ApplicationUser?.FirstName.FirstOrDefault() ?? 'U')
+                            </div>
+                        }
+                        <div>
+                            <span class="text-white-50 text-uppercase small tracking-wider fw-bold">@Localizer["TouristAdmin_Profile"].Value</span>
+                            <h3 class="text-white mb-0 mt-1 font-cinzel">
+                                @Model.Name
+                            </h3>
+                        </div>
                     </div>
                     <span class="badge-status-custom @statusClass fs-6">
                         @Model.Status
@@ -118,25 +130,49 @@
                     </div>
                 }
 
-                <!-- Personal Information -->
+                <!-- 1. User Account Information (Source: Users Table) -->
                 <div class="details-section mb-5">
-                    <h5 class="section-title mb-4 font-cinzel text-dark-egy">
-                        <i class="bi bi-info-circle-fill me-2 text-primary-egy"></i> @Localizer["TouristAdmin_PersonalInfo"].Value
+                    <h5 class="section-title mb-3 font-cinzel text-dark-egy">
+                        <i class="bi bi-person-badge-fill me-2 text-primary-egy"></i> User Information <span class="badge bg-secondary ms-2 fs-6">Users Table</span>
                     </h5>
                     
                     <div class="detail-rows-container p-3 rounded-3 bg-light border border-light-egy">
                         <div class="row align-items-center py-2.5 border-bottom border-light-egy-subtle">
-                            <div class="col-sm-4 fw-bold text-muted-egy">@Localizer["TouristAdmin_Email"].Value</div>
-                            <div class="col-sm-8 text-dark">@Model.Email</div>
+                            <div class="col-sm-4 fw-bold text-muted-egy">First Name</div>
+                            <div class="col-sm-8 text-dark fw-semibold">@(Model.ApplicationUser?.FirstName ?? "—")</div>
                         </div>
                         
                         <div class="row align-items-center py-2.5 border-bottom border-light-egy-subtle">
+                            <div class="col-sm-4 fw-bold text-muted-egy">Last Name</div>
+                            <div class="col-sm-8 text-dark fw-semibold">@(Model.ApplicationUser?.LastName ?? "—")</div>
+                        </div>
+
+                        <div class="row align-items-center py-2.5 border-bottom border-light-egy-subtle">
+                            <div class="col-sm-4 fw-bold text-muted-egy">@Localizer["TouristAdmin_Email"].Value</div>
+                            <div class="col-sm-8 text-dark">@Model.Email</div>
+                        </div>
+
+                        <div class="row align-items-center py-2.5 border-bottom border-light-egy-subtle">
+                            <div class="col-sm-4 fw-bold text-muted-egy">Phone Number</div>
+                            <div class="col-sm-8 text-dark">@(Model.ApplicationUser?.PhoneNumber ?? "—")</div>
+                        </div>
+                        
+                        <div class="row align-items-center py-2.5">
                             <div class="col-sm-4 fw-bold text-muted-egy">@Localizer["TouristAdmin_Nationality"].Value</div>
                             <div class="col-sm-8 text-dark">
                                 <span class="badge badge-nationality">@Model.Nationality</span>
                             </div>
                         </div>
-                        
+                    </div>
+                </div>
+
+                <!-- 2. Tourist Specific Information (Source: Tourist Table) -->
+                <div class="details-section mb-5">
+                    <h5 class="section-title mb-3 font-cinzel text-dark-egy">
+                        <i class="bi bi-passport me-2 text-primary-egy"></i> Tourist Information <span class="badge bg-secondary ms-2 fs-6">Tourist Table</span>
+                    </h5>
+                    
+                    <div class="detail-rows-container p-3 rounded-3 bg-light border border-light-egy">
                         <div class="row align-items-center py-2.5 border-bottom border-light-egy-subtle">
                             <div class="col-sm-4 fw-bold text-muted-egy">@Localizer["TouristAdmin_IdNumber"].Value</div>
                             <div class="col-sm-8 text-dark">@(Model.IdNumber ?? Localizer["TouristAdmin_NotSpecified"].Value)</div>
@@ -152,6 +188,16 @@
                             <div class="col-sm-8 text-dark fw-bold text-primary-egy">
                                 <i class="bi bi-star-fill text-warning me-1"></i> @Model.point_Balance @Localizer["TouristAdmin_Pts"].Value
                             </div>
+                        </div>
+
+                        <div class="row align-items-center py-2.5 border-bottom border-light-egy-subtle">
+                            <div class="col-sm-4 fw-bold text-muted-egy">Preferred Language</div>
+                            <div class="col-sm-8 text-dark">@(Model.PreferredLanguage ?? "—")</div>
+                        </div>
+
+                        <div class="row align-items-center py-2.5 border-bottom border-light-egy-subtle">
+                            <div class="col-sm-4 fw-bold text-muted-egy">Travel Interests</div>
+                            <div class="col-sm-8 text-dark">@(Model.TravelInterests ?? "—")</div>
                         </div>
 
                         <div class="row align-items-center py-2.5">
@@ -283,10 +329,6 @@
         .header-gradient {
             background: linear-gradient(135deg, var(--egy-dark) 0%, #3a2212 50%, var(--egy-primary) 100%);
             border-bottom: 3px solid var(--egy-accent);
-        }
-
-        .text-warning-egy {
-            color: var(--egy-accent) !important;
         }
 
         .font-cinzel {

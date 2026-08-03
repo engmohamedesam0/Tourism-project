@@ -1,11 +1,14 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using NetTopologySuite.Geometries;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading;
+using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Services;
 
@@ -15,6 +18,7 @@ public interface IArcGISSyncService
 {
     Task<ArcGISSyncResult> SyncDestinationsAsync(IEnumerable<Destination> destinations, CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncBranchesAsync(IEnumerable<Branch> branches, CancellationToken ct = default);
+    Task<ArcGISSyncResult> SyncDestinationsFromArcGIS(CancellationToken ct = default);
 }
 
 public record ArcGISSyncResult(bool Success, string? Error, int AddedCount, int UpdatedCount)
@@ -23,21 +27,23 @@ public record ArcGISSyncResult(bool Success, string? Error, int AddedCount, int 
     public static ArcGISSyncResult Failed(string error, int added = 0, int updated = 0) => new(false, error, added, updated);
 }
 
-public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
+public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposable
 {
     private readonly IHttpClientFactory _clientFactory;
     private readonly IConfiguration _config;
     private readonly ILogger<ArcGISSyncService> _logger;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly TouristContext _context;
     private static readonly ConcurrentDictionary<string, Dictionary<string, string>> _fieldCache = new();
     private static readonly SemaphoreSlim _fieldCacheLock = new(1, 1);
 
-    public ArcGISSyncService(IHttpClientFactory clientFactory, IConfiguration config, ILogger<ArcGISSyncService> logger)
+    public ArcGISSyncService(IHttpClientFactory clientFactory, IConfiguration config, ILogger<ArcGISSyncService> logger, TouristContext context)
     {
         _clientFactory = clientFactory;
         _config = config;
         _logger = logger;
         _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        _context = context;
     }
 
     private string? DestinationsLayerUrl => _config["ArcGIS:DestinationsLayerUrl"];
@@ -440,6 +446,226 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable
             _logger.LogError(ex, "ArcGIS branches sync failed");
             return ArcGISSyncResult.Failed($"ArcGIS branches sync failed: {ex.Message}");
         }
+    }
+
+    public async Task<ArcGISSyncResult> SyncDestinationsFromArcGIS(CancellationToken ct = default)
+    {
+        var layerUrl = LayerUrl(DestinationsLayerUrl);
+        if (string.IsNullOrWhiteSpace(layerUrl)) return ArcGISSyncResult.Ok();
+
+        string token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            _logger.LogError("ArcGIS destinations pull-sync skipped: API Key is missing");
+            return ArcGISSyncResult.Failed("API Key is missing.");
+        }
+
+        try
+        {
+            var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+
+            var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
+            if (fieldMap == null)
+            {
+                return ArcGISSyncResult.Failed("Failed to fetch ArcGIS field schema for destinations.");
+            }
+
+            var queryUrl = $"{layerUrl}/query?where=1%3D1&outFields=*&returnGeometry=true&resultRecordCount=500&f=json&token={Uri.EscapeDataString(token)}";
+            using var response = await client.GetAsync(queryUrl, ct);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errBody = await response.Content.ReadAsStringAsync(ct);
+                _logger.LogError("ArcGIS destinations query failed with HTTP status {Status}. Body: {Body}", response.StatusCode, errBody);
+                return ArcGISSyncResult.Failed($"ArcGIS query returned HTTP {(int)response.StatusCode}: {errBody}");
+            }
+
+            var body = await response.Content.ReadAsStringAsync(ct);
+            using var doc = JsonDocument.Parse(body);
+
+            if (doc.RootElement.TryGetProperty("error", out var error))
+            {
+                var errMsg = ExtractArcGISErrorMessage(error);
+                _logger.LogError("ArcGIS destinations query returned error: {Error}", errMsg);
+                return ArcGISSyncResult.Failed($"ArcGIS query error: {errMsg}");
+            }
+
+            if (!doc.RootElement.TryGetProperty("features", out var features) || features.GetArrayLength() == 0)
+            {
+                _logger.LogWarning("ArcGIS destinations query returned no features.");
+                return ArcGISSyncResult.Ok();
+            }
+
+            var remoteIds = new HashSet<int>();
+            var upserts = new List<Destination>();
+
+            foreach (var feature in features.EnumerateArray())
+            {
+                if (!feature.TryGetProperty("attributes", out var attrs)) continue;
+
+                var dest = new Destination();
+
+                if (attrs.TryGetProperty("Id", out var idEl) && idEl.ValueKind == JsonValueKind.Number)
+                    dest.Id = idEl.GetInt32();
+
+                if (attrs.TryGetProperty("English_Name", out var nameEl) && nameEl.ValueKind == JsonValueKind.String)
+                    dest.Name = nameEl.GetString() ?? string.Empty;
+
+                if (attrs.TryGetProperty("Arabic_Name", out var arabicNameEl) && arabicNameEl.ValueKind == JsonValueKind.String)
+                    dest.ArabicName = arabicNameEl.GetString();
+
+                if (attrs.TryGetProperty("Governorate", out var govEl) && govEl.ValueKind == JsonValueKind.String)
+                    dest.City = govEl.GetString() ?? string.Empty;
+
+                if (attrs.TryGetProperty("Category", out var catEl) && catEl.ValueKind == JsonValueKind.String)
+                    dest.Category = catEl.GetString();
+
+                if (attrs.TryGetProperty("Description", out var descEl) && descEl.ValueKind == JsonValueKind.String)
+                {
+                    var raw = descEl.GetString();
+                    dest.Description = raw is null or "N/A" or "n/a" or "" ? null : raw;
+                }
+
+                if (attrs.TryGetProperty("Status", out var statusEl) && statusEl.ValueKind == JsonValueKind.String)
+                {
+                    var rawStatus = statusEl.GetString() ?? "Active";
+                    // ArcGIS stores "N/A" for some records; treat those as Active.
+                    dest.Status = rawStatus is "N/A" or "" or "n/a" ? "Active" : rawStatus;
+                }
+
+                if (attrs.TryGetProperty("Visits", out var visitsEl) && visitsEl.ValueKind == JsonValueKind.Number)
+                    dest.Visits = visitsEl.GetInt32();
+
+                if (attrs.TryGetProperty("Rating", out var ratingEl) && ratingEl.ValueKind == JsonValueKind.Number)
+                    dest.Rating = (decimal)ratingEl.GetDouble();
+
+                if (attrs.TryGetProperty("Tags", out var tagsEl) && tagsEl.ValueKind == JsonValueKind.String)
+                {
+                    var raw = tagsEl.GetString();
+                    dest.Tags = raw is null or "N/A" or "n/a" or "" ? null : raw;
+                }
+
+                if (attrs.TryGetProperty("Images", out var imagesEl) && imagesEl.ValueKind == JsonValueKind.String)
+                {
+                    // ArcGIS stores image URLs separated by '|' — normalise to '\n'
+                    // which is what PhotoUrlList expects for splitting.
+                    var rawImages = imagesEl.GetString();
+                    dest.PhotoUrls = string.IsNullOrWhiteSpace(rawImages)
+                        ? null
+                        : rawImages.Replace("|", "\n");
+                }
+
+                if (attrs.TryGetProperty("TicketRequired", out var ticketReqEl) && ticketReqEl.ValueKind == JsonValueKind.String)
+                {
+                    var raw = ticketReqEl.GetString();
+                    dest.TicketRequired = raw is null or "N/A" or "n/a" or "" ? null : raw;
+                }
+
+                if (attrs.TryGetProperty("ForeignPrice", out var fpEl) && fpEl.ValueKind == JsonValueKind.Number)
+                    dest.ForeignPrice = fpEl.GetInt32();
+
+                if (attrs.TryGetProperty("StudentForeignPrice", out var sfpEl) && sfpEl.ValueKind == JsonValueKind.Number)
+                    dest.StudentForeignPrice = sfpEl.GetInt32();
+
+                if (attrs.TryGetProperty("EgyptianPrice", out var epEl) && epEl.ValueKind == JsonValueKind.Number)
+                    dest.EgyptianPrice = epEl.GetInt32();
+
+                if (attrs.TryGetProperty("StudentEgyptianPrice", out var sepEl) && sepEl.ValueKind == JsonValueKind.Number)
+                    dest.StudentEgyptianPrice = sepEl.GetInt32();
+
+                if (attrs.TryGetProperty("Days", out var daysEl) && daysEl.ValueKind == JsonValueKind.String)
+                {
+                    var raw = daysEl.GetString();
+                    dest.Days = raw is null or "N/A" or "n/a" or "" ? null : raw;
+                }
+
+                if (attrs.TryGetProperty("Open_at", out var openEl) && openEl.ValueKind == JsonValueKind.Number)
+                    dest.OpenAt = openEl.GetInt32();
+
+                if (attrs.TryGetProperty("Close_at", out var closeEl) && closeEl.ValueKind == JsonValueKind.Number)
+                    dest.CloseAt = closeEl.GetInt32();
+
+                if (attrs.TryGetProperty("Booking", out var bookingEl) && bookingEl.ValueKind == JsonValueKind.String)
+                {
+                    var raw = bookingEl.GetString();
+                    dest.Booking = raw is null or "N/A" or "n/a" or "" ? null : raw;
+                }
+
+                double lat = 0, lng = 0;
+                bool hasLat = attrs.TryGetProperty("Latitiude", out var latEl) && latEl.ValueKind == JsonValueKind.Number;
+                bool hasLng = attrs.TryGetProperty("Longitude", out var lngEl) && lngEl.ValueKind == JsonValueKind.Number;
+                if (hasLat) lat = latEl.GetDouble();
+                if (hasLng) lng = lngEl.GetDouble();
+
+                if (hasLat && hasLng)
+                {
+                    dest.Location = new Point(lng, lat) { SRID = 4326 };
+                }
+
+                remoteIds.Add(dest.Id);
+                upserts.Add(dest);
+            }
+
+            var dbDestinations = _context.Destinations.ToList();
+            var dbIds = new HashSet<int>(dbDestinations.Select(d => d.Id));
+
+            var toRemove = dbDestinations.Where(d => !remoteIds.Contains(d.Id)).ToList();
+            foreach (var d in toRemove)
+            {
+                _context.Destinations.Remove(d);
+                _logger.LogInformation("ArcGIS pull-sync removing local Destination Id={Id} (not in remote layer)", d.Id);
+            }
+
+            foreach (var remote in upserts)
+            {
+                var existing = dbDestinations.FirstOrDefault(d => d.Id == remote.Id);
+                if (existing != null)
+                {
+                    existing.Name = remote.Name;
+                    existing.ArabicName = remote.ArabicName;
+                    existing.City = remote.City;
+                    existing.Category = remote.Category;
+                    existing.Description = remote.Description;
+                    existing.Status = remote.Status;
+                    existing.Visits = remote.Visits;
+                    existing.Rating = remote.Rating;
+                    existing.Tags = remote.Tags;
+                    existing.PhotoUrls = remote.PhotoUrls;
+                    existing.TicketRequired = remote.TicketRequired;
+                    existing.ForeignPrice = remote.ForeignPrice;
+                    existing.StudentForeignPrice = remote.StudentForeignPrice;
+                    existing.EgyptianPrice = remote.EgyptianPrice;
+                    existing.StudentEgyptianPrice = remote.StudentEgyptianPrice;
+                    existing.Days = remote.Days;
+                    existing.OpenAt = remote.OpenAt;
+                    existing.CloseAt = remote.CloseAt;
+                    existing.Booking = remote.Booking;
+                    existing.Location = remote.Location;
+                    _context.Destinations.Update(existing);
+                }
+                else
+                {
+                    _context.Destinations.Add(remote);
+                    _logger.LogInformation("ArcGIS pull-sync adding new Destination Id={Id}: {Name}", remote.Id, remote.Name);
+                }
+            }
+
+            await _context.SaveChangesAsync(ct);
+
+            _logger.LogInformation("ArcGIS destinations pull-sync complete: {Added} added/updated, {Removed} removed",
+                upserts.Count, toRemove.Count);
+
+            return ArcGISSyncResult.Ok(added: upserts.Count, updated: 0);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ArcGIS destinations pull-sync failed");
+            return ArcGISSyncResult.Failed($"ArcGIS destinations pull-sync failed: {ex.Message}");
+        }
+    }
+
+    public void Dispose()
+    {
     }
 
     public ValueTask DisposeAsync()
