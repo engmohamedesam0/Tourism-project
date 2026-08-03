@@ -131,12 +131,19 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
 
             var tourist = _touristRepo.GetOrCreateByApplicationUser(applicationUser);
 
-            var redeemedRewardIds = await _context.Redemptions
+            var redemptions = await _context.Redemptions
                 .Where(r => r.TouristId == tourist.Id)
-                .Select(r => r.RewardId)
+                .Include(r => r.Reward)
+                .Select(r => new {
+                    r.RewardId, 
+                    r.Code,
+                    r.Status,
+                    r.RedemptionDate,
+                    r.PointsRedeemed,
+                })
                 .ToListAsync();
 
-            return Ok(redeemedRewardIds);
+            return Ok(redemptions);
         }
         private static string GenerateRedemptionCode()
         {
