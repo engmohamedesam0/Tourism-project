@@ -36,7 +36,7 @@ namespace Tourist_Project_MVC.Services
 
         public static async Task InitializeAsync(IServiceProvider services)
         {
-            using var scope = services.CreateScope();
+            await using var scope = services.CreateAsyncScope();
             var context = scope.ServiceProvider.GetRequiredService<TouristContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -53,12 +53,48 @@ namespace Tourist_Project_MVC.Services
             // 2. Application tables, in FK-dependency order.
             await SeedTableAsync<Sponsor>(context, seedDir, "sponsors.json");
             await SeedTableAsync<Tourist>(context, seedDir, "tourists.json");
-            await SeedGeoAsync<Destination>(context, seedDir, "destinations.json",
-                (e, el) => e.Location = new Point(el.GetProperty("lng").GetDouble(), el.GetProperty("lat").GetDouble()) { SRID = 4326 });
-            await SeedDestinationPhotosAsync(context, httpClient, env);
             await SeedGeoAsync<Branch>(context, seedDir, "branches.json",
                 (e, el) => e.Location = new Point(el.GetProperty("lng").GetDouble(), el.GetProperty("lat").GetDouble()) { SRID = 4326 });
             await SeedTableAsync<MenuItem>(context, seedDir, "menu-items.json");
+
+            // Pull-sync Destinations from ArcGIS BEFORE seeding dependent tables (Missions, TripDestinations).
+            // ArcGIS is the primary source of truth for destination data.
+            var arcgisSync = scope.ServiceProvider.GetRequiredService<IArcGISSyncService>();
+            var syncResult = await arcgisSync.SyncDestinationsFromArcGIS(CancellationToken.None);
+
+            if (!syncResult.Success)
+            {
+                Console.Error.WriteLine($"[DbInitializer] Destinations ArcGIS pull-sync failed: {syncResult.Error}");
+
+                // Only seed from local JSON if the table is completely empty.
+                if (!await context.Destinations.AnyAsync())
+                {
+                    Console.WriteLine("[DbInitializer] Seeding destinations from local destinations.json.");
+                    await SeedGeoAsync<Destination>(context, seedDir, "destinations.json",
+                        (e, el) =>
+                        {
+                            if (el.TryGetProperty("lat", out var lat) && el.TryGetProperty("lng", out var lng))
+                                e.Location = new Point(lng.GetDouble(), lat.GetDouble()) { SRID = 4326 };
+                        });
+                }
+            }
+            else
+            {
+                Console.WriteLine($"[DbInitializer] Destinations ArcGIS pull-sync complete: {syncResult.AddedCount} synced.");
+            }
+
+            // Sync PostgreSQL ID sequence for Destinations table so any future identity inserts won't conflict.
+            try
+            {
+                await context.Database.ExecuteSqlRawAsync(
+                    "SELECT setval(pg_get_serial_sequence('\"Destinations\"', 'Id'), COALESCE((SELECT MAX(\"Id\") FROM \"Destinations\"), 1))");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[DbInitializer] Sequence setval warning: {ex.Message}");
+            }
+
+            // Tables dependent on Destinations:
             await SeedTableAsync<Mission>(context, seedDir, "missions.json");
             await SeedTableAsync<Reward>(context, seedDir, "rewards.json");
             await SeedTableAsync<RewardBranch>(context, seedDir, "reward-branches.json");
@@ -77,7 +113,6 @@ namespace Tourist_Project_MVC.Services
             await SeedTableAsync<UserProgress>(context, seedDir, "user-progress.json");
             await SeedTableAsync<UserBadge>(context, seedDir, "user-badges.json");
         }
-
         private static async Task EnsureRolesAsync(RoleManager<IdentityRole> roleManager)
         {
             foreach (var role in new[] { "Admin", "User", "Sponsor" })
@@ -215,85 +250,6 @@ namespace Tourist_Project_MVC.Services
                 }
 
             await transaction.CommitAsync();
-        }
-
-        private static async Task SeedDestinationPhotosAsync(TouristContext context, HttpClient httpClient, IHostEnvironment env)
-        {
-            if (!env.IsDevelopment()) return;
-
-            var nameToTitle = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-            {
-                ["The Great Pyramids of Giza"] = "Great Pyramid of Giza",
-                ["The Great Sphinx"] = "Great Sphinx of Giza",
-                ["Karnak Temple Complex"] = "Karnak",
-                ["Valley of the Kings"] = "Valley of the Kings",
-                ["Abu Simbel Temples"] = "Abu Simbel temples",
-                ["Qaitbay Citadel"] = "Citadel of Qaitbay",
-                ["Egyptian Museum"] = "Egyptian Museum",
-                ["Saint Catherine's Monastery"] = "Saint Catherine's Monastery, Sinai",
-                ["Siwa Oasis"] = "Siwa Oasis",
-                ["Wadi El Hitan (Whale Valley)"] = "Wadi Al-Hitan",
-                ["Dendera Temple"] = "Dendera Temple complex",
-                ["Tanis (Ancient City)"] = "Tanis",
-                ["Dahshur Pyramids"] = "Dahshur",
-                ["The Grand Egyptian Museum"] = "Grand Egyptian Museum",
-                ["Saladin Citadel"] = "Cairo Citadel",
-                ["Bibliotheca Alexandrina"] = "Bibliotheca Alexandrina",
-                ["Al-Azhar Mosque"] = "Al-Azhar Mosque",
-                ["Philae Temple"] = "Philae"
-            };
-
-            var destinations = await context.Destinations
-                // .Where(d => string.IsNullOrWhiteSpace(d.PhotoUrls))
-                .ToListAsync();
-
-            foreach (var dest in destinations)
-            {
-                if (!nameToTitle.TryGetValue(dest.Name, out var title))
-                {
-                    Console.Error.WriteLine($"[DbInitializer] No Wikipedia mapping for destination: {dest.Name}");
-                    continue;
-                }
-
-                try
-                {
-                    var url = $"https://en.wikipedia.org/api/rest_v1/page/summary/{Uri.EscapeDataString(title)}";
-                    using var request = new HttpRequestMessage(HttpMethod.Get, url);
-                    request.Headers.UserAgent.ParseAdd("TouristProjectMVC/1.0 (https://github.com/your-repo; contact@example.com)");
-                    using var response = await httpClient.SendAsync(request);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        Console.Error.WriteLine($"[DbInitializer] Wikipedia lookup failed for '{title}' (status {response.StatusCode})");
-                        continue;
-                    }
-
-                    await using var stream = await response.Content.ReadAsStreamAsync();
-                    using var doc = await JsonDocument.ParseAsync(stream);
-                    if (doc.RootElement.TryGetProperty("thumbnail", out var thumb) &&
-                        thumb.TryGetProperty("source", out var thumbSrc))
-                    {
-                        dest.PhotoUrls = thumbSrc.GetString();
-                    }
-                    else if (doc.RootElement.TryGetProperty("originalimage", out var origImg) &&
-                             origImg.TryGetProperty("source", out var src))
-                    {
-                        dest.PhotoUrls = src.GetString();
-                    }
-                    else
-                    {
-                        Console.Error.WriteLine($"[DbInitializer] Wikipedia response missing image for '{title}'");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine($"[DbInitializer] Failed to fetch photo for '{title}': {ex.Message}");
-                }
-            }
-
-            if (context.ChangeTracker.HasChanges())
-            {
-                await context.SaveChangesAsync();
-            }
         }
 
         private static T? ReadJson<T>(string path) where T : class

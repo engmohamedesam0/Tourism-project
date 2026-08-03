@@ -1,0 +1,19 @@
+@model Tourist_Project_MVC.Models.Destination
+@{
+    ViewData["Title"] = "Destinations Managed via ArcGIS";
+}
+
+<div class="container-fluid mt-4 text-center">
+    <div class="alert alert-info" role="alert">
+        <i class="bi bi-info-circle-fill fs-1 d-block mb-3"></i>
+        <h4>Destinations are managed via ArcGIS</h4>
+        <p class="mb-0">
+            Destination data is now the single source of truth in the ArcGIS feature layer.
+            Local create, edit, and delete operations are disabled.
+            To manage destinations, please use the ArcGIS portal or the EGYMaps map interface.
+        </p>
+    </div>
+    <a asp-action="Index" class="btn btn-primary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Destinations List
+    </a>
+</div>

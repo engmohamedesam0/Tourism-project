@@ -18,15 +18,13 @@ namespace Tourist_Project_MVC.Controllers
     {
         private readonly IDestinationRepository _repo;
         private readonly TouristContext _context;
-        private readonly IArcGISSyncService _arcgisSync;
         private readonly IGamificationService _gamificationService;
         private readonly IFavoriteRepository _favoriteRepo;
 
-        public DestinationController(IDestinationRepository repo, TouristContext context, IArcGISSyncService arcgisSync, IGamificationService gamificationService, IFavoriteRepository favoriteRepo)
+        public DestinationController(IDestinationRepository repo, TouristContext context, IGamificationService gamificationService, IFavoriteRepository favoriteRepo)
         {
             _repo = repo;
             _context = context;
-            _arcgisSync = arcgisSync;
             _gamificationService = gamificationService;
             _favoriteRepo = favoriteRepo;
         }
@@ -138,88 +136,39 @@ namespace Tourist_Project_MVC.Controllers
         // GET: /Destination/Create
         public IActionResult Create()
         {
-            return View();
+            return View("ReadOnlyNotice");
         }
 
         // POST: /Destination/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
+        public IActionResult Create(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
         {
-            // Build the spatial point from the separate Lat/Long inputs BEFORE validation,
-            // otherwise the implicit [Required] on the non-nullable Location property
-            // ("The Location field is required") blocks every submit.
-            destination.Location = new Point(Long, Lat) { SRID = 4326 };
-            ModelState.Remove("Location");
-
-            if (ModelState.IsValid)
-            {
-                destination.Visits = 0;
-                _repo.Add(destination);
-                _repo.Save();
-                var syncResult = await _arcgisSync.SyncDestinationsAsync(new[] { destination });
-                if (!syncResult.Success)
-                {
-                    TempData["DestinationMessage"] = $"Destination was saved, but the ArcGIS map sync failed: {syncResult.Error}";
-                    TempData["DestinationMessageType"] = "danger";
-                }
-                else
-                {
-                    TempData["DestinationMessage"] = "Destination saved successfully.";
-                    TempData["DestinationMessageType"] = "success";
-                }
-                return RedirectToAction("Index");
-            }
-            ViewBag.Lat = Lat;
-            ViewBag.Long = Long;
-            return View(destination);
+            TempData["DestinationMessage"] = "Destinations are managed via ArcGIS. Local CRUD is disabled.";
+            TempData["DestinationMessageType"] = "warning";
+            return RedirectToAction("Index");
         }
 
         // GET: /Destination/Edit/5
         public IActionResult Edit(int id)
         {
-            var destination = _repo.GetById(id);
-            if (destination == null) return NotFound();
-            return View(destination);
+            return View("ReadOnlyNotice");
         }
 
         // POST: /Destination/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
+        public IActionResult Edit(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
         {
-            // Build the spatial point from the separate Lat/Long inputs BEFORE validation,
-            // otherwise the implicit [Required] on the non-nullable Location property
-            // ("The Location field is required") blocks every submit.
-            destination.Location = new Point(Long, Lat) { SRID = 4326 };
-            ModelState.Remove("Location");
-
-            if (ModelState.IsValid)
-            {
-                _repo.Update(destination);
-                _repo.Save();
-                var syncResult = await _arcgisSync.SyncDestinationsAsync(new[] { destination });
-                if (!syncResult.Success)
-                {
-                    TempData["DestinationMessage"] = $"Destination was saved, but the ArcGIS map sync failed: {syncResult.Error}";
-                    TempData["DestinationMessageType"] = "danger";
-                }
-                else
-                {
-                    TempData["DestinationMessage"] = "Destination saved successfully.";
-                    TempData["DestinationMessageType"] = "success";
-                }
-                return RedirectToAction("Index");
-            }
-            return View(destination);
+            TempData["DestinationMessage"] = "Destinations are managed via ArcGIS. Local CRUD is disabled.";
+            TempData["DestinationMessageType"] = "warning";
+            return RedirectToAction("Index");
         }
 
         // GET: /Destination/Delete
         public IActionResult Delete(int id)
         {
-            var destination = _repo.GetById(id);
-            if (destination == null) return NotFound();
-            return View(destination);
+            return View("ReadOnlyNotice");
         }
 
         // POST: /Destination/Delete
@@ -227,8 +176,8 @@ namespace Tourist_Project_MVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            _repo.Delete(id);
-            _repo.Save();
+            TempData["DestinationMessage"] = "Destinations are managed via ArcGIS. Local CRUD is disabled.";
+            TempData["DestinationMessageType"] = "warning";
             return RedirectToAction("Index");
         }
 

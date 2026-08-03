@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -13,15 +14,17 @@ namespace Tourist_Project_MVC.Controllers
     public class AdminDashboardController : Controller
     {
         private readonly TouristContext _context;
+        private readonly IArcGISSyncService _arcgisSync;
         private static readonly string[] Sections = new[]
         {
             "overview", "tourists", "missions", "sponsors",
             "destinations", "rewards", "levels", "badges", "support", "reviews"
         };
 
-        public AdminDashboardController(TouristContext context)
+        public AdminDashboardController(TouristContext context, IArcGISSyncService arcgisSync)
         {
             _context = context;
+            _arcgisSync = arcgisSync;
         }
 
         [HttpGet("")]
@@ -410,6 +413,70 @@ namespace Tourist_Project_MVC.Controllers
                 .ToList();
 
             vm.ReviewSection.RatingDistribution = ratingGroups;
+        }
+
+        // -----------------------------------------------------------------------
+        // ArcGIS On-Demand Sync Actions
+        // -----------------------------------------------------------------------
+
+        /// <summary>
+        /// POST /AdminDashboard/SyncToArcGIS
+        /// Pushes all local destinations (and branches) to the ArcGIS feature layers.
+        /// Admins can trigger this manually whenever they add/update destinations locally.
+        /// </summary>
+        [HttpPost("SyncToArcGIS")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SyncToArcGIS()
+        {
+            var destinations = await _context.Destinations
+                .Where(d => d.Location != null)
+                .ToListAsync();
+
+            var branches = await _context.Branches
+                .Where(b => b.Location != null)
+                .ToListAsync();
+
+            var destResult = await _arcgisSync.SyncDestinationsAsync(destinations);
+            var branchResult = await _arcgisSync.SyncBranchesAsync(branches);
+
+            if (destResult.Success && branchResult.Success)
+            {
+                TempData["ArcGISMessage"] = $"✅ Pushed to ArcGIS — {destResult.AddedCount} destinations added, " +
+                    $"{destResult.UpdatedCount} updated; {branchResult.AddedCount} branches added, {branchResult.UpdatedCount} updated.";
+                TempData["ArcGISMessageType"] = "success";
+            }
+            else
+            {
+                var errors = string.Join(" | ", new[] { destResult.Error, branchResult.Error }.Where(e => e != null));
+                TempData["ArcGISMessage"] = $"❌ ArcGIS push failed: {errors}";
+                TempData["ArcGISMessageType"] = "danger";
+            }
+
+            return RedirectToAction("Index", new { section = "destinations" });
+        }
+
+        /// <summary>
+        /// POST /AdminDashboard/SyncFromArcGIS
+        /// Pulls the latest destination data FROM ArcGIS into the local DB.
+        /// </summary>
+        [HttpPost("SyncFromArcGIS")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SyncFromArcGIS()
+        {
+            var result = await _arcgisSync.SyncDestinationsFromArcGIS();
+
+            if (result.Success)
+            {
+                TempData["ArcGISMessage"] = $"✅ Pulled from ArcGIS — {result.AddedCount} destinations synced into local DB.";
+                TempData["ArcGISMessageType"] = "success";
+            }
+            else
+            {
+                TempData["ArcGISMessage"] = $"❌ ArcGIS pull failed: {result.Error}";
+                TempData["ArcGISMessageType"] = "danger";
+            }
+
+            return RedirectToAction("Index", new { section = "destinations" });
         }
     }
 }

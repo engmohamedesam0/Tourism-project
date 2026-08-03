@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 
@@ -46,7 +46,7 @@ namespace Tourist_Project_MVC.Repositories
                 var email = user.Email.ToLower();
                 var byEmail = _context.Tourists
                     .Include(t => t.ApplicationUser)
-                    .FirstOrDefault(t => t.Email != null && t.Email.ToLower() == email);
+                    .FirstOrDefault(t => t.ApplicationUser != null && t.ApplicationUser.Email != null && t.ApplicationUser.Email.ToLower() == email);
                 if (byEmail != null)
                 {
                     // Self-heal: persist the link so it only happens once.

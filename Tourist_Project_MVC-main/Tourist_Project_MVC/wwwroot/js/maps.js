@@ -88,6 +88,7 @@ var EGYMaps = (function () {
       fillOpacity: 0.85,
     };
     var onLayerReady = opts.onLayerReady || null;
+    var onFeatureClick = opts.onFeatureClick || null;
 
     var handle = {
       get map() {
@@ -285,7 +286,8 @@ var EGYMaps = (function () {
 
       try {
         await sourceLayer.load();
-        await view.whenLayerView(sourceLayer).ready;
+        // whenLayerView returns a Promise resolving to the LayerView; no .ready chaining needed.
+        await view.whenLayerView(sourceLayer);
 
         // If the layer didn't bring its own Arcade popup from ArcGIS Online, generate a default one
         if (!sourceLayer.popupTemplate) {
@@ -402,6 +404,20 @@ var EGYMaps = (function () {
             localLoader.parentNode.removeChild(localLoader);
         }, 400);
       });
+
+      // Wire up feature-click → onFeatureClick callback for card highlighting.
+      if (typeof onFeatureClick === "function") {
+        view.on("click", function (event) {
+          view.hitTest(event, { include: overlayGraphicsLayer }).then(function (response) {
+            if (!response || !response.results || !response.results.length) return;
+            var firstHit = response.results[0];
+            var graphic = firstHit.graphic;
+            if (graphic && graphic.attributes) {
+              onFeatureClick(graphic.attributes);
+            }
+          });
+        });
+      }
     })();
 
     return handle;
