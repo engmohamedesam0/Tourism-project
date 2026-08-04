@@ -11204,3 +11204,107 @@ body {
 .footer {
   padding: 5rem 0;
 }
+
+/* =============================================
+   DARK MODE — marketing page surfaces
+   ============================================= */
+[data-theme="dark"] .masthead {
+  background-image: linear-gradient(to bottom, rgba(11, 7, 4, 0.34) 0%, rgba(11, 7, 4, 0.78) 75%, var(--bg-body) 100%), url("../assets/img/bg-masthead.jpg");
+}
+
+[data-theme="dark"] .masthead h1,
+[data-theme="dark"] .masthead .h1 {
+  background: linear-gradient(var(--text-inverse), var(--egy-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+[data-theme="dark"] .about-section {
+  background: linear-gradient(to bottom, var(--bg-body) 0%, var(--bg-surface) 75%, var(--bg-body) 100%);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .about-section h2,
+[data-theme="dark"] .about-section h3,
+[data-theme="dark"] .projects-section h2,
+[data-theme="dark"] .projects-section h3,
+[data-theme="dark"] .contact-section h2,
+[data-theme="dark"] .contact-section h3 {
+  color: var(--text-heading);
+}
+
+[data-theme="dark"] .about-section p,
+[data-theme="dark"] .projects-section p,
+[data-theme="dark"] .contact-section p {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .projects-section {
+  background: var(--bg-body);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .projects-section .featured-text,
+[data-theme="dark"] .projects-section .project-text {
+  background: var(--bg-card);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme="dark"] .projects-section .featured-text:hover,
+[data-theme="dark"] .projects-section .project-text:hover {
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-elevated-dark), 0 0 18px rgba(200, 131, 42, 0.14);
+  transform: translateY(-3px);
+}
+
+[data-theme="dark"] .signup-section {
+  background-image: linear-gradient(to bottom, rgba(11, 7, 4, 0.28) 0%, rgba(11, 7, 4, 0.76) 75%, var(--bg-body) 100%), url("../assets/img/bg-signup.jpg");
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .signup-section h2,
+[data-theme="dark"] .signup-section p {
+  color: var(--text-inverse);
+}
+
+[data-theme="dark"] .signup-section .form-signup input {
+  background-color: var(--bg-glass);
+  border: 1px solid var(--border-medium);
+  color: var(--text-primary);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .contact-section {
+  background: var(--bg-body);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .contact-section .card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  border-bottom: 0.25rem solid var(--egy-primary);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-card);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  backdrop-filter: blur(14px) saturate(120%);
+}
+
+[data-theme="dark"] .contact-section .card:hover {
+  border-color: var(--border-glow);
+  border-bottom-color: var(--egy-accent);
+  box-shadow: var(--shadow-elevated-dark), 0 0 18px rgba(200, 131, 42, 0.14);
+  transform: translateY(-3px);
+}
+
+[data-theme="dark"] .contact-section .card h4,
+[data-theme="dark"] .contact-section .card .h4,
+[data-theme="dark"] .contact-section .card a {
+  color: var(--text-heading);
+}
+
+[data-theme="dark"] .contact-section .card hr {
+  border-color: var(--egy-primary);
+}

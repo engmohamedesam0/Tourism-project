@@ -632,39 +632,44 @@
 }
 
 [data-theme="dark"] {
-    --dash-bg: #1A120B;
-    --dash-card-bg: #1A120B;
-    --dash-border: rgba(200,131,42,0.15);
-    --dash-border-hover: rgba(200,131,42,0.25);
-    --dash-text-primary: #E8DDD0;
-    --dash-text-secondary: #A89B8C;
-    --dash-text-muted: #8B7D6B;
+    --dash-bg: var(--bg-body);
+    --dash-card-bg: var(--bg-card);
+    --dash-border: var(--border-subtle);
+    --dash-border-hover: var(--border-glow);
+    --dash-text-primary: var(--text-primary);
+    --dash-text-secondary: var(--text-secondary);
+    --dash-text-muted: var(--text-muted);
     --dash-primary-light: rgba(200, 131, 42, 0.12);
     --dash-primary-glow: rgba(200, 131, 42, 0.35);
     --dash-green-bg: rgba(46, 125, 50, 0.15);
     --dash-amber-bg: rgba(232, 160, 69, 0.15);
 }
 
-[data-theme="dark"] .dash-header-card {
-    background: var(--dash-card-bg);
+[data-theme="dark"] .dash-header-card,
+[data-theme="dark"] .dash-card,
+[data-theme="dark"] .kpi-card,
+[data-theme="dark"] .dash-map-card,
+[data-theme="dark"] .chart-card {
+    background: var(--bg-glass);
+    border-color: var(--dash-border);
+    box-shadow: var(--shadow-card);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+    backdrop-filter: blur(12px) saturate(120%);
 }
 
-[data-theme="dark"] .dash-card {
-    background: var(--dash-card-bg);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+[data-theme="dark"] .dash-header-card:hover,
+[data-theme="dark"] .dash-card:hover,
+[data-theme="dark"] .kpi-card:hover,
+[data-theme="dark"] .dash-map-card:hover,
+[data-theme="dark"] .chart-card:hover {
+    border-color: var(--dash-border-hover);
+    box-shadow: var(--shadow-elevated-dark), 0 0 18px rgba(200, 131, 42, 0.14);
 }
 
-[data-theme="dark"] .dash-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .kpi-card {
-    background: var(--dash-card-bg);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
-}
-
-[data-theme="dark"] .kpi-card:hover {
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+[data-theme="dark"] .dash-card-header {
+    background: rgba(33, 21, 12, 0.62);
+    border-bottom-color: var(--dash-border);
+    color: var(--dash-text-primary);
 }
 
 [data-theme="dark"] .chip-btn {
