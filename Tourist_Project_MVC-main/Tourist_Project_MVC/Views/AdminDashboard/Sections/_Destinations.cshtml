@@ -12,6 +12,7 @@
 <div class="dash-card mb-3">
     <div class="dash-card-header">
         <span><i class="bi bi-cloud-arrow-up-fill me-2"></i> ArcGIS Feature Layer Sync</span>
+        <a asp-controller="AdminDashboard" asp-action="AddDestination" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i> Add Destination</a>
     </div>
     <div class="dash-card-body d-flex flex-wrap gap-2 align-items-center">
         <form method="post" action="/AdminDashboard/SyncToArcGIS" style="display:inline;">
@@ -67,14 +68,21 @@
         @foreach (var row in Model.DestinationSection.CategoryBreakdown)
         {
             <div class="top-branch-item mb-2">
-                <div class="top-branch-icon">
-                    <i class="bi bi-map-fill"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">@row.Name</h6>
-                </div>
+                <div class="top-branch-icon"><i class="bi bi-map-fill"></i></div>
+                <div class="flex-grow-1"><h6 class="mb-0 fw-bold" style="color: var(--egy-dark); font-size: 0.9rem;">@row.Name</h6></div>
                 <span class="badge bg-dark">@row.Count</span>
             </div>
         }
     </div>
 </div>
+
+<div class="dash-card destination-dashboard-list mt-3">
+    <div class="dash-card-header"><span><i class="bi bi-list-check me-2"></i> Destination records</span><a asp-controller="Destination" asp-action="Index" class="btn btn-outline-secondary btn-sm">Open data view</a></div>
+    <div class="dash-card-body p-0"><div class="table-responsive"><table class="table table-hover align-middle mb-0 destination-dashboard-table"><thead><tr><th>Destination</th><th>Category</th><th>Status</th><th>Visits</th><th class="text-end">Actions</th></tr></thead><tbody>
+    @foreach (var destination in Model.DestinationSection.Records)
+    {
+        <tr><td><strong>@destination.Name</strong><small class="d-block text-muted">@destination.City · ID @destination.Id</small></td><td>@(destination.Category ?? "—")</td><td><span class="badge bg-light text-dark border">@destination.Status</span></td><td>@destination.Visits.ToString("N0")</td><td class="text-end"><div class="btn-group btn-group-sm"><a asp-controller="Destination" asp-action="Details" asp-route-id="@destination.Id" class="btn btn-outline-info" title="View"><i class="bi bi-eye"></i></a><a asp-controller="Destination" asp-action="Edit" asp-route-id="@destination.Id" class="btn btn-outline-warning" title="Edit"><i class="bi bi-pencil"></i></a><a asp-controller="Destination" asp-action="Delete" asp-route-id="@destination.Id" class="btn btn-outline-danger" title="Delete"><i class="bi bi-trash3"></i></a></div></td></tr>
+    }
+    </tbody></table></div></div>
+</div>
+<style>.destination-dashboard-table{font-size:.76rem}.destination-dashboard-table th{color:var(--dash-text-muted);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase}.destination-dashboard-table td{color:var(--dash-text-secondary)}.destination-dashboard-table strong{color:var(--dash-text-primary)}.destination-dashboard-table .btn{border-radius:7px}@@media(max-width:680px){.destination-dashboard-table th:nth-child(2),.destination-dashboard-table td:nth-child(2),.destination-dashboard-table th:nth-child(4),.destination-dashboard-table td:nth-child(4){display:none}}</style>

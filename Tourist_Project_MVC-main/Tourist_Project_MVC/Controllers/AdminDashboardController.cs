@@ -362,6 +362,11 @@ namespace Tourist_Project_MVC.Controllers
                 .ToList();
 
             vm.DestinationSection.CategoryBreakdown = categoryGroups;
+            vm.DestinationSection.Records = _context.Destinations
+                .OrderByDescending(d => d.Visits)
+                .Take(25)
+                .Select(d => new DestinationAdminRow(d.Id, d.Name, d.City, d.Category, d.Status, d.Visits))
+                .ToList();
         }
 
         private void BuildRewardSection(AdminDashboardVM vm)
@@ -520,8 +525,9 @@ namespace Tourist_Project_MVC.Controllers
         {
             var vm = new AddDestinationVM
             {
-                Latitude = 30.0444, // Default center: Cairo
-                Longitude = 31.2357
+                Latitude = 0,
+                Longitude = 0,
+                LocationSelected = false
             };
             return View(vm);
         }
@@ -530,9 +536,42 @@ namespace Tourist_Project_MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddDestination(AddDestinationVM vm)
         {
-            if (vm.Latitude == 0 && vm.Longitude == 0)
+            if (!vm.LocationSelected || (vm.Latitude == 0 && vm.Longitude == 0))
             {
                 ModelState.AddModelError(string.Empty, "Please select the Destination location on the map.");
+            }
+
+            var isPublic = string.Equals(vm.Category?.Trim(), "Public", StringComparison.OrdinalIgnoreCase);
+            if (isPublic)
+            {
+                // Public destinations are always free-form access: no booking or
+                // ticket requirement and an all-day schedule are persisted so the
+                // existing ArcGIS fields remain populated.
+                vm.TicketRequired = "No";
+                vm.EgyptianPrice = null;
+                vm.StudentEgyptianPrice = null;
+                vm.ForeignPrice = null;
+                vm.StudentForeignPrice = null;
+                vm.Booking = null;
+                vm.SelectedDays = new List<string> { "All Days" };
+                vm.OpenAt = 0;
+                vm.CloseAt = 23;
+            }
+
+            var externalImageUrls = (vm.ExternalImageUrls ?? new List<string>())
+                .Select(url => url?.Trim())
+                .Where(url => !string.IsNullOrWhiteSpace(url))
+                .Where(url => Uri.TryCreate(url, UriKind.Absolute, out var uri)
+                    && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+                .Select(url => url!)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            if (vm.ExternalImageUrls?.Any(url =>
+                !string.IsNullOrWhiteSpace(url)
+                && (!Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri)
+                    || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))) == true)
+            {
+                ModelState.AddModelError(nameof(vm.ExternalImageUrls), "Each external image URL must be a valid absolute URL.");
             }
 
             if (!ModelState.IsValid)
@@ -540,46 +579,44 @@ namespace Tourist_Project_MVC.Controllers
                 return View(vm);
             }
 
-            // Handle Image uploads
+            // The layer has an Images URL field but no attachment support. Store
+            // uploaded files under wwwroot so the URLs remain accessible to all
+            // existing destination consumers after ArcGIS is created.
             var uploadedImageUrls = new List<string>();
             if (vm.ImageFiles != null && vm.ImageFiles.Count > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "destinations");
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
+                Directory.CreateDirectory(uploadsFolder);
 
                 foreach (var file in vm.ImageFiles)
                 {
-                    if (file.Length > 0)
+                    if (file.Length <= 0) continue;
+                    var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+                    if (!allowedExtensions.Contains(ext))
                     {
-                        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
-                        if (!allowedExtensions.Contains(ext))
-                        {
-                            ModelState.AddModelError("ImageFiles", $"File '{file.FileName}' has an invalid format. Allowed: JPG, PNG, WEBP.");
-                            return View(vm);
-                        }
-
-                        if (file.Length > 10 * 1024 * 1024) // 10MB limit
-                        {
-                            ModelState.AddModelError("ImageFiles", $"File '{file.FileName}' exceeds the 10MB size limit.");
-                            return View(vm);
-                        }
-
-                        var fileName = $"{Guid.NewGuid()}{ext}";
-                        var filePath = Path.Combine(uploadsFolder, fileName);
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await file.CopyToAsync(stream);
-                        }
-                        uploadedImageUrls.Add($"/uploads/destinations/{fileName}");
+                        ModelState.AddModelError("ImageFiles", $"File '{file.FileName}' has an invalid format. Allowed: JPG, PNG, WEBP.");
+                        return View(vm);
                     }
+                    if (file.Length > 10 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("ImageFiles", $"File '{file.FileName}' exceeds the 10MB size limit.");
+                        return View(vm);
+                    }
+
+                    var fileName = $"{Guid.NewGuid():N}{ext}";
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+                    await using var stream = new FileStream(filePath, FileMode.CreateNew);
+                    await file.CopyToAsync(stream);
+                    uploadedImageUrls.Add($"/uploads/destinations/{fileName}");
                 }
             }
 
-            string? photoUrlsCombined = uploadedImageUrls.Any() ? string.Join("\n", uploadedImageUrls) : null;
+            var allImageUrls = uploadedImageUrls
+                .Concat(externalImageUrls)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            string? photoUrlsCombined = allImageUrls.Any() ? string.Join("\n", allImageUrls) : null;
             string? daysCombined = vm.SelectedDays.Any() ? string.Join(", ", vm.SelectedDays) : null;
 
             var destination = new Destination

@@ -1,20 +1,19 @@
 ﻿@model Tourist_Project_MVC.Models.Destination
 
 @{
-    ViewData["Title"] = @Localizer["Destination_DetailsTitle"].Value;
+    ViewData["Title"] = "Destination Management";
+    var isAdmin = User.IsInRole("Admin");
 }
 
-<div class="container mt-4" style="max-width: 800px;">
+<div class="container-fluid destination-record-page mt-4">
 
-    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="destination-record-shell">
 
-        <!-- Card Header -->
-        <div class="card-header py-3"
-             style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
+        <a href="/Destination" class="record-back"><i class="bi bi-arrow-left"></i> Back to destination management</a>
+        <div class="record-hero">
             <div class="d-flex justify-content-between align-items-center">
-                <h4 class="text-white mb-0">
-                    <i class="bi bi-geo-alt-fill me-2"></i> @Model.Name
-                </h4>
+                <div><div class="record-kicker"><i class="bi bi-database me-1"></i> Admin destination record · ID @Model.Id</div><h1>@Model.Name</h1><p>@(Model.ArabicName ?? "No Arabic name supplied") · @Model.City</p></div>
+                <div class="record-actions">@if (isAdmin) { <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil-square me-1"></i> Edit</a><a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"><i class="bi bi-trash3 me-1"></i> Delete</a> }</div>
                 @{
                     var badgeClass = Model.Status switch
                     {
@@ -24,11 +23,11 @@
                         _ => "bg-success"
                     };
                 }
-                <span class="badge @badgeClass fs-6">@Model.Status</span>
+                <span class="record-status @badgeClass"><i class="bi bi-circle-fill"></i> @Model.Status</span>
             </div>
         </div>
 
-        <div class="card-body p-4">
+        <div class="record-card-body">
 
             <!-- Stats Row -->
             <div class="row text-center mb-4">
@@ -81,7 +80,7 @@
         </div>
 
 <!-- Card Footer -->
-         <div class="card-footer bg-white d-flex gap-2 justify-content-end">
+         <div class="record-footer">
              @{
                  var backUrl = ViewBag.BackUrl as string ?? "/Destination";
              }
@@ -111,8 +110,10 @@
     </div>
 </div>
 
-@section Scripts {
+@section Styles {
     <style>
+        .destination-record-page{max-width:1180px;margin:0 auto;color:var(--dash-text-primary)}.destination-record-shell{padding:1rem;border:1px solid var(--dash-border);border-radius:18px;background:var(--dash-card-bg);box-shadow:var(--dash-shadow-sm)}.record-back{display:inline-flex;align-items:center;gap:.4rem;margin:0 0 .8rem;color:var(--dash-text-muted);font-size:.7rem;font-weight:800;text-decoration:none}.record-back:hover{color:var(--dash-primary)}.record-hero{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;padding:1.4rem 1.5rem;margin-bottom:1rem;border:1px solid color-mix(in srgb,var(--dash-primary) 28%,var(--dash-border));border-radius:15px;background:linear-gradient(135deg,color-mix(in srgb,var(--dash-primary) 8%,var(--dash-card-bg)),var(--dash-card-bg))}.record-kicker{color:var(--dash-primary);font-size:.63rem;font-weight:900;letter-spacing:.11em;text-transform:uppercase}.record-hero h1{margin:.3rem 0 .2rem;font-size:clamp(1.35rem,3vw,2.1rem);font-weight:900}.record-hero p{margin:0;color:var(--dash-text-muted);font-size:.75rem}.record-actions{display:flex;gap:.45rem;flex-wrap:wrap}.record-actions .btn{border-radius:8px;font-size:.7rem;font-weight:800}.record-status{display:inline-flex;align-items:center;gap:.35rem;padding:.34rem .62rem;border-radius:999px;font-size:.64rem;font-weight:900}.record-status.bg-success{color:var(--dash-green);background:var(--dash-green-bg)!important}.record-status.bg-warning{color:#966b00;background:rgba(228,198,98,.18)!important}.record-status.bg-danger{color:var(--dash-rose);background:var(--dash-rose-bg)!important}.record-card-body{padding:1rem}.record-stat-card{height:100%;padding:.75rem;border:1px solid var(--dash-border);border-radius:10px;background:var(--dash-bg)}.record-stat-card i{color:var(--dash-primary)}.record-stat-number{display:block;margin-top:.3rem;font-weight:900}.record-stat-label{display:block;color:var(--dash-text-muted);font-size:.6rem;text-transform:uppercase;letter-spacing:.06em}.record-meta-label{display:block;color:var(--dash-text-muted);font-size:.62rem;font-weight:800;text-transform:uppercase}.record-meta-value{font-size:.78rem;font-weight:800}.record-description{color:var(--dash-text-secondary);font-size:.78rem;line-height:1.7;white-space:pre-line}.record-footer{display:flex;justify-content:flex-end;gap:.5rem;padding:1rem;border-top:1px solid var(--dash-border)}
+@@media(max-width:650px){.record-hero{flex-direction:column}.record-actions{width:100%}.record-actions .btn{flex:1}}
         .stat-mini-card {
             background: #FDF6EC;
             border: 1px solid #E8A045;

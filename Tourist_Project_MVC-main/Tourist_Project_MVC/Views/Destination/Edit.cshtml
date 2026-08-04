@@ -5,12 +5,12 @@
 }
 @if (User.Identity.IsAuthenticated)
 {
-    <div class="container mt-4">
-        <h2>✏️ @Localizer["Destination_EditTitle"].Value</h2>
-        <hr />
-        <form asp-action="Edit" method="post">
+    <div class="container-fluid destination-edit-page mt-4">
+        <div class="destination-edit-header"><div><div class="destination-edit-kicker"><i class="bi bi-pencil-square me-1"></i> Destination management</div><h1>Edit @Model.Name</h1><p>Update the catalog record while preserving its ArcGIS-compatible location and image fields.</p></div><a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i> Cancel</a></div>
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
             <div class="mb-3">
                 <label asp-for="Name" class="form-label"></label>
@@ -23,9 +23,20 @@
                 <input asp-for="City" class="form-control" />
             </div>
 
+            <div class="row g-3">
+                <div class="col-md-6"><label asp-for="ArabicName" class="form-label">Arabic name</label><input asp-for="ArabicName" class="form-control" dir="rtl" /></div>
+                <div class="col-md-6"><label asp-for="Tags" class="form-label">Discovery tags</label><input asp-for="Tags" class="form-control" placeholder="museum, family, heritage" /></div>
+            </div>
+
             <div class="mb-3">
                 <label asp-for="Category" class="form-label"></label>
-                <input asp-for="Category" class="form-control" />
+                <select asp-for="Category" class="form-select">
+                    <option value="">Select a category</option>
+                    @foreach (var category in new[] { "Hidden Gems", "Temple", "Museum", "Natural", "Public", "Adventure", "Historical", "Archaeological", "Religious", "Cultural", "Beaches", "Parks", "Landmarks", "Other" })
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </select>
             </div>
 
             <div class="mb-3">
@@ -52,7 +63,23 @@
             </div>
             <div class="mb-3">
                 <label asp-for="TicketPrice" class="form-label"></label>
-                <input asp-for="TicketPrice" class="form-control" type="number" step="0.01" />
+                <input asp-for="TicketPrice" class="form-control" type="number" step="0.01" min="0" />
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4"><label asp-for="TicketRequired" class="form-label">Ticket required</label><select asp-for="TicketRequired" class="form-select"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                <div class="col-md-4"><label asp-for="Booking" class="form-label">Booking</label><input asp-for="Booking" class="form-control" /></div>
+                <div class="col-md-4"><label asp-for="Rating" class="form-label">Rating</label><input asp-for="Rating" class="form-control" type="number" step="0.01" min="0" max="5" /></div>
+            </div>
+            <div class="row g-3 mt-1">
+                <div class="col-md-3"><label asp-for="EgyptianPrice" class="form-label">Egyptian price</label><input asp-for="EgyptianPrice" class="form-control" type="number" min="0" /></div>
+                <div class="col-md-3"><label asp-for="StudentEgyptianPrice" class="form-label">Egyptian student</label><input asp-for="StudentEgyptianPrice" class="form-control" type="number" min="0" /></div>
+                <div class="col-md-3"><label asp-for="ForeignPrice" class="form-label">Foreign price</label><input asp-for="ForeignPrice" class="form-control" type="number" min="0" /></div>
+                <div class="col-md-3"><label asp-for="StudentForeignPrice" class="form-label">Foreign student</label><input asp-for="StudentForeignPrice" class="form-control" type="number" min="0" /></div>
+            </div>
+            <div class="mt-3"><label class="form-label">Opening days</label><div class="d-flex flex-wrap gap-2">@foreach (var day in new[] { "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" }) { var selectedDay = (Model.Days ?? string.Empty).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Contains(day); <label class="border rounded px-2 py-1 small"><input type="checkbox" name="SelectedDays" value="@day" @(selectedDay ? "checked" : "") /> @day[..3]</label> }</div></div>
+            <div class="row g-3 mt-1">
+                <div class="col-md-6"><label asp-for="OpenAt" class="form-label">Opening hour</label><input asp-for="OpenAt" class="form-control" type="number" min="0" max="23" /></div>
+                <div class="col-md-6"><label asp-for="CloseAt" class="form-label">Closing hour</label><input asp-for="CloseAt" class="form-control" type="number" min="0" max="23" /></div>
             </div>
 
             <div class="row">
@@ -70,12 +97,17 @@
                 <div id="destinationMap" style="height:360px;border-radius:14px;border:1px solid rgba(200,131,42,0.25);background:#ece6db;"></div>
             </div>
 
-            <button type="submit" class="btn btn-warning">@Localizer["Destination_Update"].Value</button>
+            <button type="submit" class="btn btn-warning"><i class="bi bi-check2-circle me-1"></i> @Localizer["Destination_Update"].Value</button>
             <a asp-action="Index" class="btn btn-secondary">@Localizer["Destination_Cancel"].Value</a>
         </form>
     </div>
 
-    @section Scripts {
+    @section Styles {
+    <style>.destination-edit-page{max-width:1120px;padding-bottom:2rem}.destination-edit-header{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;padding:1.3rem 1.5rem;margin-bottom:1rem;border:1px solid rgba(200,131,42,.25);border-radius:16px;background:linear-gradient(135deg,rgba(200,131,42,.08),var(--bg-surface));box-shadow:0 8px 24px rgba(44,24,16,.06)}.destination-edit-kicker{color:var(--egy-primary);font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.destination-edit-header h1{margin:.25rem 0;font-size:2rem;font-weight:800}.destination-edit-header p{margin:0;color:var(--text-muted);font-size:.78rem}.destination-edit-page form{max-width:900px;padding:1.25rem;border:1px solid rgba(200,131,42,.15);border-radius:16px;background:var(--bg-surface);box-shadow:0 8px 24px rgba(44,24,16,.05)}.destination-edit-page .form-label{font-weight:700;font-size:.78rem}.destination-edit-page .form-control,.destination-edit-page .form-select{border-radius:9px}.destination-edit-page .form-control:focus,.destination-edit-page .form-select:focus{border-color:var(--egy-primary);box-shadow:0 0 0 3px rgba(200,131,42,.12)}@@media(max-width:650px){.destination-edit-header{align-items:flex-start;flex-direction:column}.destination-edit-header h1{font-size:1.5rem}}</style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
         (function () {
             var latVal = parseFloat(document.getElementById('Lat').value);
