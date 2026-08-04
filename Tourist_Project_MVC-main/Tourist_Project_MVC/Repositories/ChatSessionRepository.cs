@@ -15,5 +15,17 @@ namespace Tourist_Project_MVC.Repositories
                 .OrderByDescending(s => s.UpdatedDate)
                 .ToList();
         }
+
+        public IEnumerable<ChatSession> GetByUserEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return new List<ChatSession>();
+
+            var normalized = email.ToLower();
+            return _context.ChatSessions
+                .Where(s => s.UserEmail != null && s.UserEmail.ToLower() == normalized)
+                .OrderByDescending(s => s.UpdatedDate)
+                .ToList();
+        }
     }
 }

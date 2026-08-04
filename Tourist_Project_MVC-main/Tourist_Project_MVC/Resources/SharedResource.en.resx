@@ -193,7 +193,7 @@
     <value>Back</value>
   </data>
   <data name="Ai_HistoryEmpty" xml:space="preserve">
-    <value>You have no saved conversations yet.</value>
+    <value>No conversations yet. Start chatting with EGYXPLORE Assistant and your conversations will appear here.</value>
   </data>
   <data name="Search_Placeholder" xml:space="preserve">
     <value>Search Egypt…</value>

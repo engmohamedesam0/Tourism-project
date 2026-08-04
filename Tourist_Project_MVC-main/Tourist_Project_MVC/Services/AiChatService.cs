@@ -57,16 +57,17 @@ namespace Tourist_Project_MVC.Services
         private string ApiKey => _config["Gemini:ApiKey"] ?? string.Empty;
         private string Model => _config["Gemini:Model"] ?? "gemini-2.5-flash";
 
-        public async Task<AiChatResponseVM> GetReplyAsync(AiChatRequestVM request, Tourist? tourist, CancellationToken ct = default)
+        public async Task<AiChatResponseVM> GetReplyAsync(AiChatRequestVM request, Tourist? tourist, string? userEmail, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(ApiKey))
             {
                 _logger.LogWarning("AiChatService called but Gemini:ApiKey is not configured.");
-                return new AiChatResponseVM
+                var missingKey = new AiChatResponseVM
                 {
                     Reply = "The AI assistant isn't configured yet — a Gemini API key is missing on the server. " +
                             "(Developer: set Gemini:ApiKey via 'dotnet user-secrets set Gemini:ApiKey \"...\"'.)"
                 };
+                return await FinishAsync(request, missingKey, tourist, userEmail);
             }
 
             var destinations = _destinationRepo.GetAll()
@@ -185,27 +186,31 @@ namespace Tourist_Project_MVC.Services
                 if (!httpResponse.IsSuccessStatusCode)
                 {
                     _logger.LogError("Gemini API error {Status}: {Body}", httpResponse.StatusCode, body);
-                    return new AiChatResponseVM
+                    var apiError = new AiChatResponseVM
                     {
                         Reply = "Sorry, I couldn't reach the AI service just now. Please try again in a moment."
                     };
+                    return await FinishAsync(request, apiError, tourist, userEmail);
                 }
 
                 apiResponse = JsonSerializer.Deserialize<GeminiResponse>(body, _jsonOptions);
             }
             catch (TaskCanceledException)
             {
-                return new AiChatResponseVM { Reply = "That took too long to answer — please try again." };
+                var timedOut = new AiChatResponseVM { Reply = "That took too long to answer — please try again." };
+                return await FinishAsync(request, timedOut, tourist, userEmail);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error calling Gemini.");
-                return new AiChatResponseVM { Reply = "Something went wrong on our side. Please try again." };
+                var failed = new AiChatResponseVM { Reply = "Something went wrong on our side. Please try again." };
+                return await FinishAsync(request, failed, tourist, userEmail);
             }
 
             if (apiResponse?.PromptFeedback?.BlockReason != null)
             {
-                return new AiChatResponseVM { Reply = "I can't help with that request. Could you ask something else?" };
+                var blocked = new AiChatResponseVM { Reply = "I can't help with that request. Could you ask something else?" };
+                return await FinishAsync(request, blocked, tourist, userEmail);
             }
 
             var candidate = apiResponse?.Candidates?.FirstOrDefault();
@@ -219,7 +224,7 @@ namespace Tourist_Project_MVC.Services
                 switch (fc.Name)
                 {
                     case SaveTripToolName:
-                        return HandleSaveTripToolCall(fc, tourist, destinations);
+                        return await FinishAsync(request, HandleSaveTripToolCall(fc, tourist, destinations), tourist, userEmail);
                     case AddDestinationToolName:
                         functionResponse = HandleAddDestinationToolCall(fc, tourist, destinations);
                         break;
@@ -236,18 +241,7 @@ namespace Tourist_Project_MVC.Services
 
                 if (functionResponse != null)
                 {
-                    if (tourist != null)
-                    {
-                        try
-                        {
-                            await PersistChatAsync(request, functionResponse, tourist);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Failed to persist chat session for tourist {TouristId}", tourist.Id);
-                        }
-                    }
-                    return functionResponse;
+                    return await FinishAsync(request, functionResponse, tourist, userEmail);
                 }
             }
 
@@ -259,29 +253,41 @@ namespace Tourist_Project_MVC.Services
                     : reply
             };
 
+            return await FinishAsync(request, response, tourist, userEmail);
+        }
+
+        // Single exit point for every reply path: persists the turn for
+        // authenticated users (so no conversation is ever lost — even when the
+        // AI call fails) and returns the response to the caller.
+        private async Task<AiChatResponseVM> FinishAsync(AiChatRequestVM request, AiChatResponseVM response, Tourist? tourist, string? userEmail)
+        {
             if (tourist != null)
             {
                 try
                 {
-                    await PersistChatAsync(request, response, tourist);
+                    await PersistChatAsync(request, response, tourist, userEmail);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Failed to persist chat session for tourist {TouristId}", tourist.Id);
                 }
             }
-
             return response;
         }
 
-        private async Task PersistChatAsync(AiChatRequestVM request, AiChatResponseVM response, Tourist tourist)
+        private async Task PersistChatAsync(AiChatRequestVM request, AiChatResponseVM response, Tourist tourist, string? userEmail)
         {
             ChatSession? session = null;
 
             if (request.ChatSessionId.HasValue)
             {
                 session = await _chatSessionRepo.GetByIdAsync(request.ChatSessionId.Value);
-                if (session == null || session.TouristId != tourist.Id)
+                // Resume only sessions owned by this user — by email when
+                // available (new rows), falling back to TouristId for legacy rows.
+                if (session == null ||
+                    !(session.TouristId == tourist.Id &&
+                      (string.Equals(session.UserEmail, userEmail, StringComparison.OrdinalIgnoreCase)
+                       || (string.IsNullOrEmpty(session.UserEmail) && string.IsNullOrEmpty(userEmail)))))
                 {
                     session = null;
                 }
@@ -292,6 +298,7 @@ namespace Tourist_Project_MVC.Services
                 session = new ChatSession
                 {
                     TouristId = tourist.Id,
+                    UserEmail = string.IsNullOrWhiteSpace(userEmail) ? null : userEmail.Trim(),
                     Title = DeriveTitle(request.Message),
                     MessagesJson = "[]",
                     CreatedDate = DateTime.Now,
@@ -299,6 +306,11 @@ namespace Tourist_Project_MVC.Services
                 };
                 _chatSessionRepo.Add(session);
                 _chatSessionRepo.Save();
+            }
+            else if (string.IsNullOrEmpty(session.UserEmail) && !string.IsNullOrWhiteSpace(userEmail))
+            {
+                // Self-heal legacy rows: stamp the owner email once we know it.
+                session.UserEmail = userEmail.Trim();
             }
 
             var messages = JsonSerializer.Deserialize<List<AiChatMessageVM>>(session.MessagesJson, _jsonOptions) ?? new();

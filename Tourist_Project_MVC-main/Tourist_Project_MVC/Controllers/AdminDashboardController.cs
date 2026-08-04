@@ -478,5 +478,124 @@ namespace Tourist_Project_MVC.Controllers
 
             return RedirectToAction("Index", new { section = "destinations" });
         }
+
+        // -----------------------------------------------------------------------
+        // Admin -> Add Destination
+        // -----------------------------------------------------------------------
+
+        [HttpGet("Destinations/Add")]
+        public IActionResult AddDestination()
+        {
+            var vm = new AddDestinationVM
+            {
+                Latitude = 30.0444, // Default center: Cairo
+                Longitude = 31.2357
+            };
+            return View(vm);
+        }
+
+        [HttpPost("Destinations/Add")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddDestination(AddDestinationVM vm)
+        {
+            if (vm.Latitude == 0 && vm.Longitude == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Please select the Destination location on the map.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            // Handle Image uploads
+            var uploadedImageUrls = new List<string>();
+            if (vm.ImageFiles != null && vm.ImageFiles.Count > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "destinations");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                foreach (var file in vm.ImageFiles)
+                {
+                    if (file.Length > 0)
+                    {
+                        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+                        if (!allowedExtensions.Contains(ext))
+                        {
+                            ModelState.AddModelError("ImageFiles", $"File '{file.FileName}' has an invalid format. Allowed: JPG, PNG, WEBP.");
+                            return View(vm);
+                        }
+
+                        if (file.Length > 10 * 1024 * 1024) // 10MB limit
+                        {
+                            ModelState.AddModelError("ImageFiles", $"File '{file.FileName}' exceeds the 10MB size limit.");
+                            return View(vm);
+                        }
+
+                        var fileName = $"{Guid.NewGuid()}{ext}";
+                        var filePath = Path.Combine(uploadsFolder, fileName);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+                        uploadedImageUrls.Add($"/uploads/destinations/{fileName}");
+                    }
+                }
+            }
+
+            string? photoUrlsCombined = uploadedImageUrls.Any() ? string.Join("\n", uploadedImageUrls) : null;
+            string? daysCombined = vm.SelectedDays.Any() ? string.Join(", ", vm.SelectedDays) : null;
+
+            var destination = new Destination
+            {
+                Name = vm.Name.Trim(),
+                ArabicName = string.IsNullOrWhiteSpace(vm.ArabicName) ? null : vm.ArabicName.Trim(),
+                City = vm.City.Trim(),
+                Category = vm.Category.Trim(),
+                Description = string.IsNullOrWhiteSpace(vm.Description) ? null : vm.Description.Trim(),
+                Tags = string.IsNullOrWhiteSpace(vm.Tags) ? null : vm.Tags.Trim(),
+                TicketRequired = vm.TicketRequired,
+                EgyptianPrice = vm.EgyptianPrice,
+                StudentEgyptianPrice = vm.StudentEgyptianPrice,
+                ForeignPrice = vm.ForeignPrice,
+                StudentForeignPrice = vm.StudentForeignPrice,
+                Days = daysCombined,
+                OpenAt = vm.OpenAt,
+                CloseAt = vm.CloseAt,
+                Booking = vm.Booking,
+                PhotoUrls = photoUrlsCombined,
+                Location = new NetTopologySuite.Geometries.Point(vm.Longitude, vm.Latitude) { SRID = 4326 },
+                Status = "Active",
+                Visits = 0,
+                Rating = 0m
+            };
+
+            // 1. Create Feature in ArcGIS FIRST (Source of Truth)
+            var (arcgisSuccess, arcgisError, objectId, createdId) = await _arcgisSync.AddDestinationToArcGISAsync(destination);
+
+            if (!arcgisSuccess)
+            {
+                ModelState.AddModelError(string.Empty, $"Unable to create the Destination in ArcGIS: {arcgisError}. Please try again.");
+                return View(vm);
+            }
+
+            // 2. ArcGIS confirmed success -> Sync local DB to ensure local IDs match remote layer
+            if (createdId.HasValue)
+            {
+                destination.Id = createdId.Value;
+            }
+
+            // Pull fresh or save to ensure synchronization across website
+            await _arcgisSync.SyncDestinationsFromArcGIS();
+
+            TempData["ArcGISMessage"] = $"Destination '{destination.Name}' was successfully created in ArcGIS and synced locally!";
+            TempData["ArcGISMessageType"] = "success";
+
+            return RedirectToAction("Index", new { section = "destinations" });
+        }
     }
 }

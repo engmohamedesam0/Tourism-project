@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    AI ASSISTANT WIDGET — Premium Styles
    Extracted from _Layout.cshtml inline styles
    ============================================================ */
@@ -26,10 +26,29 @@
     background: var(--egy-primary);
     color: #fff;
     box-shadow: 0 8px 22px rgba(200, 131, 42, 0.45);
-    user-select: none;
     -webkit-user-select: none;
+    user-select: none;
     touch-action: none;
     will-change: left, top;
+}
+
+.ai-fab-icon {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.ai-fab-icon-dark {
+    display: none;
+}
+
+[data-theme="dark"] .ai-fab-icon-light {
+    display: none;
+}
+
+[data-theme="dark"] .ai-fab-icon-dark {
+    display: block;
+    filter: invert(1);
 }
 
 .ai-fab:hover,
@@ -59,8 +78,7 @@
    ============================================================ */
 .ai-widget-panel {
     position: fixed;
-    right: 22px;
-    bottom: 90px;
+    /* right/bottom intentionally omitted — JS sets left/top dynamically via getBoundingClientRect() */
     z-index: 10000;
     width: 380px;
     max-width: calc(100vw - 32px);
@@ -86,6 +104,7 @@
 .ai-widget-panel.is-dragging,
 .ai-widget-panel.is-resizing {
     transition: none !important;
+    -webkit-user-select: none !important;
     user-select: none !important;
     will-change: left, top, width, height !important;
 }
@@ -109,8 +128,8 @@
     gap: 8px;
     flex-shrink: 0;
     cursor: grab;
-    user-select: none;
     -webkit-user-select: none;
+    user-select: none;
     touch-action: none;
     position: relative;
 }
@@ -432,6 +451,9 @@
 }
 
 .ai-history-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     padding: 10px 12px;
     border-radius: 8px;
     cursor: pointer;
@@ -467,6 +489,49 @@
     font-size: 0.9rem;
 }
 
+/* History grouping (Today / Yesterday / Older) + preview + delete */
+.ai-history-group {
+    margin-bottom: 10px;
+}
+.ai-history-group-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--egy-primary);
+    padding: 6px 8px 4px;
+}
+.ai-history-item-main {
+    flex: 1;
+    min-width: 0;
+}
+.ai-history-item-preview {
+    font-size: 0.78rem;
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+.ai-history-item-delete {
+    background: none;
+    border: none;
+    color: #b0a795;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: color .15s ease, background .15s ease;
+}
+.ai-history-item-delete:hover,
+.ai-history-item-delete:focus {
+    color: #d9534f;
+    background: rgba(217, 83, 79, 0.1);
+    outline: none;
+}
+
 /* ============================================================
     RESIZE HANDLE — Premium grip dots
     ============================================================ */
@@ -484,6 +549,7 @@
     color: var(--egy-primary, #c8832a);
     opacity: 0.5;
     transition: opacity 0.2s ease, transform 0.2s ease;
+    -webkit-user-select: none;
     user-select: none;
     touch-action: none;
     padding: 3px;
@@ -512,9 +578,7 @@
         width: calc(100% - 28px);
         max-width: none;
         min-width: 0;
-        right: 14px;
-        left: 14px;
-        bottom: 80px;
+        /* left/right/bottom intentionally omitted — JS positions dynamically */
     }
 
     .ai-fab {

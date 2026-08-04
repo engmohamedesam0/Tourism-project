@@ -1,4 +1,4 @@
-// Floating AI assistant: premium draggable, resizable, stateful widget.
+﻿// Floating AI assistant: premium draggable, resizable, stateful widget.
 (function () {
     'use strict';
 
@@ -44,6 +44,7 @@
         var viewTripText = panel.getAttribute('data-view-trip-text') || 'View trip';
         var historyUrl = panel.getAttribute('data-history-url') || '';
         var historySessionUrlTemplate = panel.getAttribute('data-history-session-url-template') || '';
+        var historyDeleteUrlTemplate = panel.getAttribute('data-history-delete-url-template') || '';
         var historyEmptyText = panel.getAttribute('data-history-empty-text') || 'No saved conversations yet.';
         var historyErrorText = panel.getAttribute('data-history-error-text') || 'Could not load history.';
 
@@ -265,6 +266,10 @@
         // Calculate panel position anchored near the button
         function calculatePanelPosition() {
             var vp = getViewport();
+            // FIX: Always sync btnRect from actual DOM position — anchors to the real icon location
+            var _fabRect = btn.getBoundingClientRect();
+            btnRect.x = _fabRect.left;
+            btnRect.y = _fabRect.top;
             var bx = btnRect.x;
             var by = btnRect.y;
             var bw = btnRect.width;
@@ -400,25 +405,9 @@
             panel.setAttribute('aria-hidden', 'false');
             btn.setAttribute('aria-expanded', 'true');
 
-            // Use saved panel position if available, otherwise calculate near button
-            var savedPanelPos = loadPanelPosition();
-            var pos;
-            if (savedPanelPos) {
-                var vp = getViewport();
-                // Validate the saved position is still on-screen
-                if (savedPanelPos.x >= 0 && savedPanelPos.y >= 0 &&
-                    savedPanelPos.x + panelRect.width <= vp.width + 50 &&
-                    savedPanelPos.y + panelRect.height <= vp.height + 50) {
-                    pos = {
-                        x: clamp(savedPanelPos.x, 0, vp.width - panelRect.width),
-                        y: clamp(savedPanelPos.y, 0, vp.height - panelRect.height)
-                    };
-                } else {
-                    pos = calculatePanelPosition();
-                }
-            } else {
-                pos = calculatePanelPosition();
-            }
+            // FIX: Always anchor panel to the icon's current position.
+            // Never reuse a stale saved position — the icon may have moved since last open.
+            var pos = calculatePanelPosition();
 
             // Set position without transition first
             panel.style.transition = 'none';
@@ -883,6 +872,10 @@
                 btnRect.y = vp.height - btnRect.height - DEFAULT_BOTTOM;
                 applyBtnPosition(btnRect.x, btnRect.y, false);
             }
+            // FIX: Re-read actual rendered position after CSS layout so btnRect is always accurate
+            var _initDom = btn.getBoundingClientRect();
+            btnRect.x = _initDom.left;
+            btnRect.y = _initDom.top;
 
             // Panel size
             if (savedSize) {
@@ -945,46 +938,147 @@
                 }
             });
 
-            // History button
-            var historyBtn = document.getElementById('aiHistoryBtn');
-            if (historyBtn) {
-                historyBtn.addEventListener('click', async function () {
-                    if (!historyUrl) return;
-                    var listEl = document.getElementById('aiHistoryList');
-                    listEl.innerHTML = '<div class="ai-history-empty">Loading…</div>';
-                    panel.classList.add('ai-widget-history-mode');
-                    if (historyPanel) historyPanel.hidden = false;
+            // History helpers: relative time + Today/Yesterday/Older grouping
+            function historyDayDiff(isoDate) {
+                var d = new Date(isoDate);
+                if (isNaN(d.getTime())) return null;
+                var now = new Date();
+                var startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                var startOfDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                return Math.round((startToday - startOfDay) / 86400000);
+            }
 
-                    try {
-                        var response = await fetch(historyUrl, {
-                            credentials: 'same-origin',
-                            headers: {
-                                'RequestVerificationToken': getAntiforgeryToken(),
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        });
-                        var sessions = await response.json();
-                        listEl.innerHTML = '';
-                        if (!sessions || sessions.length === 0) {
-                            listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyEmptyText) + '</div>';
-                            return;
+            function historyGroupLabel(isoDate) {
+                var diff = historyDayDiff(isoDate);
+                if (diff === null) return 'Older';
+                if (diff === 0) return 'Today';
+                if (diff === 1) return 'Yesterday';
+                return 'Older';
+            }
+
+            function formatHistoryTime(isoDate) {
+                var diff = historyDayDiff(isoDate);
+                if (diff === null) return '';
+                var d = new Date(isoDate);
+                if (diff === 0) return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                if (diff === 1) return 'Yesterday';
+                if (diff < 7) return d.toLocaleDateString([], { weekday: 'short' });
+                return d.toLocaleDateString();
+            }
+
+            async function deleteHistorySession(id, itemEl, listEl) {
+                if (!historyDeleteUrlTemplate) return;
+                try {
+                    var url = historyDeleteUrlTemplate.replace('__ID__', id);
+                    var response = await fetch(url, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'RequestVerificationToken': getAntiforgeryToken(),
+                            'X-Requested-With': 'XMLHttpRequest'
                         }
-                        sessions.forEach(function (s) {
+                    });
+                    if (!response.ok) return;
+                    itemEl.remove();
+                    if (!listEl.querySelector('.ai-history-item')) {
+                        listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyEmptyText) + '</div>';
+                    }
+                } catch (err) { /* keep the item on failure */ }
+            }
+
+            async function loadHistory() {
+                if (!historyUrl) return;
+                var listEl = document.getElementById('aiHistoryList');
+                listEl.innerHTML = '<div class="ai-history-empty">Loading…</div>';
+                panel.classList.add('ai-widget-history-mode');
+                if (historyPanel) historyPanel.hidden = false;
+
+                try {
+                    var response = await fetch(historyUrl, {
+                        credentials: 'same-origin',
+                        headers: {
+                            'RequestVerificationToken': getAntiforgeryToken(),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    var sessions = await response.json();
+                    listEl.innerHTML = '';
+                    if (!sessions || sessions.length === 0) {
+                        listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyEmptyText) + '</div>';
+                        return;
+                    }
+
+                    // Group sessions into Today / Yesterday / Older (server already
+                    // returns them newest-first).
+                    var groups = {};
+                    sessions.forEach(function (s) {
+                        var label = historyGroupLabel(s.updatedDate);
+                        if (!groups[label]) groups[label] = [];
+                        groups[label].push(s);
+                    });
+
+                    ['Today', 'Yesterday', 'Older'].forEach(function (label) {
+                        if (!groups[label] || groups[label].length === 0) return;
+                        var groupEl = document.createElement('div');
+                        groupEl.className = 'ai-history-group';
+                        var groupTitle = document.createElement('div');
+                        groupTitle.className = 'ai-history-group-title';
+                        groupTitle.textContent = label;
+                        groupEl.appendChild(groupTitle);
+
+                        groups[label].forEach(function (s) {
                             var item = document.createElement('div');
                             item.className = 'ai-history-item';
                             item.setAttribute('tabindex', '0');
                             item.setAttribute('role', 'button');
-                            var dateStr = new Date(s.updatedDate).toLocaleDateString();
-                            item.innerHTML = '<div class="ai-history-item-title">' + escapeHtml(s.title) + '</div>' +
-                                             '<div class="ai-history-item-date">' + escapeHtml(dateStr) + '</div>';
-                            item.addEventListener('click', function () { loadHistorySession(s.id); });
-                            item.addEventListener('keydown', function (e) { if (e.key === 'Enter') loadHistorySession(s.id); });
-                            listEl.appendChild(item);
+                            item.setAttribute('aria-label', s.title);
+
+                            var previewHtml = s.preview
+                                ? '<div class="ai-history-item-preview">' + escapeHtml(s.preview) + '</div>'
+                                : '';
+                            var deleteBtnHtml = historyDeleteUrlTemplate
+                                ? '<button type="button" class="ai-history-item-delete" aria-label="Delete conversation" title="Delete conversation"><i class="bi bi-trash3"></i></button>'
+                                : '';
+
+                            item.innerHTML =
+                                '<div class="ai-history-item-main">' +
+                                    '<div class="ai-history-item-title">' + escapeHtml(s.title) + '</div>' +
+                                    previewHtml +
+                                    '<div class="ai-history-item-date">' + escapeHtml(formatHistoryTime(s.updatedDate)) + '</div>' +
+                                '</div>' +
+                                deleteBtnHtml;
+
+                            item.addEventListener('click', function (e) {
+                                if (e.target.closest('.ai-history-item-delete')) return;
+                                loadHistorySession(s.id);
+                            });
+                            item.addEventListener('keydown', function (e) {
+                                if (e.key === 'Enter' && !e.target.closest('.ai-history-item-delete')) {
+                                    loadHistorySession(s.id);
+                                }
+                            });
+
+                            var delBtn = item.querySelector('.ai-history-item-delete');
+                            if (delBtn) {
+                                delBtn.addEventListener('click', function (e) {
+                                    e.stopPropagation();
+                                    deleteHistorySession(s.id, item, listEl);
+                                });
+                            }
+
+                            groupEl.appendChild(item);
                         });
-                    } catch (err) {
-                        listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyErrorText) + '</div>';
-                    }
-                });
+                        listEl.appendChild(groupEl);
+                    });
+                } catch (err) {
+                    listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyErrorText) + '</div>';
+                }
+            }
+
+            // History button
+            var historyBtn = document.getElementById('aiHistoryBtn');
+            if (historyBtn) {
+                historyBtn.addEventListener('click', loadHistory);
             }
 
             // History back button
