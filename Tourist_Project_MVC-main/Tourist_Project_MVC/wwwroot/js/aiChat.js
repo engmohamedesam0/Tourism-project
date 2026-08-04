@@ -261,6 +261,7 @@
                 applyPanelPosition(newPos.x, newPos.y, true);
                 savePanelPosition(newPos.x, newPos.y);
             }
+            syncResizeHandleSide();
         }
 
         // Calculate panel position anchored near the button
@@ -336,6 +337,14 @@
 
             panel.appendChild(handle);
             handleElement = handle;
+            syncResizeHandleSide();
+        }
+
+        function syncResizeHandleSide() {
+            if (!handleElement) return;
+            var buttonRect = btn.getBoundingClientRect();
+            var isOnRight = buttonRect.left + buttonRect.width / 2 > window.innerWidth / 2;
+            handleElement.classList.toggle('ai-resize-handle-left', isOnRight);
         }
 
         // ============================================================
@@ -390,6 +399,8 @@
                 clearChatAction.addEventListener('click', function () {
                     messagesEl.innerHTML = '';
                     history = [];
+                    currentSessionId = null;
+                    // Start a fresh client-side conversation without deleting saved history.
                     menuDropdown.classList.remove('ai-menu-visible');
                     if (input) input.focus();
                 });
@@ -421,8 +432,9 @@
             // Calculate transform-origin from button center
             var btnCenterX = btnRect.x + btnRect.width / 2;
             var btnCenterY = btnRect.y + btnRect.height / 2;
+            var isRight = btnCenterX > getViewport().width / 2;
 
-            var originX = ((btnCenterX - pos.x) / panelRect.width) * 100;
+            var originX = isRight ? 100 : ((btnCenterX - pos.x) / panelRect.width) * 100;
             var originY = ((btnCenterY - pos.y) / panelRect.height) * 100;
             originX = clamp(originX, 0, 100);
             originY = clamp(originY, 0, 100);
@@ -438,6 +450,7 @@
             saveOpenState(true);
             savePanelPosition(pos.x, pos.y);
 
+            if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
             if (input) input.focus();
         }
 
@@ -520,6 +533,7 @@
                 btnRect.y = newY;
                 btn.style.left = newX + 'px';
                 btn.style.top = newY + 'px';
+                syncResizeHandleSide();
 
                 // Move panel with button if open
                 if (isOpen) {
@@ -582,6 +596,7 @@
                 panel.style.transition = '';
             }
             snapButtonToEdge(btnRect.x, btnRect.y);
+            syncResizeHandleSide();
             savePosition(btnRect.x, btnRect.y);
             if (isOpen) savePanelPosition(panelRect.x, panelRect.y);
         }
@@ -650,7 +665,7 @@
             e.stopPropagation();
 
             isResizing = true;
-            resizeDir = 'se';
+            resizeDir = handleElement && handleElement.classList.contains('ai-resize-handle-left') ? 'sw' : 'se';
             dragStart.x = e.clientX;
             dragStart.y = e.clientY;
             elemStart.x = panelRect.x;
@@ -665,32 +680,51 @@
         }
 
         function onResizePointerMove(e) {
-            if (!isResizing) return;
-            e.preventDefault();
+    if (!isResizing) return;
+    e.preventDefault();
 
-            var clientX = e.clientX;
-            var clientY = e.clientY;
-            var dx = clientX - dragStart.x;
-            var dy = clientY - dragStart.y;
+    var clientX = e.clientX;
+    var clientY = e.clientY;
+    var dx = clientX - dragStart.x;
+    var dy = clientY - dragStart.y;
 
-            scheduleUpdate(function () {
-                var vp = getViewport();
-                var newW = clamp(elemStart.width + dx, MIN_WIDTH, Math.min(vp.width - panelRect.x - 4, MAX_WIDTH_RATIO * vp.width));
-                var newH = clamp(elemStart.height + dy, MIN_HEIGHT, Math.min(vp.height - panelRect.y - 4, MAX_HEIGHT_RATIO * vp.height));
+    scheduleUpdate(function () {
+        var vp = getViewport();
+        var newW, newX;
 
-                panelRect.width = newW;
-                panelRect.height = newH;
-                panel.style.width = newW + 'px';
-                panel.style.height = newH + 'px';
-            });
-        }
+            if (resizeDir === 'sw') {
+                // Growing leftward: cap width so the left edge can't go past 0
+                var maxW = Math.min(elemStart.x + elemStart.width - 4, MAX_WIDTH_RATIO * vp.width);
+                newW = clamp(elemStart.width - dx, MIN_WIDTH, maxW);
+                newX = elemStart.x + (elemStart.width - newW); // right edge stays fixed
+                newX = clamp(newX, 0, vp.width - newW);
+
+                panelRect.x = newX;
+                panel.style.left = newX + 'px';
+            } else {
+                // 'se': original behavior, grows rightward from fixed left edge
+                newW = clamp(elemStart.width + dx, MIN_WIDTH, Math.min(vp.width - panelRect.x - 4, MAX_WIDTH_RATIO * vp.width));
+            }
+
+            var newH = clamp(elemStart.height + dy, MIN_HEIGHT, Math.min(vp.height - panelRect.y - 4, MAX_HEIGHT_RATIO * vp.height));
+
+            panelRect.width = newW;
+            panelRect.height = newH;
+            panel.style.width = newW + 'px';
+            panel.style.height = newH + 'px';
+        });
+    }
 
         function onResizePointerUp(e) {
             if (!isResizing) return;
             isResizing = false;
+            resizeDir = '';
             panel.classList.remove('is-resizing');
             panel.style.willChange = '';
             panel.style.transition = '';
+            if (e && e.pointerId !== undefined && panel.hasPointerCapture && panel.hasPointerCapture(e.pointerId)) {
+                panel.releasePointerCapture(e.pointerId);
+            }
             saveSize(panelRect.width, panelRect.height);
         }
 
@@ -904,6 +938,13 @@
                 closeBtn.addEventListener('click', closeWidget);
             }
 
+            // Close the chat only when the pointer starts outside both the panel and FAB.
+            // Pointer events keep clicks inside inputs, buttons, messages, drag, and resize intact.
+            document.addEventListener('pointerdown', function (e) {
+                if (!isOpen || panel.contains(e.target) || btn.contains(e.target)) return;
+                closeWidget();
+            });
+
             // Button drag — attach to document for guaranteed capture
             btn.addEventListener('pointerdown', onBtnPointerDown);
             btn.addEventListener('pointermove', onBtnPointerMove);
@@ -929,6 +970,10 @@
             panel.addEventListener('pointerup', onResizePointerUp);
             panel.addEventListener('pointercancel', onResizePointerUp);
             panel.addEventListener('lostpointercapture', onResizePointerUp);
+            document.addEventListener('pointerup', onResizePointerUp);
+            document.addEventListener('pointercancel', onResizePointerUp);
+            document.addEventListener('mouseup', onResizePointerUp);
+            window.addEventListener('blur', onResizePointerUp);
 
             // Escape key
             document.addEventListener('keydown', function (e) {
@@ -1127,6 +1172,7 @@
                     savePanelPosition(panelRect.x, panelRect.y);
                     saveSize(panelRect.width, panelRect.height);
                 }
+                syncResizeHandleSide();
             });
         }
 
