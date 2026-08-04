@@ -712,8 +712,8 @@
 }
 
 .notification-fab {
-    right: 22px;
-    bottom: 94px;
+    right: 24px !important;
+    bottom: 130px;
     background: var(--egy-dark);
     color: var(--egy-light);
     box-shadow: 0 8px 22px rgba(30, 18, 10, 0.35);
@@ -782,8 +782,8 @@
 
 .notification-widget-panel {
     position: fixed;
-    right: 22px;
-    bottom: 166px;
+    right: 24px;
+    bottom: 202px;
     z-index: var(--egy-fab-zindex);
     width: calc(100% - 44px);
     max-width: 360px;
@@ -919,14 +919,14 @@
     .notification-widget-panel {
         right: 10px;
         left: 10px;
-        bottom: 144px;
+        bottom: 176px;
         width: auto;
         max-width: none;
     }
 
     .notification-fab {
         right: 14px;
-        bottom: 78px;
+        bottom: 110px;
         width: 52px;
         height: 52px;
         font-size: 1.3rem;

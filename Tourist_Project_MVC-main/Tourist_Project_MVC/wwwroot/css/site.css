@@ -659,6 +659,11 @@ h6,
     line-height: 1.2;
 }
 
+.navbar-utility .tourist-level-badge {
+    color: #ffffff;
+}
+
+
 /* Reusable premium classes extracted from About page */
 .section-tag {
     display: inline-block;
