@@ -198,89 +198,121 @@ namespace Tourist_Project_MVC.Controllers
                 .Include(t => t.UserBadges)
                 .Include(t => t.ApplicationUser)
                 .ToList();
+            var destinations = _context.Destinations.ToList();
+            var trips = _context.TripPlans
+                .Include(t => t.TripDestinations)
+                .ThenInclude(td => td.Destination)
+                .ToList();
+            var tripStops = _context.TripDestinations
+                .Include(td => td.Destination)
+                .Include(td => td.TripPlan)
+                .ToList();
+            var reviews = _context.SiteReviews
+                .Include(r => r.Destination)
+                .ToList();
+            var favorites = _context.Favorites.ToList();
+            var now = DateTime.Now;
 
-            vm.TouristSection.Total = allTourists.Count();
-            
+            vm.TouristSection.Total = allTourists.Count;
             var active = allTourists.Count(t => t.Status == "Active");
             var inactive = allTourists.Count(t => t.Status == "Inactive");
             var suspended = allTourists.Count(t => t.Status == "Suspended");
-            
             vm.TouristSection.Active = active;
             vm.TouristSection.Inactive = inactive;
             vm.TouristSection.Suspended = suspended;
-
-            vm.TouristSection.GrowthPercentage = 12.5; // Mock data
-            vm.TouristSection.RetentionRate = 85.2; // Mock data
-            vm.TouristSection.AverageSessionDuration = "14m 30s"; // Mock data
+            vm.TouristSection.GrowthPercentage = allTourists.Count == 0 ? 0 : Math.Round(allTourists.Count(t => t.RegisterDate >= now.AddDays(-30)) * 100d / allTourists.Count, 1);
+            vm.TouristSection.RetentionRate = allTourists.Count == 0 ? 0 : Math.Round(active * 100d / allTourists.Count, 1);
+            vm.TouristSection.AverageSessionDuration = "Not tracked";
             vm.TouristSection.AverageMissionsCompleted = allTourists.Any() ? Math.Round(allTourists.Average(t => t.UserMissions?.Count ?? 0), 1) : 0;
 
-            var nationalityGroups = allTourists
-                .GroupBy(t => string.IsNullOrEmpty(t.Nationality) ? "Unknown" : t.Nationality)
-                .Select(g => new { Name = g.Key, Count = g.Count() })
-                .OrderByDescending(r => r.Count)
-                .Take(10)
-                .ToList()
-                .Select(r => new AdminDashboardVM.NameCountRow(r.Name, "🌍", r.Count))
-                .ToList();
-
-            var statusGroups = new List<AdminDashboardVM.NameCountRow>
+            vm.TouristSection.NationalityBreakdown = allTourists
+                .GroupBy(t => string.IsNullOrWhiteSpace(t.Nationality) ? "Unknown" : t.Nationality)
+                .Select(g => new AdminDashboardVM.NameCountRow(g.Key, "globe2", g.Count()))
+                .OrderByDescending(r => r.Count).Take(8).ToList();
+            vm.TouristSection.StatusBreakdown = new List<AdminDashboardVM.NameCountRow>
             {
-                new AdminDashboardVM.NameCountRow("Active", "✅", active),
-                new AdminDashboardVM.NameCountRow("Inactive", "💤", inactive),
-                new AdminDashboardVM.NameCountRow("Suspended", "🚫", suspended)
+                new("Active", "person-check", active), new("Inactive", "person-dash", inactive), new("Suspended", "person-x", suspended)
             };
 
-            vm.TouristSection.NationalityBreakdown = nationalityGroups;
-            vm.TouristSection.StatusBreakdown = statusGroups;
-            
-            // Mock Line Chart Data
-            var months = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-            vm.TouristSection.MonthsLabels = months.Take(DateTime.Now.Month).ToList();
-            
-            var rnd = new Random(42);
-            for(int i=0; i<vm.TouristSection.MonthsLabels.Count; i++) {
-                vm.TouristSection.ActiveHistory.Add(rnd.Next(50, 200) + (i * 10));
-                vm.TouristSection.InactiveHistory.Add(rnd.Next(10, 50));
-                vm.TouristSection.SuspendedHistory.Add(rnd.Next(0, 10));
-            }
+            var months = Enumerable.Range(0, 6).Select(i => now.AddMonths(-5 + i)).ToList();
+            vm.TouristSection.MonthsLabels = months.Select(m => m.ToString("MMM")).ToList();
+            vm.TouristSection.ActiveHistory = months.Select(m => allTourists.Count(t => t.RegisterDate.Year == m.Year && t.RegisterDate.Month == m.Month)).ToList();
+            vm.TouristSection.InactiveHistory = months.Select(m => allTourists.Count(t => t.Status == "Inactive" && t.RegisterDate.Year == m.Year && t.RegisterDate.Month == m.Month)).ToList();
+            vm.TouristSection.SuspendedHistory = months.Select(m => allTourists.Count(t => t.Status == "Suspended" && t.RegisterDate.Year == m.Year && t.RegisterDate.Month == m.Month)).ToList();
 
-            // Top Destinations (mocking visits)
-            var destinations = _context.Destinations.Take(10).ToList();
-            foreach(var dest in destinations) {
-                vm.TouristSection.TopDestinations.Add(new AdminDashboardVM.NameCountRow(dest.Name, "📍", rnd.Next(100, 1000)));
-            }
-            vm.TouristSection.TopDestinations = vm.TouristSection.TopDestinations.OrderByDescending(x => x.Count).ToList();
-
-            // Top Tourists by Points
-            vm.TouristSection.TopTouristsByPoints = allTourists
-                .OrderByDescending(t => t.point_Balance)
-                .Take(5)
-                .Select(t => new TopTouristRow(t.Name, t.point_Balance, "⭐", "Points"))
-                .ToList();
-
-            // Top Tourists by Badges
-            vm.TouristSection.TopTouristsByBadges = allTourists
-                .OrderByDescending(t => t.UserBadges?.Count ?? 0)
-                .Take(5)
-                .Select(t => new TopTouristRow(t.Name, t.UserBadges?.Count ?? 0, "🏅", "Badges"))
-                .ToList();
-
-            // Top Tourists by Level
-            vm.TouristSection.TopTouristsByLevel = allTourists
-                .OrderByDescending(t => t.UserProgress?.CurrentLevel ?? 0)
-                .Take(5)
-                .Select(t => new TopTouristRow(t.Name, t.UserProgress?.CurrentLevel ?? 0, "🏆", "Level"))
-                .ToList();
-                
-            // Recent Activities
-            vm.TouristSection.RecentActivities = new List<RecentActivityRow>
+            var visitorsByDestination = tripStops
+                .Where(td => td.Destination != null)
+                .GroupBy(td => td.DestinationId)
+                .ToDictionary(g => g.Key, g => g.Count());
+            var reviewsByDestination = reviews.Where(r => r.Destination != null).GroupBy(r => r.DestinationId!.Value).ToDictionary(g => g.Key, g => g.Average(r => r.Rating));
+            var destinationRows = destinations.Select(d =>
             {
-                new RecentActivityRow("New Registration", "John Doe joined the platform", "2 hours ago", "bi-person-plus", "text-success"),
-                new RecentActivityRow("Mission Completed", "Sarah Smith completed 'Pyramids Tour'", "5 hours ago", "bi-check-circle", "text-primary"),
-                new RecentActivityRow("Reward Claimed", "Ahmed Ali claimed 'Free Coffee'", "1 day ago", "bi-gift", "text-warning"),
-                new RecentActivityRow("Destination Visited", "Maria visited 'Luxor Temple'", "1 day ago", "bi-geo-alt", "text-info"),
-                new RecentActivityRow("Level Up", "Omar reached Level 5", "2 days ago", "bi-trophy", "text-danger"),
+                var visitors = visitorsByDestination.TryGetValue(d.Id, out var count) ? count : d.Visits;
+                var rating = reviewsByDestination.TryGetValue(d.Id, out var reviewRating) ? reviewRating : (double)(d.Rating ?? 0);
+                var congestion = visitors >= 50 ? "High" : visitors >= 20 ? "Moderate" : "Low";
+                var potential = rating >= 4 && visitors < 20 ? Math.Round(Math.Min(99, rating * 15 + (20 - visitors) * 2), 1) : 0;
+                return new TourismDestinationRow(d.Name, d.City, visitors, Math.Round(rating, 1), 0, congestion, d.Status ?? "Active", false, potential);
+            }).OrderByDescending(d => d.Visitors).ToList();
+            vm.TouristSection.TopDestinations = destinationRows.Take(8).Select(d => new AdminDashboardVM.NameCountRow(d.Destination, "geo-alt", d.Visitors)).ToList();
+            vm.MostVisitedDestination = destinationRows.FirstOrDefault()?.Destination ?? "No recorded visits";
+
+            vm.TotalTrips = trips.Count;
+            vm.RecordedDestinationVisits = tripStops.Count;
+            vm.EngagedTourists = allTourists.Count(t => (t.UserMissions?.Any() ?? false) || (t.UserProgress?.VisitedPlaces ?? 0) > 0 || trips.Any(p => p.TouristId == t.Id));
+            vm.EngagementRate = allTourists.Count == 0 ? 0 : Math.Round(vm.EngagedTourists * 100d / allTourists.Count, 1);
+            vm.AverageStayDays = tripStops.Any() ? Math.Round(tripStops.Average(td => Math.Max(1, (td.DepartureDate.Date - td.ArrivalDate.Date).TotalDays)), 1) : 0;
+            vm.HighPotentialDestinations = destinationRows.Count(d => d.Potential > 0);
+            vm.DiscoveryPotential = destinationRows.Any() ? Math.Round(destinationRows.Where(d => d.Potential > 0).Select(d => d.Potential).DefaultIfEmpty(0).Average(), 1) : 0;
+            vm.DestinationPerformance = destinationRows.Take(6).ToList();
+            vm.HiddenDestinations = destinationRows.Where(d => d.Potential > 0).OrderByDescending(d => d.Potential).Take(5).Select(d => d with { IsHidden = true }).ToList();
+            vm.DestinationOptions = destinations.Select(d => d.Name).Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().OrderBy(n => n).ToList();
+            vm.RegionOptions = destinations.Select(d => d.City).Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().OrderBy(n => n).ToList();
+
+            vm.TourismFlows = tripStops.GroupBy(td => td.TripPlanId).SelectMany(g => g.OrderBy(td => td.Visit_Order).Zip(g.OrderBy(td => td.Visit_Order).Skip(1), (from, to) => new TourismFlowRow(from.Destination?.Name ?? "Unknown", to.Destination?.Name ?? "Unknown", 1)))
+                .GroupBy(f => new { f.From, f.To }).Select(g => new TourismFlowRow(g.Key.From, g.Key.To, g.Count())).OrderByDescending(f => f.Volume).Take(6).ToList();
+            vm.Congestion = destinationRows.Take(5).Select(d => new TourismCongestionRow(d.Destination, d.Congestion, d.Visitors, destinationRows.Sum(x => x.Visitors) == 0 ? 0 : Math.Round(d.Visitors * 100d / destinationRows.Sum(x => x.Visitors), 1))).ToList();
+
+            // Avoid translating DateTime.Year/Month into PostgreSQL date_part casts.
+            // On some PostgreSQL/Npgsql combinations that translation can overflow
+            // when the provider converts date_part's numeric result back to int.
+            // Restrict by a parameterized range in SQL, then group the materialized
+            // dates in .NET where the values are already DateTime instances.
+            var activityWindowStart = new DateTime(months[0].Year, months[0].Month, 1);
+            var activityWindowEnd = months[^1].AddMonths(1);
+            var missionActivityDates = _context.UserMissions
+                .Where(um => um.Completed_At >= activityWindowStart && um.Completed_At < activityWindowEnd)
+                .Select(um => um.Completed_At)
+                .ToList();
+            var missionsByMonth = missionActivityDates
+                .GroupBy(date => new { date.Year, date.Month })
+                .ToDictionary(group => (group.Key.Year, group.Key.Month), group => group.Count());
+            vm.ActivityTrend = months.Select(m => new TourismSeriesPoint(
+                m.ToString("MMM"),
+                allTourists.Count(t => t.RegisterDate.Year == m.Year && t.RegisterDate.Month == m.Month),
+                missionsByMonth.TryGetValue((m.Year, m.Month), out var missionCount) ? missionCount : 0)).ToList();
+
+            var topNationality = vm.TouristSection.NationalityBreakdown.FirstOrDefault()?.Name ?? "No nationality data";
+            vm.Insights = new List<TourismInsightRow>
+            {
+                new("Destination demand is concentrated", $"{vm.MostVisitedDestination} leads recorded destination visits. Use nearby low-traffic sites to balance the experience.", "graph-up-arrow", "gold"),
+                new("Underexplored inventory detected", $"{vm.HighPotentialDestinations} destinations combine strong ratings with low recorded visits.", "stars", "blue"),
+                new("Audience signal", $"{topNationality} is the largest nationality segment in the current tourist registry.", "globe2", "green")
             };
+            vm.RecentTouristActivity = allTourists.OrderByDescending(t => t.RegisterDate).Take(4).Select(t => new TourismActivityRow("Tourist registered", $"{t.Name} joined the platform", RelativeTime(t.RegisterDate, now), "person-plus", "gold")).ToList();
+            vm.RecentTouristActivity.AddRange(reviews.OrderByDescending(r => r.CreatedDate).Take(3).Select(r => new TourismActivityRow("Review submitted", $"{r.Destination?.Name ?? "A destination"} received a {r.Rating}/5 rating", RelativeTime(r.CreatedDate, now), "star", "blue")));
+
+            vm.TouristSection.TopTouristsByPoints = allTourists.OrderByDescending(t => t.point_Balance).Take(5).Select(t => new TopTouristRow(t.Name, t.point_Balance, "star", "Points")).ToList();
+            vm.TouristSection.TopTouristsByBadges = allTourists.OrderByDescending(t => t.UserBadges?.Count ?? 0).Take(5).Select(t => new TopTouristRow(t.Name, t.UserBadges?.Count ?? 0, "award", "Badges")).ToList();
+            vm.TouristSection.TopTouristsByLevel = allTourists.OrderByDescending(t => t.UserProgress?.CurrentLevel ?? 0).Take(5).Select(t => new TopTouristRow(t.Name, t.UserProgress?.CurrentLevel ?? 0, "trophy", "Level")).ToList();
+            vm.TouristSection.RecentActivities = vm.RecentTouristActivity.Select(a => new RecentActivityRow(a.Title, a.Detail, a.TimeAgo, $"bi-{a.Icon}", a.Tone)).ToList();
+        }
+
+        private static string RelativeTime(DateTime value, DateTime now)
+        {
+            var minutes = Math.Max(1, (int)(now - value).TotalMinutes);
+            if (minutes < 60) return $"{minutes}m ago";
+            if (minutes < 1440) return $"{minutes / 60}h ago";
+            return $"{minutes / 1440}d ago";
         }
 
         private void BuildMissionSection(AdminDashboardVM vm)

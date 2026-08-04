@@ -1,417 +1,239 @@
 @model Tourist_Project_MVC.View_Model.AdminDashboardVM
+@using System.Text.Json
+@{
+    var tourism = Model.TouristSection;
+    var seriesJson = JsonSerializer.Serialize(Model.ActivityTrend);
+    var nationalityLabels = JsonSerializer.Serialize(tourism.NationalityBreakdown.Select(x => x.Name));
+    var nationalityData = JsonSerializer.Serialize(tourism.NationalityBreakdown.Select(x => x.Count));
+    var destinationLabels = JsonSerializer.Serialize(Model.DestinationPerformance.Select(x => x.Destination));
+    var destinationData = JsonSerializer.Serialize(Model.DestinationPerformance.Select(x => x.Visitors));
+    var flowLabels = JsonSerializer.Serialize(Model.TourismFlows.Select(x => $"{x.From} → {x.To}"));
+    var flowData = JsonSerializer.Serialize(Model.TourismFlows.Select(x => x.Volume));
+}
 
 <style>
-    .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 2.5rem; }
-    .kpi-card { background: var(--bg-card); border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.04); display: flex; align-items: center; gap: 1.25rem; border: 1px solid rgba(0,0,0,0.02); opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-    .kpi-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
-    .kpi-card.animate-in { opacity: 1; transform: translateY(0); }
-    .kpi-icon-wrapper { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; transition: transform 0.3s; }
-    .kpi-card:hover .kpi-icon-wrapper { transform: scale(1.1); }
-    
-    .kpi-icon-wrapper.blue { background: linear-gradient(135deg, rgba(13, 110, 253, 0.15), rgba(13, 110, 253, 0.05)); color: #0d6efd; }
-    .kpi-icon-wrapper.green { background: linear-gradient(135deg, rgba(25, 135, 84, 0.15), rgba(25, 135, 84, 0.05)); color: #198754; }
-    .kpi-icon-wrapper.purple { background: linear-gradient(135deg, rgba(111, 66, 193, 0.15), rgba(111, 66, 193, 0.05)); color: #6f42c1; }
-    .kpi-icon-wrapper.orange { background: linear-gradient(135deg, rgba(253, 126, 20, 0.15), rgba(253, 126, 20, 0.05)); color: #fd7e14; }
-    
-    .kpi-label { font-size: 0.9rem; color: #6c757d; font-weight: 600; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .kpi-value { font-size: 2rem; font-weight: 800; color: #2b3445; line-height: 1.2; }
-    .kpi-sub { font-size: 0.8rem; color: #adb5bd; margin-top: 0.4rem; font-weight: 500; }
-    
-    .dash-card { background: var(--bg-card); border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.02); margin-bottom: 2.5rem; opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-    .dash-card.animate-in { opacity: 1; transform: translateY(0); }
-    .dash-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; font-weight: 700; color: #2b3445; font-size: 1.2rem; }
-    .chart-container { position: relative; height: 350px; width: 100%; }
-    
-    .leaderboard-list { list-style: none; padding: 0; margin: 0; }
-    .leaderboard-item { display: flex; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--border-subtle); opacity: 0; transition: opacity 0.5s ease-out; }
-    .leaderboard-item.animate-in { opacity: 1; }
-    .leaderboard-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .leaderboard-item:first-child { padding-top: 0; }
-    .leaderboard-rank { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-surface-elevated); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: #6c757d; margin-right: 1.25rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
-    .leaderboard-rank.top-1 { background: linear-gradient(135deg, #ffd700, #fbc02d); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-    .leaderboard-rank.top-2 { background: linear-gradient(135deg, #e0e0e0, #bdbdbd); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-    .leaderboard-rank.top-3 { background: linear-gradient(135deg, #cd7f32, #a65e2e); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-    .leaderboard-info { flex-grow: 1; }
-    .leaderboard-name { font-weight: 600; color: #2b3445; margin: 0; font-size: 0.95rem; }
-    .leaderboard-score { font-weight: 800; color: #0d6efd; font-size: 1.1rem; }
-    
-    .activity-list { list-style: none; padding: 0; margin: 0; position: relative; }
-    .activity-list::before { content: ''; position: absolute; left: 23px; top: 0; bottom: 0; width: 2px; background: rgba(0,0,0,0.05); }
-    .activity-item { display: flex; gap: 1.25rem; margin-bottom: 2rem; position: relative; z-index: 1; opacity: 0; transform: translateX(-20px); transition: all 0.5s ease-out; }
-    .activity-item.animate-in { opacity: 1; transform: translateX(0); }
-    .activity-item:last-child { margin-bottom: 0; }
-    .activity-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--bg-card); border: 3px solid var(--border-subtle); box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
-    .activity-content { flex-grow: 1; padding-top: 0.4rem; }
-    .activity-title { font-weight: 700; color: #2b3445; margin: 0 0 0.3rem 0; font-size: 1rem; }
-    .activity-desc { color: #6c757d; font-size: 0.9rem; margin: 0; font-weight: 500; }
-    .activity-time { color: #adb5bd; font-size: 0.8rem; font-weight: 600; display: inline-block; margin-top: 0.4rem; }
-    
-    /* Layout tweaks */
-    .premium-row { display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px; }
-    .premium-col { padding-right: 15px; padding-left: 15px; width: 100%; }
+    .tourism-intel { --ti-ink: var(--dash-text-primary); --ti-muted: var(--dash-text-secondary); --ti-faint: var(--dash-text-muted); --ti-surface: var(--dash-card-bg); --ti-border: var(--dash-border); --ti-gold: var(--dash-primary); --ti-gold-soft: var(--dash-primary-light); color: var(--ti-ink); }
+    .tourism-intel * { box-sizing: border-box; }
+    .tourism-heading { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; margin: 2px 0 22px; }
+    .tourism-eyebrow { color:var(--ti-gold); font-size:.71rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin-bottom:7px; }
+    .tourism-title { font-size:clamp(1.65rem, 2.2vw, 2.35rem); font-weight:800; letter-spacing:-.04em; margin:0; color:var(--ti-ink); }
+    .tourism-subtitle { color:var(--ti-muted); margin:8px 0 0; max-width:650px; font-size:.9rem; line-height:1.65; }
+    .tourism-actions { display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+    .tourism-select, .tourism-btn { appearance:none; border:1px solid var(--ti-border); border-radius:10px; background:var(--ti-surface); color:var(--ti-ink); padding:10px 12px; font-size:.78rem; font-weight:700; min-height:40px; }
+    .tourism-btn { cursor:pointer; display:inline-flex; align-items:center; gap:7px; transition:.2s ease; }
+    .tourism-btn:hover { border-color:var(--ti-gold); color:var(--ti-gold); transform:translateY(-1px); }
+    .tourism-btn.primary { background:var(--ti-gold); border-color:var(--ti-gold); color:#fff; box-shadow:0 7px 18px var(--dash-primary-glow); }
+    .tourism-btn.primary:hover { color:#fff; background:var(--dash-primary-hover); }
+    .tourism-filterbar { display:flex; gap:8px; flex-wrap:wrap; padding:12px; margin-bottom:18px; background:var(--ti-surface); border:1px solid var(--ti-border); border-radius:14px; box-shadow:var(--dash-shadow-sm); }
+    .tourism-filterbar .tourism-select { min-width:145px; flex:1 1 145px; }
+    .tourism-kpis { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+    .tourism-kpi, .tourism-card { background:var(--ti-surface); border:1px solid var(--ti-border); border-radius:16px; box-shadow:var(--dash-shadow-sm); }
+    .tourism-kpi { min-height:140px; padding:16px; position:relative; overflow:hidden; transition:.25s ease; }
+    .tourism-kpi:hover { transform:translateY(-3px); box-shadow:var(--dash-shadow-md); border-color:var(--dash-border-hover); }
+    .tourism-kpi::after { content:""; position:absolute; width:85px; height:85px; border-radius:50%; right:-34px; top:-36px; background:var(--ti-gold-soft); }
+    .tourism-kpi-top { display:flex; align-items:center; justify-content:space-between; gap:8px; color:var(--ti-faint); font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+    .tourism-kpi-icon { width:29px; height:29px; border-radius:9px; display:grid; place-items:center; color:var(--ti-gold); background:var(--ti-gold-soft); font-size:.86rem; position:relative; z-index:1; }
+    .tourism-kpi-value { font-size:1.65rem; font-weight:800; letter-spacing:-.04em; margin:17px 0 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .tourism-kpi-meta { color:var(--ti-muted); font-size:.72rem; }
+    .tourism-up { color:var(--dash-green); font-weight:800; }
+    .tourism-layout { display:grid; grid-template-columns:minmax(0, 1.8fr) minmax(260px, .7fr); gap:18px; margin-bottom:18px; }
+    .tourism-card { overflow:hidden; }
+    .tourism-card-header { padding:16px 18px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; border-bottom:1px solid var(--ti-border); }
+    .tourism-card-title { font-size:1rem; font-weight:800; margin:0; letter-spacing:-.02em; }
+    .tourism-card-kicker { color:var(--ti-faint); text-transform:uppercase; font-size:.65rem; font-weight:800; letter-spacing:.1em; margin-bottom:5px; }
+    .tourism-card-body { padding:18px; }
+    .tourism-live { display:inline-flex; align-items:center; gap:6px; color:var(--dash-green); background:var(--dash-green-bg); border-radius:99px; padding:6px 9px; font-size:.68rem; font-weight:800; white-space:nowrap; }
+    .tourism-live i { font-size:.55rem; }
+    .tourism-map-shell { position:relative; height:445px; background:linear-gradient(145deg, rgba(200,131,42,.06), transparent 48%), var(--dash-bg); }
+    .tourism-map { height:100%; width:100%; }
+    .tourism-map-tools { position:absolute; z-index:5; top:14px; left:14px; right:14px; display:flex; justify-content:space-between; align-items:flex-start; gap:10px; pointer-events:none; }
+    .tourism-map-tools > * { pointer-events:auto; }
+    .tourism-map-search { width:min(240px, 48%); }
+    .tourism-map-search input { width:100%; border:1px solid var(--ti-border); border-radius:10px; padding:9px 11px 9px 34px; background:color-mix(in srgb, var(--ti-surface) 90%, transparent); color:var(--ti-ink); backdrop-filter:blur(8px); font-size:.75rem; }
+    .tourism-map-search i { position:absolute; margin:10px 0 0 12px; color:var(--ti-faint); }
+    .tourism-map-controls { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+    .tourism-map-controls button { border:1px solid var(--ti-border); background:color-mix(in srgb, var(--ti-surface) 90%, transparent); color:var(--ti-ink); border-radius:9px; min-width:34px; min-height:34px; cursor:pointer; backdrop-filter:blur(8px); }
+    .tourism-map-controls button.active, .tourism-map-controls button:hover { color:var(--ti-gold); border-color:var(--ti-gold); }
+    .tourism-map-legend { position:absolute; z-index:4; bottom:14px; left:14px; display:flex; gap:9px; flex-wrap:wrap; padding:9px 11px; border:1px solid var(--ti-border); border-radius:10px; background:color-mix(in srgb, var(--ti-surface) 90%, transparent); backdrop-filter:blur(8px); font-size:.68rem; color:var(--ti-muted); }
+    .tourism-map-legend span { display:inline-flex; align-items:center; gap:5px; }
+    .tourism-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+    .tourism-dot.gold { background:var(--ti-gold); box-shadow:0 0 0 3px var(--ti-gold-soft); }
+    .tourism-dot.blue { background:var(--dash-blue); box-shadow:0 0 0 3px var(--dash-blue-bg); }
+    .tourism-dot.rose { background:var(--dash-rose); box-shadow:0 0 0 3px var(--dash-rose-bg); }
+    .tourism-map-note { position:absolute; z-index:3; right:14px; bottom:14px; color:var(--ti-faint); font-size:.64rem; text-align:right; }
+    .tourism-signal { padding:14px 0; border-bottom:1px solid var(--ti-border); }
+    .tourism-signal:last-child { border-bottom:0; padding-bottom:0; }
+    .tourism-signal-label { display:flex; justify-content:space-between; gap:10px; font-size:.75rem; font-weight:800; }
+    .tourism-signal-label span:last-child { color:var(--ti-gold); }
+    .tourism-progress { height:5px; background:var(--dash-bg); border-radius:99px; overflow:hidden; margin-top:9px; }
+    .tourism-progress span { height:100%; display:block; border-radius:inherit; background:linear-gradient(90deg,var(--ti-gold),#e9ad5c); }
+    .tourism-note { color:var(--ti-muted); font-size:.74rem; line-height:1.6; margin:5px 0 0; }
+    .tourism-grid-2 { display:grid; grid-template-columns:minmax(0, 1.35fr) minmax(0, .85fr); gap:18px; margin-bottom:18px; }
+    .tourism-chart { position:relative; height:270px; }
+    .tourism-chart.tall { height:310px; }
+    .tourism-inline-legend { display:flex; gap:14px; flex-wrap:wrap; color:var(--ti-muted); font-size:.72rem; font-weight:700; }
+    .tourism-inline-legend span { display:inline-flex; align-items:center; gap:6px; }
+    .tourism-table-wrap { overflow:auto; }
+    .tourism-table { width:100%; border-collapse:collapse; min-width:700px; font-size:.75rem; }
+    .tourism-table th { color:var(--ti-faint); text-transform:uppercase; letter-spacing:.08em; font-size:.63rem; font-weight:800; text-align:left; padding:11px 12px; border-bottom:1px solid var(--ti-border); white-space:nowrap; }
+    .tourism-table td { color:var(--ti-muted); padding:14px 12px; border-bottom:1px solid color-mix(in srgb, var(--ti-border) 70%, transparent); white-space:nowrap; }
+    .tourism-table tr:last-child td { border-bottom:0; }
+    .tourism-table td:first-child { color:var(--ti-ink); font-weight:800; }
+    .tourism-destination { display:flex; align-items:center; gap:9px; }
+    .tourism-destination-icon { width:28px; height:28px; border-radius:8px; display:grid; place-items:center; background:var(--ti-gold-soft); color:var(--ti-gold); }
+    .tourism-badge { display:inline-flex; align-items:center; padding:5px 8px; border-radius:99px; font-weight:800; font-size:.64rem; }
+    .tourism-badge.low { color:var(--dash-green); background:var(--dash-green-bg); }
+    .tourism-badge.moderate { color:var(--dash-amber); background:var(--dash-amber-bg); }
+    .tourism-badge.high { color:var(--dash-rose); background:var(--dash-rose-bg); }
+    .tourism-badge.active { color:var(--dash-blue); background:var(--dash-blue-bg); }
+    .tourism-performance-grid { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(250px,.8fr); gap:18px; margin-bottom:18px; }
+    .tourism-flow-list { display:grid; gap:10px; }
+    .tourism-flow { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:8px; padding:11px; border:1px solid var(--ti-border); border-radius:11px; background:color-mix(in srgb, var(--ti-surface) 88%, var(--ti-gold-soft)); }
+    .tourism-flow strong { font-size:.76rem; color:var(--ti-ink); }
+    .tourism-flow small { display:block; color:var(--ti-faint); font-size:.63rem; margin-top:3px; }
+    .tourism-flow-arrow { color:var(--ti-gold); font-size:1.1rem; }
+    .tourism-flow-volume { text-align:right; color:var(--ti-gold); font-size:.68rem; font-weight:800; }
+    .tourism-congestion-row { display:grid; grid-template-columns:1fr 70px 46px; gap:8px; align-items:center; padding:12px 0; border-bottom:1px solid var(--ti-border); }
+    .tourism-congestion-row:last-child { border-bottom:0; }
+    .tourism-congestion-row strong { display:block; font-size:.78rem; }
+    .tourism-congestion-row small { color:var(--ti-faint); font-size:.66rem; }
+    .tourism-congestion-bar { height:5px; border-radius:99px; background:var(--dash-bg); overflow:hidden; }
+    .tourism-congestion-bar span { display:block; height:100%; background:var(--dash-rose); border-radius:inherit; }
+    .tourism-ai { background:linear-gradient(135deg, color-mix(in srgb, var(--ti-gold) 13%, var(--ti-surface)), var(--ti-surface) 60%); border-color:color-mix(in srgb, var(--ti-gold) 35%, var(--ti-border)); }
+    .tourism-ai .tourism-card-header { border-bottom-color:color-mix(in srgb, var(--ti-gold) 25%, var(--ti-border)); }
+    .tourism-ai-mark { width:34px; height:34px; border-radius:11px; display:grid; place-items:center; color:#fff; background:linear-gradient(135deg,var(--ti-gold),#edb361); box-shadow:0 5px 15px var(--dash-primary-glow); }
+    .tourism-insight { display:grid; grid-template-columns:30px 1fr; gap:10px; padding:12px 0; border-bottom:1px solid color-mix(in srgb, var(--ti-gold) 20%, var(--ti-border)); }
+    .tourism-insight:last-child { border-bottom:0; }
+    .tourism-insight-icon { width:30px; height:30px; display:grid; place-items:center; border-radius:9px; background:var(--ti-gold-soft); color:var(--ti-gold); }
+    .tourism-insight strong { font-size:.77rem; }
+    .tourism-insight p { margin:3px 0 0; font-size:.72rem; line-height:1.55; color:var(--ti-muted); }
+    .tourism-bottom-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; }
+    .tourism-activity { display:flex; gap:10px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--ti-border); }
+    .tourism-activity:last-child { border-bottom:0; }
+    .tourism-activity-icon { width:31px; height:31px; border-radius:9px; display:grid; place-items:center; flex:0 0 auto; background:var(--ti-gold-soft); color:var(--ti-gold); }
+    .tourism-activity strong { display:block; font-size:.76rem; }
+    .tourism-activity p { margin:3px 0 0; color:var(--ti-muted); font-size:.7rem; }
+    .tourism-activity time { color:var(--ti-faint); font-size:.64rem; }
+    .tourism-empty { color:var(--ti-faint); font-size:.76rem; padding:20px 0; text-align:center; }
+    [data-theme="dark"] .tourism-map-shell { background:radial-gradient(circle at 35% 40%, rgba(200,131,42,.12), transparent 42%), #17100b; }
+    [data-theme="dark"] .tourism-ai { background:linear-gradient(135deg, rgba(200,131,42,.16), var(--ti-surface) 60%); }
+    [data-theme="dark"] .tourism-map-search input, [data-theme="dark"] .tourism-map-controls button, [data-theme="dark"] .tourism-map-legend { background:rgba(25,17,11,.9); }
+    @@media (max-width: 1350px) { .tourism-kpis { grid-template-columns:repeat(3, minmax(0,1fr)); } }
+    @@media (max-width: 1050px) { .tourism-layout, .tourism-grid-2, .tourism-performance-grid, .tourism-bottom-grid { grid-template-columns:1fr; } }
+    @@media (max-width: 700px) { .tourism-heading { flex-direction:column; } .tourism-actions { justify-content:flex-start; } .tourism-kpis { grid-template-columns:repeat(2, minmax(0,1fr)); } .tourism-kpi { min-height:125px; padding:13px; } .tourism-kpi-value { font-size:1.35rem; } .tourism-map-shell { height:360px; } .tourism-map-tools { flex-direction:column; } .tourism-map-search { width:75%; } .tourism-map-controls { justify-content:flex-start; } }
+    @@media (max-width: 420px) { .tourism-kpis { grid-template-columns:1fr; } .tourism-filterbar .tourism-select { flex-basis:100%; } }
 </style>
 
-<div class="analytics-grid">
-    <div class="kpi-card" style="transition-delay: 100ms;">
-        <div class="kpi-icon-wrapper blue"><i class="bi bi-people-fill"></i></div>
+<div class="tourism-intel" id="tourismIntelligence">
+    <header class="tourism-heading">
         <div>
-            <div class="kpi-label">Total Tourists</div>
-            <div class="kpi-value counter" data-target="@Model.TouristSection.Total">0</div>
-            <div class="kpi-sub"><span class="text-success"><i class="bi bi-arrow-up-right"></i> @Model.TouristSection.GrowthPercentage%</span> vs last month</div>
+            <div class="tourism-eyebrow"><i class="bi bi-compass me-1"></i> Egypt tourism intelligence</div>
+            <h1 class="tourism-title">Tourist Intelligence</h1>
+            <p class="tourism-subtitle">Monitor tourist activity, destinations, movement patterns, and tourism trends across Egypt.</p>
         </div>
-    </div>
-    <div class="kpi-card" style="transition-delay: 200ms;">
-        <div class="kpi-icon-wrapper green"><i class="bi bi-person-check-fill"></i></div>
-        <div>
-            <div class="kpi-label">Active Tourists</div>
-            <div class="kpi-value counter" data-target="@Model.TouristSection.Active">0</div>
-            <div class="kpi-sub">Retention: @Model.TouristSection.RetentionRate%</div>
+        <div class="tourism-actions">
+            <select class="tourism-select" aria-label="Date range" id="tourismDateRange"><option>Today</option><option selected>Last 7 Days</option><option>Last 30 Days</option><option>Custom Range</option></select>
+            <button class="tourism-btn" type="button" id="tourismExport"><i class="bi bi-download"></i> Export report</button>
         </div>
-    </div>
-    <div class="kpi-card" style="transition-delay: 300ms;">
-        <div class="kpi-icon-wrapper purple"><i class="bi bi-clock-history"></i></div>
-        <div>
-            <div class="kpi-label">Avg Session</div>
-            <div class="kpi-value">@Model.TouristSection.AverageSessionDuration</div>
-            <div class="kpi-sub">Across all active users</div>
-        </div>
-    </div>
-    <div class="kpi-card" style="transition-delay: 400ms;">
-        <div class="kpi-icon-wrapper orange"><i class="bi bi-check2-all"></i></div>
-        <div>
-            <div class="kpi-label">Avg Missions</div>
-            <div class="kpi-value counter" data-target="@Model.TouristSection.AverageMissionsCompleted">0</div>
-            <div class="kpi-sub">Per tourist</div>
-        </div>
-    </div>
-</div>
+    </header>
 
-<!-- Primary Charts Row (Important in Middle Focus) -->
-<div class="row">
-    <!-- Status Chart (Pie) -->
-    <div class="col-xl-4 col-lg-5">
-        <div class="dash-card h-100" style="transition-delay: 200ms; margin-bottom: 2.5rem;">
-            <div class="dash-card-header">
-                <span><i class="bi bi-pie-chart-fill text-primary me-2"></i> Tourist Status</span>
-            </div>
-            <div class="chart-container" style="height: 350px;">
-                <canvas id="touristStatusPieChart"></canvas>
-            </div>
-        </div>
+    <div class="tourism-filterbar" aria-label="Tourism dashboard filters">
+        <select class="tourism-select tourism-filter" data-filter="destination" aria-label="Filter by destination"><option value="">All destinations</option>@foreach (var option in Model.DestinationOptions) { <option value="@option">@option</option> }</select>
+        <select class="tourism-select tourism-filter" data-filter="nationality" aria-label="Filter by nationality"><option value="">All nationalities</option>@foreach (var item in tourism.NationalityBreakdown) { <option value="@item.Name">@item.Name</option> }</select>
+        <select class="tourism-select tourism-filter" data-filter="region" aria-label="Filter by region"><option value="">All regions</option>@foreach (var option in Model.RegionOptions) { <option value="@option">@option</option> }</select>
+        <select class="tourism-select tourism-filter" data-filter="activity" aria-label="Filter by activity"><option value="">All activity</option><option>Trips</option><option>Missions</option><option>Reviews</option></select>
+        <button class="tourism-btn" type="button" id="tourismReset"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
     </div>
-    
-    <!-- Most Visited Destinations (Horizontal Bar) -->
-    <div class="col-xl-8 col-lg-7">
-        <div class="dash-card h-100" style="transition-delay: 300ms; margin-bottom: 2.5rem;">
-            <div class="dash-card-header">
-                <span><i class="bi bi-map-fill text-danger me-2"></i> Most Visited Destinations</span>
-            </div>
-            <div class="chart-container" style="height: 350px;">
-                <canvas id="destinationsChart"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Secondary Charts Row -->
-<div class="row">
-    <div class="col-12">
-        <div class="dash-card" style="transition-delay: 400ms;">
-            <div class="dash-card-header">
-                <span><i class="bi bi-globe2 text-success me-2"></i> Tourist Nationalities</span>
-            </div>
-            <div class="chart-container" style="height: 350px;">
-                <canvas id="nationalityChart"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
+    <section class="tourism-kpis" aria-label="Tourism KPIs">
+        <article class="tourism-kpi"><div class="tourism-kpi-top"><span>Total tourists</span><span class="tourism-kpi-icon"><i class="bi bi-people"></i></span></div><div class="tourism-kpi-value" data-counter="@tourism.Total">0</div><div class="tourism-kpi-meta"><span class="tourism-up">+@tourism.GrowthPercentage%</span> registered in last 30 days</div></article>
+        <article class="tourism-kpi"><div class="tourism-kpi-top"><span>Active tourists</span><span class="tourism-kpi-icon"><i class="bi bi-activity"></i></span></div><div class="tourism-kpi-value" data-counter="@tourism.Active">0</div><div class="tourism-kpi-meta">@tourism.RetentionRate% of registered audience</div></article>
+        <article class="tourism-kpi"><div class="tourism-kpi-top"><span>Top destination</span><span class="tourism-kpi-icon"><i class="bi bi-geo-alt"></i></span></div><div class="tourism-kpi-value" style="font-size:1.13rem; margin-top:23px;">@Model.MostVisitedDestination</div><div class="tourism-kpi-meta">highest recorded visit volume</div></article>
+        <article class="tourism-kpi"><div class="tourism-kpi-top"><span>Average stay</span><span class="tourism-kpi-icon"><i class="bi bi-calendar3"></i></span></div><div class="tourism-kpi-value">@(Model.AverageStayDays > 0 ? $"{Model.AverageStayDays:0.0} d" : "—")</div><div class="tourism-kpi-meta">from planned destination stops</div></article>
+        <article class="tourism-kpi"><div class="tourism-kpi-top"><span>Engagement</span><span class="tourism-kpi-icon"><i class="bi bi-lightning-charge"></i></span></div><div class="tourism-kpi-value">@Model.EngagementRate.ToString("0.0")%</div><div class="tourism-kpi-meta">tourists with recorded activity</div></article>
+        <article class="tourism-kpi"><div class="tourism-kpi-top"><span>Discovery potential</span><span class="tourism-kpi-icon"><i class="bi bi-stars"></i></span></div><div class="tourism-kpi-value">@(Model.DiscoveryPotential > 0 ? $"+{Model.DiscoveryPotential:0.0}%" : "—")</div><div class="tourism-kpi-meta">high-rated, low-traffic signal</div></article>
+    </section>
 
-<!-- Leaderboards & Activities Row -->
-<div class="row">
-    <div class="col-lg-4">
-        <div class="dash-card h-100" style="transition-delay: 500ms; margin-bottom: 2.5rem;">
-            <div class="dash-card-header">
-                <span><i class="bi bi-star-fill text-warning me-2"></i> Top Points</span>
-            </div>
-            <ul class="leaderboard-list">
-                @for (int i = 0; i < Model.TouristSection.TopTouristsByPoints.Count; i++)
-                {
-                    var tourist = Model.TouristSection.TopTouristsByPoints[i];
-                    <li class="leaderboard-item" style="transition-delay: @((i+1)*100)ms;">
-                        <div class="leaderboard-rank @(i < 3 ? $"top-{i+1}" : "")">@(i+1)</div>
-                        <div class="leaderboard-info">
-                            <h6 class="leaderboard-name">@tourist.Name</h6>
-                        </div>
-                        <div class="leaderboard-score">@tourist.Value <span class="text-muted" style="font-size: 0.75rem; font-weight: 600;">pts</span></div>
-                    </li>
-                }
-            </ul>
-        </div>
-    </div>
-    
-    <div class="col-lg-4">
-        <div class="dash-card h-100" style="transition-delay: 600ms; margin-bottom: 2.5rem;">
-            <div class="dash-card-header">
-                <span><i class="bi bi-award-fill text-info me-2"></i> Top Badges</span>
-            </div>
-            <ul class="leaderboard-list">
-                @for (int i = 0; i < Model.TouristSection.TopTouristsByBadges.Count; i++)
-                {
-                    var tourist = Model.TouristSection.TopTouristsByBadges[i];
-                    <li class="leaderboard-item" style="transition-delay: @((i+1)*100)ms;">
-                        <div class="leaderboard-rank @(i < 3 ? $"top-{i+1}" : "")">@(i+1)</div>
-                        <div class="leaderboard-info">
-                            <h6 class="leaderboard-name">@tourist.Name</h6>
-                        </div>
-                        <div class="leaderboard-score">@tourist.Value <span class="text-muted" style="font-size: 0.75rem; font-weight: 600;">bdg</span></div>
-                    </li>
-                }
-            </ul>
-        </div>
-    </div>
-    
-    <div class="col-lg-4">
-        <div class="dash-card h-100" style="transition-delay: 700ms; margin-bottom: 2.5rem;">
-            <div class="dash-card-header">
-                <span><i class="bi bi-lightning-charge-fill text-success me-2"></i> Recent Activity</span>
-            </div>
-            <ul class="activity-list">
-                @for (int i = 0; i < Model.TouristSection.RecentActivities.Count; i++)
-                {
-                    var act = Model.TouristSection.RecentActivities[i];
-                    <li class="activity-item" style="transition-delay: @((i+1)*150)ms;">
-                        <div class="activity-icon @act.Color">
-                            <i class="bi @act.Icon"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h6 class="activity-title">@act.Title</h6>
-                            <p class="activity-desc">@act.Description</p>
-                            <span class="activity-time"><i class="bi bi-clock me-1"></i> @act.TimeAgo</span>
-                        </div>
-                    </li>
-                }
-            </ul>
-        </div>
-    </div>
+    <section class="tourism-layout">
+        <article class="tourism-card">
+            <div class="tourism-card-header"><div><div class="tourism-card-kicker">Geographic distribution</div><h2 class="tourism-card-title">Tourist activity across Egypt</h2></div><span class="tourism-live"><i class="bi bi-circle-fill"></i> ArcGIS destination layer</span></div>
+            <div class="tourism-map-shell"><div class="tourism-map" id="tourismMap"><div class="tourism-empty">Loading Egypt destination intelligence…</div></div><div class="tourism-map-tools"><label class="tourism-map-search"><i class="bi bi-search"></i><input id="tourismMapSearch" type="search" placeholder="Search destination layer…" /></label><div class="tourism-map-controls"><button type="button" class="active tourism-layer" data-layer="destinations" title="Destination layer"><i class="bi bi-geo-alt"></i></button><button type="button" class="tourism-layer" data-layer="density" title="Tourist density view"><i class="bi bi-fire"></i></button><button type="button" class="tourism-layer" data-layer="flow" title="Tourism flow view"><i class="bi bi-shuffle"></i></button><button type="button" id="tourismFullscreen" title="Fullscreen"><i class="bi bi-fullscreen"></i></button></div></div><div class="tourism-map-legend"><span><i class="tourism-dot gold"></i> Destination</span><span><i class="tourism-dot blue"></i> Underexplored signal</span><span><i class="tourism-dot rose"></i> Congestion watch</span></div><div class="tourism-map-note">Base data: existing EGYXPLORE ArcGIS layer<br /><span id="tourismFeatureCount">Waiting for layer…</span></div></div>
+        </article>
+        <aside class="tourism-card">
+            <div class="tourism-card-header"><div><div class="tourism-card-kicker">Decision signals</div><h2 class="tourism-card-title">At a glance</h2></div><i class="bi bi-bar-chart-line" style="color:var(--ti-gold)"></i></div>
+            <div class="tourism-card-body"><div class="tourism-signal"><div class="tourism-signal-label"><span>Active audience</span><span>@tourism.Active.ToString("N0")</span></div><div class="tourism-progress"><span style="width:@Math.Min(100, tourism.Total == 0 ? 0 : tourism.Active * 100d / tourism.Total)%"></span></div><p class="tourism-note">Registered tourists currently marked active.</p></div><div class="tourism-signal"><div class="tourism-signal-label"><span>Recorded stops</span><span>@Model.RecordedDestinationVisits.ToString("N0")</span></div><div class="tourism-progress"><span style="width:@Math.Min(100, Model.RecordedDestinationVisits)%"></span></div><p class="tourism-note">Destination stops captured in trip planning data.</p></div><div class="tourism-signal"><div class="tourism-signal-label"><span>Opportunity inventory</span><span>@Model.HighPotentialDestinations</span></div><div class="tourism-progress"><span style="width:@Math.Min(100, Model.HighPotentialDestinations * 10)%"></span></div><p class="tourism-note">High-rated destinations with low recorded traffic.</p></div><div class="tourism-signal"><div class="tourism-signal-label"><span>Trip plans</span><span>@Model.TotalTrips.ToString("N0")</span></div><p class="tourism-note">Use the flow section below to understand planned movement between destinations.</p></div></div>
+        </aside>
+    </section>
+
+    <section class="tourism-grid-2">
+        <article class="tourism-card"><div class="tourism-card-header"><div><div class="tourism-card-kicker">Tourist activity analytics</div><h2 class="tourism-card-title">Tourist activity over time</h2></div><div class="tourism-inline-legend"><span><i class="tourism-dot gold"></i> Registrations</span><span><i class="tourism-dot blue"></i> Missions</span></div></div><div class="tourism-card-body"><div class="tourism-chart tall"><canvas id="tourismActivityChart"></canvas></div></div></article>
+        <article class="tourism-card"><div class="tourism-card-header"><div><div class="tourism-card-kicker">Audience composition</div><h2 class="tourism-card-title">Tourist nationalities</h2></div><i class="bi bi-globe2" style="color:var(--ti-gold)"></i></div><div class="tourism-card-body"><div class="tourism-chart"><canvas id="tourismNationalityChart"></canvas></div></div></article>
+    </section>
+
+    <section class="tourism-performance-grid">
+        <article class="tourism-card"><div class="tourism-card-header"><div><div class="tourism-card-kicker">Destination intelligence</div><h2 class="tourism-card-title">Destination Performance</h2></div><span class="tourism-card-kicker" style="margin:0">@Model.DestinationPerformance.Count tracked</span></div><div class="tourism-table-wrap"><table class="tourism-table"><thead><tr><th>Destination</th><th>Visitors</th><th>Rating</th><th>Traffic</th><th>Status</th></tr></thead><tbody>@if (Model.DestinationPerformance.Any()) { foreach (var item in Model.DestinationPerformance) { <tr><td><div class="tourism-destination"><span class="tourism-destination-icon"><i class="bi bi-geo-alt"></i></span><span>@item.Destination<small style="display:block;color:var(--ti-faint);font-weight:500">@item.Region</small></span></div></td><td>@item.Visitors.ToString("N0")</td><td><i class="bi bi-star-fill" style="color:var(--ti-gold)"></i> @(item.Rating > 0 ? item.Rating.ToString("0.0") : "—")</td><td><span class="tourism-badge @item.Congestion.ToLowerInvariant()">@item.Congestion</span></td><td><span class="tourism-badge active">@item.Status</span></td></tr> } } else { <tr><td colspan="5"><div class="tourism-empty">No destination visit data is available yet.</div></td></tr> }</tbody></table></div></article>
+        <article class="tourism-card"><div class="tourism-card-header"><div><div class="tourism-card-kicker">Movement intelligence</div><h2 class="tourism-card-title">Tourism Flow</h2></div><i class="bi bi-signpost-split" style="color:var(--ti-gold)"></i></div><div class="tourism-card-body"><div class="tourism-flow-list">@if (Model.TourismFlows.Any()) { foreach (var flow in Model.TourismFlows) { <div class="tourism-flow"><div><strong>@flow.From</strong><small>origin</small></div><span class="tourism-flow-arrow"><i class="bi bi-arrow-right"></i></span><div><strong>@flow.To</strong><small>next stop</small></div><div class="tourism-flow-volume">@flow.Volume.ToString("N0")<small>plans</small></div></div> } } else { <div class="tourism-empty">Trip plans will reveal destination-to-destination flows here.</div> }</div></div></article>
+    </section>
+
+    <section class="tourism-performance-grid">
+        <article class="tourism-card"><div class="tourism-card-header"><div><div class="tourism-card-kicker">Traffic balancing</div><h2 class="tourism-card-title">Hidden Destination Performance</h2></div><button class="tourism-btn" type="button" id="tourismOpportunities"><i class="bi bi-stars"></i> View opportunities</button></div><div class="tourism-table-wrap"><table class="tourism-table"><thead><tr><th>Destination</th><th>Visitors</th><th>Rating</th><th>Potential</th><th>Signal</th></tr></thead><tbody>@if (Model.HiddenDestinations.Any()) { foreach (var item in Model.HiddenDestinations) { <tr><td>@item.Destination<small style="display:block;color:var(--ti-faint)">@item.Region</small></td><td>@item.Visitors.ToString("N0")</td><td><i class="bi bi-star-fill" style="color:var(--ti-gold)"></i> @item.Rating.ToString("0.0")</td><td class="tourism-up">+@item.Potential.ToString("0.0")%</td><td><span class="tourism-badge low">Promote</span></td></tr> } } else { <tr><td colspan="5"><div class="tourism-empty">No high-potential destinations can be identified from current visits and ratings.</div></td></tr> }</tbody></table></div></article>
+        <article class="tourism-card"><div class="tourism-card-header"><div><div class="tourism-card-kicker">Crowding / congestion monitoring</div><h2 class="tourism-card-title">Tourist Congestion</h2></div><i class="bi bi-speedometer2" style="color:var(--ti-gold)"></i></div><div class="tourism-card-body">@if (Model.Congestion.Any()) { foreach (var item in Model.Congestion) { <div class="tourism-congestion-row"><div><strong>@item.Destination</strong><small>@item.Visitors.ToString("N0") recorded visitors</small></div><span class="tourism-badge @item.Level.ToLowerInvariant()">@item.Level</span><div class="tourism-congestion-bar"><span style="width:@Math.Min(100, item.Share * 2)%"></span></div></div> } } else { <div class="tourism-empty">Congestion signals will appear as destination visits are recorded.</div> }</div></article>
+    </section>
+
+    <section class="tourism-grid-2">
+        <article class="tourism-card tourism-ai"><div class="tourism-card-header"><div class="d-flex align-items-center gap-10" style="display:flex;gap:10px"><span class="tourism-ai-mark"><i class="bi bi-stars"></i></span><div><div class="tourism-card-kicker">EGYXPLORE ASSISTA</div><h2 class="tourism-card-title">AI Tourism Insights</h2></div></div><span class="tourism-badge active">Decision support</span></div><div class="tourism-card-body">@foreach (var insight in Model.Insights) { <div class="tourism-insight"><span class="tourism-insight-icon"><i class="bi bi-@insight.Icon"></i></span><div><strong>@insight.Title</strong><p>@insight.Detail</p></div></div> }</div></article>
+        <article class="tourism-card"><div class="tourism-card-header"><div><div class="tourism-card-kicker">Destination ranking</div><h2 class="tourism-card-title">Popularity by recorded visits</h2></div><i class="bi bi-bar-chart-fill" style="color:var(--ti-gold)"></i></div><div class="tourism-card-body"><div class="tourism-chart"><canvas id="tourismDestinationChart"></canvas></div></div></article>
+    </section>
+
+    <section class="tourism-bottom-grid"><article class="tourism-card"><div class="tourism-card-header"><div><div class="tourism-card-kicker">Live feed</div><h2 class="tourism-card-title">Recent Tourist Activity</h2></div><span class="tourism-live"><i class="bi bi-circle-fill"></i> Platform events</span></div><div class="tourism-card-body">@if (Model.RecentTouristActivity.Any()) { foreach (var activity in Model.RecentTouristActivity.Take(7)) { <div class="tourism-activity"><span class="tourism-activity-icon"><i class="bi bi-@activity.Icon"></i></span><div><strong>@activity.Title</strong><p>@activity.Detail</p><time>@activity.TimeAgo</time></div></div> } } else { <div class="tourism-empty">No recent tourism events are available.</div> }</div></article><article class="tourism-card"><div class="tourism-card-header"><div><div class="tourism-card-kicker">Planned movement</div><h2 class="tourism-card-title">Flow volume</h2></div><i class="bi bi-diagram-3" style="color:var(--ti-gold)"></i></div><div class="tourism-card-body"><div class="tourism-chart"><canvas id="tourismFlowChart"></canvas></div></div></article></section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Staggered Animations
-        setTimeout(() => {
-            document.querySelectorAll('.kpi-card, .dash-card, .leaderboard-item, .activity-item').forEach(el => {
-                el.classList.add('animate-in');
-            });
-            
-            // Premium Counter Animation
-            const counters = document.querySelectorAll('.counter');
-            const speed = 150; 
-
-            counters.forEach(counter => {
-                const updateCount = () => {
-                    const target = +counter.getAttribute('data-target');
-                    const count = +counter.innerText;
-                    const inc = target / speed;
-                    
-                    if(count < target) {
-                        counter.innerText = Math.ceil(count + inc);
-                        setTimeout(updateCount, 15);
-                    } else {
-                        counter.innerText = target.toLocaleString(); // Add commas
-                    }
-                };
-                updateCount();
-            });
-        }, 100);
-
-        // Global Chart Styling
-        Chart.defaults.font.family = "'Inter', 'Segoe UI', system-ui, sans-serif";
-        Chart.defaults.color = '#8392a5';
-        Chart.defaults.scale.grid.color = 'rgba(0,0,0,0.04)';
-        Chart.defaults.scale.grid.borderColor = 'transparent';
-        
-        // 1. Status Chart (Pie Chart)
-        const ctxStatusPie = document.getElementById('touristStatusPieChart').getContext('2d');
-        const activeCount = @Model.TouristSection.Active;
-        const inactiveCount = @Model.TouristSection.Inactive;
-        const suspendedCount = @Model.TouristSection.Suspended;
-        
-        new Chart(ctxStatusPie, {
-            type: 'pie',
-            data: {
-                labels: ['Active', 'Inactive', 'Suspended'],
-                datasets: [{
-                    data: [activeCount, inactiveCount, suspendedCount],
-                    backgroundColor: [
-                        'rgba(25, 135, 84, 0.85)',  // Success Green
-                        'rgba(173, 181, 189, 0.85)', // Secondary Gray
-                        'rgba(220, 53, 69, 0.85)'    // Danger Red
-                    ],
-                    hoverBackgroundColor: [
-                        'rgba(25, 135, 84, 1)',
-                        'rgba(173, 181, 189, 1)',
-                        'rgba(220, 53, 69, 1)'
-                    ],
-                    borderWidth: 3,
-                    borderColor: '#ffffff',
-                    hoverOffset: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    animateScale: true,
-                    animateRotate: true,
-                    duration: 1500,
-                    easing: 'easeOutBounce'
-                },
-                layout: {
-                    padding: 10
-                },
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 20,
-                            usePointStyle: true,
-                            pointStyle: 'circle',
-                            font: { size: 13, weight: '600' },
-                            color: '#2b3445'
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
-                        titleColor: '#2b3445',
-                        bodyColor: '#2b3445',
-                        bodyFont: { size: 14, weight: 'bold' },
-                        borderColor: 'rgba(0,0,0,0.08)',
-                        borderWidth: 1,
-                        padding: 12,
-                        boxPadding: 6,
-                        usePointStyle: true,
-                        callbacks: {
-                            labelTextColor: function() { return '#2b3445'; }
-                        }
-                    }
-                }
-            }
-        });
-
-        // 2. Destinations Chart (Horizontal Bar with Premium Gradient)
-        const ctxDest = document.getElementById('destinationsChart').getContext('2d');
-        const destLabels = @Html.Raw(Json.Serialize(Model.TouristSection.TopDestinations.Select(x => x.Name)));
-        const destData = @Html.Raw(Json.Serialize(Model.TouristSection.TopDestinations.Select(x => x.Count)));
-        const maxVisits = Math.max(...destData, 1);
-        
-        // Create gradient
-        let gradientDest = ctxDest.createLinearGradient(0, 0, 600, 0);
-        gradientDest.addColorStop(0, 'rgba(13, 110, 253, 0.6)');
-        gradientDest.addColorStop(1, 'rgba(13, 110, 253, 1)');
-        
-        new Chart(ctxDest, {
-            type: 'bar',
-            data: {
-                labels: destLabels,
-                datasets: [{
-                    label: 'Visits',
-                    data: destData,
-                    backgroundColor: gradientDest,
-                    borderRadius: 6,
-                    barPercentage: 0.6,
-                    hoverBackgroundColor: 'rgba(10, 88, 202, 1)'
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    duration: 1400,
-                    easing: 'easeOutQuart'
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
-                        titleColor: '#2b3445',
-                        bodyColor: '#2b3445',
-                        borderColor: 'rgba(0,0,0,0.08)',
-                        borderWidth: 1,
-                        padding: 14,
-                        callbacks: {
-                            labelTextColor: function() { return '#2b3445'; },
-                            afterLabel: function(context) {
-                                const val = context.raw;
-                                const perc = ((val / maxVisits) * 100).toFixed(1);
-                                return `Percentage of Top: ${perc}%`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: { beginAtZero: true, grid: { drawBorder: false }, ticks: { font: { weight: '600' } } },
-                    y: { grid: { display: false }, ticks: { font: { weight: '600', color: '#2b3445' } } }
-                }
-            }
-        });
-        
-        // 3. Nationalities Chart (Bar Chart with Highlight)
-        const ctxNat = document.getElementById('nationalityChart').getContext('2d');
-        const natLabels = @Html.Raw(Json.Serialize(Model.TouristSection.NationalityBreakdown.Select(x => x.Name)));
-        const natData = @Html.Raw(Json.Serialize(Model.TouristSection.NationalityBreakdown.Select(x => x.Count)));
-        
-        // Premium gradient for the top nationality
-        let topGrad = ctxNat.createLinearGradient(0, 0, 0, 400);
-        topGrad.addColorStop(0, 'rgba(25, 135, 84, 1)');
-        topGrad.addColorStop(1, 'rgba(25, 135, 84, 0.4)');
-        
-        const bgColors = natData.map((d, i) => i === 0 ? topGrad : 'rgba(13, 110, 253, 0.2)');
-        const borderColors = natData.map((d, i) => i === 0 ? 'rgba(25, 135, 84, 1)' : 'rgba(13, 110, 253, 0.4)');
-        
-        new Chart(ctxNat, {
-            type: 'bar',
-            data: {
-                labels: natLabels,
-                datasets: [{
-                    label: 'Tourists',
-                    data: natData,
-                    backgroundColor: bgColors,
-                    borderColor: borderColors,
-                    borderWidth: { top: 2, right: 2, left: 2, bottom: 0 },
-                    borderRadius: { topLeft: 8, topRight: 8, bottomLeft: 0, bottomRight: 0 },
-                    barPercentage: 0.5,
-                    hoverBackgroundColor: natData.map((d, i) => i === 0 ? topGrad : 'rgba(13, 110, 253, 0.4)')
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    duration: 1600,
-                    easing: 'easeOutElastic'
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
-                        titleColor: '#2b3445',
-                        bodyColor: '#2b3445',
-                        borderColor: 'rgba(0,0,0,0.08)',
-                        borderWidth: 1,
-                        padding: 14,
-                        callbacks: {
-                            labelTextColor: function() { return '#2b3445'; }
-                        }
-                    }
-                },
-                scales: {
-                    y: { beginAtZero: true, grid: { borderDash: [4, 4] }, ticks: { font: { weight: '600' } } },
-                    x: { grid: { display: false }, ticks: { font: { weight: '600', color: '#2b3445' } } }
-                }
-            }
-        });
-    });
+(function () {
+    'use strict';
+    var root = document.getElementById('tourismIntelligence');
+    if (!root) return;
+    var css = function (name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); };
+    var charts = [];
+    var tourismMap = null;
+    var chartDefaults = function () {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        var text = dark ? '#E8DDD0' : '#475569';
+        var grid = dark ? 'rgba(200,131,42,.12)' : 'rgba(15,23,42,.07)';
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+        Chart.defaults.color = text;
+        Chart.defaults.borderColor = grid;
+        return { text: text, grid: grid, dark: dark };
+    };
+    var destroyCharts = function () { charts.forEach(function (chart) { chart.destroy(); }); charts = []; };
+    var makeChart = function (id, config) { var el = document.getElementById(id); if (!el) return; var chart = new Chart(el.getContext('2d'), config); charts.push(chart); };
+    var renderCharts = function () {
+        if (typeof Chart === 'undefined') return;
+        destroyCharts();
+        var theme = chartDefaults();
+        var gold = css('--dash-primary') || '#C8832A', blue = css('--dash-blue') || '#2563EB';
+        var series = @Html.Raw(seriesJson), nationalityLabels = @Html.Raw(nationalityLabels), nationalityData = @Html.Raw(nationalityData), destinationLabels = @Html.Raw(destinationLabels), destinationData = @Html.Raw(destinationData), flowLabels = @Html.Raw(flowLabels), flowData = @Html.Raw(flowData);
+        makeChart('tourismActivityChart', { type:'line', data:{ labels:series.map(function(x){return x.Label;}), datasets:[{label:'Registrations',data:series.map(function(x){return x.Tourists;}),borderColor:gold,backgroundColor:'rgba(200,131,42,.12)',fill:true,tension:.42,pointRadius:3,pointHoverRadius:6},{label:'Missions',data:series.map(function(x){return x.Missions;}),borderColor:blue,backgroundColor:'transparent',tension:.42,pointRadius:3,pointHoverRadius:6}]}, options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{padding:11,displayColors:true}},scales:{y:{beginAtZero:true,grid:{color:theme.grid}},x:{grid:{display:false}}}}});
+        makeChart('tourismNationalityChart', { type:'doughnut', data:{labels:nationalityLabels,datasets:[{data:nationalityData,backgroundColor:[gold,blue,'#10B981','#8B5CF6','#F59E0B','#F43F5E','#64748B','#38BDF8'],borderWidth:2,borderColor:theme.dark?'#1A120B':'#FFFFFF',hoverOffset:8}]}, options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:14,font:{size:10}}},tooltip:{padding:11}}}});
+        makeChart('tourismDestinationChart', { type:'bar', data:{labels:destinationLabels,datasets:[{label:'Recorded visits',data:destinationData,backgroundColor:gold,borderRadius:7,barThickness:18}]}, options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{padding:11}},scales:{x:{beginAtZero:true,grid:{color:theme.grid}},y:{grid:{display:false}}}}});
+        makeChart('tourismFlowChart', { type:'bar', data:{labels:flowLabels,datasets:[{label:'Planned flows',data:flowData,backgroundColor:blue,borderRadius:7,barThickness:17}]}, options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{padding:11}},scales:{x:{beginAtZero:true,grid:{color:theme.grid}},y:{grid:{display:false}}}}});
+    };
+    var animateCounters = function () { root.querySelectorAll('[data-counter]').forEach(function (el) { var target = Number(el.dataset.counter || 0), start = performance.now(); var step = function (time) { var progress = Math.min((time - start) / 650, 1), value = Math.floor(target * (1 - Math.pow(1 - progress, 3))); el.textContent = value.toLocaleString(); if (progress < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }); };
+    var initMap = function () {
+        if (!window.EGYMaps || !document.getElementById('tourismMap')) return;
+        tourismMap = EGYMaps.initWfsMap({ mapElId:'tourismMap', layer:'destinations', center:[30.0444,31.2357], zoom:6, propMap:{id:['Id','id','OBJECTID'],name:['Name','name','NAME']}, markerStyle:{radius:8,fillColor:'#C8832A',color:'#fff',weight:2,opacity:1,fillOpacity:.9}, onLayerReady:function(info){ var features = info.features || []; window.tourismFeatures = features; var counter = document.getElementById('tourismFeatureCount'); if (counter) counter.textContent = features.length + ' mapped destinations'; } });
+    };
+    var filterMap = function (query) { if (!tourismMap || !tourismMap.filterMarkers) return; var value = (query || '').toLowerCase(); tourismMap.filterMarkers(function (feature) { if (!value) return true; var attrs = feature.attributes || {}; return Object.keys(attrs).some(function (key) { return String(attrs[key] || '').toLowerCase().indexOf(value) !== -1; }); }); };
+    root.querySelector('#tourismMapSearch')?.addEventListener('input', function (e) { filterMap(e.target.value); });
+    root.querySelectorAll('.tourism-layer').forEach(function (button) { button.addEventListener('click', function () { root.querySelectorAll('.tourism-layer').forEach(function (item) { item.classList.remove('active'); }); button.classList.add('active'); var note = document.getElementById('tourismFeatureCount'); if (note && button.dataset.layer !== 'destinations') note.textContent = button.dataset.layer === 'density' ? 'Density view requires visit coordinates' : 'Flow view requires live route geometry'; }); });
+    document.getElementById('tourismFullscreen')?.addEventListener('click', function () { var shell = document.querySelector('.tourism-map-shell'); if (shell && shell.requestFullscreen) shell.requestFullscreen(); });
+    document.getElementById('tourismReset')?.addEventListener('click', function () { root.querySelectorAll('.tourism-filter').forEach(function (select) { select.value = ''; }); var search = document.getElementById('tourismMapSearch'); if (search) search.value = ''; filterMap(''); });
+    document.getElementById('tourismExport')?.addEventListener('click', function () { window.print(); });
+    document.getElementById('tourismOpportunities')?.addEventListener('click', function () { document.querySelector('.tourism-performance-grid').scrollIntoView({behavior:'smooth'}); });
+    root.querySelectorAll('.tourism-filter').forEach(function (select) { select.addEventListener('change', function () { if (select.dataset.filter === 'destination') filterMap(select.value); }); });
+    window.addEventListener('themechange', renderCharts);
+    document.addEventListener('DOMContentLoaded', function () { renderCharts(); animateCounters(); initMap(); });
+    if (document.readyState !== 'loading') { renderCharts(); animateCounters(); initMap(); }
+})();
 </script>

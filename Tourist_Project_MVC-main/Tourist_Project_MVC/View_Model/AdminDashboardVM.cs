@@ -20,6 +20,25 @@ namespace Tourist_Project_MVC.View_Model
         public List<TopRewardRow> DashboardTopRewards { get; set; } = new();
         public List<BranchMapPoint> AllBranches { get; set; } = new();
 
+        // Tourism intelligence aggregates built from existing platform data.
+        public int TotalTrips { get; set; }
+        public int RecordedDestinationVisits { get; set; }
+        public int HighPotentialDestinations { get; set; }
+        public int EngagedTourists { get; set; }
+        public double EngagementRate { get; set; }
+        public double AverageStayDays { get; set; }
+        public double DiscoveryPotential { get; set; }
+        public string MostVisitedDestination { get; set; } = "No recorded visits";
+        public List<TourismSeriesPoint> ActivityTrend { get; set; } = new();
+        public List<TourismDestinationRow> DestinationPerformance { get; set; } = new();
+        public List<TourismDestinationRow> HiddenDestinations { get; set; } = new();
+        public List<TourismFlowRow> TourismFlows { get; set; } = new();
+        public List<TourismCongestionRow> Congestion { get; set; } = new();
+        public List<TourismInsightRow> Insights { get; set; } = new();
+        public List<TourismActivityRow> RecentTouristActivity { get; set; } = new();
+        public List<string> DestinationOptions { get; set; } = new();
+        public List<string> RegionOptions { get; set; } = new();
+
         public TouristSectionVM TouristSection { get; set; } = new();
         public MissionSectionVM MissionSection { get; set; } = new();
         public SponsorSectionVM SponsorSection { get; set; } = new();
@@ -64,6 +83,12 @@ namespace Tourist_Project_MVC.View_Model
 
     public record TopTouristRow(string Name, int Value, string Icon, string Subtext = "");
     public record RecentActivityRow(string Title, string Description, string TimeAgo, string Icon, string Color);
+    public record TourismSeriesPoint(string Label, int Tourists, int Missions);
+    public record TourismDestinationRow(string Destination, string Region, int Visitors, double Rating, double Momentum, string Congestion, string Status, bool IsHidden, double Potential);
+    public record TourismFlowRow(string From, string To, int Volume);
+    public record TourismCongestionRow(string Destination, string Level, int Visitors, double Share);
+    public record TourismInsightRow(string Title, string Detail, string Icon, string Tone);
+    public record TourismActivityRow(string Title, string Detail, string TimeAgo, string Icon, string Tone);
 
     public class MissionSectionVM
     {

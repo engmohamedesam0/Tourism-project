@@ -31,14 +31,6 @@
                 </div>
                 <div class="d-flex flex-wrap align-items-center gap-3">
                     @await Html.PartialAsync("_AdminModuleToggle", null, new ViewDataDictionary(ViewData) { { "AdminModule", Model.ActiveSection }, { "ActiveView", "Dashboard" } })
-                    <div class="d-flex align-items-center gap-2">
-                        <a asp-controller="Tourist" asp-action="Index" class="btn btn-outline-dark dash-action-btn">
-                            <i class="bi bi-people-fill me-1"></i> @Localizer["Nav_Tourists"].Value
-                        </a>
-                        <a asp-controller="Mission" asp-action="Index" class="btn btn-primary dash-action-btn" style="background-color: var(--dash-primary); border-color: var(--dash-primary);">
-                            <i class="bi bi-trophy-fill me-1"></i> @Localizer["Nav_Missions"].Value
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
