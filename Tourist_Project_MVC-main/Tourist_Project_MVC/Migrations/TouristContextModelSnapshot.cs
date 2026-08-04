@@ -343,6 +343,10 @@ namespace Tourist_Project_MVC.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("UserEmail")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
                     b.HasKey("Id");
 
                     b.ToTable("ChatSessions");

@@ -19,6 +19,7 @@ public interface IArcGISSyncService
     Task<ArcGISSyncResult> SyncDestinationsAsync(IEnumerable<Destination> destinations, CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncBranchesAsync(IEnumerable<Branch> branches, CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncDestinationsFromArcGIS(CancellationToken ct = default);
+    Task<(bool Success, string? Error, int? CreatedObjectId, int? CreatedId)> AddDestinationToArcGISAsync(Destination destination, CancellationToken ct = default);
 }
 
 public record ArcGISSyncResult(bool Success, string? Error, int AddedCount, int UpdatedCount)
@@ -661,6 +662,128 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
         {
             _logger.LogError(ex, "ArcGIS destinations pull-sync failed");
             return ArcGISSyncResult.Failed($"ArcGIS destinations pull-sync failed: {ex.Message}");
+        }
+    }
+
+    public async Task<(bool Success, string? Error, int? CreatedObjectId, int? CreatedId)> AddDestinationToArcGISAsync(Destination destination, CancellationToken ct = default)
+    {
+        var layerUrl = LayerUrl(DestinationsLayerUrl);
+        if (string.IsNullOrWhiteSpace(layerUrl))
+            return (false, "DestinationsLayerUrl is not configured.", null, null);
+
+        string token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            _logger.LogError("ArcGIS add destination failed: API Key is missing");
+            return (false, "ArcGIS API Key is missing in server configuration.", null, null);
+        }
+
+        try
+        {
+            var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+
+            var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
+
+            // Determine next ID if Id attribute is required
+            int nextId = 1;
+            if (_context.Destinations.Any())
+            {
+                nextId = _context.Destinations.Max(d => d.Id) + 1;
+            }
+
+            var attrs = new Dictionary<string, object?>
+            {
+                [ResolveField(fieldMap, "Id") ?? "Id"] = nextId,
+                [ResolveField(fieldMap, "English_Name") ?? "English_Name"] = destination.Name,
+                [ResolveField(fieldMap, "Arabic_Name") ?? "Arabic_Name"] = destination.ArabicName ?? string.Empty,
+                [ResolveField(fieldMap, "Governorate") ?? "Governorate"] = destination.City,
+                [ResolveField(fieldMap, "Category") ?? "Category"] = destination.Category ?? string.Empty,
+                [ResolveField(fieldMap, "Description") ?? "Description"] = destination.Description ?? string.Empty,
+                [ResolveField(fieldMap, "Status") ?? "Status"] = string.IsNullOrWhiteSpace(destination.Status) ? "Active" : destination.Status,
+                [ResolveField(fieldMap, "Visits") ?? "Visits"] = destination.Visits,
+                [ResolveField(fieldMap, "Rating") ?? "Rating"] = destination.Rating ?? 0m,
+                [ResolveField(fieldMap, "Tags") ?? "Tags"] = destination.Tags ?? string.Empty,
+                [ResolveField(fieldMap, "Images") ?? "Images"] = destination.PhotoUrls != null ? destination.PhotoUrls.Replace("\n", "|") : string.Empty,
+                [ResolveField(fieldMap, "TicketRequired") ?? "TicketRequired"] = destination.TicketRequired ?? "No",
+                [ResolveField(fieldMap, "ForeignPrice") ?? "ForeignPrice"] = destination.ForeignPrice ?? 0,
+                [ResolveField(fieldMap, "StudentForeignPrice") ?? "StudentForeignPrice"] = destination.StudentForeignPrice ?? 0,
+                [ResolveField(fieldMap, "EgyptianPrice") ?? "EgyptianPrice"] = destination.EgyptianPrice ?? 0,
+                [ResolveField(fieldMap, "StudentEgyptianPrice") ?? "StudentEgyptianPrice"] = destination.StudentEgyptianPrice ?? 0,
+                [ResolveField(fieldMap, "Days") ?? "Days"] = destination.Days ?? string.Empty,
+                [ResolveField(fieldMap, "Open_at") ?? "Open_at"] = destination.OpenAt ?? 0,
+                [ResolveField(fieldMap, "Close_at") ?? "Close_at"] = destination.CloseAt ?? 0,
+                [ResolveField(fieldMap, "Booking") ?? "Booking"] = destination.Booking ?? string.Empty,
+                [ResolveField(fieldMap, "Latitiude") ?? "Latitiude"] = destination.Location?.Y ?? 0.0,
+                [ResolveField(fieldMap, "Longitude") ?? "Longitude"] = destination.Location?.X ?? 0.0
+            };
+
+            var geometry = new
+            {
+                x = destination.Location?.X ?? 0.0,
+                y = destination.Location?.Y ?? 0.0,
+                spatialReference = new { wkid = 4326 }
+            };
+
+            var feature = new { attributes = attrs, geometry = geometry };
+            var adds = new[] { feature };
+
+            var formFields = new Dictionary<string, string>
+            {
+                ["f"] = "json",
+                ["adds"] = JsonSerializer.Serialize(adds, _jsonOptions)
+            };
+
+            var content = new FormUrlEncodedContent(formFields);
+            var url = $"{layerUrl}/applyEdits?token={Uri.EscapeDataString(token)}";
+            var response = await client.PostAsync(url, content, ct);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errBody = await response.Content.ReadAsStringAsync(ct);
+                _logger.LogError("ArcGIS add destination failed with HTTP {Status}: {Body}", response.StatusCode, errBody);
+                return (false, $"ArcGIS returned HTTP {(int)response.StatusCode}: {errBody}", null, null);
+            }
+
+            var body = await response.Content.ReadAsStringAsync(ct);
+            _logger.LogInformation("ArcGIS add destination applyEdits response: {Body}", body);
+
+            using var doc = JsonDocument.Parse(body);
+
+            if (doc.RootElement.TryGetProperty("error", out var error))
+            {
+                var errMsg = ExtractArcGISErrorMessage(error);
+                _logger.LogError("ArcGIS applyEdits returned error: {Error}", errMsg);
+                return (false, $"ArcGIS error: {errMsg}", null, null);
+            }
+
+            if (doc.RootElement.TryGetProperty("addResults", out var addResults) && addResults.GetArrayLength() > 0)
+            {
+                var firstResult = addResults[0];
+                if (firstResult.TryGetProperty("success", out var successProp) && successProp.GetBoolean())
+                {
+                    int? objectId = null;
+                    if (firstResult.TryGetProperty("objectId", out var oidEl) && oidEl.ValueKind == JsonValueKind.Number)
+                    {
+                        objectId = oidEl.GetInt32();
+                    }
+
+                    return (true, null, objectId, nextId);
+                }
+                else
+                {
+                    var errMsg = ExtractArcGISErrorMessage(firstResult);
+                    _logger.LogError("ArcGIS add destination result failed: {Error}", errMsg);
+                    return (false, $"ArcGIS feature creation failed: {errMsg}", null, null);
+                }
+            }
+
+            return (false, "ArcGIS did not return addResults.", null, null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ArcGIS add destination exception");
+            return (false, $"ArcGIS request error: {ex.Message}", null, null);
         }
     }
 

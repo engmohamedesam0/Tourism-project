@@ -210,6 +210,12 @@ namespace Tourist_Project_MVC.Data
                 .HasIndex(f => new { f.TouristId, f.ItemType, f.ItemId })
                 .IsUnique();
 
+            // ChatSession ownership email (set from the authenticated identity,
+            // sized to match Identity's Email column).
+            modelBuilder.Entity<ChatSession>()
+                .Property(c => c.UserEmail)
+                .HasMaxLength(450);
+
             // NOTE: All sample data is now seeded from JSON via
             // Services/DbInitializer.cs (see Program.cs). The ad-hoc
             // modelBuilder.HasData(...) calls that previously lived here have

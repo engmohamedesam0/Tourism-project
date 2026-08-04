@@ -1,4 +1,4 @@
-// Floating AI assistant: premium draggable, resizable, stateful widget.
+﻿// Floating AI assistant: premium draggable, resizable, stateful widget.
 (function () {
     'use strict';
 
@@ -44,6 +44,7 @@
         var viewTripText = panel.getAttribute('data-view-trip-text') || 'View trip';
         var historyUrl = panel.getAttribute('data-history-url') || '';
         var historySessionUrlTemplate = panel.getAttribute('data-history-session-url-template') || '';
+        var historyDeleteUrlTemplate = panel.getAttribute('data-history-delete-url-template') || '';
         var historyEmptyText = panel.getAttribute('data-history-empty-text') || 'No saved conversations yet.';
         var historyErrorText = panel.getAttribute('data-history-error-text') || 'Could not load history.';
 
@@ -260,11 +261,16 @@
                 applyPanelPosition(newPos.x, newPos.y, true);
                 savePanelPosition(newPos.x, newPos.y);
             }
+            syncResizeHandleSide();
         }
 
         // Calculate panel position anchored near the button
         function calculatePanelPosition() {
             var vp = getViewport();
+            // FIX: Always sync btnRect from actual DOM position — anchors to the real icon location
+            var _fabRect = btn.getBoundingClientRect();
+            btnRect.x = _fabRect.left;
+            btnRect.y = _fabRect.top;
             var bx = btnRect.x;
             var by = btnRect.y;
             var bw = btnRect.width;
@@ -331,6 +337,14 @@
 
             panel.appendChild(handle);
             handleElement = handle;
+            syncResizeHandleSide();
+        }
+
+        function syncResizeHandleSide() {
+            if (!handleElement) return;
+            var buttonRect = btn.getBoundingClientRect();
+            var isOnRight = buttonRect.left + buttonRect.width / 2 > window.innerWidth / 2;
+            handleElement.classList.toggle('ai-resize-handle-left', isOnRight);
         }
 
         // ============================================================
@@ -385,6 +399,8 @@
                 clearChatAction.addEventListener('click', function () {
                     messagesEl.innerHTML = '';
                     history = [];
+                    currentSessionId = null;
+                    // Start a fresh client-side conversation without deleting saved history.
                     menuDropdown.classList.remove('ai-menu-visible');
                     if (input) input.focus();
                 });
@@ -400,25 +416,9 @@
             panel.setAttribute('aria-hidden', 'false');
             btn.setAttribute('aria-expanded', 'true');
 
-            // Use saved panel position if available, otherwise calculate near button
-            var savedPanelPos = loadPanelPosition();
-            var pos;
-            if (savedPanelPos) {
-                var vp = getViewport();
-                // Validate the saved position is still on-screen
-                if (savedPanelPos.x >= 0 && savedPanelPos.y >= 0 &&
-                    savedPanelPos.x + panelRect.width <= vp.width + 50 &&
-                    savedPanelPos.y + panelRect.height <= vp.height + 50) {
-                    pos = {
-                        x: clamp(savedPanelPos.x, 0, vp.width - panelRect.width),
-                        y: clamp(savedPanelPos.y, 0, vp.height - panelRect.height)
-                    };
-                } else {
-                    pos = calculatePanelPosition();
-                }
-            } else {
-                pos = calculatePanelPosition();
-            }
+            // FIX: Always anchor panel to the icon's current position.
+            // Never reuse a stale saved position — the icon may have moved since last open.
+            var pos = calculatePanelPosition();
 
             // Set position without transition first
             panel.style.transition = 'none';
@@ -432,8 +432,9 @@
             // Calculate transform-origin from button center
             var btnCenterX = btnRect.x + btnRect.width / 2;
             var btnCenterY = btnRect.y + btnRect.height / 2;
+            var isRight = btnCenterX > getViewport().width / 2;
 
-            var originX = ((btnCenterX - pos.x) / panelRect.width) * 100;
+            var originX = isRight ? 100 : ((btnCenterX - pos.x) / panelRect.width) * 100;
             var originY = ((btnCenterY - pos.y) / panelRect.height) * 100;
             originX = clamp(originX, 0, 100);
             originY = clamp(originY, 0, 100);
@@ -449,6 +450,7 @@
             saveOpenState(true);
             savePanelPosition(pos.x, pos.y);
 
+            if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
             if (input) input.focus();
         }
 
@@ -531,6 +533,7 @@
                 btnRect.y = newY;
                 btn.style.left = newX + 'px';
                 btn.style.top = newY + 'px';
+                syncResizeHandleSide();
 
                 // Move panel with button if open
                 if (isOpen) {
@@ -593,6 +596,7 @@
                 panel.style.transition = '';
             }
             snapButtonToEdge(btnRect.x, btnRect.y);
+            syncResizeHandleSide();
             savePosition(btnRect.x, btnRect.y);
             if (isOpen) savePanelPosition(panelRect.x, panelRect.y);
         }
@@ -661,7 +665,7 @@
             e.stopPropagation();
 
             isResizing = true;
-            resizeDir = 'se';
+            resizeDir = handleElement && handleElement.classList.contains('ai-resize-handle-left') ? 'sw' : 'se';
             dragStart.x = e.clientX;
             dragStart.y = e.clientY;
             elemStart.x = panelRect.x;
@@ -676,32 +680,51 @@
         }
 
         function onResizePointerMove(e) {
-            if (!isResizing) return;
-            e.preventDefault();
+    if (!isResizing) return;
+    e.preventDefault();
 
-            var clientX = e.clientX;
-            var clientY = e.clientY;
-            var dx = clientX - dragStart.x;
-            var dy = clientY - dragStart.y;
+    var clientX = e.clientX;
+    var clientY = e.clientY;
+    var dx = clientX - dragStart.x;
+    var dy = clientY - dragStart.y;
 
-            scheduleUpdate(function () {
-                var vp = getViewport();
-                var newW = clamp(elemStart.width + dx, MIN_WIDTH, Math.min(vp.width - panelRect.x - 4, MAX_WIDTH_RATIO * vp.width));
-                var newH = clamp(elemStart.height + dy, MIN_HEIGHT, Math.min(vp.height - panelRect.y - 4, MAX_HEIGHT_RATIO * vp.height));
+    scheduleUpdate(function () {
+        var vp = getViewport();
+        var newW, newX;
 
-                panelRect.width = newW;
-                panelRect.height = newH;
-                panel.style.width = newW + 'px';
-                panel.style.height = newH + 'px';
-            });
-        }
+            if (resizeDir === 'sw') {
+                // Growing leftward: cap width so the left edge can't go past 0
+                var maxW = Math.min(elemStart.x + elemStart.width - 4, MAX_WIDTH_RATIO * vp.width);
+                newW = clamp(elemStart.width - dx, MIN_WIDTH, maxW);
+                newX = elemStart.x + (elemStart.width - newW); // right edge stays fixed
+                newX = clamp(newX, 0, vp.width - newW);
+
+                panelRect.x = newX;
+                panel.style.left = newX + 'px';
+            } else {
+                // 'se': original behavior, grows rightward from fixed left edge
+                newW = clamp(elemStart.width + dx, MIN_WIDTH, Math.min(vp.width - panelRect.x - 4, MAX_WIDTH_RATIO * vp.width));
+            }
+
+            var newH = clamp(elemStart.height + dy, MIN_HEIGHT, Math.min(vp.height - panelRect.y - 4, MAX_HEIGHT_RATIO * vp.height));
+
+            panelRect.width = newW;
+            panelRect.height = newH;
+            panel.style.width = newW + 'px';
+            panel.style.height = newH + 'px';
+        });
+    }
 
         function onResizePointerUp(e) {
             if (!isResizing) return;
             isResizing = false;
+            resizeDir = '';
             panel.classList.remove('is-resizing');
             panel.style.willChange = '';
             panel.style.transition = '';
+            if (e && e.pointerId !== undefined && panel.hasPointerCapture && panel.hasPointerCapture(e.pointerId)) {
+                panel.releasePointerCapture(e.pointerId);
+            }
             saveSize(panelRect.width, panelRect.height);
         }
 
@@ -883,6 +906,10 @@
                 btnRect.y = vp.height - btnRect.height - DEFAULT_BOTTOM;
                 applyBtnPosition(btnRect.x, btnRect.y, false);
             }
+            // FIX: Re-read actual rendered position after CSS layout so btnRect is always accurate
+            var _initDom = btn.getBoundingClientRect();
+            btnRect.x = _initDom.left;
+            btnRect.y = _initDom.top;
 
             // Panel size
             if (savedSize) {
@@ -911,6 +938,13 @@
                 closeBtn.addEventListener('click', closeWidget);
             }
 
+            // Close the chat only when the pointer starts outside both the panel and FAB.
+            // Pointer events keep clicks inside inputs, buttons, messages, drag, and resize intact.
+            document.addEventListener('pointerdown', function (e) {
+                if (!isOpen || panel.contains(e.target) || btn.contains(e.target)) return;
+                closeWidget();
+            });
+
             // Button drag — attach to document for guaranteed capture
             btn.addEventListener('pointerdown', onBtnPointerDown);
             btn.addEventListener('pointermove', onBtnPointerMove);
@@ -936,6 +970,10 @@
             panel.addEventListener('pointerup', onResizePointerUp);
             panel.addEventListener('pointercancel', onResizePointerUp);
             panel.addEventListener('lostpointercapture', onResizePointerUp);
+            document.addEventListener('pointerup', onResizePointerUp);
+            document.addEventListener('pointercancel', onResizePointerUp);
+            document.addEventListener('mouseup', onResizePointerUp);
+            window.addEventListener('blur', onResizePointerUp);
 
             // Escape key
             document.addEventListener('keydown', function (e) {
@@ -945,46 +983,147 @@
                 }
             });
 
-            // History button
-            var historyBtn = document.getElementById('aiHistoryBtn');
-            if (historyBtn) {
-                historyBtn.addEventListener('click', async function () {
-                    if (!historyUrl) return;
-                    var listEl = document.getElementById('aiHistoryList');
-                    listEl.innerHTML = '<div class="ai-history-empty">Loading…</div>';
-                    panel.classList.add('ai-widget-history-mode');
-                    if (historyPanel) historyPanel.hidden = false;
+            // History helpers: relative time + Today/Yesterday/Older grouping
+            function historyDayDiff(isoDate) {
+                var d = new Date(isoDate);
+                if (isNaN(d.getTime())) return null;
+                var now = new Date();
+                var startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                var startOfDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                return Math.round((startToday - startOfDay) / 86400000);
+            }
 
-                    try {
-                        var response = await fetch(historyUrl, {
-                            credentials: 'same-origin',
-                            headers: {
-                                'RequestVerificationToken': getAntiforgeryToken(),
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        });
-                        var sessions = await response.json();
-                        listEl.innerHTML = '';
-                        if (!sessions || sessions.length === 0) {
-                            listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyEmptyText) + '</div>';
-                            return;
+            function historyGroupLabel(isoDate) {
+                var diff = historyDayDiff(isoDate);
+                if (diff === null) return 'Older';
+                if (diff === 0) return 'Today';
+                if (diff === 1) return 'Yesterday';
+                return 'Older';
+            }
+
+            function formatHistoryTime(isoDate) {
+                var diff = historyDayDiff(isoDate);
+                if (diff === null) return '';
+                var d = new Date(isoDate);
+                if (diff === 0) return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                if (diff === 1) return 'Yesterday';
+                if (diff < 7) return d.toLocaleDateString([], { weekday: 'short' });
+                return d.toLocaleDateString();
+            }
+
+            async function deleteHistorySession(id, itemEl, listEl) {
+                if (!historyDeleteUrlTemplate) return;
+                try {
+                    var url = historyDeleteUrlTemplate.replace('__ID__', id);
+                    var response = await fetch(url, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'RequestVerificationToken': getAntiforgeryToken(),
+                            'X-Requested-With': 'XMLHttpRequest'
                         }
-                        sessions.forEach(function (s) {
+                    });
+                    if (!response.ok) return;
+                    itemEl.remove();
+                    if (!listEl.querySelector('.ai-history-item')) {
+                        listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyEmptyText) + '</div>';
+                    }
+                } catch (err) { /* keep the item on failure */ }
+            }
+
+            async function loadHistory() {
+                if (!historyUrl) return;
+                var listEl = document.getElementById('aiHistoryList');
+                listEl.innerHTML = '<div class="ai-history-empty">Loading…</div>';
+                panel.classList.add('ai-widget-history-mode');
+                if (historyPanel) historyPanel.hidden = false;
+
+                try {
+                    var response = await fetch(historyUrl, {
+                        credentials: 'same-origin',
+                        headers: {
+                            'RequestVerificationToken': getAntiforgeryToken(),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    var sessions = await response.json();
+                    listEl.innerHTML = '';
+                    if (!sessions || sessions.length === 0) {
+                        listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyEmptyText) + '</div>';
+                        return;
+                    }
+
+                    // Group sessions into Today / Yesterday / Older (server already
+                    // returns them newest-first).
+                    var groups = {};
+                    sessions.forEach(function (s) {
+                        var label = historyGroupLabel(s.updatedDate);
+                        if (!groups[label]) groups[label] = [];
+                        groups[label].push(s);
+                    });
+
+                    ['Today', 'Yesterday', 'Older'].forEach(function (label) {
+                        if (!groups[label] || groups[label].length === 0) return;
+                        var groupEl = document.createElement('div');
+                        groupEl.className = 'ai-history-group';
+                        var groupTitle = document.createElement('div');
+                        groupTitle.className = 'ai-history-group-title';
+                        groupTitle.textContent = label;
+                        groupEl.appendChild(groupTitle);
+
+                        groups[label].forEach(function (s) {
                             var item = document.createElement('div');
                             item.className = 'ai-history-item';
                             item.setAttribute('tabindex', '0');
                             item.setAttribute('role', 'button');
-                            var dateStr = new Date(s.updatedDate).toLocaleDateString();
-                            item.innerHTML = '<div class="ai-history-item-title">' + escapeHtml(s.title) + '</div>' +
-                                             '<div class="ai-history-item-date">' + escapeHtml(dateStr) + '</div>';
-                            item.addEventListener('click', function () { loadHistorySession(s.id); });
-                            item.addEventListener('keydown', function (e) { if (e.key === 'Enter') loadHistorySession(s.id); });
-                            listEl.appendChild(item);
+                            item.setAttribute('aria-label', s.title);
+
+                            var previewHtml = s.preview
+                                ? '<div class="ai-history-item-preview">' + escapeHtml(s.preview) + '</div>'
+                                : '';
+                            var deleteBtnHtml = historyDeleteUrlTemplate
+                                ? '<button type="button" class="ai-history-item-delete" aria-label="Delete conversation" title="Delete conversation"><i class="bi bi-trash3"></i></button>'
+                                : '';
+
+                            item.innerHTML =
+                                '<div class="ai-history-item-main">' +
+                                    '<div class="ai-history-item-title">' + escapeHtml(s.title) + '</div>' +
+                                    previewHtml +
+                                    '<div class="ai-history-item-date">' + escapeHtml(formatHistoryTime(s.updatedDate)) + '</div>' +
+                                '</div>' +
+                                deleteBtnHtml;
+
+                            item.addEventListener('click', function (e) {
+                                if (e.target.closest('.ai-history-item-delete')) return;
+                                loadHistorySession(s.id);
+                            });
+                            item.addEventListener('keydown', function (e) {
+                                if (e.key === 'Enter' && !e.target.closest('.ai-history-item-delete')) {
+                                    loadHistorySession(s.id);
+                                }
+                            });
+
+                            var delBtn = item.querySelector('.ai-history-item-delete');
+                            if (delBtn) {
+                                delBtn.addEventListener('click', function (e) {
+                                    e.stopPropagation();
+                                    deleteHistorySession(s.id, item, listEl);
+                                });
+                            }
+
+                            groupEl.appendChild(item);
                         });
-                    } catch (err) {
-                        listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyErrorText) + '</div>';
-                    }
-                });
+                        listEl.appendChild(groupEl);
+                    });
+                } catch (err) {
+                    listEl.innerHTML = '<div class="ai-history-empty">' + escapeHtml(historyErrorText) + '</div>';
+                }
+            }
+
+            // History button
+            var historyBtn = document.getElementById('aiHistoryBtn');
+            if (historyBtn) {
+                historyBtn.addEventListener('click', loadHistory);
             }
 
             // History back button
@@ -1033,6 +1172,7 @@
                     savePanelPosition(panelRect.x, panelRect.y);
                     saveSize(panelRect.width, panelRect.height);
                 }
+                syncResizeHandleSide();
             });
         }
 

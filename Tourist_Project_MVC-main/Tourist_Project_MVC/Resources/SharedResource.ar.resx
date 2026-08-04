@@ -193,7 +193,7 @@
     <value>رجوع</value>
   </data>
   <data name="Ai_HistoryEmpty" xml:space="preserve">
-    <value>لا توجد محادثات محفوظة بعد.</value>
+    <value>لا توجد محادثات بعد. ابدأ الدردشة مع مساعد إيجيبلور وستظهر محادثاتك هنا.</value>
   </data>
   <data name="Search_Placeholder" xml:space="preserve">
     <value>ابحث في مصر…</value>

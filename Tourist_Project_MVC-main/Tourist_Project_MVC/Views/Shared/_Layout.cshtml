@@ -798,7 +798,8 @@
             aria-label="@Localizer["Ai_Open"].Value"
             aria-expanded="false"
             aria-controls="aiAssistantPanel">
-        <i class="bi bi-stars"></i>
+        <img class="ai-fab-icon ai-fab-icon-light" src="/lottie/Stars-white.svg" alt="" aria-hidden="true" />
+        <img class="ai-fab-icon ai-fab-icon-dark" src="/lottie/Stars-black.svg" alt="" aria-hidden="true" />
     </button>
 
     @await Component.InvokeAsync("NotificationFab")
@@ -808,6 +809,7 @@
          data-trip-url-template="@Url.Action("Details", "Trip", new { id = "__ID__" })"
          data-history-url="@Url.Action("GetHistory", "AiChat")"
          data-history-session-url-template="@Url.Action("GetHistorySession", "AiChat", new { id = "__ID__" })"
+         data-history-delete-url-template="@Url.Action("DeleteSession", "AiChat", new { id = "__ID__" })"
          data-history-empty-text="@Localizer["Ai_HistoryEmpty"].Value"
          data-history-error-text="@Localizer["Ai_Error"].Value"
          data-thinking-text="@Localizer["Ai_Thinking"].Value"
@@ -815,7 +817,8 @@
          data-view-trip-text="@Localizer["Ai_ViewTrip"].Value">
          <div class="ai-widget-header">
              <h5 class="ai-widget-title">
-                 <i class="bi bi-stars me-2"></i> @Localizer["Ai_Title"].Value
+                 <img class="ai-widget-title-stars" src="/lottie/Stars-white.svg" alt="" aria-hidden="true" />
+                 <span>@Localizer["Ai_Title"].Value</span>
              </h5>
              <div class="ai-widget-header-actions">
                  <button type="button" class="ai-widget-history-toggle" id="aiHistoryBtn"
