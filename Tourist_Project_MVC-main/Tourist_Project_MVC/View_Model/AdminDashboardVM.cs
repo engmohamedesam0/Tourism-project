@@ -109,7 +109,10 @@ namespace Tourist_Project_MVC.View_Model
         public int Total { get; set; }
         public int Active { get; set; }
         public List<AdminDashboardVM.NameCountRow> CategoryBreakdown { get; set; } = new();
+        public List<DestinationAdminRow> Records { get; set; } = new();
     }
+
+    public record DestinationAdminRow(int Id, string Name, string City, string? Category, string Status, int Visits);
 
     public class RewardSectionVM
     {

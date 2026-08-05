@@ -31,6 +31,8 @@ namespace Tourist_Project_MVC.View_Model
         [Range(-180.0, 180.0, ErrorMessage = "Longitude must be between -180 and 180.")]
         public double Longitude { get; set; }
 
+        public bool LocationSelected { get; set; }
+
         // Ticket Info
         [Display(Name = "Ticket Required")]
         public string TicketRequired { get; set; } = "No"; // "Yes" or "No"
@@ -64,8 +66,12 @@ namespace Tourist_Project_MVC.View_Model
 
         public string? Booking { get; set; }
 
-        // Images
+        // Images — local uploads remain files; external URLs are stored in the same
+        // newline-delimited PhotoUrls field by the controller.
         [Display(Name = "Destination Images")]
         public List<IFormFile>? ImageFiles { get; set; }
+
+        [Display(Name = "External Image URLs")]
+        public List<string> ExternalImageUrls { get; set; } = new();
     }
 }

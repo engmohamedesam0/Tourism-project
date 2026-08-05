@@ -11,6 +11,7 @@ using System.Threading;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Services;
+using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Services;
 
@@ -20,6 +21,9 @@ public interface IArcGISSyncService
     Task<ArcGISSyncResult> SyncBranchesAsync(IEnumerable<Branch> branches, CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncDestinationsFromArcGIS(CancellationToken ct = default);
     Task<(bool Success, string? Error, int? CreatedObjectId, int? CreatedId)> AddDestinationToArcGISAsync(Destination destination, CancellationToken ct = default);
+    Task<ArcGISSyncResult> DeleteDestinationFromArcGISAsync(int destinationId, CancellationToken ct = default);
+    Task<ArcGISSyncResult> UpdateDestinationOnArcGISAsync(Destination destination, CancellationToken ct = default);
+    Task<ArcGISDestinationSnapshot> GetDestinationSnapshotAsync(int? databaseId = null, CancellationToken ct = default);
 }
 
 public record ArcGISSyncResult(bool Success, string? Error, int AddedCount, int UpdatedCount)
@@ -114,7 +118,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
 
     private async Task<int?> QueryObjectIdAsync(HttpClient client, string layerUrl, int id, string token, string idFieldName, CancellationToken ct)
     {
-        var queryUrl = $"{layerUrl}/query?where={Uri.EscapeDataString(idFieldName)}={id}&f=json&token={Uri.EscapeDataString(token)}&outFields=OBJECTID&returnGeometry=false";
+        var queryUrl = $"{layerUrl}/query?where={Uri.EscapeDataString(idFieldName)}={id}&f=json&token={Uri.EscapeDataString(token)}&outFields=ObjectId&returnGeometry=false";
         using var response = await client.GetAsync(queryUrl, ct);
         if (!response.IsSuccessStatusCode) return null;
         var body = await response.Content.ReadAsStringAsync(ct);
@@ -122,12 +126,65 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
         if (doc.RootElement.TryGetProperty("features", out var features) && features.GetArrayLength() > 0)
         {
             var first = features[0];
-            if (first.TryGetProperty("attributes", out var attrs) && attrs.TryGetProperty("OBJECTID", out var oid))
+            if (first.TryGetProperty("attributes", out var attrs))
             {
-                return oid.GetInt32();
+                foreach (var property in attrs.EnumerateObject())
+                {
+                    if (property.Name.Equals("ObjectId", StringComparison.OrdinalIgnoreCase) && property.Value.ValueKind == JsonValueKind.Number)
+                        return property.Value.GetInt32();
+                }
             }
         }
         return null;
+    }
+
+    private async Task<(bool CanCreate, string? Error)> EnsureLayerCanCreateAsync(HttpClient client, string layerUrl, string token, CancellationToken ct)
+    {
+        var metadataUrl = $"{layerUrl}?f=json&token={Uri.EscapeDataString(token)}";
+        using var response = await client.GetAsync(metadataUrl, ct);
+        if (!response.IsSuccessStatusCode)
+            return (false, $"ArcGIS layer metadata returned HTTP {(int)response.StatusCode}.");
+
+        var body = await response.Content.ReadAsStringAsync(ct);
+        using var doc = JsonDocument.Parse(body);
+        if (doc.RootElement.TryGetProperty("error", out var error))
+            return (false, $"ArcGIS layer metadata error: {ExtractArcGISErrorMessage(error)}");
+
+        var capabilities = doc.RootElement.TryGetProperty("capabilities", out var capabilitiesElement)
+            ? capabilitiesElement.GetString() ?? string.Empty
+            : string.Empty;
+        var canCreate = capabilities.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Any(value => value.Equals("Create", StringComparison.OrdinalIgnoreCase));
+        return canCreate
+            ? (true, null)
+            : (false, "The configured ArcGIS layer does not currently allow feature creation.");
+    }
+
+    private async Task<int> GetNextDestinationIdAsync(HttpClient client, string layerUrl, string token, string idField, CancellationToken ct)
+    {
+        var queryUrl = $"{layerUrl}/query?where=1%3D1&f=json&token={Uri.EscapeDataString(token)}&outFields={Uri.EscapeDataString(idField)}&orderByFields={Uri.EscapeDataString(idField)}%20DESC&resultRecordCount=1&returnGeometry=false";
+        using var response = await client.GetAsync(queryUrl, ct);
+        if (!response.IsSuccessStatusCode) return 1;
+        var body = await response.Content.ReadAsStringAsync(ct);
+        using var doc = JsonDocument.Parse(body);
+        if (doc.RootElement.TryGetProperty("features", out var features) && features.GetArrayLength() > 0 && features[0].TryGetProperty("attributes", out var attrs))
+        {
+            foreach (var property in attrs.EnumerateObject())
+            {
+                if (property.Name.Equals(idField, StringComparison.OrdinalIgnoreCase) && property.Value.ValueKind == JsonValueKind.Number && property.Value.TryGetInt32(out var currentId))
+                    return currentId + 1;
+            }
+        }
+        return 1;
+    }
+
+    private static double WebMercatorX(double longitude) => longitude * 20037508.34 / 180d;
+
+    private static double WebMercatorY(double latitude)
+    {
+        var clamped = Math.Clamp(latitude, -85.05112878, 85.05112878);
+        var radians = clamped * Math.PI / 180d;
+        return Math.Log(Math.Tan(Math.PI / 4d + radians / 2d)) * 20037508.34 / Math.PI;
     }
 
     private static string ExtractArcGISErrorMessage(JsonElement resultElement)
@@ -174,21 +231,33 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
                 var attrs = new Dictionary<string, object>
                 {
                     [ResolveField(fieldMap, "Id") ?? "Id"] = d.Id,
-                    [ResolveField(fieldMap, "Name") ?? "Name"] = d.Name,
-                    [ResolveField(fieldMap, "City") ?? "City"] = d.City,
+                    [ResolveField(fieldMap, "English_Name") ?? "English_Name"] = d.Name,
+                    [ResolveField(fieldMap, "Arabic_Name") ?? "Arabic_Name"] = d.ArabicName ?? "",
+                    [ResolveField(fieldMap, "Governorate") ?? "Governorate"] = d.City,
                     [ResolveField(fieldMap, "Category") ?? "Category"] = d.Category ?? "",
-                    [ResolveField(fieldMap, "TicketPrice") ?? "TicketPrice"] = d.TicketPrice ?? 0m,
-                    [ResolveField(fieldMap, "Rating") ?? "Rating"] = d.Rating ?? 0m,
-                    [ResolveField(fieldMap, "Visits") ?? "Visits"] = d.Visits,
+                    [ResolveField(fieldMap, "Description") ?? "Description"] = d.Description ?? "",
                     [ResolveField(fieldMap, "Status") ?? "Status"] = d.Status,
-                    [ResolveField(fieldMap, "latitude") ?? "latitude"] = d.Location.Y,
-                    [ResolveField(fieldMap, "longitude") ?? "longitude"] = d.Location.X
+                    [ResolveField(fieldMap, "Visits") ?? "Visits"] = d.Visits,
+                    [ResolveField(fieldMap, "Rating") ?? "Rating"] = d.Rating ?? 0m,
+                    [ResolveField(fieldMap, "Tags") ?? "Tags"] = d.Tags ?? "",
+                    [ResolveField(fieldMap, "Images") ?? "Images"] = d.PhotoUrls?.Replace("\\n", "|") ?? "",
+                    [ResolveField(fieldMap, "TicketRequired") ?? "TicketRequired"] = d.TicketRequired ?? "No",
+                    [ResolveField(fieldMap, "ForeignPrice") ?? "ForeignPrice"] = d.ForeignPrice ?? 0,
+                    [ResolveField(fieldMap, "StudentForeignPrice") ?? "StudentForeignPrice"] = d.StudentForeignPrice ?? 0,
+                    [ResolveField(fieldMap, "EgyptianPrice") ?? "EgyptianPrice"] = d.EgyptianPrice ?? 0,
+                    [ResolveField(fieldMap, "StudentEgyptianPrice") ?? "StudentEgyptianPrice"] = d.StudentEgyptianPrice ?? 0,
+                    [ResolveField(fieldMap, "Days") ?? "Days"] = d.Days ?? "",
+                    [ResolveField(fieldMap, "Open_at") ?? "Open_at"] = d.OpenAt ?? 0,
+                    [ResolveField(fieldMap, "Close_at") ?? "Close_at"] = d.CloseAt ?? 0,
+                    [ResolveField(fieldMap, "Booking") ?? "Booking"] = d.Booking ?? "",
+                    [ResolveField(fieldMap, "Latitiude") ?? "Latitiude"] = d.Location.Y,
+                    [ResolveField(fieldMap, "Longitude") ?? "Longitude"] = d.Location.X
                 };
                 var geometry = new
                 {
-                    x = d.Location.X,
-                    y = d.Location.Y,
-                    spatialReference = new { wkid = 4326 }
+                    x = WebMercatorX(d.Location.X),
+                    y = WebMercatorY(d.Location.Y),
+                    spatialReference = new { wkid = 102100 }
                 };
                 var feature = new { attributes = attrs, geometry = geometry };
 
@@ -200,15 +269,27 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
                         {
                             ["OBJECTID"] = existingOid.Value,
                             [ResolveField(fieldMap, "Id") ?? "Id"] = d.Id,
-                            [ResolveField(fieldMap, "Name") ?? "Name"] = d.Name,
-                            [ResolveField(fieldMap, "City") ?? "City"] = d.City,
+                            [ResolveField(fieldMap, "English_Name") ?? "English_Name"] = d.Name,
+                            [ResolveField(fieldMap, "Arabic_Name") ?? "Arabic_Name"] = d.ArabicName ?? "",
+                            [ResolveField(fieldMap, "Governorate") ?? "Governorate"] = d.City,
                             [ResolveField(fieldMap, "Category") ?? "Category"] = d.Category ?? "",
-                            [ResolveField(fieldMap, "TicketPrice") ?? "TicketPrice"] = d.TicketPrice ?? 0m,
-                            [ResolveField(fieldMap, "Rating") ?? "Rating"] = d.Rating ?? 0m,
-                            [ResolveField(fieldMap, "Visits") ?? "Visits"] = d.Visits,
+                            [ResolveField(fieldMap, "Description") ?? "Description"] = d.Description ?? "",
                             [ResolveField(fieldMap, "Status") ?? "Status"] = d.Status,
-                            [ResolveField(fieldMap, "latitude") ?? "latitude"] = d.Location.Y,
-                            [ResolveField(fieldMap, "longitude") ?? "longitude"] = d.Location.X
+                            [ResolveField(fieldMap, "Visits") ?? "Visits"] = d.Visits,
+                            [ResolveField(fieldMap, "Rating") ?? "Rating"] = d.Rating ?? 0m,
+                            [ResolveField(fieldMap, "Tags") ?? "Tags"] = d.Tags ?? "",
+                            [ResolveField(fieldMap, "Images") ?? "Images"] = d.PhotoUrls?.Replace("\\n", "|") ?? "",
+                            [ResolveField(fieldMap, "TicketRequired") ?? "TicketRequired"] = d.TicketRequired ?? "No",
+                            [ResolveField(fieldMap, "ForeignPrice") ?? "ForeignPrice"] = d.ForeignPrice ?? 0,
+                            [ResolveField(fieldMap, "StudentForeignPrice") ?? "StudentForeignPrice"] = d.StudentForeignPrice ?? 0,
+                            [ResolveField(fieldMap, "EgyptianPrice") ?? "EgyptianPrice"] = d.EgyptianPrice ?? 0,
+                            [ResolveField(fieldMap, "StudentEgyptianPrice") ?? "StudentEgyptianPrice"] = d.StudentEgyptianPrice ?? 0,
+                            [ResolveField(fieldMap, "Days") ?? "Days"] = d.Days ?? "",
+                            [ResolveField(fieldMap, "Open_at") ?? "Open_at"] = d.OpenAt ?? 0,
+                            [ResolveField(fieldMap, "Close_at") ?? "Close_at"] = d.CloseAt ?? 0,
+                            [ResolveField(fieldMap, "Booking") ?? "Booking"] = d.Booking ?? "",
+                            [ResolveField(fieldMap, "Latitiude") ?? "Latitiude"] = d.Location.Y,
+                            [ResolveField(fieldMap, "Longitude") ?? "Longitude"] = d.Location.X
                         },
                         geometry = geometry
                     });
@@ -449,6 +530,104 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
         }
     }
 
+    public async Task<ArcGISDestinationSnapshot> GetDestinationSnapshotAsync(int? databaseId = null, CancellationToken ct = default)
+    {
+        var layerUrl = LayerUrl(DestinationsLayerUrl);
+        var token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(layerUrl) || string.IsNullOrWhiteSpace(token))
+            return new(Array.Empty<ArcGISFieldDefinition>(), Array.Empty<ArcGISDestinationRecord>(), "ArcGIS destination layer is not configured.");
+
+        try
+        {
+            var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            using var metadataResponse = await client.GetAsync($"{layerUrl}?f=json&token={Uri.EscapeDataString(token)}", ct);
+            if (!metadataResponse.IsSuccessStatusCode)
+                return new(Array.Empty<ArcGISFieldDefinition>(), Array.Empty<ArcGISDestinationRecord>(), $"ArcGIS schema returned HTTP {(int)metadataResponse.StatusCode}.");
+            using var metadata = JsonDocument.Parse(await metadataResponse.Content.ReadAsStringAsync(ct));
+            if (metadata.RootElement.TryGetProperty("error", out var metadataError))
+                return new(Array.Empty<ArcGISFieldDefinition>(), Array.Empty<ArcGISDestinationRecord>(), ExtractArcGISErrorMessage(metadataError));
+
+            var fields = new List<ArcGISFieldDefinition>();
+            if (metadata.RootElement.TryGetProperty("fields", out var fieldArray))
+            {
+                foreach (var field in fieldArray.EnumerateArray())
+                {
+                    var name = field.TryGetProperty("name", out var nameElement) ? nameElement.GetString() : null;
+                    if (string.IsNullOrWhiteSpace(name)) continue;
+                    fields.Add(new(
+                        name,
+                        field.TryGetProperty("type", out var typeElement) ? typeElement.GetString() ?? "" : "",
+                        field.TryGetProperty("alias", out var aliasElement) ? aliasElement.GetString() ?? name : name,
+                        !field.TryGetProperty("nullable", out var nullableElement) || nullableElement.GetBoolean(),
+                        !field.TryGetProperty("editable", out var editableElement) || editableElement.GetBoolean()));
+                }
+            }
+
+            var records = new List<ArcGISDestinationRecord>();
+            var where = databaseId.HasValue ? $"Id={databaseId.Value}" : "1=1";
+            async Task<(bool Success, bool More, string? Error)> ReadPageAsync(string pageWhere, int offset)
+            {
+                var queryUrl = $"{layerUrl}/query?where={Uri.EscapeDataString(pageWhere)}&outFields=*&returnGeometry=true&resultOffset={offset}&resultRecordCount=1000&f=json&token={Uri.EscapeDataString(token)}";
+                using var response = await client.GetAsync(queryUrl, ct);
+                if (!response.IsSuccessStatusCode) return (false, false, $"ArcGIS query returned HTTP {(int)response.StatusCode}.");
+                using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
+                if (document.RootElement.TryGetProperty("error", out var queryError)) return (false, false, ExtractArcGISErrorMessage(queryError));
+                if (!document.RootElement.TryGetProperty("features", out var features)) return (true, false, null);
+                foreach (var feature in features.EnumerateArray())
+                {
+                    var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+                    if (feature.TryGetProperty("attributes", out var attributesElement))
+                    {
+                        foreach (var property in attributesElement.EnumerateObject())
+                            attributes[property.Name] = property.Value.ValueKind switch
+                            {
+                                JsonValueKind.Null => null,
+                                JsonValueKind.String => property.Value.GetString(),
+                                JsonValueKind.Number when property.Value.TryGetInt64(out var integer) => integer,
+                                JsonValueKind.Number when property.Value.TryGetDouble(out var number) => number,
+                                JsonValueKind.True or JsonValueKind.False => property.Value.GetBoolean(),
+                                _ => property.Value.GetRawText()
+                            };
+                    }
+                    int? objectId = attributes.TryGetValue("ObjectId", out var objectValue) ? ConvertNullableInt(objectValue) : null;
+                    int? id = attributes.TryGetValue("Id", out var idValue) ? ConvertNullableInt(idValue) : null;
+                    double? latitude = attributes.TryGetValue("Latitiude", out var latitudeValue) ? ConvertNullableDouble(latitudeValue) : null;
+                    double? longitude = attributes.TryGetValue("Longitude", out var longitudeValue) ? ConvertNullableDouble(longitudeValue) : null;
+                    if ((!latitude.HasValue || !longitude.HasValue) && feature.TryGetProperty("geometry", out var geometry))
+                    {
+                        var x = geometry.TryGetProperty("x", out var xElement) ? xElement.GetDouble() : 0;
+                        var y = geometry.TryGetProperty("y", out var yElement) ? yElement.GetDouble() : 0;
+                        longitude = WebMercatorToLongitude(x);
+                        latitude = WebMercatorToLatitude(y);
+                    }
+                    records.Add(new(objectId, id, attributes, latitude, longitude));
+                }
+                var more = document.RootElement.TryGetProperty("exceededTransferLimit", out var exceeded) && exceeded.ValueKind == JsonValueKind.True;
+                return (true, more, null);
+            }
+            var offset = 0;
+            while (true)
+            {
+                var pageResult = await ReadPageAsync(where, offset);
+                if (!pageResult.Success) return new(fields, records, pageResult.Error);
+                if (!pageResult.More || databaseId.HasValue) break;
+                offset += 1000;
+            }
+            return new(fields, records);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ArcGIS destination snapshot failed");
+            return new(Array.Empty<ArcGISFieldDefinition>(), Array.Empty<ArcGISDestinationRecord>(), ex.Message);
+        }
+    }
+
+    private static int? ConvertNullableInt(object? value) => value switch { null => null, int integer => integer, long longValue => (int)longValue, double number => (int)number, _ when int.TryParse(value.ToString(), out var parsed) => parsed, _ => null };
+    private static double? ConvertNullableDouble(object? value) => value switch { null => null, double number => number, float number => number, int integer => integer, long longValue => longValue, _ when double.TryParse(value.ToString(), out var parsed) => parsed, _ => null };
+    private static double WebMercatorToLongitude(double x) => x / 20037508.34 * 180d;
+    private static double WebMercatorToLatitude(double y) => 180d / Math.PI * (2d * Math.Atan(Math.Exp(y / 20037508.34 * Math.PI)) - Math.PI / 2d);
+
     public async Task<ArcGISSyncResult> SyncDestinationsFromArcGIS(CancellationToken ct = default)
     {
         var layerUrl = LayerUrl(DestinationsLayerUrl);
@@ -497,6 +676,8 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
                 return ArcGISSyncResult.Ok();
             }
 
+            var queryWasCapped = doc.RootElement.TryGetProperty("exceededTransferLimit", out var exceededTransferLimit)
+                && exceededTransferLimit.ValueKind == JsonValueKind.True;
             var remoteIds = new HashSet<int>();
             var upserts = new List<Destination>();
 
@@ -538,7 +719,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
                     dest.Visits = visitsEl.GetInt32();
 
                 if (attrs.TryGetProperty("Rating", out var ratingEl) && ratingEl.ValueKind == JsonValueKind.Number)
-                    dest.Rating = (decimal)ratingEl.GetDouble();
+                    dest.Rating = Math.Round((decimal)ratingEl.GetDouble(), 0, MidpointRounding.AwayFromZero);
 
                 if (attrs.TryGetProperty("Tags", out var tagsEl) && tagsEl.ValueKind == JsonValueKind.String)
                 {
@@ -610,7 +791,13 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
             var dbDestinations = _context.Destinations.ToList();
             var dbIds = new HashSet<int>(dbDestinations.Select(d => d.Id));
 
-            var toRemove = dbDestinations.Where(d => !remoteIds.Contains(d.Id)).ToList();
+            var toRemove = queryWasCapped
+                ? new List<Destination>()
+                : dbDestinations.Where(d => !remoteIds.Contains(d.Id)).ToList();
+            if (queryWasCapped)
+            {
+                _logger.LogWarning("ArcGIS destinations query exceeded the transfer limit; skipping local deletions to avoid removing records outside the returned page.");
+            }
             foreach (var d in toRemove)
             {
                 _context.Destinations.Remove(d);
@@ -665,6 +852,44 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
         }
     }
 
+    public async Task<ArcGISSyncResult> UpdateDestinationOnArcGISAsync(Destination destination, CancellationToken ct = default)
+    {
+        var result = await SyncDestinationsAsync(new[] { destination }, ct);
+        return result.Success ? result : ArcGISSyncResult.Failed(result.Error ?? "ArcGIS update failed.");
+    }
+
+    public async Task<ArcGISSyncResult> DeleteDestinationFromArcGISAsync(int destinationId, CancellationToken ct = default)
+    {
+        var layerUrl = LayerUrl(DestinationsLayerUrl);
+        var token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(layerUrl) || string.IsNullOrWhiteSpace(token)) return ArcGISSyncResult.Failed("ArcGIS destination layer is not configured.");
+        try
+        {
+            var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
+            var idField = ResolveField(fieldMap, "Id") ?? "Id";
+            var objectId = await QueryObjectIdAsync(client, layerUrl, destinationId, token, idField, ct);
+            if (!objectId.HasValue)
+            {
+                _logger.LogWarning("ArcGIS destination delete target was not found for database Id={DestinationId}", destinationId);
+                return ArcGISSyncResult.Failed($"No ArcGIS feature was found for destination Id={destinationId}.");
+            }
+            var fields = new Dictionary<string, string> { ["f"] = "json", ["deletes"] = objectId.Value.ToString(System.Globalization.CultureInfo.InvariantCulture), ["rollbackOnFailure"] = "true" };
+            using var response = await client.PostAsync($"{layerUrl}/applyEdits?token={Uri.EscapeDataString(token)}", new FormUrlEncodedContent(fields), ct);
+            if (!response.IsSuccessStatusCode) return ArcGISSyncResult.Failed($"ArcGIS returned HTTP {(int)response.StatusCode}.");
+            using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
+            if (doc.RootElement.TryGetProperty("error", out var error)) return ArcGISSyncResult.Failed($"ArcGIS delete failed: {ExtractArcGISErrorMessage(error)}");
+            if (doc.RootElement.TryGetProperty("deleteResults", out var results) && results.GetArrayLength() > 0 && results[0].TryGetProperty("success", out var success) && success.GetBoolean()) return ArcGISSyncResult.Ok(updated: 1);
+            return ArcGISSyncResult.Failed("ArcGIS did not confirm the destination deletion.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ArcGIS destination deletion failed for Id={DestinationId}", destinationId);
+            return ArcGISSyncResult.Failed($"ArcGIS deletion failed: {ex.Message}");
+        }
+    }
+
     public async Task<(bool Success, string? Error, int? CreatedObjectId, int? CreatedId)> AddDestinationToArcGISAsync(Destination destination, CancellationToken ct = default)
     {
         var layerUrl = LayerUrl(DestinationsLayerUrl);
@@ -683,14 +908,16 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
             var client = _clientFactory.CreateClient();
             client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
 
-            var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
+            var layerCapability = await EnsureLayerCanCreateAsync(client, layerUrl, token, ct);
+            if (!layerCapability.CanCreate)
+                return (false, layerCapability.Error, null, null);
 
-            // Determine next ID if Id attribute is required
-            int nextId = 1;
-            if (_context.Destinations.Any())
-            {
-                nextId = _context.Destinations.Max(d => d.Id) + 1;
-            }
+            var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
+            if (fieldMap == null)
+                return (false, "ArcGIS destination field metadata could not be loaded.", null, null);
+
+            var idField = ResolveField(fieldMap, "Id") ?? "Id";
+            var nextId = await GetNextDestinationIdAsync(client, layerUrl, token, idField, ct);
 
             var attrs = new Dictionary<string, object?>
             {
@@ -702,7 +929,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
                 [ResolveField(fieldMap, "Description") ?? "Description"] = destination.Description ?? string.Empty,
                 [ResolveField(fieldMap, "Status") ?? "Status"] = string.IsNullOrWhiteSpace(destination.Status) ? "Active" : destination.Status,
                 [ResolveField(fieldMap, "Visits") ?? "Visits"] = destination.Visits,
-                [ResolveField(fieldMap, "Rating") ?? "Rating"] = destination.Rating ?? 0m,
+                [ResolveField(fieldMap, "Rating") ?? "Rating"] = destination.Rating.HasValue ? (int)Math.Round(destination.Rating.Value, MidpointRounding.AwayFromZero) : 0,
                 [ResolveField(fieldMap, "Tags") ?? "Tags"] = destination.Tags ?? string.Empty,
                 [ResolveField(fieldMap, "Images") ?? "Images"] = destination.PhotoUrls != null ? destination.PhotoUrls.Replace("\n", "|") : string.Empty,
                 [ResolveField(fieldMap, "TicketRequired") ?? "TicketRequired"] = destination.TicketRequired ?? "No",
@@ -720,9 +947,9 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
 
             var geometry = new
             {
-                x = destination.Location?.X ?? 0.0,
-                y = destination.Location?.Y ?? 0.0,
-                spatialReference = new { wkid = 4326 }
+                x = WebMercatorX(destination.Location?.X ?? 0.0),
+                y = WebMercatorY(destination.Location?.Y ?? 0.0),
+                spatialReference = new { wkid = 102100 }
             };
 
             var feature = new { attributes = attrs, geometry = geometry };

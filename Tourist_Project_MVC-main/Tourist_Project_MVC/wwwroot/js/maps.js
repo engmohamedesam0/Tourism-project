@@ -51,11 +51,15 @@ var EGYMaps = (function () {
 
   function _waitForArcgisLoader() {
     if (window.$arcgis) return Promise.resolve(window.$arcgis);
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
+      var started = Date.now();
       var interval = setInterval(function () {
         if (window.$arcgis) {
           clearInterval(interval);
           resolve(window.$arcgis);
+        } else if (Date.now() - started > 15000) {
+          clearInterval(interval);
+          reject(new Error("ArcGIS loader timed out."));
         }
       }, 20);
     });
@@ -430,6 +434,7 @@ var EGYMaps = (function () {
 
     var latInput = document.getElementById(opts.latInputId);
     var lngInput = document.getElementById(opts.lngInputId);
+    var onLocationSelected = typeof opts.onLocationSelected === "function" ? opts.onLocationSelected : null;
 
     var initialLat =
       opts.initialLat !== undefined && opts.initialLat !== null
@@ -462,6 +467,8 @@ var EGYMaps = (function () {
       var TextSymbol = await $arcgis.import(
         "@arcgis/core/symbols/TextSymbol.js",
       );
+      var webMercatorUtils = await $arcgis.import("@arcgis/core/geometry/support/webMercatorUtils.js");
+      var Search = await $arcgis.import("@arcgis/core/widgets/Search.js");
 
       var map = new EsriMap({
         basemap: "osm",
@@ -507,13 +514,16 @@ var EGYMaps = (function () {
       function syncFromLatLng(lng, lat) {
         if (latInput) latInput.value = _round6(lat);
         if (lngInput) lngInput.value = _round6(lng);
+        if (onLocationSelected) onLocationSelected({ latitude: _round6(lat), longitude: _round6(lng) });
       }
 
       view.on("pointer-down", function (event) {
         view.hitTest(event).then(function (response) {
-          if (response.results.length) {
+          if (response.results.length && response.results[0].graphic === pickerGraphic) {
             view._dragging = true;
             event.stopPropagation();
+          } else {
+            view._dragging = false;
           }
         });
       });
@@ -600,12 +610,30 @@ var EGYMaps = (function () {
           });
       }
 
+      var search = new Search({ view: view, includeDefaultSources: true });
+      view.ui.add(search, "top-right");
+      search.on("select-result", function (event) {
+        var point = event.result && event.result.feature && event.result.feature.geometry;
+        if (!point) return;
+        var geo = point.spatialReference && point.spatialReference.wkid === 4326
+          ? point
+          : point.longitude !== undefined ? point : webMercatorUtils.webMercatorToGeographic(point);
+        if (geo && geo.longitude !== undefined && geo.latitude !== undefined) {
+          pickerGraphic.geometry = new Point({ longitude: geo.longitude, latitude: geo.latitude, spatialReference: { wkid: 4326 } });
+          view.goTo({ center: [geo.longitude, geo.latitude], zoom: 16 }, { duration: 600 });
+          syncFromLatLng(geo.longitude, geo.latitude);
+        }
+      });
+
       view.when(function () {
         localLoader.style.opacity = "0";
         setTimeout(function () {
           if (localLoader.parentNode)
             localLoader.parentNode.removeChild(localLoader);
         }, 400);
+      }).catch(function (error) {
+        if (localLoader) localLoader.innerHTML = '<div class="p-3 text-center text-white">The ArcGIS map could not be initialized. Refresh and try again.</div>';
+        console.warn("ArcGIS location picker failed", error);
       });
 
       if (latInput) {
@@ -642,8 +670,16 @@ var EGYMaps = (function () {
       }
 
       return { map: map, view: view, marker: pickerGraphic };
-    })();
+    })().catch(function (error) {
+      console.warn("ArcGIS location picker initialization failed", error);
+      mapEl.innerHTML = '<div class="p-4 text-center text-muted">ArcGIS map unavailable. You can still enter latitude and longitude manually.</div>';
+    });
   }
 
-  return { initWfsMap: initWfsMap, initLocationPicker: initLocationPicker };
+  function resize(mapElId) {
+    var view = _maps[mapElId];
+    if (view && view.resize) view.resize();
+  }
+
+  return { initWfsMap: initWfsMap, initLocationPicker: initLocationPicker, resize: resize };
 })();

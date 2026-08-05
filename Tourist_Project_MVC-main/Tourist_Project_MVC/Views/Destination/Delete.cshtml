@@ -3,9 +3,9 @@
 @{
     ViewData["Title"] = @Localizer["Destination_DeleteTitle"].Value;
 }
-@if (User.Identity.IsAuthenticated)
+@if (User.IsInRole("Admin"))
 {
-    <div class="container mt-4">
+    <div class="container-fluid destination-delete-page mt-4">
         <h2 class="text-danger">🗑️ @Localizer["Destination_DeleteTitle"].Value</h2>
         <hr />
         <p class="lead">@Localizer["Destination_DeleteConfirm"].Value <strong>@Model.Name</strong></p>
@@ -21,7 +21,7 @@
             <dd class="col-sm-9">@Model.TicketPrice?.ToString("C")</dd>
         </dl>
 
-        <form asp-action="Delete" method="post">
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Delete this destination permanently?');">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
             <button type="submit" class="btn btn-danger">@Localizer["Destination_YesDelete"].Value</button>

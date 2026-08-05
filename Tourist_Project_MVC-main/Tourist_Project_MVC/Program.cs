@@ -162,7 +162,11 @@ namespace Tourist_Project_MVC
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"[Program] Migration failed: {ex.Message}");
+                // Do not continue into Identity/data seeding when the schema is
+                // unavailable. Continuing here produces misleading errors such as
+                // "relation AspNetUsers does not exist" later in the request pipeline.
+                Console.Error.WriteLine($"[Program] Migration failed: {ex}");
+                throw;
             }
 
             // JSON-driven, idempotent sample-data seeding (see Services/DbInitializer.cs

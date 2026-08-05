@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,19 +21,42 @@ namespace Tourist_Project_MVC.Controllers
         private readonly TouristContext _context;
         private readonly IGamificationService _gamificationService;
         private readonly IFavoriteRepository _favoriteRepo;
+        private readonly IArcGISSyncService _arcgisSync;
 
-        public DestinationController(IDestinationRepository repo, TouristContext context, IGamificationService gamificationService, IFavoriteRepository favoriteRepo)
+        public DestinationController(IDestinationRepository repo, TouristContext context, IGamificationService gamificationService, IFavoriteRepository favoriteRepo, IArcGISSyncService arcgisSync)
         {
             _repo = repo;
             _context = context;
             _gamificationService = gamificationService;
             _favoriteRepo = favoriteRepo;
+            _arcgisSync = arcgisSync;
         }
 
         // GET: /Destination/Index
-        public IActionResult Index(string? search, string? status, string? category)
+        public async Task<IActionResult> Index(string? search, string? status, string? category, string? field, string? filter, string sort = "ObjectId", string direction = "asc", int page = 1, int pageSize = 25)
         {
-            var all = _repo.GetAll();
+            var snapshot = await _arcgisSync.GetDestinationSnapshotAsync();
+            var all = _repo.GetAll().ToList();
+            var databaseById = all.ToDictionary(d => d.Id);
+            var records = snapshot.Records
+                .Where(r => !databaseById.TryGetValue(r.DatabaseId ?? -1, out _))
+                .Select(r => new DestinationSmartRow(r, null))
+                .Concat(snapshot.Records.Where(r => databaseById.ContainsKey(r.DatabaseId ?? -1)).Select(r => new DestinationSmartRow(r, databaseById[r.DatabaseId!.Value])))
+                .ToList();
+            if (!snapshot.Success) records = all.Select(d => new DestinationSmartRow(new ArcGISDestinationRecord(null, d.Id, new Dictionary<string, object?>(), d.Location?.Y, d.Location?.X), d)).ToList();
+            var normalizedSearch = search?.Trim();
+            if (!string.IsNullOrWhiteSpace(normalizedSearch)) records = records.Where(r => r.Feature.Attributes.Values.Any(v => v?.ToString()?.Contains(normalizedSearch, StringComparison.OrdinalIgnoreCase) == true) || r.DatabaseRecord?.Name.Contains(normalizedSearch, StringComparison.OrdinalIgnoreCase) == true).ToList();
+            if (!string.IsNullOrWhiteSpace(status)) records = records.Where(r => string.Equals(Value(r, "Status"), status, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (!string.IsNullOrWhiteSpace(category)) records = records.Where(r => string.Equals(Value(r, "Category"), category, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (!string.IsNullOrWhiteSpace(field) && !string.IsNullOrWhiteSpace(filter)) records = records.Where(r => Value(r, field)?.Contains(filter, StringComparison.OrdinalIgnoreCase) == true).ToList();
+            records = direction.Equals("desc", StringComparison.OrdinalIgnoreCase) ? records.OrderByDescending(r => SortValue(r, sort)).ToList() : records.OrderBy(r => SortValue(r, sort)).ToList();
+            // Destinations are intentionally rendered as one continuous admin data view.
+            // Keep the legacy parameters for route compatibility, but do not slice the
+            // filtered result set into pages.
+            page = 1;
+            var totalRecords = records.Count;
+            pageSize = Math.Max(1, totalRecords);
+            var smartModel = new DestinationSmartIndexVM { Fields = snapshot.Fields, Records = records, Search = search, Status = status, Category = category, Field = field, Filter = filter, Sort = sort, Direction = direction, Page = page, PageSize = pageSize, TotalRecords = totalRecords, HasError = !snapshot.Success, Error = snapshot.Error, StatusValues = snapshot.Records.Select(r => AttributeText(r.Attributes, "Status")).Where(v => !string.IsNullOrWhiteSpace(v)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(v => v).ToList()!, CategoryValues = snapshot.Records.Select(r => AttributeText(r.Attributes, "Category")).Where(v => !string.IsNullOrWhiteSpace(v)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(v => v).ToList()! };
 
             ViewBag.AllCount = all.Count();
             ViewBag.ActiveCount = all.Count(d => d.Status == "Active");
@@ -44,8 +68,6 @@ namespace Tourist_Project_MVC.Controllers
                 .Select(d => d.Category)
                 .Distinct()
                 .ToList();
-
-            var destinations = _repo.GetFiltered(search, status, category);
 
             ViewBag.Search = search;
             ViewBag.Status = status;
@@ -79,18 +101,34 @@ namespace Tourist_Project_MVC.Controllers
                 new StatBoxItem { IconClass = "bi-bar-chart-fill", Color = "purple", Value = topCategory, Label = "Top Category (by Visits)" }
             };
 
-            return View(destinations);
+            return View("Index", smartModel);
         }
 
-        // GET: /Destination/Details
-        public IActionResult Details(int id)
-        {
-            var destination = _repo.GetById(id);
-            if (destination == null) return NotFound();
+        private static string? AttributeText(IReadOnlyDictionary<string, object?> attributes, string field) => attributes.TryGetValue(field, out var value) ? value?.ToString() : null;
 
-            destination.Visits++;
-            _repo.Update(destination);
-            _repo.Save();
+        private static string? Value(DestinationSmartRow row, string field)
+        {
+            var text = AttributeText(row.Feature.Attributes, field);
+            if (text != null) return text;
+            return field switch { "English_Name" => row.DatabaseRecord?.Name, "Arabic_Name" => row.DatabaseRecord?.ArabicName, "Governorate" => row.DatabaseRecord?.City, "Category" => row.DatabaseRecord?.Category, "Status" => row.DatabaseRecord?.Status, _ => null };
+        }
+
+        private static object SortValue(DestinationSmartRow row, string field) => Value(row, field) ?? (object)(row.Feature.ObjectId ?? row.DatabaseRecord?.Id ?? int.MaxValue);
+
+        // GET: /Destination/Details
+        public async Task<IActionResult> Details(int id)
+        {
+            var snapshot = await _arcgisSync.GetDestinationSnapshotAsync(id);
+            var feature = snapshot.Records.FirstOrDefault();
+            var destination = _repo.GetById(id);
+            if (feature == null && destination == null) return NotFound();
+
+            if (destination != null)
+            {
+                destination.Visits++;
+                _repo.Update(destination);
+                _repo.Save();
+            }
 
             // Context-aware back target: respect the referrer so tourists return
             // to Explore (filters/scroll intact) and admins return to the admin list.
@@ -105,32 +143,13 @@ namespace Tourist_Project_MVC.Controllers
             }
             ViewBag.BackUrl = backUrl;
 
-            var reviews = _context.SiteReviews
-                .Include(r => r.Tourist)
-                    .ThenInclude(t => t.ApplicationUser)
-                .Where(r => r.DestinationId == id)
-                .OrderByDescending(r => r.CreatedDate)
-                .Take(5)
-                .ToList();
-
-            ViewBag.ReviewsCarousel = new Tourist_Project_MVC.View_Model.ReviewsCarouselVM
+            return View("SmartDetails", new DestinationSmartDetailsVM
             {
-                Title = "Traveler Reviews",
-                TargetTitle = destination.Name,
-                Items = reviews.Select(r => new Tourist_Project_MVC.View_Model.ReviewsCarouselItemVM
-                {
-                    TouristName = r.Tourist?.Name ?? "Tourist",
-                    TouristPhotoPath = r.Tourist?.ApplicationUser != null ? r.Tourist.ApplicationUser.ProfilePicturePath : null,
-                    Rating = r.Rating,
-                    Comment = r.Comment,
-                    CreatedDate = r.CreatedDate
-                }).ToList(),
-                CanAddReview = User.IsInRole("User"),
-                TargetId = destination.Id,
-                TargetType = "Destination"
-            };
-
-            return View(destination);
+                Fields = snapshot.Fields,
+                Feature = feature,
+                DatabaseRecord = destination,
+                Error = snapshot.Success ? null : snapshot.Error
+            });
         }
 
         // GET: /Destination/Create
@@ -150,35 +169,181 @@ namespace Tourist_Project_MVC.Controllers
         }
 
         // GET: /Destination/Edit/5
-        public IActionResult Edit(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id)
         {
-            return View("ReadOnlyNotice");
+            var snapshot = await _arcgisSync.GetDestinationSnapshotAsync(id);
+            var feature = snapshot.Records.FirstOrDefault();
+            var destination = _repo.GetById(id);
+            if (feature == null || destination == null) return NotFound();
+
+            return View("SmartEdit", new DestinationSmartEditVM
+            {
+                DatabaseId = id,
+                ObjectId = feature.ObjectId,
+                Fields = snapshot.Fields,
+                Values = snapshot.Fields.ToDictionary(f => f.Name, f => feature.Attributes.TryGetValue(f.Name, out var value) ? Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture) : null, StringComparer.OrdinalIgnoreCase),
+                Error = snapshot.Success ? null : snapshot.Error
+            });
         }
 
         // POST: /Destination/Edit
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Destination destination, [Range(-90, 90)] double Lat, [Range(-180, 180)] double Long)
+        public async Task<IActionResult> Edit(DestinationSmartEditVM model)
         {
-            TempData["DestinationMessage"] = "Destinations are managed via ArcGIS. Local CRUD is disabled.";
-            TempData["DestinationMessageType"] = "warning";
-            return RedirectToAction("Index");
+            var existing = _repo.GetById(model.DatabaseId);
+            if (existing == null) return NotFound();
+            var snapshot = await _arcgisSync.GetDestinationSnapshotAsync(model.DatabaseId);
+            var feature = snapshot.Records.FirstOrDefault();
+            if (feature == null) return NotFound();
+
+            var values = model.Values ?? new(StringComparer.OrdinalIgnoreCase);
+            string Text(string field) => values.TryGetValue(field, out var value) ? value?.Trim() ?? string.Empty : string.Empty;
+            bool TryInt(string field, out int? value)
+            {
+                value = null;
+                var text = Text(field);
+                if (string.IsNullOrWhiteSpace(text)) return true;
+                if (!int.TryParse(text, out var parsed)) return false;
+                value = parsed;
+                return true;
+            }
+            bool TryDecimal(string field, out decimal? value) { value = null; return string.IsNullOrWhiteSpace(Text(field)) || decimal.TryParse(Text(field), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var parsed) && (value = parsed).HasValue; }
+            bool TryDouble(string field, out double value) => double.TryParse(Text(field), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out value);
+
+            if (string.IsNullOrWhiteSpace(Text("English_Name"))) ModelState.AddModelError("Values[English_Name]", "English name is required.");
+            if (!TryInt("Visits", out var visits)) ModelState.AddModelError("Values[Visits]", "Visits must be a whole number.");
+            if (!TryInt("ForeignPrice", out var foreignPrice)) ModelState.AddModelError("Values[ForeignPrice]", "Foreign price must be a whole number.");
+            if (!TryInt("StudentForeignPrice", out var studentForeignPrice)) ModelState.AddModelError("Values[StudentForeignPrice]", "Student foreign price must be a whole number.");
+            if (!TryInt("EgyptianPrice", out var egyptianPrice)) ModelState.AddModelError("Values[EgyptianPrice]", "Egyptian price must be a whole number.");
+            if (!TryInt("StudentEgyptianPrice", out var studentEgyptianPrice)) ModelState.AddModelError("Values[StudentEgyptianPrice]", "Student Egyptian price must be a whole number.");
+            if (!TryInt("Open_at", out var openAt)) ModelState.AddModelError("Values[Open_at]", "Opening hour must be a whole number.");
+            if (!TryInt("Close_at", out var closeAt)) ModelState.AddModelError("Values[Close_at]", "Closing hour must be a whole number.");
+            if (!TryInt("Rating", out var ratingInt)) ModelState.AddModelError("Values[Rating]", "Rating must be a whole number.");
+            if (!TryDouble("Latitiude", out var latitude) || latitude is < -90 or > 90) ModelState.AddModelError("Values[Latitiude]", "Latitude must be between -90 and 90.");
+            if (!TryDouble("Longitude", out var longitude) || longitude is < -180 or > 180) ModelState.AddModelError("Values[Longitude]", "Longitude must be between -180 and 180.");
+
+            if (!ModelState.IsValid)
+            {
+                return View("SmartEdit", new DestinationSmartEditVM { DatabaseId = model.DatabaseId, ObjectId = feature.ObjectId, Fields = snapshot.Fields, Values = values, Error = "Review the highlighted values before saving." });
+            }
+
+            // Build a candidate without mutating the tracked database entity. ArcGIS is first.
+            var candidate = new Destination
+            {
+                Id = existing.Id,
+                Name = Text("English_Name"),
+                ArabicName = NullIfEmpty(Text("Arabic_Name")),
+                City = Text("Governorate"),
+                Category = NullIfEmpty(Text("Category")),
+                Description = NullIfEmpty(Text("Description")),
+                Status = string.IsNullOrWhiteSpace(Text("Status")) ? "Active" : Text("Status"),
+                Visits = visits ?? 0,
+                Rating = ratingInt,
+                Tags = NullIfEmpty(Text("Tags")),
+                PhotoUrls = NullIfEmpty(Text("Images"))?.Replace("|", "\n"),
+                TicketRequired = NullIfEmpty(Text("TicketRequired")),
+                ForeignPrice = foreignPrice,
+                StudentForeignPrice = studentForeignPrice,
+                EgyptianPrice = egyptianPrice,
+                StudentEgyptianPrice = studentEgyptianPrice,
+                Days = NullIfEmpty(Text("Days")),
+                OpenAt = openAt,
+                CloseAt = closeAt,
+                Booking = NullIfEmpty(Text("Booking")),
+                Location = new Point(longitude, latitude) { SRID = 4326 }
+            };
+
+            var syncResult = await _arcgisSync.UpdateDestinationOnArcGISAsync(candidate);
+            if (!syncResult.Success)
+            {
+                TempData["DestinationMessage"] = $"ArcGIS update failed. The database was not changed: {syncResult.Error}";
+                TempData["DestinationMessageType"] = "danger";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                existing.Name = candidate.Name; existing.ArabicName = candidate.ArabicName; existing.City = candidate.City; existing.Category = candidate.Category;
+                existing.Description = candidate.Description; existing.Status = candidate.Status; existing.Visits = candidate.Visits; existing.Rating = candidate.Rating;
+                existing.Tags = candidate.Tags; existing.PhotoUrls = candidate.PhotoUrls; existing.TicketRequired = candidate.TicketRequired; existing.ForeignPrice = candidate.ForeignPrice;
+                existing.StudentForeignPrice = candidate.StudentForeignPrice; existing.EgyptianPrice = candidate.EgyptianPrice; existing.StudentEgyptianPrice = candidate.StudentEgyptianPrice;
+                existing.Days = candidate.Days; existing.OpenAt = candidate.OpenAt; existing.CloseAt = candidate.CloseAt; existing.Booking = candidate.Booking; existing.Location = candidate.Location;
+                _repo.Update(existing);
+                _repo.Save();
+            }
+            catch (Exception ex)
+            {
+                TempData["DestinationMessage"] = $"ArcGIS was updated, but database synchronization failed. Contact an administrator. ({ex.Message})";
+                TempData["DestinationMessageType"] = "warning";
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData["DestinationMessage"] = $"Destination '{candidate.Name}' was updated in ArcGIS and synchronized to the database.";
+            TempData["DestinationMessageType"] = "success";
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Destination/Delete
+        private static string? NullIfEmpty(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+        // GET: /Destination/Delete/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
-            return View("ReadOnlyNotice");
+            var destination = _repo.GetById(id);
+            if (destination == null) return NotFound();
+            return View("DeleteSmart", destination);
         }
 
         // POST: /Destination/Delete
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            TempData["DestinationMessage"] = "Destinations are managed via ArcGIS. Local CRUD is disabled.";
-            TempData["DestinationMessageType"] = "warning";
-            return RedirectToAction("Index");
+            var destination = _repo.GetById(id);
+            if (destination == null) return NotFound();
+
+            // ArcGIS is authoritative: do not mutate any local rows until the
+            // exact remote feature has been deleted and confirmed.
+            var arcgisResult = await _arcgisSync.DeleteDestinationFromArcGISAsync(id);
+            if (!arcgisResult.Success)
+            {
+                TempData["DestinationMessage"] = $"The destination was not deleted because ArcGIS could not confirm the removal: {arcgisResult.Error}";
+                TempData["DestinationMessageType"] = "danger";
+                return RedirectToAction(nameof(Index));
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var missions = _context.Missions.Where(m => m.DestinationId == id).ToList();
+                var missionIds = missions.Select(m => m.Id).ToList();
+                if (missionIds.Count > 0)
+                {
+                    _context.UserMissions.RemoveRange(_context.UserMissions.Where(um => missionIds.Contains(um.MissionId)));
+                    _context.Missions.RemoveRange(missions);
+                }
+                _context.TripDestinations.RemoveRange(_context.TripDestinations.Where(td => td.DestinationId == id));
+                _context.SiteReviews.Where(r => r.DestinationId == id).ToList().ForEach(r => r.DestinationId = null);
+                _context.Favorites.RemoveRange(_context.Favorites.Where(f => f.ItemType == FavoriteItemType.Destination && f.ItemId == id));
+                _repo.Delete(id);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                TempData["DestinationMessage"] = $"ArcGIS deletion succeeded, but database synchronization failed. The local record requires reconciliation. ({ex.Message})";
+                TempData["DestinationMessageType"] = "warning";
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData["DestinationMessage"] = $"Destination '{destination.Name}' was deleted from ArcGIS and the database.";
+            TempData["DestinationMessageType"] = "success";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
