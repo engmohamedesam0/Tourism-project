@@ -494,8 +494,22 @@ span.field-validation-error,
     height: 22px;
 }
 
-.social-icon-btn:last-child svg path {
-    fill: #111 !important;
+.social-login-form {
+    display: flex;
+    margin: 0;
+}
+
+.social-error-banner {
+    margin-bottom: 18px;
+    padding: 12px 16px;
+    border: 1px solid #e8b4a8;
+    border-radius: 12px;
+    background: #fdf3f0;
+    color: #b3402a;
+    font-family: var(--login-font-ui);
+    font-size: 13.5px;
+    line-height: 1.5;
+    text-align: center;
 }
 
 .register-prompt {

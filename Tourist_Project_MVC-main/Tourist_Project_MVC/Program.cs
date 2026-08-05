@@ -138,6 +138,49 @@ namespace Tourist_Project_MVC
                         }
                     };
                 });
+            // External OAuth login providers (Google / Facebook) for the website.
+            // SignInScheme must be the Identity external cookie so SignInManager's
+            // ExternalLogin* flow can read the provider result and link it to an
+            // ApplicationUser. Credentials come from appsettings.json or user-secrets
+            // ("Authentication:Google:*" / "Authentication:Facebook:*").
+            //
+            // The schemes are ALWAYS registered so the buttons stay live. ASP.NET Core
+            // validates OAuth options eagerly on the first request (the auth middleware
+            // initializes every handler), so an empty ClientId would crash the whole
+            // site — hence the "not-configured" fallback placeholder when user-secrets
+            // are missing: validation passes, the app runs, and the moment real
+            // credentials are added they take effect without any code change. The
+            // AccountController additionally short-circuits the challenge with a
+            // friendly message when a provider is not yet configured.
+            bool ProviderConfigured(string provider) =>
+                !string.IsNullOrWhiteSpace(builder.Configuration[$"Authentication:{provider}:ClientId"]) &&
+                !string.IsNullOrWhiteSpace(builder.Configuration[$"Authentication:{provider}:ClientSecret"]);
+
+            // Reads an OAuth credential, treating null AND empty/whitespace values
+            // as "not configured". A bare `?? "not-configured"` fallback is NOT
+            // enough: appsettings.json contains literal "" placeholders, and `??`
+            // only catches null — an empty string would flow into the OAuth
+            // options and fail eager validation with the same ClientId error.
+            string OAuthValue(string provider, string key)
+            {
+                var value = builder.Configuration[$"Authentication:{provider}:{key}"];
+                return string.IsNullOrWhiteSpace(value) ? "not-configured" : value;
+            }
+
+            builder.Services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = OAuthValue("Google", "ClientId");
+                    options.ClientSecret = OAuthValue("Google", "ClientSecret");
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                })
+                .AddFacebook(options =>
+                {
+                    options.ClientId = OAuthValue("Facebook", "ClientId");
+                    options.ClientSecret = OAuthValue("Facebook", "ClientSecret");
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                });
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("MobileApp", policy =>
