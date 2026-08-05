@@ -1,0 +1,14 @@
+[
+  { "Id": 1,  "RewardId": 1,  "TouristId": "seed-tourist-1",  "ViewedDate": "2026-06-01" },
+  { "Id": 2,  "RewardId": 2,  "TouristId": "seed-tourist-2",  "ViewedDate": "2026-06-02" },
+  { "Id": 3,  "RewardId": 3,  "TouristId": "seed-tourist-3",  "ViewedDate": "2026-06-03" },
+  { "Id": 4,  "RewardId": 1,  "TouristId": "seed-tourist-4",  "ViewedDate": "2026-06-04" },
+  { "Id": 5,  "RewardId": 6,  "TouristId": "seed-tourist-5",  "ViewedDate": "2026-06-05" },
+  { "Id": 6,  "RewardId": 8,  "TouristId": "seed-tourist-6",  "ViewedDate": "2026-06-06" },
+  { "Id": 7,  "RewardId": 10, "TouristId": "seed-tourist-7",  "ViewedDate": "2026-06-07" },
+  { "Id": 8,  "RewardId": 4,  "TouristId": "seed-tourist-8",  "ViewedDate": "2026-06-08" },
+  { "Id": 9,  "RewardId": 13, "TouristId": "seed-tourist-9",  "ViewedDate": "2026-06-09" },
+  { "Id": 10, "RewardId": 15, "TouristId": "seed-tourist-10", "ViewedDate": "2026-06-10" },
+  { "Id": 11, "RewardId": 19, "TouristId": "seed-tourist-11", "ViewedDate": "2026-06-11" },
+  { "Id": 12, "RewardId": 21, "TouristId": "seed-tourist-12", "ViewedDate": "2026-06-12" }
+]

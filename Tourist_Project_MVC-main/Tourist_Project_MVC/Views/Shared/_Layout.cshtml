@@ -268,6 +268,11 @@
                                         </a>
                                     </li>
                                     <li>
+                                        <a class="dropdown-item" asp-controller="Favorite" asp-action="Index">
+                                            <i class="bi bi-heart-fill me-2"></i> My Favorite
+                                        </a>
+                                    </li>
+                                    <li>
                                         <a class="dropdown-item" asp-controller="TouristSupport" asp-action="Index">
                                             <i class="bi bi-headset me-2"></i> @Localizer["Nav_Support"].Value
                                         </a>
@@ -469,11 +474,6 @@
 <li class="nav-item">
                                     <a class="nav-link" asp-controller="TouristReward" asp-action="Index">
                                         <i class="bi bi-gift-fill"></i> @Localizer["Nav_Rewards"].Value
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Favorite" asp-action="Index">
-                                        <i class="bi bi-heart"></i> @Localizer["Nav_Favorites"].Value
                                     </a>
                                 </li>
                                 <li class="nav-item">

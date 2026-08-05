@@ -1,0 +1,20 @@
+[
+  { "Id": 1,  "Code": "MARRIOTT15-EGY",  "PointsRedeemed": 200, "Status": "Active", "RedemptionDate": "2026-08-05", "RewardId": 1,  "TouristId": 1,  "BranchId": 1 },
+  { "Id": 2,  "Code": "NILE-CRUISE-EMC", "PointsRedeemed": 300, "Status": "Used",   "RedemptionDate": "2026-10-03", "RewardId": 4,  "TouristId": 2,  "BranchId": 4 },
+  { "Id": 3,  "Code": "EGYPTAIR-UP",     "PointsRedeemed": 500, "Status": "Used",   "RedemptionDate": "2026-07-15", "RewardId": 3,  "TouristId": 3,  "BranchId": 3 },
+  { "Id": 4,  "Code": "WINTERPAL-20",    "PointsRedeemed": 250, "Status": "Active", "RedemptionDate": "2026-09-01", "RewardId": 6,  "TouristId": 4,  "BranchId": 5 },
+  { "Id": 5,  "Code": "ASWAN-SUNSET",    "PointsRedeemed": 400, "Status": "Used",   "RedemptionDate": "2026-08-20", "RewardId": 8,  "TouristId": 5,  "BranchId": 6 },
+  { "Id": 6,  "Code": "FISHAWY-20",      "PointsRedeemed": 120, "Status": "Active", "RedemptionDate": "2026-09-10", "RewardId": 10, "TouristId": 6,  "BranchId": 7 },
+  { "Id": 7,  "Code": "ABOUELSID-15",    "PointsRedeemed": 130, "Status": "Used",   "RedemptionDate": "2026-07-22", "RewardId": 13, "TouristId": 7,  "BranchId": 8 },
+  { "Id": 8,  "Code": "MENAHSE-25",      "PointsRedeemed": 300, "Status": "Active", "RedemptionDate": "2026-10-12", "RewardId": 15, "TouristId": 8,  "BranchId": 9 },
+  { "Id": 9,  "Code": "NILECR-CR",       "PointsRedeemed": 400, "Status": "Used",   "RedemptionDate": "2026-08-30", "RewardId": 17, "TouristId": 9,  "BranchId": 10 },
+  { "Id": 10, "Code": "CILANTRO-BOGO",   "PointsRedeemed": 50,  "Status": "Active", "RedemptionDate": "2026-09-18", "RewardId": 19, "TouristId": 10, "BranchId": 11 },
+  { "Id": 11, "Code": "MARRIOTT-SPA",    "PointsRedeemed": 350, "Status": "Used",   "RedemptionDate": "2026-07-05", "RewardId": 2,  "TouristId": 11, "BranchId": 1 },
+  { "Id": 12, "Code": "EMECO-WHITE",     "PointsRedeemed": 450, "Status": "Active", "RedemptionDate": "2026-10-08", "RewardId": 5,  "TouristId": 12, "BranchId": 4 },
+  { "Id": 13, "Code": "WINTERPAL-TEA",   "PointsRedeemed": 150, "Status": "Used",   "RedemptionDate": "2026-08-14", "RewardId": 7,  "TouristId": 1,  "BranchId": 5 },
+  { "Id": 14, "Code": "FISHAWY-SHISHA",  "PointsRedeemed": 80,  "Status": "Active", "RedemptionDate": "2026-09-25", "RewardId": 11, "TouristId": 2,  "BranchId": 7 },
+  { "Id": 15, "Code": "ABOUELSID-UMM",   "PointsRedeemed": 60,  "Status": "Used",   "RedemptionDate": "2026-07-30", "RewardId": 14, "TouristId": 3,  "BranchId": 8 },
+  { "Id": 16, "Code": "ASWAN-SPA",       "PointsRedeemed": 220, "Status": "Active", "RedemptionDate": "2026-10-15", "RewardId": 9,  "TouristId": 4,  "BranchId": 6 },
+  { "Id": 17, "Code": "CILANTRO-BDAY",   "PointsRedeemed": 90,  "Status": "Used",   "RedemptionDate": "2026-08-11", "RewardId": 20, "TouristId": 5,  "BranchId": 11 },
+  { "Id": 18, "Code": "MENAHSE-POOL",    "PointsRedeemed": 160, "Status": "Active", "RedemptionDate": "2026-09-29", "RewardId": 16, "TouristId": 6,  "BranchId": 9 }
+]

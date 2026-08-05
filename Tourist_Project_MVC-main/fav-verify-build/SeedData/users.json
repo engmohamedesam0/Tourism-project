@@ -1,0 +1,17 @@
+[
+  { "Id": "seed-admin-1",            "FirstName": "Admin",        "LastName": "User",        "Nationality": "Egyptian",  "Email": "admin@egyxplore.com",     "UserName": "admin@egyxplore.com",     "Password": "AdminPass123!",   "Role": "Admin" },
+  { "Id": "seed-sponsor-elfishawy",  "FirstName": "Fishawy",      "LastName": "Manager",     "Nationality": "Egyptian",  "Email": "elfishawy@egyxplore.com", "UserName": "elfishawy@egyxplore.com", "Password": "SponsorPass123!", "Role": "Sponsor" },
+
+  { "Id": "seed-tourist-1",  "FirstName": "Ahmed",   "LastName": "Hassan",   "Nationality": "Egyptian", "Email": "ahmed.hassan@egyxplore.com",   "UserName": "ahmed.hassan@egyxplore.com",   "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-2",  "FirstName": "James",   "LastName": "Wilson",   "Nationality": "American", "Email": "james.wilson@egyxplore.com",   "UserName": "james.wilson@egyxplore.com",   "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-3",  "FirstName": "Sophie",  "LastName": "Muller",   "Nationality": "German",   "Email": "sophie.muller@egyxplore.com",  "UserName": "sophie.muller@egyxplore.com",  "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-4",  "FirstName": "Yuki",    "LastName": "Tanaka",   "Nationality": "Japanese", "Email": "yuki.tanaka@egyxplore.com",    "UserName": "yuki.tanaka@egyxplore.com",    "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-5",  "FirstName": "Mohamed", "LastName": "Ali",      "Nationality": "Egyptian", "Email": "mohamed.ali@egyxplore.com",    "UserName": "mohamed.ali@egyxplore.com",    "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-6",  "FirstName": "Emma",    "LastName": "Johnson",  "Nationality": "British",  "Email": "emma.johnson@egyxplore.com",   "UserName": "emma.johnson@egyxplore.com",   "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-7",  "FirstName": "Lukas",   "LastName": "Weber",    "Nationality": "German",   "Email": "lukas.weber@egyxplore.com",    "UserName": "lukas.weber@egyxplore.com",    "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-8",  "FirstName": "Mei",     "LastName": "Chen",     "Nationality": "Chinese",  "Email": "mei.chen@egyxplore.com",       "UserName": "mei.chen@egyxplore.com",       "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-9",  "FirstName": "Omar",    "LastName": "Farouk",   "Nationality": "Egyptian", "Email": "omar.farouk@egyxplore.com",    "UserName": "omar.farouk@egyxplore.com",    "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-10", "FirstName": "Hannah",  "LastName": "Becker",   "Nationality": "French",   "Email": "hannah.becker@egyxplore.com",  "UserName": "hannah.becker@egyxplore.com",  "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-11", "FirstName": "Khalid",  "LastName": "Nasser",   "Nationality": "Emirati",  "Email": "khalid.nasser@egyxplore.com",  "UserName": "khalid.nasser@egyxplore.com",  "Password": "TouristPass123!", "Role": "User" },
+  { "Id": "seed-tourist-12", "FirstName": "Sara",    "LastName": "Rossi",    "Nationality": "Italian",  "Email": "sara.rossi@egyxplore.com",     "UserName": "sara.rossi@egyxplore.com",     "Password": "TouristPass123!", "Role": "User" }
+]

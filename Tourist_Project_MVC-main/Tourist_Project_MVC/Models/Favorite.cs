@@ -10,6 +10,6 @@ namespace Tourist_Project_MVC.Models
         public FavoriteItemType ItemType { get; set; }
         public int ItemId { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
     }
 }

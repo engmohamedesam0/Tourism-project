@@ -1,0 +1,10 @@
+[
+  { "Id": 1, "Name": "Pyramid Explorer", "Description": "Visit the Great Pyramids of Giza and witness the ancient wonders.", "Icon": "🏛️", "Rarity": "Common", "XPRequired": 0, "LevelRequired": 1, "RewardType": null, "RewardValue": null },
+  { "Id": 2, "Name": "Scarab Collector", "Description": "Complete 5 missions to earn the Scarab Collector badge.", "Icon": "🪲", "Rarity": "Common", "XPRequired": 100, "LevelRequired": 2, "RewardType": null, "RewardValue": null },
+  { "Id": 3, "Name": "Temple Hunter", "Description": "Visit 3 temples across Egypt and document your journey.", "Icon": "🏛️", "Rarity": "Rare", "XPRequired": 300, "LevelRequired": 3, "RewardType": null, "RewardValue": null },
+  { "Id": 4, "Name": "Nile Traveler", "Description": "Complete 3 trips along the Nile and explore its treasures.", "Icon": "⛵", "Rarity": "Rare", "XPRequired": 500, "LevelRequired": 4, "RewardType": null, "RewardValue": null },
+  { "Id": 5, "Name": "Photo Explorer", "Description": "Upload 5 photos of Egypt's breathtaking landscapes and landmarks.", "Icon": "📸", "Rarity": "Epic", "XPRequired": 1000, "LevelRequired": 5, "RewardType": null, "RewardValue": null },
+  { "Id": 6, "Name": "Mission Master", "Description": "Complete 10 missions to prove your mastery of Egyptian adventures.", "Icon": "🏆", "Rarity": "Epic", "XPRequired": 1500, "LevelRequired": 6, "RewardType": null, "RewardValue": null },
+  { "Id": 7, "Name": "Hidden Egypt", "Description": "Discover 5 hidden gems that most tourists never find.", "Icon": "🗝️", "Rarity": "Legendary", "XPRequired": 2000, "LevelRequired": 7, "RewardType": null, "RewardValue": null },
+  { "Id": 8, "Name": "Egypt Legend", "Description": "Reach the highest level and become a legend of Egypt.", "Icon": "👑", "Rarity": "Legendary", "XPRequired": 2500, "LevelRequired": 7, "RewardType": null, "RewardValue": null }
+]

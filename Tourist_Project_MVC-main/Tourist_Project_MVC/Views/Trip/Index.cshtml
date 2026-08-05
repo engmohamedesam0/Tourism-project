@@ -5,6 +5,7 @@
     ViewData["FullWidth"] = true;
     var tourist = ViewBag.Tourist as Tourist_Project_MVC.Models.Tourist;
     var myTrips = (ViewBag.MyTrips as IEnumerable<Tourist_Project_MVC.Models.TripPlan>) ?? new List<Tourist_Project_MVC.Models.TripPlan>();
+    var favoritedDestinationIds = ViewBag.FavoritedDestinationIds as HashSet<int> ?? new HashSet<int>();
 }
 
 <!-- WIDE MODERN CONTAINER FOR FULL-SCREEN ELEGANCE -->
@@ -289,6 +290,15 @@
                                             }
                                         </label>
                                     </div>
+                                    @if (User.IsInRole("User"))
+                                    {
+                                        @await Html.PartialAsync("_FavoriteButton", new FavoriteButtonVM
+                                        {
+                                            ItemType = FavoriteItemType.Destination,
+                                            ItemId = Model.Stops[i].DestinationId,
+                                            IsFavorited = favoritedDestinationIds.Contains(Model.Stops[i].DestinationId)
+                                        })
+                                    }
                                     @if (Model.Stops[i].TicketPrice.HasValue && Model.Stops[i].TicketPrice > 0)
                                     {
                                         <span class="badge px-2 py-1 align-self-start" style="background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A;">

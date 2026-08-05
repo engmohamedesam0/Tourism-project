@@ -1,0 +1,12 @@
+[
+  { "Id": 1,  "Name": "Cairo Marriott Hotel", "Type": "Hotel", "Address": "16 Saray El Gezira St, Zamalek, Cairo", "ContactNumber": 223456789, "Email": "cairo.marriott@egyxplore.com", "ApplicationUserId": null },
+  { "Id": 2,  "Name": "EgyptAir", "Type": "Airline", "Address": "Cairo International Airport, Cairo", "ContactNumber": 290777000, "Email": "egyptair@egyxplore.com", "ApplicationUserId": null },
+  { "Id": 3,  "Name": "Emeco Travel", "Type": "Tourism Agency", "Address": "26 Tahrir Square, Downtown Cairo", "ContactNumber": 222756000, "Email": "emeco@egyxplore.com", "ApplicationUserId": null },
+  { "Id": 4,  "Name": "Sofitel Luxor Winter Palace", "Type": "Hotel", "Address": "Corniche El Nile, Luxor", "ContactNumber": 953580422, "Email": "luxor.winterpalace@egyxplore.com", "ApplicationUserId": null },
+  { "Id": 5,  "Name": "Hilton Aswan", "Type": "Hotel", "Address": "Elephantine Island, Aswan", "ContactNumber": 972780222, "Email": "hilton.aswan@egyxplore.com", "ApplicationUserId": null },
+  { "Id": 6,  "Name": "El Fishawy Cafe", "Type": "Cafe", "Address": "Al-Hussein Square, Khan El Khalili, Cairo", "ContactNumber": 25902836, "Email": "elfishawy@egyxplore.com", "ApplicationUserId": "seed-sponsor-elfishawy" },
+  { "Id": 7,  "Name": "Abou El Sid", "Type": "Restaurant", "Address": "157 26th of July St, Zamalek, Cairo", "ContactNumber": 27359595, "Email": "abouelsid@egyxplore.com", "ApplicationUserId": null },
+  { "Id": 8,  "Name": "Mena House Hotel", "Type": "Hotel", "Address": "Pyramids Road, Giza", "ContactNumber": 23332222, "Email": "menahouse@egyxplore.com", "ApplicationUserId": null },
+  { "Id": 9,  "Name": "Nile Cruise Co", "Type": "Tourism Agency", "Address": "Aswan River Dock, Aswan", "ContactNumber": 97345678, "Email": "nilecruise@egyxplore.com", "ApplicationUserId": null },
+  { "Id": 10, "Name": "Cilantro Coffee", "Type": "Cafe", "Address": "9 Road 9, Maadi, Cairo", "ContactNumber": 27582525, "Email": "cilantro@egyxplore.com", "ApplicationUserId": null }
+]

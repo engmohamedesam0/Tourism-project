@@ -149,6 +149,15 @@
                                             <h5 class="reward-card-title mb-0 text-truncate" title="@reward.Title">
                                                 @reward.Title
                                             </h5>
+                                            @if (User.IsInRole("User"))
+                                            {
+                                                @await Html.PartialAsync("_FavoriteButton", new FavoriteButtonVM
+                                                {
+                                                    ItemType = FavoriteItemType.Reward,
+                                                    ItemId = reward.Id,
+                                                    IsFavorited = (ViewBag.FavoritedRewardIds as HashSet<int>)?.Contains(reward.Id) ?? false
+                                                })
+                                            }
                                             <span class="badge rounded-pill px-2.5 py-1 fw-bold text-uppercase border"
                                                   style="font-size: 0.7rem;
                                                          background: @(reward.RewardType == "Discount" ? "#EFF6FF" : reward.RewardType == "Experience" ? "#ECFDF5" : "#F0FDF4");

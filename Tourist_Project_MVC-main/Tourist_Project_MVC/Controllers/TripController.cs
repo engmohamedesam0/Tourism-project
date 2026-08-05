@@ -21,6 +21,7 @@ namespace Tourist_Project_MVC.Controllers
         private readonly ITripPlanRepository _tripPlanRepo;
         private readonly TouristContext _context;
         private readonly IGamificationService _gamificationService;
+        private readonly IFavoriteRepository _favoriteRepo;
 
         public TripController(
             UserManager<ApplicationUser> userManager,
@@ -28,7 +29,8 @@ namespace Tourist_Project_MVC.Controllers
             IDestinationRepository destinationRepo,
             ITripPlanRepository tripPlanRepo,
             TouristContext context,
-            IGamificationService gamificationService)
+            IGamificationService gamificationService,
+            IFavoriteRepository favoriteRepo)
         {
             _userManager = userManager;
             _touristRepo = touristRepo;
@@ -36,6 +38,7 @@ namespace Tourist_Project_MVC.Controllers
             _tripPlanRepo = tripPlanRepo;
             _context = context;
             _gamificationService = gamificationService;
+            _favoriteRepo = favoriteRepo;
         }
 
         // Resolve the signed-in ApplicationUser to a Tourist record.
@@ -80,6 +83,9 @@ namespace Tourist_Project_MVC.Controllers
 
             ViewBag.Tourist = tourist;
             ViewBag.MyTrips = myTrips;
+            ViewBag.FavoritedDestinationIds = tourist == null
+                ? new HashSet<int>()
+                : _favoriteRepo.GetFavoritedItemIds(tourist.Id, FavoriteItemType.Destination);
 
             if (tourist != null)
             {
@@ -184,6 +190,7 @@ namespace Tourist_Project_MVC.Controllers
             {
                 ViewBag.Tourist = tourist;
                 ViewBag.MyTrips = _tripPlanRepo.GetAllWithDetails().Where(t => t.TouristId == tourist.Id);
+                ViewBag.FavoritedDestinationIds = _favoriteRepo.GetFavoritedItemIds(tourist.Id, FavoriteItemType.Destination);
                 return View("Index", vm);
             }
 
@@ -277,6 +284,7 @@ namespace Tourist_Project_MVC.Controllers
             ViewBag.AvailableDestinations = _destinationRepo.GetAll()
                 .Where(d => !trip.TripDestinations.Any(td => td.DestinationId == d.Id))
                 .ToList();
+            ViewBag.FavoritedDestinationIds = _favoriteRepo.GetFavoritedItemIds(tourist.Id, FavoriteItemType.Destination);
 
             return View(trip);
         }
@@ -399,7 +407,8 @@ namespace Tourist_Project_MVC.Controllers
                 arrivalDate = newStop.ArrivalDate.ToString("MMM dd"),
                 departureDate = newStop.DepartureDate.ToString("MMM dd"),
                 arrivalDateInput = newStop.ArrivalDate.ToString("yyyy-MM-dd"),
-                departureDateInput = newStop.DepartureDate.ToString("yyyy-MM-dd")
+                departureDateInput = newStop.DepartureDate.ToString("yyyy-MM-dd"),
+                isFavorited = _favoriteRepo.IsFavorited(tourist.Id, FavoriteItemType.Destination, destinationId)
             });
         }
 
@@ -455,7 +464,8 @@ namespace Tourist_Project_MVC.Controllers
                     arrivalDate = newStop.ArrivalDate.ToString("MMM dd"),
                     departureDate = newStop.DepartureDate.ToString("MMM dd"),
                     arrivalDateInput = newStop.ArrivalDate.ToString("yyyy-MM-dd"),
-                    departureDateInput = newStop.DepartureDate.ToString("yyyy-MM-dd")
+                    departureDateInput = newStop.DepartureDate.ToString("yyyy-MM-dd"),
+                    isFavorited = _favoriteRepo.IsFavorited(tourist.Id, FavoriteItemType.Destination, destId)
                 });
             }
 

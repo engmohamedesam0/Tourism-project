@@ -1,0 +1,12 @@
+[
+  { "Id": 1,  "Status": "Completed",    "PointsEarned": 150, "Completed_At": "2026-08-02", "TouristId": 2,  "MissionId": 1 },
+  { "Id": 2,  "Status": "In Progress",  "PointsEarned": 0,   "Completed_At": "0001-01-01", "TouristId": 3,  "MissionId": 2 },
+  { "Id": 3,  "Status": "Completed",    "PointsEarned": 200, "Completed_At": "2026-10-04", "TouristId": 1,  "MissionId": 2 },
+  { "Id": 4,  "Status": "In Progress",  "PointsEarned": 0,   "Completed_At": "0001-01-01", "TouristId": 4,  "MissionId": 1 },
+  { "Id": 5,  "Status": "Completed",    "PointsEarned": 300, "Completed_At": "2026-06-15", "TouristId": 5,  "MissionId": 4 },
+  { "Id": 6,  "Status": "Completed",    "PointsEarned": 100, "Completed_At": "2026-05-20", "TouristId": 6,  "MissionId": 3 },
+  { "Id": 7,  "Status": "In Progress",  "PointsEarned": 0,   "Completed_At": "0001-01-01", "TouristId": 7,  "MissionId": 5 },
+  { "Id": 8,  "Status": "Completed",    "PointsEarned": 180, "Completed_At": "2026-07-01", "TouristId": 8,  "MissionId": 6 },
+  { "Id": 9,  "Status": "Completed",    "PointsEarned": 150, "Completed_At": "2026-04-10", "TouristId": 9,  "MissionId": 8 },
+  { "Id": 10, "Status": "In Progress",  "PointsEarned": 0,   "Completed_At": "0001-01-01", "TouristId": 10, "MissionId": 9 }
+]

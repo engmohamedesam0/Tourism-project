@@ -21,8 +21,18 @@
 
     async function toggleFavorite(button) {
         const itemType = button.dataset.itemType;
+        const itemTypeValue = {
+            Destination: 0,
+            Reward: 1,
+            Branch: 2
+        }[itemType];
         const itemId = parseInt(button.dataset.itemId, 10);
         const wasFavorited = button.classList.contains('is-favorited');
+
+        if (itemTypeValue === undefined || Number.isNaN(itemId)) {
+            console.error('Invalid favorite button data.', { itemType, itemId });
+            return;
+        }
 
         button.disabled = true;
         try {
@@ -32,9 +42,18 @@
                     'Content-Type': 'application/json',
                     'RequestVerificationToken': document.querySelector('#antiforgeryForm input[name="__RequestVerificationToken"]')?.value || ''
                 },
-                body: JSON.stringify({ itemType, itemId })
+                body: JSON.stringify({ itemType: itemTypeValue, itemId })
             });
-            if (!res.ok) throw new Error('Toggle failed');
+            if (!res.ok) {
+                let details = '';
+                try {
+                    const error = await res.json();
+                    details = error.error ? `: ${error.error}` : '';
+                } catch (_) {
+                    // Keep the generic message when the server did not return JSON.
+                }
+                throw new Error(`Toggle failed (${res.status})${details}`);
+            }
             const data = await res.json();
 
             document.querySelectorAll(
@@ -44,6 +63,7 @@
                 btn.querySelector('.favorite-btn-icon').className =
                     'bi favorite-btn-icon ' + (data.isFavorited ? 'bi-heart-fill' : 'bi-heart');
                 btn.setAttribute('aria-pressed', String(data.isFavorited));
+                btn.setAttribute('aria-label', data.isFavorited ? 'Remove from favorites' : 'Add to favorites');
             });
 
             if (!wasFavorited && data.isFavorited) {

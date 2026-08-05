@@ -4,6 +4,7 @@
     ViewData["Title"] = @Localizer["TripDetails_PageTitle"].Value;
     ViewData["FullWidth"] = true;
     var tourist = ViewBag.Tourist as Tourist_Project_MVC.Models.Tourist;
+    var favoritedDestinationIds = ViewBag.FavoritedDestinationIds as HashSet<int> ?? new HashSet<int>();
 }
 
 <div class="trip-page-container px-3 px-md-4 px-xl-5 py-4" style="max-width: 1500px; margin: 0 auto;">
@@ -130,6 +131,15 @@
                                     <h6 class="fw-bold text-dark mb-0 fs-6">@td.Destination?.Name</h6>
                                     <small class="text-secondary"><i class="bi bi-geo-alt me-1 text-gold"></i>@td.Destination?.City</small>
                                 </div>
+                                @if (User.IsInRole("User"))
+                                {
+                                    @await Html.PartialAsync("_FavoriteButton", new FavoriteButtonVM
+                                    {
+                                        ItemType = FavoriteItemType.Destination,
+                                        ItemId = td.DestinationId,
+                                        IsFavorited = favoritedDestinationIds.Contains(td.DestinationId)
+                                    })
+                                }
                                 <div class="stop-dates text-dark small text-end bg-light px-3 py-1 rounded-2 border">
                                     <div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">@td.ArrivalDate.ToString("MMM dd")</strong></div>
                                     <div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">@td.DepartureDate.ToString("MMM dd")</strong></div>
@@ -487,6 +497,9 @@
                 '<h6 class="fw-bold text-dark mb-0 fs-6">' + _esc(stop.destinationName) + '</h6>' +
                 '<small class="text-secondary"><i class="bi bi-geo-alt me-1 text-gold"></i>' + _esc(stop.destinationCity) + '</small>' +
                 '</div>' +
+                '<button type="button" class="favorite-btn' + (stop.isFavorited ? ' is-favorited' : '') + '" data-item-type="Destination" data-item-id="' + stop.destinationId + '" aria-pressed="' + (stop.isFavorited ? 'true' : 'false') + '" aria-label="' + (stop.isFavorited ? 'Remove from favorites' : 'Add to favorites') + '">' +
+                '<i class="bi ' + (stop.isFavorited ? 'bi-heart-fill' : 'bi-heart') + ' favorite-btn-icon"></i>' +
+                '</button>' +
                 '<div class="stop-dates text-dark small text-end bg-light px-3 py-1 rounded-2 border">' +
                 '<div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">' + stop.arrivalDate + '</strong></div>' +
                 '<div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">' + stop.departureDate + '</strong></div>' +

@@ -1,0 +1,5 @@
+[
+  { "Id": 1, "ApplicationUserId": "seed-tourist-1", "Status": "Pending",   "RequestedDate": "2026-05-01", "ReviewedDate": null,       "ReviewedByAdminId": null },
+  { "Id": 2, "ApplicationUserId": "seed-tourist-2", "Status": "Approved",  "RequestedDate": "2026-04-01", "ReviewedDate": "2026-04-02", "ReviewedByAdminId": "seed-admin-1" },
+  { "Id": 3, "ApplicationUserId": "seed-tourist-3", "Status": "Rejected",  "RequestedDate": "2026-03-01", "ReviewedDate": "2026-03-02", "ReviewedByAdminId": "seed-admin-1" }
+]

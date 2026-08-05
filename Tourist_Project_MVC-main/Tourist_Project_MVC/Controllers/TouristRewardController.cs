@@ -70,14 +70,7 @@ namespace Tourist_Project_MVC.Controllers
                 Progress = progress
             };
 
-            if (User.IsInRole("User"))
-            {
-                var touristUser = _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId);
-                if (touristUser != null)
-                {
-                    ViewBag.FavoritedRewardIds = _favoriteRepo.GetFavoritedItemIds(touristUser.Id, FavoriteItemType.Reward);
-                }
-            }
+            ViewBag.FavoritedRewardIds = _favoriteRepo.GetFavoritedItemIds(tourist.Id, FavoriteItemType.Reward);
 
             var rewardReviews = _context.SiteReviews
                 .Include(r => r.Tourist)
