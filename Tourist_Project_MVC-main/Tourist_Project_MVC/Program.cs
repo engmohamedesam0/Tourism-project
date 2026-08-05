@@ -17,6 +17,62 @@ namespace Tourist_Project_MVC
 {
     public class Program
     {
+        private const string InitialMigrationProductVersion = "10.0.10";
+
+        private static void BaselineExistingSchemaIfNeeded(TouristContext context)
+        {
+            // Some older startup paths created the schema without recording an EF
+            // migration. In that state Migrate() tries to recreate AspNetRoles and
+            // crashes with PostgreSQL 42P07. Baseline only when the complete initial
+            // schema is already present; never drop or alter existing user data.
+            context.Database.ExecuteSqlRaw("""
+                CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+                    "MigrationId" character varying(150) NOT NULL,
+                    "ProductVersion" character varying(32) NOT NULL,
+                    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+                );
+                """);
+
+            var appliedMigrations = context.Database.GetAppliedMigrations().ToHashSet();
+            var initialMigration = context.Database.GetMigrations().FirstOrDefault();
+            if (initialMigration == null || appliedMigrations.Count > 0)
+            {
+                return;
+            }
+
+            var existingInitialSchemaTableCount = context.Database.SqlQueryRaw<int>("""
+                SELECT COUNT(*)::int AS "Value"
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                  AND table_type = 'BASE TABLE'
+                  AND table_name = ANY (ARRAY[
+                      'AspNetRoles', 'AspNetUsers', 'AspNetRoleClaims',
+                      'AspNetUserClaims', 'AspNetUserLogins', 'AspNetUserRoles',
+                      'AspNetUserTokens', 'Badges', 'Branches', 'ChatSessions',
+                      'Destinations', 'Favorites', 'MenuItems', 'Missions',
+                      'Notifications', 'Redemptions', 'Reviews', 'RewardBranches',
+                      'RewardViews', 'Rewards', 'SiteReviews',
+                      'SponsorApprovalRequests', 'Sponsors', 'SupportTickets',
+                      'Tourists', 'TripDestinations', 'TripPlans', 'UserBadges',
+                      'UserMissions', 'UserProgress'
+                  ]);
+                """).Single();
+
+            const int initialSchemaTableCount = 29;
+            if (existingInitialSchemaTableCount != initialSchemaTableCount)
+            {
+                return;
+            }
+
+            context.Database.ExecuteSqlInterpolated($"""
+                INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+                VALUES ({initialMigration}, {InitialMigrationProductVersion})
+                ON CONFLICT ("MigrationId") DO NOTHING;
+                """);
+
+            Console.WriteLine($"[Program] Existing schema detected; baselined EF migration '{initialMigration}'.");
+        }
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -157,6 +213,7 @@ namespace Tourist_Project_MVC
                 using (var scope = app.Services.CreateScope())
                 {
                     var context = scope.ServiceProvider.GetRequiredService<TouristContext>();
+                    BaselineExistingSchemaIfNeeded(context);
                     context.Database.Migrate();
                 }
             }
