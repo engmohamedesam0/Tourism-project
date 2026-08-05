@@ -58,7 +58,7 @@ namespace Tourist_Project_MVC
                   ]);
                 """).Single();
 
-            const int initialSchemaTableCount = 29;
+            const int initialSchemaTableCount = 30;
             if (existingInitialSchemaTableCount != initialSchemaTableCount)
             {
                 return;
