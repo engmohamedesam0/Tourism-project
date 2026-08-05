@@ -15,6 +15,8 @@
 
     @await Html.PartialAsync("_StatBoxRow", (List<Tourist_Project_MVC.View_Model.StatBoxItem>)ViewBag.StatBoxes)
 
+        @if (Model.Any())
+        {
         <div class="table-responsive">
             <table class="table table-hover align-middle destinations-table">
                 <thead>
@@ -87,13 +89,16 @@
                 </tbody>
             </table>
         </div>
-
-        @if (!Model.Any())
+        }
+        else
         {
-            <div class="text-center py-5">
-                <i class="bi bi-gift" style="font-size:3rem; color:var(--egy-primary);"></i>
-                <p class="text-muted mt-2">@Localizer["SponsorReward_EmptyState"].Value</p>
-            </div>
+            @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+            {
+                { "EmptyStateTitle", "No Rewards Yet" },
+                { "EmptyStateDescription", "You haven't created any rewards yet. Create your first offer to attract tourists." },
+                { "EmptyStateActionUrl", Url.Action("Create") },
+                { "EmptyStateActionText", "Add Reward" }
+            })
         }
     </div>
 </div>

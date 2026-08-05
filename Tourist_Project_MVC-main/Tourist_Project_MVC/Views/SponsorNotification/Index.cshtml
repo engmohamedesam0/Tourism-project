@@ -34,10 +34,13 @@
         <div class="card-body">
             @if (!Model.Notifications.Any())
             {
-                <div class="text-center py-5 text-muted">
-                    <i class="bi bi-check-circle" style="font-size:2.5rem;"></i>
-                    <p class="mb-0 mt-2">@Localizer["SponsorNotification_NoNotifications"].Value</p>
-                </div>
+                @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                {
+                    { "EmptyStateTitle", "No Notifications" },
+                    { "EmptyStateDescription", "You're all caught up. New notifications will appear here." },
+                    { "EmptyStateActionUrl", Url.Action("Index", new { filter = "" }) },
+                    { "EmptyStateActionText", "Clear Filters" }
+                })
             }
             else
             {

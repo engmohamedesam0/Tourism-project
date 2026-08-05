@@ -246,11 +246,13 @@
                     }
                     else
                     {
-                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
-                            <div class="text-center">
-                                <i class="bi bi-inbox display-4 d-block mb-2 text-black-50"></i>
-                                No reward data available
-                            </div>
+                        <div class="h-100 d-flex align-items-center justify-content-center">
+                            @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                            {
+                                { "EmptyStateTitle", "No Reward Data" },
+                                { "EmptyStateDescription", "Top rewards will appear here once tourists start redeeming your offers." },
+                                { "EmptyStateCompact", true }
+                            })
                         </div>
                     }
                 </div>

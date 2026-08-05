@@ -91,10 +91,13 @@
         <div class="card-body">
             @if (!Model.Tickets.Any())
             {
-                <div class="text-center py-5 text-muted">
-                    <i class="bi bi-inbox" style="font-size:2.5rem;"></i>
-                    <p class="mb-0 mt-2">@Localizer["AdminSupport_NoTicketsFound"].Value</p>
-                </div>
+                @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                {
+                    { "EmptyStateTitle", "No Support Tickets Found" },
+                    { "EmptyStateDescription", "There are no support tickets matching your filters. Try adjusting the search, status, category or submitter." },
+                    { "EmptyStateActionUrl", Url.Action("Index") },
+                    { "EmptyStateActionText", "Clear Filters" }
+                })
             }
             else
             {

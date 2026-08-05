@@ -1843,3 +1843,144 @@ img, video, .esri-view-root, .esri-view-surface, canvas,
     width: 18px;
     height: 18px;
 }
+
+/* =============================================
+   REUSABLE EMPTY STATE (Admin + Tourist + Sponsor)
+   ============================================= */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1.5rem;
+    width: 100%;
+    min-height: 260px;
+}
+
+.empty-state .empty-state-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-state .empty-state-svg {
+    width: 320px;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 14px rgba(30, 18, 10, 0.08));
+    animation: empty-state-float 3.5s ease-in-out infinite;
+}
+
+@keyframes empty-state-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
+}
+
+.empty-state .empty-state-title {
+    font-family: 'Cinzel', serif;
+    color: var(--egy-dark);
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 1.15rem 0 0.35rem;
+}
+
+.empty-state .empty-state-desc {
+    color: var(--text-muted);
+    max-width: 380px;
+    margin-bottom: 1.15rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.empty-state .empty-state-btn {
+    background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    padding: 0.55rem 1.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(200, 131, 42, 0.25);
+}
+
+.empty-state .empty-state-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(200, 131, 42, 0.35);
+    color: #ffffff;
+}
+
+.empty-state .empty-state-btn.empty-state-action {
+    cursor: pointer;
+    border: none;
+}
+
+/* Compact variant (cards, dropdown panels, in-table cells) */
+.empty-state.empty-state-compact {
+    padding: 1.6rem 1rem;
+    min-height: 0;
+}
+
+.empty-state.empty-state-compact .empty-state-svg {
+    width: 140px;
+    height: auto;
+    animation: none;
+}
+
+.empty-state.empty-state-compact .empty-state-title {
+    font-size: 1.05rem;
+    margin-top: 0.9rem;
+}
+
+.empty-state.empty-state-compact .empty-state-desc {
+    font-size: 0.85rem;
+    margin-bottom: 0.9rem;
+}
+
+.empty-state.empty-state-compact .empty-state-btn {
+    padding: 0.45rem 1.2rem;
+    font-size: 0.82rem;
+}
+
+/* Extra-large variant for empty states rendered inside wide data-table cells */
+.empty-state.empty-state-table {
+    padding: 3.5rem 1.5rem;
+    min-height: 0;
+}
+
+.empty-state.empty-state-table .empty-state-svg {
+    width: 640px;
+    height: auto;
+}
+
+.empty-state.empty-state-table .empty-state-title {
+    font-size: 1.6rem;
+    margin-top: 1.4rem;
+}
+
+.empty-state.empty-state-table .empty-state-desc {
+    font-size: 1rem;
+    max-width: 460px;
+}
+
+.empty-state.empty-state-table .empty-state-btn {
+    padding: 0.65rem 1.7rem;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 767.98px) {
+    .empty-state.empty-state-table .empty-state-svg {
+        width: 360px;
+    }
+}
+
+/* Dark theme */
+[data-theme="dark"] .empty-state .empty-state-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .empty-state .empty-state-desc {
+    color: var(--text-secondary);
+}

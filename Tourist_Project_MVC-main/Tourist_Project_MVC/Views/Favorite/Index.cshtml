@@ -11,14 +11,13 @@
 
         @if (!Model.Destinations.Any() && !Model.Rewards.Any() && !Model.Branches.Any())
         {
-            <div class="text-center py-5 text-muted">
-                <i class="bi bi-heart" style="font-size: 3rem; color: var(--egy-primary);"></i>
-                <h5 class="mt-3 fw-bold">@Localizer["Favorites_Empty"].Value</h5>
-                <p class="small">@Localizer["Favorites_EmptyDesc"].Value</p>
-                <a asp-controller="Explore" asp-action="Index" class="btn btn-egy-primary mt-3">
-                    <i class="bi bi-compass-fill me-1"></i> @Localizer["Favorites_Browse"].Value
-                </a>
-            </div>
+            @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+            {
+                { "EmptyStateTitle", "No Favorites Yet" },
+                { "EmptyStateDescription", "You haven't saved any destinations, rewards or branches yet. Tap the heart icon anywhere on the site to build your personal collection." },
+                { "EmptyStateActionUrl", Url.Action("Index", "Explore") },
+                { "EmptyStateActionText", "Explore Destinations" }
+            })
         }
         else
         {

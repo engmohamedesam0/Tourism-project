@@ -79,6 +79,10 @@
 <div class="dash-card destination-dashboard-list mt-3">
     <div class="dash-card-header"><span><i class="bi bi-list-check me-2"></i> Destination records</span><a asp-controller="Destination" asp-action="Index" class="btn btn-outline-secondary btn-sm">Open data view</a></div>
     <div class="dash-card-body p-0"><div class="table-responsive"><table class="table table-hover align-middle mb-0 destination-dashboard-table"><thead><tr><th>Destination</th><th>Category</th><th>Status</th><th>Visits</th><th class="text-end">Actions</th></tr></thead><tbody>
+    @if (!Model.DestinationSection.Records.Any())
+    {
+        <tr><td colspan="5">@await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData) { { "EmptyStateTitle", "No Destinations Yet" }, { "EmptyStateDescription", "No destination records are available. Add a destination or pull data from ArcGIS." }, { "EmptyStateActionUrl", Url.Action("AddDestination", "AdminDashboard") }, { "EmptyStateActionText", "Add Destination" }, { "EmptyStateTable", true } })</td></tr>
+    }
     @foreach (var destination in Model.DestinationSection.Records)
     {
         <tr><td><strong>@destination.Name</strong><small class="d-block text-muted">@destination.City · ID @destination.Id</small></td><td>@(destination.Category ?? "—")</td><td><span class="badge bg-light text-dark border">@destination.Status</span></td><td>@destination.Visits.ToString("N0")</td><td class="text-end"><div class="btn-group btn-group-sm"><a asp-controller="Destination" asp-action="Details" asp-route-id="@destination.Id" class="btn btn-outline-info" title="View"><i class="bi bi-eye"></i></a><a asp-controller="Destination" asp-action="Edit" asp-route-id="@destination.Id" class="btn btn-outline-warning" title="Edit"><i class="bi bi-pencil"></i></a><a asp-controller="Destination" asp-action="Delete" asp-route-id="@destination.Id" class="btn btn-outline-danger" title="Delete"><i class="bi bi-trash3"></i></a></div></td></tr>

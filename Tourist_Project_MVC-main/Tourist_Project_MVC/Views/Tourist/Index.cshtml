@@ -82,6 +82,8 @@
 
     <!-- Table Card -->
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden table-card">
+        @if (Model.Any())
+        {
         <div class="table-responsive">
             <table class="table align-middle custom-tourist-table mb-0">
                 <thead>
@@ -205,16 +207,16 @@
                 </tbody>
             </table>
         </div>
-
-        @if (!Model.Any())
+        }
+        else
         {
-            <div class="text-center py-5 empty-state-container">
-                <div class="empty-state-icon mb-3">
-                    <i class="bi bi-people-fill"></i>
-                </div>
-                <h5 class="fw-bold font-cinzel">@Localizer["TouristAdmin_NoTourists"].Value</h5>
-                <p class="text-muted small">Try adjusting your filters or search term.</p>
-            </div>
+            @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+            {
+                { "EmptyStateTitle", "No Tourists Found" },
+                { "EmptyStateDescription", "There are no tourists matching your search. Try adjusting your filters or search term." },
+                { "EmptyStateActionUrl", Url.Action("Index") },
+                { "EmptyStateActionText", "Clear Filters" }
+            })
         }
     </div>
 </div>

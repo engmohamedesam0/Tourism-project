@@ -48,8 +48,14 @@
 
                 <!-- Scrollable destination list -->
                 <div class="explore-list" id="exploreList">
-                    <div id="exploreEmptyFilter" class="text-muted small py-3" style="display:none">No results match
-                        your filters.</div>
+                    <div id="exploreEmptyFilter" style="display:none">
+                        @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                        {
+                            { "EmptyStateTitle", "No Results Found" },
+                            { "EmptyStateDescription", "We couldn't find anything matching your search or filters." },
+                            { "EmptyStateActionText", "Clear Filters" }
+                        })
+                    </div>
 
                         @foreach (var item in Model)
                         {
@@ -103,10 +109,12 @@
 
                         @if (!Model.Any())
                         {
-                            <div class="text-center text-muted py-5">
-                                <i class="bi bi-geo-alt" style="font-size: 2.5rem; color: var(--egy-primary);"></i>
-                                <p class="mt-2 mb-0">@Localizer["Explore_NoDestinations"].Value</p>
-                            </div>
+                            @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                            {
+                                { "EmptyStateTitle", "No Destinations Found" },
+                                { "EmptyStateDescription", "There are currently no destinations to display. Try adjusting your search or filters." },
+                                { "EmptyStateActionText", "Clear Filters" }
+                            })
                         }
                     </div>
                 </div>
@@ -552,7 +560,27 @@
                 function toggleExploreEmpty() {
                     var visible = cards.filter(function (c) { return c.style.display !== 'none'; });
                     var empty = document.getElementById('exploreEmptyFilter');
-                    if (empty) empty.style.display = visible.length === 0 ? '' : 'none';
+                    if (!empty) return;
+                    // Server already rendered the empty state when there are zero cards at all.
+                    if (cards.length === 0) { empty.style.display = 'none'; return; }
+                    empty.style.display = visible.length === 0 ? '' : 'none';
+                }
+
+                // Clear Filters button inside the client-side empty state
+                var exploreEmptyEl = document.getElementById('exploreEmptyFilter');
+                if (exploreEmptyEl) {
+                    exploreEmptyEl.addEventListener('click', function (e) {
+                        if (!e.target.closest('.empty-state-action')) return;
+                        var searchEl = document.getElementById('exploreSearch');
+                        if (searchEl) searchEl.value = '';
+                        chips.forEach(function (c) { c.classList.remove('chip-active'); });
+                        var allChip = document.querySelector('#categoryChips .chip[data-filter="all"]');
+                        if (allChip) allChip.classList.add('chip-active');
+                        cards.forEach(function (c) { c.style.display = ''; });
+                        syncMarkersFromChips();
+                        toggleExploreEmpty();
+                        fitExploreBounds();
+                    });
                 }
 
                 chips.forEach(function (chip) {

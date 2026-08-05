@@ -1,0 +1,77 @@
+@*
+    Reusable "No Data" Empty State — shared across Admin, Tourist and Sponsor areas.
+
+    Usage:
+        @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+        {
+            { "EmptyStateTitle", "No Trips Yet" },
+            { "EmptyStateDescription", "You haven't created any trips yet." },
+            { "EmptyStateActionUrl", Url.Action("Index") },
+            { "EmptyStateActionText", "Clear Filters" },
+            { "EmptyStateCompact", false }
+        })
+
+    ViewData keys:
+        EmptyStateTitle        (string, required)  — main heading, e.g. "No Trips Yet"
+        EmptyStateDescription  (string, optional)  — supporting sentence
+        EmptyStateActionUrl    (string, optional)  — href for the action button
+        EmptyStateActionText   (string, optional)  — button label; when no ActionUrl is
+                                                     given the partial renders a <button>
+                                                     with class "empty-state-action" so the
+                                                     page can bind its own click handler.
+        EmptyStateCompact      (bool, optional)    — smaller variant for cards/panels.
+        EmptyStateTable        (bool, optional)    — extra-large variant (5x SVG) for
+                                                     empty states rendered inside table
+                                                     cells (wide admin data tables).
+        EmptyStateSvg          (string, optional)  — override the default artwork
+                                                     ("~/lottie/no data.svg") with another
+                                                     asset, e.g. "~/lottie/Customer Support.svg".
+
+    IMPORTANT: Only render this partial for LEGITIMATELY EMPTY results (request
+    succeeded + zero records). Never for connection failures, exceptions,
+    unauthorized requests or other real errors.
+*@
+@{
+    var esTitle = ViewData["EmptyStateTitle"]?.ToString() ?? "No Data";
+    var esDescription = ViewData["EmptyStateDescription"]?.ToString();
+    var esActionUrl = ViewData["EmptyStateActionUrl"]?.ToString();
+    var esActionText = ViewData["EmptyStateActionText"]?.ToString();
+    var esCompact = ViewData["EmptyStateCompact"] as bool? ?? false;
+    var esTable = ViewData["EmptyStateTable"] as bool? ?? false;
+    var esSvg = ViewData["EmptyStateSvg"]?.ToString();
+    var esSvgUrl = Url.Content(string.IsNullOrEmpty(esSvg) ? "~/lottie/no data.svg" : esSvg);
+}
+
+<div class="empty-state @(esCompact ? "empty-state-compact" : "") @(esTable ? "empty-state-table" : "")" role="status" aria-live="polite">
+    <div class="empty-state-visual">
+        <img class="empty-state-svg" src="@esSvgUrl" alt="No data" loading="lazy" />
+    </div>
+    <h4 class="empty-state-title">@esTitle</h4>
+    @if (!string.IsNullOrEmpty(esDescription))
+    {
+        <p class="empty-state-desc">@esDescription</p>
+    }
+    @if (!string.IsNullOrEmpty(esActionText))
+    {
+        if (!string.IsNullOrEmpty(esActionUrl))
+        {
+            <a href="@esActionUrl" class="btn empty-state-btn">
+                @if (string.Equals(esActionText, "Clear Filters", StringComparison.OrdinalIgnoreCase))
+                {
+                    <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>
+                }
+                @esActionText
+            </a>
+        }
+        else
+        {
+            <button type="button" class="btn empty-state-btn empty-state-action">
+                @if (string.Equals(esActionText, "Clear Filters", StringComparison.OrdinalIgnoreCase))
+                {
+                    <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>
+                }
+                @esActionText
+            </button>
+        }
+    }
+</div>

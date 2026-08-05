@@ -24,6 +24,8 @@
 
     @await Html.PartialAsync("_StatBoxRow", (List<Tourist_Project_MVC.View_Model.StatBoxItem>)ViewBag.StatBoxes)
 
+        @if (Model.Any())
+        {
         <div class="table-responsive">
             <table class="table table-hover align-middle destinations-table">
                 <thead>
@@ -66,13 +68,16 @@
                 </tbody>
             </table>
         </div>
-
-        @if (!Model.Any())
+        }
+        else
         {
-            <div class="text-center py-5">
-                <i class="bi bi-geo-alt" style="font-size:3rem; color:var(--egy-primary);"></i>
-                <p class="text-muted mt-2">@Localizer["SponsorBranch_EmptyMessage"].Value</p>
-            </div>
+            @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+            {
+                { "EmptyStateTitle", "No Branches Yet" },
+                { "EmptyStateDescription", "You haven't created any branches yet. Add your first branch so tourists can discover and visit you." },
+                { "EmptyStateActionUrl", Url.Action("Create") },
+                { "EmptyStateActionText", "Add Branch" }
+            })
         }
     </div>
 </div>
