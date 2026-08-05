@@ -13,6 +13,8 @@ using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.Services;
+using Tourist_Project_MVC.Services.AiAgent;
+using Tourist_Project_MVC.Services.AiTools;
 namespace Tourist_Project_MVC
 {
     public class Program
@@ -30,13 +32,39 @@ namespace Tourist_Project_MVC
 
             builder.Services.AddScoped<IArcGISSyncService, ArcGISSyncService>();
 
-            // AI chat widget (Gemini-backed). A typed HttpClient with a sane
-            // timeout — the Gemini call can take a few seconds, especially
-            // with tool calling involved.
-            builder.Services.AddHttpClient<IAiChatService, AiChatService>(client =>
+            // AI chat widget (Gemini-backed role-aware agent). The typed HttpClient
+            // lives on the orchestrator with a generous timeout — the Gemini call
+            // can take several seconds, especially with tool calling involved.
+            builder.Services.AddHttpClient<IAiAgentOrchestrator, AiAgentOrchestrator>(client =>
             {
-                client.Timeout = TimeSpan.FromSeconds(60);
+                client.Timeout = TimeSpan.FromSeconds(90);
             });
+
+            // OpenAI fallback used ONLY when the primary provider (Gemini) reports
+            // quota/credit exhaustion. Receives the same context the Gemini request
+            // would have received; disabled while OpenAI:ApiKey is empty.
+            builder.Services.AddHttpClient<IOpenAiFallbackService, OpenAiFallbackService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(90);
+            });
+
+            // Role-aware AI agent services:
+            //  - AiIdentityResolver: server-side auth state (user/role/tourist/sponsor)
+            //  - AiPendingActionStore: in-memory confirmation store (singleton)
+            //  - AiToolRegistry + per-role tool sets: role-filtered, ownership-checked actions
+            //  - IChatHistoryService: chat-session persistence (tourists)
+            //  - IAiStarterQuestionsService: role-based starter questions
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IAiIdentityResolver, AiIdentityResolver>();
+            builder.Services.AddSingleton<AiPendingActionStore>();
+            builder.Services.AddScoped<GuestAiTools>();
+            builder.Services.AddScoped<TouristAiTools>();
+            builder.Services.AddScoped<SponsorAiTools>();
+            builder.Services.AddScoped<AdminAiTools>();
+            builder.Services.AddScoped<IAiToolRegistry, AiToolRegistry>();
+            builder.Services.AddScoped<IChatHistoryService, ChatHistoryService>();
+            builder.Services.AddScoped<IAiStarterQuestionsService, AiStarterQuestionsService>();
+            builder.Services.AddScoped<IAiChatService, AiChatService>();
 
             // Explicit header name so [ValidateAntiForgeryToken] accepts the token sent
             // via the "RequestVerificationToken" header on JSON fetch() calls (used by

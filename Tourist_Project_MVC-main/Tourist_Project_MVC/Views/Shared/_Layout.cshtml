@@ -814,7 +814,10 @@
          data-history-error-text="@Localizer["Ai_Error"].Value"
          data-thinking-text="@Localizer["Ai_Thinking"].Value"
          data-error-text="@Localizer["Ai_Error"].Value"
-         data-view-trip-text="@Localizer["Ai_ViewTrip"].Value">
+         data-view-trip-text="@Localizer["Ai_ViewTrip"].Value"
+         data-starter-url="@Url.Action("StarterQuestions", "AiChat")"
+         data-confirm-url="@Url.Action("ConfirmPendingAction", "AiChat")"
+         data-cancel-url="@Url.Action("CancelPendingAction", "AiChat")">
          <div class="ai-widget-header">
              <h5 class="ai-widget-title">
                  <img class="ai-widget-title-stars" src="/lottie/Stars-white.svg" alt="" aria-hidden="true" />
@@ -848,8 +851,8 @@
              </div>
          </div>
          <div class="ai-widget-body" id="aiChatMessages">
-             <div class="ai-chat-msg ai-chat-msg-assistant">
-                 <div class="ai-chat-bubble">@Localizer["Ai_Description"].Value</div>
+             <div class="ai-chat-msg ai-chat-msg-assistant" id="aiChatWelcomeMsg">
+                 <div class="ai-chat-bubble" id="aiChatWelcome">@Localizer["Ai_Description"].Value</div>
              </div>
          </div>
          <div class="ai-widget-history" id="aiWidgetHistory" hidden>

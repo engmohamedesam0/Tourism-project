@@ -46,6 +46,12 @@ namespace Tourist_Project_MVC.View_Model
         // Id of the persisted chat session this response belongs to.
         public int? ChatSessionId { get; set; }
         public List<string>? PhotoUrls { get; set; }
+
+        // Role-aware agent: set when a state-changing operation was pre-validated
+        // and is now waiting for the user's confirmation. The frontend renders a
+        // Confirm/Cancel UI and calls /AiChat/ConfirmPendingAction with the token.
+        public string? PendingActionToken { get; set; }
+        public string? PendingActionSummary { get; set; }
     }
 
     // Compact projection of a Destination, cheap enough to inline into
@@ -101,6 +107,9 @@ namespace Tourist_Project_MVC.View_Model
 
         [JsonPropertyName("functionCall")]
         public GeminiFunctionCall? FunctionCall { get; set; }
+
+        [JsonPropertyName("functionResponse")]
+        public GeminiFunctionResponse? FunctionResponse { get; set; }
     }
 
     public class GeminiInlineData
@@ -119,6 +128,17 @@ namespace Tourist_Project_MVC.View_Model
 
         [JsonPropertyName("args")]
         public JsonElement Args { get; set; }
+    }
+
+    // Result of executing a tool, fed back into the conversation as a
+    // "user"-role part so the model can produce the final natural-language reply.
+    public class GeminiFunctionResponse
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
+
+        [JsonPropertyName("response")]
+        public object Response { get; set; } = new();
     }
 
     public class GeminiTool
