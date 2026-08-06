@@ -1,139 +1,535 @@
-﻿@model Tourist_Project_MVC.Models.Destination
+@model Tourist_Project_MVC.Models.Destination
 
 @{
-    ViewData["Title"] = "Destination Management";
+    ViewData["Title"] = "Destination Details";
     var isAdmin = User.IsInRole("Admin");
+    var photos = Model.PhotoUrlList;
+    var photoCount = photos.Count;
+    var backUrl = ViewBag.BackUrl as string ?? "/Destination";
+    var isTop = Model.Rating.HasValue && Model.Rating.Value >= 4.5m;
+
+    var badgeClass = Model.Status switch
+    {
+        "Active" => "good",
+        "Pending" => "warn",
+        "Inactive" => "bad",
+        _ => "good"
+    };
+
+    var statusIcon = Model.Status switch
+    {
+        "Active" => "bi-check-circle-fill",
+        "Inactive" => "bi-x-circle-fill",
+        "Pending" => "bi-clock-fill",
+        _ => "bi-shield-check"
+    };
+
+    // NetTopologySuite Point: X = longitude, Y = latitude
+    string lat = Model.Location != null ? Model.Location.Y.ToString("0.00000", CultureInfo.InvariantCulture) : "";
+    string lon = Model.Location != null ? Model.Location.X.ToString("0.00000", CultureInfo.InvariantCulture) : "";
+    string bbox = "";
+    string mapsUrl = "https://www.google.com/maps";
+    string osmEmbed = "";
+    if (Model.Location != null)
+    {
+        var lonD = Model.Location.X;
+        var latD = Model.Location.Y;
+        bbox = $"{(lonD - 0.03).ToString("0.00000", CultureInfo.InvariantCulture)},{(latD - 0.018).ToString("0.00000", CultureInfo.InvariantCulture)},{(lonD + 0.03).ToString("0.00000", CultureInfo.InvariantCulture)},{(latD + 0.018).ToString("0.00000", CultureInfo.InvariantCulture)}";
+        mapsUrl = $"https://www.google.com/maps/search/?api=1&query={lat},{lon}";
+        osmEmbed = $"https://www.openstreetmap.org/export/embed.html?bbox={bbox}&layer=mapnik&marker={lat},{lon}";
+    }
+
+    string FormatHour(int? hour) => hour.HasValue ? hour.Value.ToString("D2", CultureInfo.InvariantCulture) + ":00" : "Not specified";
+    string Price(int? p) => p.HasValue ? p.Value.ToString("N0", CultureInfo.InvariantCulture) + " EGP" : "Not Available";
 }
 
-<div class="container-fluid destination-record-page mt-4">
+<div class="dest-detail-page">
 
-    <div class="destination-record-shell">
+    <!-- Hero: sharp angled split — cream info panel / full sharp image -->
+    <div class="dest-hero">
 
-        <a href="/Destination" class="record-back"><i class="bi bi-arrow-left"></i> Back to destination management</a>
-        <div class="record-hero">
-            <div class="d-flex justify-content-between align-items-center">
-                <div><div class="record-kicker"><i class="bi bi-database me-1"></i> Admin destination record · ID @Model.Id</div><h1>@Model.Name</h1><p>@(Model.ArabicName ?? "No Arabic name supplied") · @Model.City</p></div>
-                <div class="record-actions">@if (isAdmin) { <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil-square me-1"></i> Edit</a><a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"><i class="bi bi-trash3 me-1"></i> Delete</a> }</div>
-                @{
-                    var badgeClass = Model.Status switch
-                    {
-                        "Active" => "bg-success",
-                        "Pending" => "bg-warning text-dark",
-                        "Inactive" => "bg-danger",
-                        _ => "bg-success"
-                    };
-                }
-                <span class="record-status @badgeClass"><i class="bi bi-circle-fill"></i> @Model.Status</span>
-            </div>
-        </div>
-
-        <div class="record-card-body">
-
-            <!-- Stats Row -->
-            <div class="row text-center mb-4">
-                <div class="col-4">
-                    <div class="stat-mini-card">
-                        <i class="bi bi-eye-fill text-primary"></i>
-                        <div class="stat-mini-number">@Model.Visits.ToString("N0")</div>
-                        <div class="stat-mini-label">@Localizer["Destination_TotalVisits"].Value</div>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="stat-mini-card">
-                        <i class="bi bi-ticket-perforated-fill text-warning"></i>
-                        <div class="stat-mini-number">
-                            @(Model.TicketPrice == 0 ? Localizer["Destination_Free"].Value : Model.TicketPrice?.ToString("C"))
-                        </div>
-                        <div class="stat-mini-label">@Localizer["Destination_TicketPrice"].Value</div>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="stat-mini-card">
-                        <i class="bi bi-tag-fill text-success"></i>
-                        <div class="stat-mini-number">@Model.Category</div>
-                        <div class="stat-mini-label">@Localizer["Destination_Category"].Value</div>
-                    </div>
-                </div>
-            </div>
-
-            <hr />
-
-            <!-- Details -->
-            <dl class="row">
-                <dt class="col-sm-4 text-muted">@Localizer["Destination_CityGovernorate"].Value</dt>
-                <dd class="col-sm-8">@Model.City</dd>
-
-                <dt class="col-sm-4 text-muted">@Localizer["Destination_Description"].Value</dt>
-                <dd class="col-sm-8">@Model.Description</dd>
-
-                <dt class="col-sm-4 text-muted">@Localizer["Destination_Coordinates"].Value</dt>
-                <dd class="col-sm-8">
-                    <i class="bi bi-geo text-danger me-1"></i>
-                    Lat: @Model.Location.Y | Long: @Model.Location.X
-                </dd>
-
-                <dt class="col-sm-4 text-muted">@Localizer["Destination_OpeningHours"].Value</dt>
-                <dd class="col-sm-8">
-                    @(Model.OpeningHours.HasValue ? Model.OpeningHours.Value.ToString("hh:mm tt") : Localizer["Destination_NotSpecified"].Value)
-                </dd>
-            </dl>
-        </div>
-
-<!-- Card Footer -->
-         <div class="record-footer">
-             @{
-                 var backUrl = ViewBag.BackUrl as string ?? "/Destination";
-             }
-
-            @if (User.IsInRole("User"))
+        <!-- Top bar: back link (left) + Edit / Delete (right, over the image) -->
+        <div class="dest-hero-top">
+            <a href="@backUrl" class="dest-back" onclick="if(document.referrer){history.back();return false;}"><i class="bi bi-arrow-left"></i> Back to all destinations</a>
+            @if (isAdmin)
             {
-                <form asp-controller="Trip" asp-action="AddToTrip" method="post" class="d-inline">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-plus-circle-fill me-1"></i> @Localizer["Destination_AddToMyTrip"].Value
-                    </button>
-                </form>
+                <div class="dest-actions">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="dest-btn dest-btn-edit"><i class="bi bi-pencil"></i> Edit</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="dest-btn dest-btn-delete"><i class="bi bi-trash3"></i> Delete</a>
+                </div>
             }
-
-            <a href="@backUrl" class="btn-back"
-               onclick="if(document.referrer){history.back();return false;}">
-                <i class="bi bi-arrow-left me-1"></i> @Localizer["Destination_Back"].Value
-            </a>
         </div>
 
-        @if (ViewBag.ReviewsCarousel is Tourist_Project_MVC.View_Model.ReviewsCarouselVM reviewsVm && reviewsVm.Items != null && reviewsVm.Items.Any())
-        {
-            @await Html.PartialAsync("_ReviewsCarousel", reviewsVm)
-        }
+        <!-- Cream information panel with a sharp diagonal right edge -->
+        <div class="dest-hero-panel">
+            <span class="dest-kicker"><i class="bi bi-database me-1"></i> Live ArcGIS feature · ObjectId @Model.Id</span>
+            <h1 class="dest-title">@Model.Name</h1>
+            @if (!string.IsNullOrWhiteSpace(Model.ArabicName))
+            {
+                <p class="dest-arabic">@Model.ArabicName</p>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <p class="dest-desc">@Model.Description</p>
+            }
+            <div class="dest-chips">
+                <span class="dest-chip"><i class="bi bi-geo-alt-fill"></i> @Model.City</span>
+                <span class="dest-chip"><i class="bi bi-globe2"></i> Egypt</span>
+                @if (isTop)
+                {
+                    <span class="dest-chip dest-chip-gold"><i class="bi bi-trophy-fill"></i> #1 Top</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Category))
+                {
+                    <span class="dest-chip"><i class="bi bi-bank"></i> @Model.Category</span>
+                }
+                @if (Model.Rating.HasValue)
+                {
+                    <span class="dest-chip"><i class="bi bi-star-fill" style="color: #E8A045;"></i> @Model.Rating.Value.ToString("0.0", CultureInfo.InvariantCulture) (@Model.Visits.ToString("N0"))</span>
+                }
+                <span class="dest-chip dest-chip-@badgeClass"><i class="bi @statusIcon"></i> @Model.Status</span>
+            </div>
+        </div>
 
+        <!-- Full sharp image side (slideshow; rotates every 7s when > 1 photo) -->
+        <div class="dest-hero-media">
+            @if (photoCount > 0)
+            {
+                <div class="dest-hero-slides" id="destHeroSlides">
+                    @for (int i = 0; i < photoCount; i++)
+                    {
+                        <div class="dest-hero-slide @(i == 0 ? "is-active" : "")">
+                            <img src="@photos[i]" alt="@Model.Name — photo @(i + 1)" onerror="this.closest('.dest-hero-slide').classList.add('img-error')" />
+                        </div>
+                    }
+                </div>
+                @if (photoCount > 1)
+                {
+                    <button type="button" class="dest-hero-arrow prev" data-hero-prev aria-label="Previous photo"><i class="bi bi-chevron-left"></i></button>
+                    <button type="button" class="dest-hero-arrow next" data-hero-next aria-label="Next photo"><i class="bi bi-chevron-right"></i></button>
+                    <div class="dest-hero-dots" id="destHeroDots">
+                        @for (int i = 0; i < photoCount; i++)
+                        {
+                            <button type="button" class="dest-hero-dot @(i == 0 ? "is-active" : "")" data-hero-dot="@i" aria-label="Photo @(i + 1)"></button>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="dest-hero-empty"><i class="bi bi-image"></i><span>No photos available</span></div>
+            }
+        </div>
     </div>
+
+    <!-- Two-column body -->
+    <div class="dest-layout">
+        <main class="dest-main">
+
+            <!-- Basic Information -->
+            <section class="dest-card">
+                <div class="dest-card-head"><i class="bi bi-card-text"></i><strong>Basic Information</strong></div>
+                <div class="dest-fields">
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-geo-alt"></i> ID</span><span class="dest-value">@Model.Id</span></div>
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-globe2"></i> English Name</span><span class="dest-value">@Model.Name</span></div>
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-stars"></i> Arabic Name</span><span class="dest-value">@(string.IsNullOrWhiteSpace(Model.ArabicName) ? "—" : Model.ArabicName)</span></div>
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-person"></i> Governorate</span><span class="dest-value">@Model.City</span></div>
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-bank"></i> Category</span><span class="dest-value">@(string.IsNullOrWhiteSpace(Model.Category) ? "—" : Model.Category)</span></div>
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-shield-check"></i> Status</span><span class="dest-value"><span class="dest-status @badgeClass"><i class="bi @statusIcon"></i> @Model.Status</span></span></div>
+                </div>
+            </section>
+
+            <!-- Visiting Information -->
+            <section class="dest-card">
+                <div class="dest-card-head"><i class="bi bi-calendar2-week"></i><strong>Visiting Information</strong></div>
+                <div class="dest-fields">
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-calendar2"></i> Opening Days</span><span class="dest-value">@(string.IsNullOrWhiteSpace(Model.Days) ? "Not specified" : Model.Days)</span></div>
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-clock"></i> Opening Hour</span><span class="dest-value">@FormatHour(Model.OpenAt)</span></div>
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-clock-history"></i> Closing Hour</span><span class="dest-value">@FormatHour(Model.CloseAt)</span></div>
+                    <div class="dest-field">
+                        <span class="dest-label"><i class="bi bi-ticket-perforated"></i> Ticket Required</span>
+                        <span class="dest-value">
+                            @if (string.Equals(Model.TicketRequired, "Yes", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span class="dest-yes"><i class="bi bi-check-circle-fill"></i> Yes</span>
+                            }
+                            else if (string.Equals(Model.TicketRequired, "No", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span class="dest-no"><i class="bi bi-x-circle"></i> No</span>
+                            }
+                            else
+                            {
+                                <span>Not specified</span>
+                            }
+                        </span>
+                    </div>
+                </div>
+                <div class="dest-note"><i class="bi bi-info-circle"></i><span>We recommend arriving early in the morning to enjoy the best experience and avoid crowds.</span></div>
+            </section>
+
+            <!-- Gallery -->
+            <section class="dest-card">
+                <div class="dest-card-head"><i class="bi bi-images"></i><strong>Gallery</strong></div>
+                @if (photoCount > 0)
+                {
+                    <div class="dest-gallery">
+                        <div class="dest-gallery-track" id="destGalleryTrack">
+                            @for (int i = 0; i < photoCount; i++)
+                            {
+                                <a class="dest-gallery-slide" href="@photos[i]" target="_blank" rel="noopener" title="Open full size">
+                                    <img src="@photos[i]" alt="@Model.Name — gallery @(i + 1)" loading="lazy" onerror="this.closest('.dest-gallery-slide').classList.add('img-error')" />
+                                </a>
+                            }
+                        </div>
+                        @if (photoCount > 1)
+                        {
+                            <button type="button" class="dest-gallery-arrow prev" data-gallery-prev aria-label="Previous"><i class="bi bi-chevron-left"></i></button>
+                            <button type="button" class="dest-gallery-arrow next" data-gallery-next aria-label="Next"><i class="bi bi-chevron-right"></i></button>
+                            <div class="dest-gallery-dots" id="destGalleryDots">
+                                @for (int i = 0; i < photoCount; i++)
+                                {
+                                    <button type="button" class="dest-gallery-dot @(i == 0 ? "is-active" : "")" data-gallery-dot="@i" aria-label="Photo @(i + 1)"></button>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="dest-gallery-empty"><i class="bi bi-images"></i> No photos available</div>
+                }
+            </section>
+        </main>
+
+        <aside class="dest-aside">
+
+            <!-- Location -->
+            <section class="dest-card">
+                <div class="dest-card-head"><i class="bi bi-geo-alt"></i><strong>Location</strong></div>
+                <div class="dest-map-wrap">
+                    @if (Model.Location != null)
+                    {
+                        <a class="dest-view-map" href="@mapsUrl" target="_blank" rel="noopener">View on map <i class="bi bi-box-arrow-up-right"></i></a>
+                        <iframe class="dest-map-frame" src="@osmEmbed" loading="lazy" title="Map of @Model.Name"></iframe>
+                    }
+                    else
+                    {
+                        <div class="dest-map-empty"><i class="bi bi-geo-alt"></i> No coordinates available</div>
+                    }
+                </div>
+                <div class="dest-coords">
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-arrows-vertical"></i> Latitude</span><span class="dest-value">@(Model.Location != null ? lat : "—")</span></div>
+                    <div class="dest-field"><span class="dest-label"><i class="bi bi-arrows-horizontal"></i> Longitude</span><span class="dest-value">@(Model.Location != null ? lon : "—")</span></div>
+                </div>
+            </section>
+
+            <!-- GIS / System -->
+            <section class="dest-card">
+                <div class="dest-card-head"><i class="bi bi-diagram-3"></i><strong>GIS / System</strong></div>
+                <div class="dest-fields">
+                    <div class="dest-field"><span class="dest-label">OBJECTID</span><span class="dest-value">@Model.Id</span></div>
+                    <div class="dest-field"><span class="dest-label">GLOBALID</span><span class="dest-value">Not Available — layer has no GlobalId</span></div>
+                    <div class="dest-field"><span class="dest-label">SPATIAL REFERENCE</span><span class="dest-value">WKID 102100 / 3857</span></div>
+                </div>
+            </section>
+
+            <!-- About This Data -->
+            <section class="dest-card">
+                <div class="dest-card-head"><i class="bi bi-shield-check"></i><strong>About This Data</strong></div>
+                <div class="dest-note"><i class="bi bi-info-circle"></i><span>This page is driven by the live ArcGIS field schema. Every returned field is rendered in a section or Additional Information, including fields added later to the layer.</span></div>
+            </section>
+        </aside>
+    </div>
+
+    <!-- Additional Information (full width) -->
+    <section class="dest-card dest-extra">
+        <div class="dest-card-head"><i class="bi bi-list-ul"></i><strong>Additional Information</strong></div>
+        <div class="dest-fields">
+            <div class="dest-field">
+                <span class="dest-label"><i class="bi bi-link-45deg"></i> Booking Link</span>
+                <span class="dest-value">
+                    @if (!string.IsNullOrWhiteSpace(Model.Booking) && Model.Booking.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <a href="@Model.Booking" target="_blank" rel="noopener" class="dest-yes" style="text-decoration: underline;">
+                            <i class="bi bi-box-arrow-up-right"></i> Book Here
+                        </a>
+                    }
+                    else if (!string.IsNullOrWhiteSpace(Model.Booking) && (Model.Booking.Contains(".com", StringComparison.OrdinalIgnoreCase) || Model.Booking.Contains(".eg", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        <a href="https://@Model.Booking" target="_blank" rel="noopener" class="dest-yes" style="text-decoration: underline;">
+                            <i class="bi bi-box-arrow-up-right"></i> Book Here
+                        </a>
+                    }
+                    else if (string.Equals(Model.Booking, "Yes", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <span class="dest-yes"><i class="bi bi-check-circle-fill"></i> Available (No link provided)</span>
+                    }
+                    else if (string.Equals(Model.Booking, "No", StringComparison.OrdinalIgnoreCase) || string.IsNullOrWhiteSpace(Model.Booking) || string.Equals(Model.Booking, "Not Available", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <span class="text-muted"><i class="bi bi-x-circle"></i> No booking link available</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Booking</span>
+                    }
+                </span>
+            </div>
+            <div class="dest-field"><span class="dest-label"><i class="bi bi-cash-coin"></i> Foreign Price</span><span class="dest-value">@Price(Model.ForeignPrice)</span></div>
+            <div class="dest-field"><span class="dest-label"><i class="bi bi-cash-coin"></i> Student Foreign Price</span><span class="dest-value">@Price(Model.StudentForeignPrice)</span></div>
+            <div class="dest-field"><span class="dest-label"><i class="bi bi-cash-coin"></i> Egyptian Price</span><span class="dest-value">@Price(Model.EgyptianPrice)</span></div>
+            <div class="dest-field"><span class="dest-label"><i class="bi bi-cash-coin"></i> Student Egyptian Price</span><span class="dest-value">@Price(Model.StudentEgyptianPrice)</span></div>
+            <div class="dest-field"><span class="dest-label"><i class="bi bi-eye"></i> @Localizer["Destination_TotalVisits"].Value</span><span class="dest-value">@Model.Visits.ToString("N0")</span></div>
+            @if (Model.TicketPrice.HasValue && Model.TicketPrice.Value > 0)
+            {
+                <div class="dest-field"><span class="dest-label"><i class="bi bi-ticket-perforated"></i> @Localizer["Destination_TicketPrice"].Value</span><span class="dest-value">@Model.TicketPrice.Value.ToString("N0", CultureInfo.InvariantCulture) EGP</span></div>
+            }
+        </div>
+    </section>
+
+    <!-- Footer actions -->
+    <div class="dest-footer">
+        @if (User.IsInRole("User"))
+        {
+            <form asp-controller="Trip" asp-action="AddToTrip" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="dest-btn dest-btn-trip"><i class="bi bi-plus-circle-fill me-1"></i> @Localizer["Destination_AddToMyTrip"].Value</button>
+            </form>
+        }
+        <a href="@backUrl" class="dest-btn dest-btn-back" onclick="if(document.referrer){history.back();return false;}"><i class="bi bi-arrow-left me-1"></i> @Localizer["Destination_Back"].Value</a>
+    </div>
+
+    @if (ViewBag.ReviewsCarousel is Tourist_Project_MVC.View_Model.ReviewsCarouselVM reviewsVm && reviewsVm.Items != null && reviewsVm.Items.Any())
+    {
+        @await Html.PartialAsync("_ReviewsCarousel", reviewsVm)
+    }
+</div>
+
+<!-- Anti-forgery token for the favorites.js toggle -->
+<form id="antiforgeryForm" class="d-none">@Html.AntiForgeryToken()</form>
+
+<!-- Floating action buttons (right edge) -->
+<div class="dest-fabs">
+    <button type="button" class="dest-fab dest-fab-fav favorite-btn" data-item-type="Destination" data-item-id="@Model.Id" aria-pressed="false" title="Add to favorites">
+        <i class="bi bi-heart favorite-btn-icon"></i>
+    </button>
 </div>
 
 @section Styles {
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
     <style>
-        .destination-record-page{max-width:1180px;margin:0 auto;color:var(--dash-text-primary)}.destination-record-shell{padding:1rem;border:1px solid var(--dash-border);border-radius:18px;background:var(--dash-card-bg);box-shadow:var(--dash-shadow-sm)}.record-back{display:inline-flex;align-items:center;gap:.4rem;margin:0 0 .8rem;color:var(--dash-text-muted);font-size:.7rem;font-weight:800;text-decoration:none}.record-back:hover{color:var(--dash-primary)}.record-hero{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;padding:1.4rem 1.5rem;margin-bottom:1rem;border:1px solid color-mix(in srgb,var(--dash-primary) 28%,var(--dash-border));border-radius:15px;background:linear-gradient(135deg,color-mix(in srgb,var(--dash-primary) 8%,var(--dash-card-bg)),var(--dash-card-bg))}.record-kicker{color:var(--dash-primary);font-size:.63rem;font-weight:900;letter-spacing:.11em;text-transform:uppercase}.record-hero h1{margin:.3rem 0 .2rem;font-size:clamp(1.35rem,3vw,2.1rem);font-weight:900}.record-hero p{margin:0;color:var(--dash-text-muted);font-size:.75rem}.record-actions{display:flex;gap:.45rem;flex-wrap:wrap}.record-actions .btn{border-radius:8px;font-size:.7rem;font-weight:800}.record-status{display:inline-flex;align-items:center;gap:.35rem;padding:.34rem .62rem;border-radius:999px;font-size:.64rem;font-weight:900}.record-status.bg-success{color:var(--dash-green);background:var(--dash-green-bg)!important}.record-status.bg-warning{color:#966b00;background:rgba(228,198,98,.18)!important}.record-status.bg-danger{color:var(--dash-rose);background:var(--dash-rose-bg)!important}.record-card-body{padding:1rem}.record-stat-card{height:100%;padding:.75rem;border:1px solid var(--dash-border);border-radius:10px;background:var(--dash-bg)}.record-stat-card i{color:var(--dash-primary)}.record-stat-number{display:block;margin-top:.3rem;font-weight:900}.record-stat-label{display:block;color:var(--dash-text-muted);font-size:.6rem;text-transform:uppercase;letter-spacing:.06em}.record-meta-label{display:block;color:var(--dash-text-muted);font-size:.62rem;font-weight:800;text-transform:uppercase}.record-meta-value{font-size:.78rem;font-weight:800}.record-description{color:var(--dash-text-secondary);font-size:.78rem;line-height:1.7;white-space:pre-line}.record-footer{display:flex;justify-content:flex-end;gap:.5rem;padding:1rem;border-top:1px solid var(--dash-border)}
-@@media(max-width:650px){.record-hero{flex-direction:column}.record-actions{width:100%}.record-actions .btn{flex:1}}
-        .stat-mini-card {
-            background: #FDF6EC;
-            border: 1px solid #E8A045;
-            border-radius: 12px;
-            padding: 15px 10px;
-        }
+        .dest-detail-page{max-width:1200px;margin:0 auto;padding:1.4rem 1.25rem 3rem;color:var(--dash-text-primary);font-family:'Plus Jakarta Sans','Nunito',sans-serif}
+        .dest-detail-page *{box-sizing:border-box}
 
-        .stat-mini-number {
-            font-family: 'Cinzel', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--egy-dark);
-            margin: 6px 0 2px;
-        }
+        /* ---------- Hero: sharp angled split (cream panel / full sharp image) ---------- */
+        .dest-hero{position:relative;min-height:365px;border:1px solid var(--dash-border);border-radius:16px;background:var(--egy-dark,#1E120A);box-shadow:var(--dash-shadow-md);overflow:hidden}
 
-        .stat-mini-label {
-            font-size: 0.75rem;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        /* Full sharp image side — covers the whole hero, no fade/overlay on the photo */
+        .dest-hero-media{position:absolute;inset:0;z-index:1;background:var(--egy-dark,#1E120A)}
+        .dest-hero-slides{position:absolute;inset:0}
+        .dest-hero-slide{position:absolute;inset:0;opacity:0;transition:opacity .7s ease;background:var(--egy-dark,#1E120A)}
+        .dest-hero-slide.is-active{opacity:1}
+        .dest-hero-slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+        .dest-hero-slide.img-error img{display:none}
+        .dest-hero-empty{position:absolute;inset:0;display:flex;flex-direction:column;gap:.6rem;align-items:center;justify-content:center;color:var(--dash-text-muted)}
+        .dest-hero-empty .bi{font-size:2.4rem;color:#C8B898}
+        .dest-hero-empty span{font-size:.75rem;font-weight:800}
+
+        /* Cream panel — sharp diagonal right edge (top ~41%, bottom 45% of hero width) */
+        .dest-hero-panel{position:absolute;top:0;bottom:0;left:0;z-index:2;width:45%;padding:2.5rem 3.5rem 2rem 2.4rem;display:flex;flex-direction:column;justify-content:center;background:#FBF4E6;clip-path:polygon(0 0, calc(100% - 48px) 0, 100% 100%, 0 100%)}
+
+        .dest-hero-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:38px;height:38px;border-radius:50%;border:none;display:grid;place-items:center;background:rgba(255,255,255,.92);color:var(--egy-dark,#1E120A);font-size:.95rem;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer;transition:background .15s,transform .15s}
+        .dest-hero-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.06)}
+        .dest-hero-arrow.prev{right:4.6rem;left:auto}
+        .dest-hero-arrow.next{right:1rem}
+        .dest-hero-dots{position:absolute;bottom:1.1rem;right:1.5rem;left:auto;z-index:4;display:flex;justify-content:center;gap:.4rem}
+        .dest-hero-dot{width:7px;height:7px;border-radius:999px;border:none;padding:0;background:rgba(255,255,255,.8);cursor:pointer;transition:all .25s}
+        .dest-hero-dot.is-active{width:20px;background:var(--dash-primary,#C8832A)}
+
+        .dest-hero-top{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.1rem 1.4rem;flex-wrap:wrap;pointer-events:none}
+        .dest-hero-top > *{pointer-events:auto}
+        .dest-back{display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .75rem;border-radius:999px;background:#FBF4E6;color:var(--dash-primary);font-size:.72rem;font-weight:800;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+        .dest-back:hover{color:var(--dash-primary-hover)}
+        .dest-actions{display:flex;gap:.5rem}
+        .dest-btn{display:inline-flex;align-items:center;gap:.45rem;padding:.52rem .95rem;border-radius:9px;border:1px solid transparent;font-size:.7rem;font-weight:800;text-decoration:none;cursor:pointer;transition:filter .15s,transform .15s;box-shadow:0 3px 12px rgba(0,0,0,.16)}
+        .dest-btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+        .dest-btn-edit{color:#fff;background:linear-gradient(135deg,#E8A045,#C8832A);border-color:#C8832A}
+        .dest-btn-delete{color:#fff;background:linear-gradient(135deg,#C0392B,#9F1D17);border-color:#9F1D17}
+        .dest-btn-trip{color:#fff;background:var(--dash-green);border-color:var(--dash-green);box-shadow:none}
+        .dest-btn-back{color:var(--dash-text-secondary);background:#fff;border-color:var(--dash-border);box-shadow:none}
+        .dest-btn-back:hover{color:var(--dash-primary);border-color:var(--dash-primary)}
+
+        .dest-kicker{display:inline-flex;align-items:center;gap:.45rem;align-self:flex-start;padding:.36rem .8rem;border-radius:999px;background:#fff;border:1px solid rgba(200,131,42,.35);color:var(--dash-primary);font-size:.6rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
+        .dest-title{margin:.9rem 0 .15rem;font-family:'Cinzel',serif;font-size:clamp(1.8rem,3.6vw,2.75rem);font-weight:700;color:var(--egy-dark,#1E120A);text-transform:uppercase;letter-spacing:.02em;line-height:1.15}
+        .dest-arabic{margin:0 0 1.25rem;font-size:1.02rem;color:#B37424;font-weight:700}
+        .dest-desc{margin:1.05rem 0 1.15rem;color:var(--dash-text-secondary);font-size:.85rem;line-height:1.65}
+        
+        .dest-chips{display:flex;flex-wrap:wrap;gap:.6rem;margin-top: 0;}
+        .dest-chip{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .75rem;border-radius:999px;border:1px solid var(--dash-border);background:#fff;color:var(--dash-text-secondary);font-size:.66rem;font-weight:800;transition:transform .2s}
+        .dest-chip:hover{transform:translateY(-1px)}
+        .dest-chip .bi{color:var(--dash-primary)}
+        
+        .dest-chip-gold{background:rgba(200,131,42,.12);border-color:rgba(200,131,42,.4);color:#9a6518}
+        .dest-chip-gold .bi{color:#C8832A}
+        .dest-chip-good{background:#d1e7dd;border-color:#a3cfbb;color:#0f5132}
+        .dest-chip-good .bi{color:#0f5132}
+        .dest-chip-warn{background:#fff3cd;border-color:#ffe69c;color:#664d03}
+        .dest-chip-warn .bi{color:#664d03}
+        .dest-chip-bad{background:#f8d7da;border-color:#f1aeb5;color:#842029}
+        .dest-chip-bad .bi{color:#842029}
+
+        /* ---------- Two-column layout ---------- */
+        .dest-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:1.1rem;margin-top:1.1rem;align-items:start}
+        .dest-card{border:1px solid var(--dash-border);border-radius:16px;background:var(--dash-card-bg);box-shadow:var(--dash-shadow-sm);overflow:hidden;margin-bottom:1.1rem}
+        .dest-card-head{display:flex;align-items:center;gap:.55rem;padding:.85rem 1.1rem;border-bottom:1px solid var(--dash-border);font-size:.78rem;letter-spacing:.02em}
+        .dest-card-head i{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;color:var(--dash-primary);background:var(--dash-primary-light);font-size:.85rem}
+        .dest-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7rem;padding:1.1rem}
+        .dest-field{min-width:0;padding:.7rem .8rem;border:1px solid var(--dash-border);border-radius:10px;background:#FBF9F5}
+        .dest-label{display:flex;align-items:center;gap:.4rem;color:var(--dash-text-muted);font-size:.58rem;font-weight:900;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.32rem}
+        .dest-label .bi{color:var(--dash-primary)}
+        .dest-value{display:block;color:var(--dash-text-primary);font-size:.8rem;font-weight:750;overflow-wrap:anywhere}
+        .dest-status{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .6rem;border-radius:999px;font-size:.64rem;font-weight:900;border:1px solid transparent}
+        .dest-status.good{color:#0f5132;background:#d1e7dd;border-color:#a3cfbb}
+        .dest-status.warn{color:#664d03;background:#fff3cd;border-color:#ffe69c}
+        .dest-status.bad{color:#842029;background:#f8d7da;border-color:#f1aeb5}
+        .dest-yes{display:inline-flex;align-items:center;gap:.35rem;color:var(--dash-green);font-weight:800}
+        .dest-no{display:inline-flex;align-items:center;gap:.35rem;color:var(--dash-rose);font-weight:800}
+        .dest-note{display:flex;gap:.55rem;align-items:flex-start;margin:0 1.1rem 1.1rem;padding:.85rem 1rem;border-radius:11px;background:#FDF6EC;border:1px solid #E8A045;color:#7A5B1E;font-size:.74rem;line-height:1.5}
+        .dest-note .bi{color:#C8832A;margin-top:.1rem}
+
+        /* ---------- Gallery ---------- */
+        .dest-gallery{position:relative;padding:1rem 1.1rem 1.3rem}
+        .dest-gallery-track{display:flex;gap:.8rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:.2rem .1rem .5rem;scrollbar-width:none}
+        .dest-gallery-track::-webkit-scrollbar{display:none}
+        .dest-gallery-slide{flex:0 0 calc(25% - .6rem);aspect-ratio:3/4;border-radius:12px;overflow:hidden;scroll-snap-align:start;display:block;background:#EFE7D8;box-shadow:var(--dash-shadow-sm)}
+        .dest-gallery-slide img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+        .dest-gallery-slide:hover img{transform:scale(1.06)}
+        .dest-gallery-slide.img-error img{display:none}
+        .dest-gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:34px;height:34px;border-radius:50%;border:none;display:grid;place-items:center;background:rgba(255,255,255,.95);color:var(--egy-dark,#1E120A);font-size:.85rem;box-shadow:0 4px 14px rgba(0,0,0,.16);cursor:pointer;transition:transform .15s}
+        .dest-gallery-arrow:hover{transform:translateY(-50%) scale(1.08)}
+        .dest-gallery-arrow.prev{left:.35rem}
+        .dest-gallery-arrow.next{right:.35rem}
+        .dest-gallery-dots{display:flex;justify-content:center;gap:.4rem;margin-top:.45rem}
+        .dest-gallery-dot{width:7px;height:7px;border-radius:999px;border:none;padding:0;background:#D8CFC0;cursor:pointer;transition:all .25s}
+        .dest-gallery-dot.is-active{width:20px;background:var(--dash-primary,#C8832A)}
+        .dest-gallery-empty{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:2.4rem 1rem;color:var(--dash-text-muted);font-size:.78rem;font-weight:700}
+        .dest-gallery-empty .bi{font-size:1.5rem;color:#C8B898}
+
+        /* ---------- Aside: map / GIS ---------- */
+        .dest-map-wrap{padding:1.1rem 1.1rem .4rem}
+        .dest-view-map{display:flex;justify-content:center;align-items:center;gap:.45rem;width:100%;padding:.62rem;border-radius:10px;background:var(--egy-dark,#1E120A);color:#fff;font-size:.68rem;font-weight:800;letter-spacing:.09em;text-decoration:none;margin-bottom:.75rem;transition:background .15s}
+        .dest-view-map:hover{background:#C8832A;color:#fff}
+        .dest-map-frame{width:100%;height:205px;border:1px solid var(--dash-border);border-radius:12px;display:block;filter:grayscale(.25) contrast(.98)}
+        .dest-map-empty{display:flex;align-items:center;justify-content:center;gap:.5rem;height:150px;border:1px dashed var(--dash-border);border-radius:12px;color:var(--dash-text-muted);font-size:.75rem;font-weight:700}
+        .dest-coords{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;padding:.4rem 1.1rem 1.1rem}
+        .dest-coords .dest-field{padding:.55rem .65rem}
+
+        /* ---------- Additional info / footer ---------- */
+        .dest-extra{margin-top:0}
+        .dest-extra .dest-fields{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}
+        .dest-footer{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.2rem}
+        .dest-toast{position:fixed;right:1.4rem;bottom:6.4rem;z-index:1070;background:var(--egy-dark,#1E120A);color:#fff;padding:.55rem 1rem;border-radius:10px;font-size:.74rem;font-weight:700;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+        .dest-toast.show{opacity:1;transform:translateY(0)}
+
+        /* ---------- Floating action buttons ---------- */
+        .dest-fabs{position:fixed;right:22px;bottom:160px;z-index:1060;display:flex;flex-direction:column;gap:10px}
+        .dest-fab{width:46px;height:46px;border-radius:50%;border:none;display:grid;place-items:center;color:#fff;font-size:1.05rem;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.2);transition:transform .15s,filter .15s}
+        .dest-fab:hover{transform:translateY(-2px);filter:brightness(1.08)}
+        .dest-fab-fav{background:linear-gradient(135deg,#E8A045,#C8832A)}
+
+        /* ---------- Responsive ---------- */
+        @@media(max-width:992px){
+            .dest-hero-panel{width:52%;padding-right:3rem}
+        }
+        @@media(max-width:768px){
+            .dest-hero{min-height:0;display:flex;flex-direction:column}
+            .dest-hero-top{position:relative;top:auto;left:auto;right:auto;flex-direction:column;align-items:flex-start;gap:.5rem;padding:1rem;pointer-events:auto;order:0}
+            .dest-hero-panel{position:relative;top:auto;bottom:auto;left:auto;width:100%;clip-path:none;padding:1.2rem 1.2rem 1.4rem;order:1}
+            .dest-hero-media{position:relative;inset:auto;height:320px;order:2}
+            .dest-hero-dots{left:0;right:0;justify-content:center}
+            .dest-hero-arrow.prev{left:.9rem;right:auto}
+            .dest-hero-arrow.next{right:.9rem}
+            .dest-actions{width:100%}
+            .dest-actions .dest-btn{flex:1;justify-content:center}
+            .dest-back{background:#FBF4E6;color:var(--dash-primary)}
+            .dest-layout{grid-template-columns:1fr}
+            .dest-gallery-slide{flex:0 0 80%}
+            .dest-coords{grid-template-columns:1fr}
+            .dest-detail-page{padding:1rem .8rem 2.5rem}
         }
     </style>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            'use strict';
+
+            /* ---- Hero slideshow: auto-advance every 7 seconds (only when > 1 photo) ---- */
+            var slides = Array.prototype.slice.call(document.querySelectorAll('#destHeroSlides .dest-hero-slide'));
+            var dots = Array.prototype.slice.call(document.querySelectorAll('#destHeroDots .dest-hero-dot'));
+            var prevBtn = document.querySelector('[data-hero-prev]');
+            var nextBtn = document.querySelector('[data-hero-next]');
+
+            if (slides.length > 1) {
+                var idx = 0;
+                var timer = null;
+
+                function show(n) {
+                    idx = (n + slides.length) % slides.length;
+                    slides.forEach(function (s, i) { s.classList.toggle('is-active', i === idx); });
+                    dots.forEach(function (d, i) { d.classList.toggle('is-active', i === idx); });
+                    restart();
+                }
+                function restart() {
+                    clearInterval(timer);
+                    timer = setInterval(function () { show(idx + 1); }, 7000);
+                }
+                if (prevBtn) prevBtn.addEventListener('click', function () { show(idx - 1); });
+                if (nextBtn) nextBtn.addEventListener('click', function () { show(idx + 1); });
+                dots.forEach(function (d) {
+                    d.addEventListener('click', function () { show(parseInt(d.getAttribute('data-hero-dot'), 10)); });
+                });
+                restart();
+            }
+
+            /* ---- Gallery scroll-snap carousel ---- */
+            var track = document.getElementById('destGalleryTrack');
+            if (track) {
+                var gDots = Array.prototype.slice.call(document.querySelectorAll('#destGalleryDots .dest-gallery-dot'));
+                var gPrev = document.querySelector('[data-gallery-prev]');
+                var gNext = document.querySelector('[data-gallery-next]');
+
+                function gSlideWidth() {
+                    var s = track.querySelector('.dest-gallery-slide');
+                    if (!s) return 300;
+                    return s.getBoundingClientRect().width + parseFloat(getComputedStyle(track).gap || 12);
+                }
+                function gIndex() {
+                    return Math.round(track.scrollLeft / gSlideWidth());
+                }
+                function gScrollTo(i) {
+                    var max = Math.max(0, track.scrollWidth - track.clientWidth);
+                    track.scrollTo({ left: Math.min(i * gSlideWidth(), max), behavior: 'smooth' });
+                }
+                function gSync() {
+                    var i = gIndex();
+                    gDots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
+                }
+                if (gPrev) gPrev.addEventListener('click', function () { gScrollTo(gIndex() - 1); });
+                if (gNext) gNext.addEventListener('click', function () { gScrollTo(gIndex() + 1); });
+                gDots.forEach(function (d) {
+                    d.addEventListener('click', function () { gScrollTo(parseInt(d.getAttribute('data-gallery-dot'), 10)); });
+                });
+                var ticking = false;
+                track.addEventListener('scroll', function () {
+                    if (!ticking) {
+                        requestAnimationFrame(function () { gSync(); ticking = false; });
+                        ticking = true;
+                    }
+                });
+                gSync();
+            }
+        })();
+    </script>
 }

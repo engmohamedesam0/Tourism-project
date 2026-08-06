@@ -143,6 +143,14 @@ namespace Tourist_Project_MVC.Controllers
             }
             ViewBag.BackUrl = backUrl;
 
+            // Render the redesigned record page when the destination exists in the
+            // database (hero image slideshow, Basic/Visiting/Location/GIS cards...).
+            // SmartDetails remains the fallback for ArcGIS-only features.
+            if (destination != null)
+            {
+                return View("Details", destination);
+            }
+
             return View("SmartDetails", new DestinationSmartDetailsVM
             {
                 Fields = snapshot.Fields,
