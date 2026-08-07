@@ -47,6 +47,12 @@
         var historyDeleteUrlTemplate = panel.getAttribute('data-history-delete-url-template') || '';
         var historyEmptyText = panel.getAttribute('data-history-empty-text') || 'No saved conversations yet.';
         var historyErrorText = panel.getAttribute('data-history-error-text') || 'Could not load history.';
+        var starterUrl = panel.getAttribute('data-starter-url') || '';
+        var confirmUrl = panel.getAttribute('data-confirm-url') || '';
+        var cancelUrl = panel.getAttribute('data-cancel-url') || '';
+        var starterConfirmText = 'Confirm';
+        var starterCancelText = 'Cancel';
+        var processingText = 'Working on it…';
 
         // ============================================================
         // State
@@ -56,6 +62,15 @@
         var sending = false;
         var currentSessionId = null;
         var historyPanel = document.getElementById('aiWidgetHistory');
+
+        // Role-aware starter questions (role comes from the SERVER — never
+        // hard-coded on the frontend; authorization itself stays server-side).
+        var currentRole = 'Guest';
+        var starterQuestions = [];
+        var starterGreeting = '';
+        var starterLoaded = false;
+        var pendingActionToken = null;
+        var pendingActionSummary = null;
 
         var btnRect = { x: 0, y: 0, width: 58, height: 58 };
         var panelRect = { x: 0, y: 0, width: 380, height: 520 };
@@ -380,15 +395,19 @@
                     messagesEl.innerHTML = '';
                     history = [];
                     currentSessionId = null;
-                    // Re-add welcome message
-                    var desc = panel.getAttribute('data-welcome-text') || panel.querySelector('.ai-chat-bubble') ? '' : '';
+                    pendingActionToken = null;
+                    pendingActionSummary = null;
+                    // Re-add the role-aware welcome message + starter chips.
                     var welcomeWrap = document.createElement('div');
                     welcomeWrap.className = 'ai-chat-msg ai-chat-msg-assistant';
+                    welcomeWrap.id = 'aiChatWelcomeMsg';
                     var welcomeBubble = document.createElement('div');
                     welcomeBubble.className = 'ai-chat-bubble';
-                    welcomeBubble.textContent = panel.getAttribute('data-welcome-text') || 'Hello! How can I help you today?';
+                    welcomeBubble.id = 'aiChatWelcome';
+                    welcomeBubble.textContent = starterGreeting || 'Hello! How can I help you today?';
                     welcomeWrap.appendChild(welcomeBubble);
                     messagesEl.appendChild(welcomeWrap);
+                    renderStarterChips();
                     menuDropdown.classList.remove('ai-menu-visible');
                     if (input) input.focus();
                 });
@@ -400,7 +419,20 @@
                     messagesEl.innerHTML = '';
                     history = [];
                     currentSessionId = null;
+                    pendingActionToken = null;
+                    pendingActionSummary = null;
                     // Start a fresh client-side conversation without deleting saved history.
+                    // Re-add the welcome message + starter chips.
+                    var welcomeWrap = document.createElement('div');
+                    welcomeWrap.className = 'ai-chat-msg ai-chat-msg-assistant';
+                    welcomeWrap.id = 'aiChatWelcomeMsg';
+                    var welcomeBubble = document.createElement('div');
+                    welcomeBubble.className = 'ai-chat-bubble';
+                    welcomeBubble.id = 'aiChatWelcome';
+                    welcomeBubble.textContent = starterGreeting || 'Hello! How can I help you today?';
+                    welcomeWrap.appendChild(welcomeBubble);
+                    messagesEl.appendChild(welcomeWrap);
+                    renderStarterChips();
                     menuDropdown.classList.remove('ai-menu-visible');
                     if (input) input.focus();
                 });
@@ -729,6 +761,173 @@
         }
 
         // ============================================================
+        // Role-aware starter questions
+        // ============================================================
+        async function loadStarterQuestions() {
+            if (!starterUrl || starterLoaded) return;
+            try {
+                var response = await fetch(starterUrl, {
+                    credentials: 'same-origin',
+                    headers: {
+                        'RequestVerificationToken': getAntiforgeryToken(),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                if (!response.ok) return;
+                var data = await response.json();
+                if (data && Array.isArray(data.questions)) {
+                    currentRole = data.role || 'Guest';
+                    starterQuestions = data.questions.slice(0, 3);
+                    starterGreeting = data.greeting || '';
+                    starterLoaded = true;
+                    var welcomeEl = document.getElementById('aiChatWelcome');
+                    if (welcomeEl && starterGreeting) {
+                        welcomeEl.textContent = starterGreeting;
+                    }
+                }
+            } catch (err) {
+                // silently keep default greeting
+            }
+        }
+
+        function renderStarterChips() {
+            var welcomeMsg = document.getElementById('aiChatWelcomeMsg');
+            if (!welcomeMsg || starterQuestions.length === 0) return;
+            // Only show chips while the conversation is still empty.
+            if (messagesEl.querySelector('.ai-chat-msg-user')) return;
+
+            var existing = messagesEl.querySelector('.ai-chat-starter-wrap');
+            if (existing) return;
+
+            var wrap = document.createElement('div');
+            wrap.className = 'ai-chat-starter-wrap';
+            var title = document.createElement('div');
+            title.className = 'ai-chat-starter-title';
+            title.textContent = 'Try asking:';
+            wrap.appendChild(title);
+
+            starterQuestions.forEach(function (q) {
+                var chip = document.createElement('button');
+                chip.type = 'button';
+                chip.className = 'ai-chat-starter-chip';
+                chip.textContent = q;
+                chip.addEventListener('click', function () {
+                    // Clicking a starter question behaves like typing it — the
+                    // conversation continues from there exactly as free-form chat.
+                    removeStarterChips();
+                    sendMessage(q);
+                });
+                wrap.appendChild(chip);
+            });
+
+            // Insert chips right after the welcome bubble.
+            welcomeMsg.parentNode.insertBefore(wrap, welcomeMsg.nextSibling);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        function removeStarterChips() {
+            var existing = messagesEl.querySelector('.ai-chat-starter-wrap');
+            if (existing) existing.remove();
+        }
+
+        // ============================================================
+        // Action confirmation UI (Confirm / Cancel pending actions)
+        // ============================================================
+        function appendConfirmRow(summary, token) {
+            pendingActionToken = token;
+            pendingActionSummary = summary || '';
+
+            var wrap = document.createElement('div');
+            wrap.className = 'ai-chat-msg ai-chat-msg-assistant';
+            var bubble = document.createElement('div');
+            bubble.className = 'ai-chat-bubble ai-chat-confirm-bubble';
+            bubble.textContent = summary || 'Do you want me to go ahead?';
+            wrap.appendChild(bubble);
+
+            var row = document.createElement('div');
+            row.className = 'ai-chat-confirm-row';
+
+            var confirmBtn = document.createElement('button');
+            confirmBtn.type = 'button';
+            confirmBtn.className = 'ai-chat-confirm-btn ai-chat-confirm-yes';
+            confirmBtn.textContent = starterConfirmText;
+            confirmBtn.addEventListener('click', function () {
+                sendPendingAction('confirm', token, confirmBtn, row);
+            });
+
+            var cancelBtn = document.createElement('button');
+            cancelBtn.type = 'button';
+            cancelBtn.className = 'ai-chat-confirm-btn ai-chat-confirm-no';
+            cancelBtn.textContent = starterCancelText;
+            cancelBtn.addEventListener('click', function () {
+                sendPendingAction('cancel', token, cancelBtn, row);
+            });
+
+            row.appendChild(confirmBtn);
+            row.appendChild(cancelBtn);
+            wrap.appendChild(row);
+            messagesEl.appendChild(wrap);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        async function sendPendingAction(action, token, clickedBtn, row) {
+            if (!row) return;
+            var url = action === 'confirm' ? confirmUrl : cancelUrl;
+            if (!url) return;
+
+            var buttons = row.querySelectorAll('.ai-chat-confirm-btn');
+            buttons.forEach(function (b) { b.disabled = true; });
+            if (clickedBtn) clickedBtn.textContent = processingText;
+            setSending(true);
+
+            var typingEl = appendTyping();
+            try {
+                var response = await fetch(url, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'RequestVerificationToken': getAntiforgeryToken(),
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token: token })
+                });
+                typingEl.remove();
+
+                if (!response.ok) {
+                    appendMessage('error', errorText);
+                    buttons.forEach(function (b) { b.disabled = false; });
+                    if (clickedBtn) clickedBtn.textContent = action === 'confirm' ? starterConfirmText : starterCancelText;
+                    return;
+                }
+
+                var data = await response.json();
+                row.remove();
+                pendingActionToken = null;
+                pendingActionSummary = null;
+
+                var reply = data && data.reply ? data.reply : errorText;
+                var extraOpts = {};
+                if (data && data.tripSaved) extraOpts.tripId = data.tripPlanId;
+                if (data && data.photoUrls && data.photoUrls.length > 0) extraOpts.photos = data.photoUrls;
+                appendMessage('assistant', reply, extraOpts);
+                history.push({ role: 'assistant', content: reply });
+
+                if (data && data.chatSessionId) {
+                    currentSessionId = data.chatSessionId;
+                }
+            } catch (err) {
+                typingEl.remove();
+                appendMessage('error', errorText);
+                buttons.forEach(function (b) { b.disabled = false; });
+                if (clickedBtn) clickedBtn.textContent = action === 'confirm' ? starterConfirmText : starterCancelText;
+            } finally {
+                setSending(false);
+                if (input) input.focus();
+            }
+        }
+
+        // ============================================================
         // Message helpers (preserved from original)
         // ============================================================
         function appendMessage(role, text, options) {
@@ -814,6 +1013,9 @@
                 messagesEl.innerHTML = '';
                 history = [];
                 currentSessionId = data.id;
+                pendingActionToken = null;
+                pendingActionSummary = null;
+                removeStarterChips();
                 if (data.messages && Array.isArray(data.messages)) {
                     data.messages.forEach(function (m) {
                         appendMessage(m.role, m.content);
@@ -834,6 +1036,11 @@
         async function sendMessage(text) {
             appendMessage('user', text);
             history.push({ role: 'user', content: text });
+            // Starter chips are "initial" helpers — remove them once the
+            // conversation actually starts.
+            removeStarterChips();
+            pendingActionToken = null;
+            pendingActionSummary = null;
 
             var typingEl = appendTyping();
             setSending(true);
@@ -870,6 +1077,12 @@
                 if (data && data.photoUrls && data.photoUrls.length > 0) extraOpts.photos = data.photoUrls;
                 appendMessage('assistant', reply, extraOpts);
                 history.push({ role: 'assistant', content: reply });
+
+                // A state-changing action was pre-validated and is waiting for
+                // the user's confirmation — render the Confirm/Cancel row.
+                if (data && data.pendingActionToken) {
+                    appendConfirmRow(data.pendingActionSummary || reply, data.pendingActionToken);
+                }
 
                 if (history.length > MAX_HISTORY) {
                     history = history.slice(history.length - MAX_HISTORY);
@@ -925,6 +1138,12 @@
 
             // Menu
             setupMenu();
+
+            // Role-aware starter questions: fetch once (role provided by the
+            // server), then render the chips when the widget opens.
+            loadStarterQuestions().then(function () {
+                renderStarterChips();
+            });
 
             // Always start with panel closed on navigation (only floating button visible)
             closeWidget();

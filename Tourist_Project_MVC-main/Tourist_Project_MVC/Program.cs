@@ -13,6 +13,8 @@ using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.Services;
+using Tourist_Project_MVC.Services.AiAgent;
+using Tourist_Project_MVC.Services.AiTools;
 namespace Tourist_Project_MVC
 {
     public class Program
@@ -86,13 +88,39 @@ namespace Tourist_Project_MVC
 
             builder.Services.AddScoped<IArcGISSyncService, ArcGISSyncService>();
 
-            // AI chat widget (Gemini-backed). A typed HttpClient with a sane
-            // timeout — the Gemini call can take a few seconds, especially
-            // with tool calling involved.
-            builder.Services.AddHttpClient<IAiChatService, AiChatService>(client =>
+            // AI chat widget (Gemini-backed role-aware agent). The typed HttpClient
+            // lives on the orchestrator with a generous timeout — the Gemini call
+            // can take several seconds, especially with tool calling involved.
+            builder.Services.AddHttpClient<IAiAgentOrchestrator, AiAgentOrchestrator>(client =>
             {
-                client.Timeout = TimeSpan.FromSeconds(60);
+                client.Timeout = TimeSpan.FromSeconds(90);
             });
+
+            // OpenAI fallback used ONLY when the primary provider (Gemini) reports
+            // quota/credit exhaustion. Receives the same context the Gemini request
+            // would have received; disabled while OpenAI:ApiKey is empty.
+            builder.Services.AddHttpClient<IOpenAiFallbackService, OpenAiFallbackService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(90);
+            });
+
+            // Role-aware AI agent services:
+            //  - AiIdentityResolver: server-side auth state (user/role/tourist/sponsor)
+            //  - AiPendingActionStore: in-memory confirmation store (singleton)
+            //  - AiToolRegistry + per-role tool sets: role-filtered, ownership-checked actions
+            //  - IChatHistoryService: chat-session persistence (tourists)
+            //  - IAiStarterQuestionsService: role-based starter questions
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IAiIdentityResolver, AiIdentityResolver>();
+            builder.Services.AddSingleton<AiPendingActionStore>();
+            builder.Services.AddScoped<GuestAiTools>();
+            builder.Services.AddScoped<TouristAiTools>();
+            builder.Services.AddScoped<SponsorAiTools>();
+            builder.Services.AddScoped<AdminAiTools>();
+            builder.Services.AddScoped<IAiToolRegistry, AiToolRegistry>();
+            builder.Services.AddScoped<IChatHistoryService, ChatHistoryService>();
+            builder.Services.AddScoped<IAiStarterQuestionsService, AiStarterQuestionsService>();
+            builder.Services.AddScoped<IAiChatService, AiChatService>();
 
             // Explicit header name so [ValidateAntiForgeryToken] accepts the token sent
             // via the "RequestVerificationToken" header on JSON fetch() calls (used by
@@ -194,6 +222,49 @@ namespace Tourist_Project_MVC
                         }
                     };
                 });
+            // External OAuth login providers (Google / Facebook) for the website.
+            // SignInScheme must be the Identity external cookie so SignInManager's
+            // ExternalLogin* flow can read the provider result and link it to an
+            // ApplicationUser. Credentials come from appsettings.json or user-secrets
+            // ("Authentication:Google:*" / "Authentication:Facebook:*").
+            //
+            // The schemes are ALWAYS registered so the buttons stay live. ASP.NET Core
+            // validates OAuth options eagerly on the first request (the auth middleware
+            // initializes every handler), so an empty ClientId would crash the whole
+            // site — hence the "not-configured" fallback placeholder when user-secrets
+            // are missing: validation passes, the app runs, and the moment real
+            // credentials are added they take effect without any code change. The
+            // AccountController additionally short-circuits the challenge with a
+            // friendly message when a provider is not yet configured.
+            bool ProviderConfigured(string provider) =>
+                !string.IsNullOrWhiteSpace(builder.Configuration[$"Authentication:{provider}:ClientId"]) &&
+                !string.IsNullOrWhiteSpace(builder.Configuration[$"Authentication:{provider}:ClientSecret"]);
+
+            // Reads an OAuth credential, treating null AND empty/whitespace values
+            // as "not configured". A bare `?? "not-configured"` fallback is NOT
+            // enough: appsettings.json contains literal "" placeholders, and `??`
+            // only catches null — an empty string would flow into the OAuth
+            // options and fail eager validation with the same ClientId error.
+            string OAuthValue(string provider, string key)
+            {
+                var value = builder.Configuration[$"Authentication:{provider}:{key}"];
+                return string.IsNullOrWhiteSpace(value) ? "not-configured" : value;
+            }
+
+            builder.Services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = OAuthValue("Google", "ClientId");
+                    options.ClientSecret = OAuthValue("Google", "ClientSecret");
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                })
+                .AddFacebook(options =>
+                {
+                    options.ClientId = OAuthValue("Facebook", "ClientId");
+                    options.ClientSecret = OAuthValue("Facebook", "ClientSecret");
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                });
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("MobileApp", policy =>

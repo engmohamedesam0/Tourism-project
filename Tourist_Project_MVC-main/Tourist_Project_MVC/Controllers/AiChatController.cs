@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Security.Claims;
 using System.Text.Json;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.Services;
+using Tourist_Project_MVC.Services.AiAgent;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -19,21 +19,18 @@ namespace Tourist_Project_MVC.Controllers
     //   - Website: ASP.NET Identity cookie + CSRF (antiforgery) header, exactly
     //     as before.
     //   - Mobile app: "Authorization: Bearer {jwt}" header (token obtained from
-    //     POST /api/auth/login). No antiforgery check for these requests — CSRF
-    //     protection exists to stop a browser being tricked into resending a
-    //     cookie it holds automatically; a bearer token is never attached
-    //     automatically by anything, so the same attack doesn't apply.
+    //     POST /api/auth/login). No antiforgery check for these requests.
     //
-    // Chat history ownership: every conversation is stamped with the email of
-    // the authenticated user (resolved server-side from the auth identity via
-    // UserManager — NEVER from frontend input). All history reads/writes/deletes
-    // are filtered by that email, so users can only ever see their own chats.
-    //
-    // Anonymous website visitors can still ask general questions. When a bearer
-    // token is supplied by mobile, however, it must be valid and belong to a User.
+    // The role-aware agent layer (AiIdentityResolver -> AiAgentOrchestrator ->
+    // AiToolRegistry -> existing repositories/controllers) derives the current
+    // user, role and ownership server-side. The frontend and the AI model never
+    // supply identity values.
     public class AiChatController : Controller
     {
         private readonly IAiChatService _aiChatService;
+        private readonly IAiAgentOrchestrator _orchestrator;
+        private readonly IAiIdentityResolver _identityResolver;
+        private readonly IAiStarterQuestionsService _starterQuestions;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITouristRepository _touristRepo;
         private readonly IChatSessionRepository _chatSessionRepo;
@@ -42,6 +39,9 @@ namespace Tourist_Project_MVC.Controllers
 
         public AiChatController(
             IAiChatService aiChatService,
+            IAiAgentOrchestrator orchestrator,
+            IAiIdentityResolver identityResolver,
+            IAiStarterQuestionsService starterQuestions,
             UserManager<ApplicationUser> userManager,
             ITouristRepository touristRepo,
             IChatSessionRepository chatSessionRepo,
@@ -49,65 +49,14 @@ namespace Tourist_Project_MVC.Controllers
             ILogger<AiChatController> logger)
         {
             _aiChatService = aiChatService;
+            _orchestrator = orchestrator;
+            _identityResolver = identityResolver;
+            _starterQuestions = starterQuestions;
             _userManager = userManager;
             _touristRepo = touristRepo;
             _chatSessionRepo = chatSessionRepo;
             _antiforgery = antiforgery;
             _logger = logger;
-        }
-
-        // Resolves the authenticated user (ApplicationUser) whose identity is
-        // attached to this request — cookie (website, CSRF-validated) or bearer
-        // JWT (mobile app). Returns null when there is no valid authenticated
-        // "User"-role identity; the caller decides how to treat that.
-        private async Task<ApplicationUser?> ResolveAuthenticatedUserAsync()
-        {
-            var hasBearerToken = HasBearerToken();
-
-            var hasIdentityCookie = Request.Cookies.ContainsKey(".AspNetCore.Identity.Application");
-
-            ClaimsPrincipal identity;
-
-            if (hasBearerToken)
-            {
-                var authResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
-                if (!authResult.Succeeded || authResult.Principal == null)
-                {
-                    return null;
-                }
-                identity = authResult.Principal;
-            }
-            else if (hasIdentityCookie)
-            {
-                try
-                {
-                    await _antiforgery.ValidateRequestAsync(HttpContext);
-                }
-                catch (AntiforgeryValidationException)
-                {
-                    return null;
-                }
-                identity = User;
-            }
-            else
-            {
-                identity = User;
-            }
-
-            if (identity.Identity?.IsAuthenticated != true || !identity.IsInRole("User"))
-            {
-                return null;
-            }
-
-            return await _userManager.GetUserAsync(identity);
-        }
-
-        private async Task<Tourist?> ResolveTouristAsync(CancellationToken ct = default)
-        {
-            var appUser = await ResolveAuthenticatedUserAsync();
-            if (appUser == null) return null;
-
-            return _touristRepo.GetOrCreateByApplicationUser(appUser);
         }
 
         private bool HasBearerToken()
@@ -147,6 +96,10 @@ namespace Tourist_Project_MVC.Controllers
             }
         }
 
+        // ============================================================
+        // Chat
+        // ============================================================
+
         [HttpPost]
         public async Task<IActionResult> Send([FromForm] AiChatRequestVM request, CancellationToken ct)
         {
@@ -157,24 +110,22 @@ namespace Tourist_Project_MVC.Controllers
                 return BadRequest(new { error = "A message, image, or audio file is required." });
             }
 
-            var appUser = await ResolveAuthenticatedUserAsync();
-            if (HasBearerToken() && appUser == null)
+            var identity = await _identityResolver.ResolveAsync(ct);
+            if (HasBearerToken() && !identity.IsAuthenticated)
                 return Unauthorized(new { error = "Invalid or expired session." });
-
-            Tourist? tourist = appUser != null ? _touristRepo.GetOrCreateByApplicationUser(appUser) : null;
 
             // Never trust a ChatSessionId blindly: a stale/foreign id must not
             // abort the user's message, and must not let them continue someone
             // else's conversation.
-            if (request.ChatSessionId.HasValue && appUser != null)
+            if (request.ChatSessionId.HasValue && identity.User != null)
             {
                 var session = await _chatSessionRepo.GetByIdAsync(request.ChatSessionId.Value);
                 if (session != null)
                 {
-                    if (!OwnsSession(session, appUser, tourist))
+                    if (!OwnsSession(session, identity.User, identity.Tourist))
                         return StatusCode(403, new { error = "Forbidden" });
                 }
-                // session == null (deleted/stale) -> service starts a new conversation.
+                // session == null (deleted/stale) -> the service starts a new conversation.
             }
             else if (request.ChatSessionId.HasValue)
             {
@@ -182,14 +133,62 @@ namespace Tourist_Project_MVC.Controllers
                 request.ChatSessionId = null;
             }
 
-            var result = await _aiChatService.GetReplyAsync(request, tourist, appUser?.Email, ct);
+            var result = await _aiChatService.GetReplyAsync(request, identity, ct);
             return Json(result);
         }
+
+        // ============================================================
+        // Role-aware starter questions (role derived server-side)
+        // ============================================================
+
+        [HttpGet]
+        public async Task<IActionResult> StarterQuestions(CancellationToken ct)
+        {
+            var identity = await _identityResolver.ResolveAsync(ct);
+            return Json(_starterQuestions.GetForRole(identity.Role));
+        }
+
+        // ============================================================
+        // Action confirmation (Confirm / Cancel pending actions)
+        // ============================================================
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmPendingAction([FromBody] AiConfirmRequestVM model, CancellationToken ct)
+        {
+            var identity = await _identityResolver.ResolveAsync(ct);
+            if (HasBearerToken() && !identity.IsAuthenticated)
+                return Unauthorized(new { error = "Invalid or expired session." });
+
+            if (model == null || string.IsNullOrWhiteSpace(model.Token))
+                return BadRequest(new { error = "A confirmation token is required." });
+
+            var result = await _orchestrator.ConfirmActionAsync(model.Token.Trim(), identity, ct);
+            return Json(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelPendingAction([FromBody] AiConfirmRequestVM model, CancellationToken ct)
+        {
+            var identity = await _identityResolver.ResolveAsync(ct);
+            if (HasBearerToken() && !identity.IsAuthenticated)
+                return Unauthorized(new { error = "Invalid or expired session." });
+
+            if (model == null || string.IsNullOrWhiteSpace(model.Token))
+                return BadRequest(new { error = "A confirmation token is required." });
+
+            var result = await _orchestrator.CancelActionAsync(model.Token.Trim(), identity, ct);
+            return Json(result);
+        }
+
+        // ============================================================
+        // History (unchanged behavior)
+        // ============================================================
 
         [HttpGet]
         public async Task<IActionResult> GetHistory(CancellationToken ct)
         {
-            var appUser = await ResolveAuthenticatedUserAsync();
+            var identity = await _identityResolver.ResolveAsync(ct);
+            var appUser = identity.User;
             if (appUser == null)
             {
                 if (HasBearerToken())
@@ -204,9 +203,10 @@ namespace Tourist_Project_MVC.Controllers
 
             // Legacy: rows saved before the UserEmail column existed but still
             // owned by this user via their Tourist record.
-            var tourist = _touristRepo.GetOrCreateByApplicationUser(appUser);
-            var legacy = _chatSessionRepo.GetByTouristId(tourist.Id)
-                .Where(s => string.IsNullOrEmpty(s.UserEmail));
+            var tourist = identity.Tourist;
+            var legacy = tourist != null
+                ? _chatSessionRepo.GetByTouristId(tourist.Id).Where(s => string.IsNullOrEmpty(s.UserEmail))
+                : Enumerable.Empty<ChatSession>();
 
             var sessions = byEmail
                 .Concat(legacy)
@@ -228,7 +228,8 @@ namespace Tourist_Project_MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> GetHistorySession(int id, CancellationToken ct)
         {
-            var appUser = await ResolveAuthenticatedUserAsync();
+            var identity = await _identityResolver.ResolveAsync(ct);
+            var appUser = identity.User;
             if (appUser == null)
             {
                 if (HasBearerToken())
@@ -240,8 +241,7 @@ namespace Tourist_Project_MVC.Controllers
             if (session == null)
                 return NotFound();
 
-            var tourist = _touristRepo.GetOrCreateByApplicationUser(appUser);
-            if (!OwnsSession(session, appUser, tourist))
+            if (!OwnsSession(session, appUser, identity.Tourist))
                 return StatusCode(403, new { error = "Forbidden" });
 
             var messages = JsonSerializer.Deserialize<List<AiChatMessageVM>>(session.MessagesJson,
@@ -252,7 +252,8 @@ namespace Tourist_Project_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteSession(int id, CancellationToken ct)
         {
-            var appUser = await ResolveAuthenticatedUserAsync();
+            var identity = await _identityResolver.ResolveAsync(ct);
+            var appUser = identity.User;
             if (appUser == null)
             {
                 if (HasBearerToken())
@@ -264,8 +265,7 @@ namespace Tourist_Project_MVC.Controllers
             if (session == null)
                 return NotFound();
 
-            var tourist = _touristRepo.GetOrCreateByApplicationUser(appUser);
-            if (!OwnsSession(session, appUser, tourist))
+            if (!OwnsSession(session, appUser, identity.Tourist))
                 return StatusCode(403, new { error = "Forbidden" });
 
             _chatSessionRepo.Delete(id);

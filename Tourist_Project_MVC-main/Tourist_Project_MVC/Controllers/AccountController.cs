@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
@@ -20,7 +22,8 @@ namespace Tourist_Project_MVC.Controllers
         private readonly TouristContext _context;
         private readonly IWebHostEnvironment _env;
         private readonly IGamificationService _gamificationService;
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, TouristContext context, IWebHostEnvironment env, IGamificationService gamificationService)
+        private readonly IConfiguration _config;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, TouristContext context, IWebHostEnvironment env, IGamificationService gamificationService, IConfiguration config)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -29,6 +32,7 @@ namespace Tourist_Project_MVC.Controllers
             this._context = context;
             this._env = env;
             this._gamificationService = gamificationService;
+            this._config = config;
         }
         [HttpGet]
         public IActionResult Register()
@@ -257,6 +261,132 @@ namespace Tourist_Project_MVC.Controllers
             await signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }
+
+        // =========================================================
+        // External (social) login — Google & Facebook
+        // =========================================================
+
+        // Step 1: POST from the social buttons — redirects the browser to the
+        // external provider (Google / Facebook). The provider sends the user back
+        // to ExternalLoginCallback when the flow completes.
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+        {
+            // The social buttons are always visible, so guard against clicking one
+            // whose credentials are not configured yet — without this the browser
+            // would bounce to the provider with an invalid client id.
+            if (!IsProviderConfigured(provider))
+            {
+                TempData["SocialLoginError"] =
+                    $"{provider} login is not configured yet. Set the ClientId/ClientSecret " +
+                    "via .NET User Secrets (dotnet user-secrets set \"Authentication:" + provider +
+                    ":ClientId\" ...) and restart the app.";
+                return RedirectToAction("Login");
+            }
+
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
+            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(properties, provider);
+        }
+
+        // Step 2: provider redirect target — links the external identity to an
+        // ApplicationUser (creating one on first social sign-in), signs the user
+        // in, and redirects to the protected page or the Explore home.
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
+        {
+            returnUrl ??= Url.Content("~/");
+
+            if (remoteError != null)
+            {
+                ModelState.AddModelError("", $"Error from external provider: {remoteError}");
+                return View("Login");
+            }
+
+            var info = await signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                ModelState.AddModelError("", "Unable to load external login information. Please try again.");
+                return View("Login");
+            }
+
+            // Account already linked to this provider → sign straight in.
+            var signInResult = await signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if (signInResult.Succeeded)
+            {
+                return RedirectToLocal(returnUrl);
+            }
+
+            if (signInResult.IsLockedOut)
+            {
+                ModelState.AddModelError("", "This account is locked out. Please try again later.");
+                return View("Login");
+            }
+
+            // First sign-in with this provider → create or link the account.
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(email))
+            {
+                ModelState.AddModelError("", "The external provider did not return an email address, so an account could not be created.");
+                return View("Login");
+            }
+
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName) ?? "",
+                    LastName = info.Principal.FindFirstValue(ClaimTypes.Surname) ?? ""
+                };
+
+                var createResult = await userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    foreach (var err in createResult.Errors)
+                        ModelState.AddModelError("", err.Description);
+                    return View("Login");
+                }
+
+                await userManager.AddToRoleAsync(user, "User");
+            }
+
+            var addLoginResult = await userManager.AddLoginAsync(user, info);
+            if (!addLoginResult.Succeeded)
+            {
+                foreach (var err in addLoginResult.Errors)
+                    ModelState.AddModelError("", err.Description);
+                return View("Login");
+            }
+
+            await signInManager.SignInAsync(user, isPersistent: false);
+
+            // Link/auto-create the Tourist record so the trip planner works
+            // immediately after a social sign-in (same as the Register flow).
+            _touristRepo.GetOrCreateByApplicationUser(user);
+            _touristRepo.Save();
+
+            return RedirectToLocal(returnUrl);
+        }
+
+        private IActionResult RedirectToLocal(string? returnUrl)
+        {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+            return RedirectToAction("Index", "Explore");
+        }
+
+        private bool IsProviderConfigured(string provider) =>
+            !string.IsNullOrWhiteSpace(_config[$"Authentication:{provider}:ClientId"]) &&
+            !string.IsNullOrWhiteSpace(_config[$"Authentication:{provider}:ClientSecret"]);
 
         [AllowAnonymous]
         public IActionResult AccessDenied(string? returnUrl = null)

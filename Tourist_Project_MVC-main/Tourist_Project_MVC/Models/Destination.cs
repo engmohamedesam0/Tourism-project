@@ -37,7 +37,10 @@ namespace Tourist_Project_MVC.Models
         [NotMapped]
         public List<string> PhotoUrlList => string.IsNullOrWhiteSpace(PhotoUrls)
             ? new List<string>()
-            : PhotoUrls.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+            : PhotoUrls.Split(
+
+                new[] { "\r\n", "\n", "|" },
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
 
         public List<Mission> Missions { get; set; } = new List<Mission>();
         public List<TripDestination> TripDestinations { get; set; } = new List<TripDestination>();

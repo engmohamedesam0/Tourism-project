@@ -9,9 +9,11 @@
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">
-        <i class="bi bi-info-circle-fill me-2"></i> @Localizer["SponsorApproval_EmptyMessage"].Value
-    </div>
+    @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+    {
+        { "EmptyStateTitle", "No Pending Approvals" },
+        { "EmptyStateDescription", "There are no sponsor applications waiting for approval right now." }
+    })
 }
 else
 {

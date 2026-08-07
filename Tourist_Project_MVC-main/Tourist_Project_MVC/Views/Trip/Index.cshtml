@@ -122,6 +122,26 @@
             </div>
         </div>
     }
+    else
+    {
+        <div class="mb-5">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h3 class="section-title mb-0" style="font-family:'Cinzel',serif; color:var(--text-primary); font-weight: 700;">
+                    <i class="bi bi-journal-bookmark me-2 text-gold"></i>@Localizer["Trip_MySavedTrips"].Value
+                </h3>
+                <span class="badge rounded-pill px-3 py-2 fw-semibold" style="background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; font-size: 0.85rem;">
+                    0 Saved Expeditions
+                </span>
+            </div>
+            <div class="card border-0 shadow-sm rounded-4" style="background: var(--bg-surface); border: 1px solid var(--border-subtle) !important;">
+                @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                {
+                    { "EmptyStateTitle", "No Trips Yet" },
+                    { "EmptyStateDescription", "You haven't created any trips yet. Use the trip studio below to plan your first expedition." }
+                })
+            </div>
+        </div>
+    }
 
     <!-- BUILDER FORM -->
     <form asp-action="Create" method="post" id="tripForm">
@@ -259,9 +279,14 @@
                     </div>
 
                     <div class="destination-picker p-2 rounded-3">
-<div id="tripEmptyFilter" class="text-muted small p-3 text-center" style="display:none">
-                             <i class="bi bi-exclamation-circle text-gold fs-4 d-block mb-1"></i>
-                             @Localizer["Trip_NoMatch"].Value
+<div id="tripEmptyFilter" style="display:@(Model.Stops.Any() ? "none" : "")">
+                             @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                             {
+                                 { "EmptyStateTitle", "No Destinations Match" },
+                                 { "EmptyStateDescription", "No destinations match your current filters. Adjust the budget, interests or search to see more options." },
+                                 { "EmptyStateActionText", "Clear Filters" },
+                                 { "EmptyStateCompact", true }
+                             })
                          </div>
                         @for (int i = 0; i < Model.Stops.Count; i++)
                         {
@@ -827,6 +852,19 @@
             var visible = $('.picker-row:visible');
             var empty = document.getElementById('tripEmptyFilter');
             if (empty) empty.style.display = visible.length === 0 ? '' : 'none';
+        }
+
+        // Clear Filters button inside the picker empty state
+        var tripEmptyFilter = document.getElementById('tripEmptyFilter');
+        if (tripEmptyFilter) {
+            tripEmptyFilter.addEventListener('click', function (e) {
+                if (!e.target.closest('.empty-state-action')) return;
+                $('#tripInterests input').prop('checked', false);
+                $('#Budget').val('');
+                $('#destSearchInput').val('');
+                $('.picker-row').show();
+                applyTripFilter();
+            });
         }
 
         $('#StartDate, #EndDate').on('change', updateDuration);

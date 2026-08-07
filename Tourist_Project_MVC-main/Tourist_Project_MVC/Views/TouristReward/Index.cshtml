@@ -123,18 +123,24 @@
 
             @if (!Model.AvailableRewards.Any())
             {
-                <div class="text-center py-5 text-muted card border-0 shadow-sm rounded-4">
-                    <i class="bi bi-gift text-gold" style="font-size:3rem; opacity: 0.7;"></i>
-                    <h5 class="fw-bold text-dark mb-1 mt-3">@Localizer["Reward_NoneAvailable"].Value</h5>
-                    <p class="small text-muted mb-0">Check back later for new vouchers and offers.</p>
+                <div class="card border-0 shadow-sm rounded-4">
+                    @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                    {
+                        { "EmptyStateTitle", "No Rewards Available" },
+                        { "EmptyStateDescription", "There are currently no rewards to display. Check back later for new vouchers and offers." }
+                    })
                 </div>
             }
             else
             {
-                <div id="rewardEmptyFilter" class="text-center py-5 text-muted card border-0 shadow-sm rounded-4 mb-3" style="display:none">
-                    <i class="bi bi-exclamation-circle text-gold fs-2 mb-2"></i>
-                    <h5 class="fw-bold text-dark mb-1">@Localizer["Reward_NoMatch"].Value</h5>
-                    <p class="small text-muted mb-0">Try adjusting your filters or search terms.</p>
+                <div id="rewardEmptyFilter" class="card border-0 shadow-sm rounded-4 mb-3" style="display:none">
+                    @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                    {
+                        { "EmptyStateTitle", "No Results Found" },
+                        { "EmptyStateDescription", "We couldn't find anything matching your search or filters. Try adjusting your search terms or filter settings." },
+                        { "EmptyStateActionText", "Clear Filters" },
+                        { "EmptyStateCompact", true }
+                    })
                 </div>
 
                 <div class="row g-3">
@@ -253,6 +259,21 @@
             </div>
         </div>
     }
+    else
+    {
+        <div class="mt-5 mb-4">
+            <h3 class="section-title mb-3" style="font-family:'Cinzel',serif; color:var(--text-primary); font-weight: 700;">
+                <i class="bi bi-ticket-perforated me-2 text-gold"></i> @Localizer["Reward_MyVouchers"].Value
+            </h3>
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid var(--border-subtle) !important;">
+                @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                {
+                    { "EmptyStateTitle", "No Vouchers Yet" },
+                    { "EmptyStateDescription", "You haven't redeemed any rewards yet. Explore the available rewards above and redeem your first voucher." }
+                })
+            </div>
+        </div>
+    }
 
     <!-- ACHIEVEMENTS & BADGES SECTION -->
     <div class="mt-5 mb-4" id="badges-section">
@@ -319,9 +340,12 @@
         }
         else
         {
-            <div class="text-center py-4 text-muted">
-                <i class="bi bi-trophy fs-1 mb-2" style="opacity: 0.4;"></i>
-                <p>No badges defined yet.</p>
+            <div class="card border-0 shadow-sm rounded-4">
+                @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                {
+                    { "EmptyStateTitle", "No Badges Yet" },
+                    { "EmptyStateDescription", "No badges are available on the platform yet. Check back soon to start collecting achievements." }
+                })
             </div>
         }
     </div>
@@ -496,6 +520,16 @@
             var typeSelect = document.getElementById('rewardTypeFilter');
             var maxPointsInput = document.getElementById('rewardMaxPoints');
             var emptyEl = document.getElementById('rewardEmptyFilter');
+            var clearRewardFilters = document.getElementById('rewardEmptyFilter');
+            if (clearRewardFilters) {
+                clearRewardFilters.addEventListener('click', function (e) {
+                    if (!e.target.closest('.empty-state-action')) return;
+                    searchInput.value = '';
+                    typeSelect.value = '';
+                    maxPointsInput.value = '';
+                    applyRewardFilter();
+                });
+            }
 
             function applyRewardFilter() {
                 var search = (searchInput.value || '').toLowerCase().trim();

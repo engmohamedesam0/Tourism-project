@@ -87,10 +87,12 @@
                     <h6 class="fw-bold mb-3"><i class="bi bi-ticket-perforated me-1 text-primary"></i> @Localizer["TouristSupport_YourTickets"].Value</h6>
                     @if (!Model.Tickets.Any())
                     {
-                        <div class="text-center py-5 text-muted d-flex flex-column align-items-center justify-content-center">
-                            <object type="image/svg+xml" data="~/lottie/Customer Support.svg" style="width: 150px; height: 150px; margin-bottom: 20px; pointer-events: none;"></object>
-                            <p class="mb-0 mt-2 fw-semibold" style="color: var(--egy-primary);">@Localizer["TouristSupport_NoTickets"].Value</p>
-                        </div>
+                        @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                        {
+                            { "EmptyStateTitle", "No Support Tickets" },
+                            { "EmptyStateDescription", "You haven't submitted any support tickets yet. If you need help, create a new ticket and our team will get back to you." },
+                            { "EmptyStateSvg", "~/lottie/Customer Support.svg" }
+                        })
                     }
                     else
                     {
