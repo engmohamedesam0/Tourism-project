@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
-
 namespace Tourist_Project_MVC.Controllers.Middlewares
 {
     public class UserExistsMiddleware
@@ -28,7 +27,13 @@ namespace Tourist_Project_MVC.Controllers.Middlewares
                     if (user == null)
                     {
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        await context.Response.WriteAsync("User no longer exists in the system.");
+                        context.Response.ContentType = "application/json";
+                        var errorResponse = new
+                        {
+                            success = false,
+                            message = "User no longer exists in the system."
+                        };
+                        await context.Response.WriteAsJsonAsync(errorResponse);
                         return;
                     }
                 }
