@@ -178,6 +178,13 @@ namespace Tourist_Project_MVC.Controllers
 
             _ticketService.Update(ticket);
 
+            // The ticket got an admin response — clear its "new ticket" bell notifications.
+            foreach (var n in _context.Notifications.Where(n =>
+                n.RecipientRole == "Admin" && n.RelatedEntityType == "SupportTicket"
+                && n.RelatedEntityId == ticket.Id && !n.IsRead).ToList())
+                n.IsRead = true;
+            _context.SaveChanges();
+
             if (!ticket.TouristId.HasValue)
             {
                 _notificationService.Create(
@@ -186,6 +193,18 @@ namespace Tourist_Project_MVC.Controllers
                     $"An admin responded to your support ticket: \"{ticket.Subject}\".",
                     "SupportTicket",
                     ticket.Id);
+            }
+            else
+            {
+                // Notify the tourist who submitted the ticket, in their bell box.
+                var tourist = _context.Tourists.FirstOrDefault(t => t.Id == ticket.TouristId.Value);
+                if (tourist?.ApplicationUserId != null)
+                {
+                    _notificationService.CreateForUser(
+                        "Tourist", tourist.ApplicationUserId, "TouristSupportResponse",
+                        $"An admin responded to your support ticket: \"{ticket.Subject}\".",
+                        "SupportTicket", ticket.Id);
+                }
             }
 
             return RedirectToAction("Details", new { id });
@@ -200,6 +219,13 @@ namespace Tourist_Project_MVC.Controllers
 
             ticket.Status = "Resolved";
             _ticketService.Update(ticket);
+
+            // The ticket is closed — clear its "new ticket" bell notifications.
+            foreach (var n in _context.Notifications.Where(n =>
+                n.RecipientRole == "Admin" && n.RelatedEntityType == "SupportTicket"
+                && n.RelatedEntityId == id && !n.IsRead).ToList())
+                n.IsRead = true;
+            _context.SaveChanges();
 
             return RedirectToAction("Details", new { id });
         }

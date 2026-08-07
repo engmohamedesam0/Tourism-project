@@ -65,22 +65,22 @@ namespace Tourist_Project_MVC.Services
             if (!syncResult.Success)
             {
                 Console.Error.WriteLine($"[DbInitializer] Destinations ArcGIS pull-sync failed: {syncResult.Error}");
-
-                // Only seed from local JSON if the table is completely empty.
-                if (!await context.Destinations.AnyAsync())
-                {
-                    Console.WriteLine("[DbInitializer] Seeding destinations from local destinations.json.");
-                    await SeedGeoAsync<Destination>(context, seedDir, "destinations.json",
-                        (e, el) =>
-                        {
-                            if (el.TryGetProperty("lat", out var lat) && el.TryGetProperty("lng", out var lng))
-                                e.Location = new Point(lng.GetDouble(), lat.GetDouble()) { SRID = 4326 };
-                        });
-                }
             }
-            else
+
+            // Only seed from local JSON if the table is completely empty. This covers
+            // every case where ArcGIS did not populate it: sync not configured (no-op),
+            // sync failed, or sync succeeded with zero features. Without destinations,
+            // dependent seeds (Missions, TripDestinations) would fail on their FK and
+            // abort the rest of the seeding (Notifications, SupportTickets, Approvals...).
+            if (!await context.Destinations.AnyAsync())
             {
-                Console.WriteLine($"[DbInitializer] Destinations ArcGIS pull-sync complete: {syncResult.AddedCount} synced.");
+                Console.WriteLine("[DbInitializer] Seeding destinations from local destinations.json.");
+                await SeedGeoAsync<Destination>(context, seedDir, "destinations.json",
+                    (e, el) =>
+                    {
+                        if (el.TryGetProperty("lat", out var lat) && el.TryGetProperty("lng", out var lng))
+                            e.Location = new Point(lng.GetDouble(), lat.GetDouble()) { SRID = 4326 };
+                    });
             }
 
             // Sync PostgreSQL ID sequence for Destinations table so any future identity inserts won't conflict.

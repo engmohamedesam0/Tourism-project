@@ -23,7 +23,8 @@ namespace Tourist_Project_MVC.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly IGamificationService _gamificationService;
         private readonly IConfiguration _config;
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, TouristContext context, IWebHostEnvironment env, IGamificationService gamificationService, IConfiguration config)
+        private readonly INotificationService _notificationService;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, TouristContext context, IWebHostEnvironment env, IGamificationService gamificationService, IConfiguration config, INotificationService notificationService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -33,6 +34,7 @@ namespace Tourist_Project_MVC.Controllers
             this._env = env;
             this._gamificationService = gamificationService;
             this._config = config;
+            this._notificationService = notificationService;
         }
         [HttpGet]
         public IActionResult Register()
@@ -104,6 +106,12 @@ namespace Tourist_Project_MVC.Controllers
                           };
                           _context.SponsorApprovalRequests.Add(request);
                           await _context.SaveChangesAsync();
+
+                          // Notify every admin that a new sponsor is waiting for approval.
+                          _notificationService.CreateForUser(
+                              "Admin", null, "NewSponsorApproval",
+                              $"New sponsor registration pending approval: {createdUser.FirstName} {createdUser.LastName}.",
+                              "SponsorApproval", request.Id);
 
                           return RedirectToAction("SponsorApprovalStatus", new { status = "submitted" });
                       }

@@ -122,6 +122,13 @@ namespace Tourist_Project_MVC.Controllers
                 }
 
                 _supportTicketService.Create(ticket);
+
+                // Notify admins about the new ticket so it shows in their bell box.
+                _notificationService.CreateForUser(
+                    "Admin", null, "NewSupportTicket",
+                    $"New support ticket from tourist {tourist.Name}: \"{ticket.Subject}\".",
+                    "SupportTicket", ticket.Id);
+
                 return RedirectToAction(nameof(Index));
             }
 

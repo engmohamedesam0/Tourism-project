@@ -377,6 +377,19 @@
                                             <i class="bi bi-person-gear me-2"></i> @Localizer["Nav_Accounts"].Value
                                         </a>
                                     </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="SponsorApproval" asp-action="Index">
+                                            <i class="bi bi-bell-fill me-2"></i> @Localizer["Nav_Approvals"].Value
+                                            @await Component.InvokeAsync("AdminNavBadges", new { badge = "approvals" })
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="AdminSupport" asp-action="Index">
+                                            <i class="bi bi-headset me-2"></i> @Localizer["Nav_SupportInbox"].Value
+                                            @await Component.InvokeAsync("AdminNavBadges", new { badge = "support" })
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                             <!-- Public discovery pages -->
@@ -390,6 +403,7 @@
                                 <a class="nav-link dropdown-toggle position-relative" href="#" id="sponsorDropdown"
                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-building me-1"></i> @Localizer["Nav_Sponsors"].Value
+                                    @await Component.InvokeAsync("AdminNavBadges")
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="sponsorDropdown">
                                     <li>
@@ -545,7 +559,7 @@
     <!-- AI Assistant widget: open/close toggle + live chat (see wwwroot/js/aiChat.js) -->
     <script src="~/js/aiChat.js" asp-append-version="true"></script>
 
-    <!-- Notification widget toggle (sponsor-only FAB) -->
+    <!-- Notification widget toggle (Admin / Sponsor / Tourist FAB) -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var btn = document.getElementById('notificationFabBtn');
@@ -555,34 +569,21 @@
             var markAllBtn = document.getElementById('markAllReadBtn');
             var loaded = false;
 
-            var notifEmptyHtml =
-                '<div class="text-center py-4 text-muted w-100 d-flex flex-column align-items-center justify-content-center">' +
-                    '<img src="/lottie/no data.svg" alt="No notifications" style="width: 130px; height: auto; margin-bottom: 12px; pointer-events: none;" />' +
-                    '<h6 class="mb-0 mt-2 fw-bold" style="color: var(--egy-primary);">You\'re all caught up 🏺</h6>' +
-                '</div>';
-
             function openNotif() {
                 panel.classList.add('notification-widget-open');
                 panel.setAttribute('aria-hidden', 'false');
                 btn.setAttribute('aria-expanded', 'true');
                 if (loaded || !panelBody) return;
                 loaded = true;
-                var role = btn.getAttribute('data-user-role');
-                if (role === 'Sponsor') {
-                    fetch('/SponsorNotification/Panel')
-                        .then(function (r) { return r.text(); })
-                        .then(function (html) {
-                            panelBody.innerHTML = html;
-                            formatRelativeTimes(panelBody);
-                        })
-                        .catch(function () {
-                            panelBody.innerHTML = '<div class="alert alert-danger m-3">Failed to load.</div>';
-                        });
-                } else {
-                    panelBody.innerHTML = notifEmptyHtml;
-                    var markAll = document.getElementById('markAllReadBtn');
-                    if (markAll) markAll.style.display = 'none';
-                }
+                fetch('/Notification/Panel')
+                    .then(function (r) { return r.text(); })
+                    .then(function (html) {
+                        panelBody.innerHTML = html;
+                        formatRelativeTimes(panelBody);
+                    })
+                    .catch(function () {
+                        panelBody.innerHTML = '<div class="alert alert-danger m-3">Failed to load.</div>';
+                    });
             }
 
             function closeNotif() {
@@ -611,7 +612,7 @@
                 markAllBtn.addEventListener('click', function () {
                     var f = document.getElementById('antiforgeryForm');
                     var token = f ? f.querySelector('input[name="__RequestVerificationToken"]').value : '';
-                    fetch('/SponsorNotification/MarkAllRead', {
+                    fetch('/Notification/MarkAllRead', {
                         method: 'POST',
                         headers: {
                             'RequestVerificationToken': token,
@@ -623,7 +624,7 @@
                         if (data && data.success) {
                             updateNotifBadge(data.unreadCount);
                             if (panelBody) {
-                                fetch('/SponsorNotification/Panel')
+                                fetch('/Notification/Panel')
                                     .then(function (r) { return r.text(); })
                                     .then(function (html) { panelBody.innerHTML = html; formatRelativeTimes(panelBody); });
                             }
@@ -662,12 +663,22 @@
                 return f ? f.querySelector('input[name="__RequestVerificationToken"]').value : '';
             }
 
-            function notifTarget(type, relId) {
-                if (!type) return null;
-                if (type === 'Reward') return '/SponsorReward/Edit/' + relId;
-                if (type === 'Redemption') return '/SponsorRedemption/Index';
-                if (type === 'SupportTicket') return '/SponsorNotification/Support';
-                if (type === 'TouristSupportTicket') return '/SponsorNotification/TouristTickets';
+            function notifTarget(relType, relId, role) {
+                if (!relType) return null;
+                if (role === 'Admin') {
+                    if (relType === 'SupportTicket') return '/AdminSupport/Details/' + relId;
+                    if (relType === 'SponsorApproval') return '/SponsorApproval';
+                    return null;
+                }
+                if (role === 'Sponsor') {
+                    if (relType === 'Reward') return '/SponsorReward/Edit/' + relId;
+                    if (relType === 'Redemption') return '/SponsorRedemption/Index';
+                    if (relType === 'SupportTicket') return '/SponsorNotification/SupportDetails/' + relId;
+                    if (relType === 'TouristSupportTicket') return '/SponsorNotification/TouristTicketDetails/' + relId;
+                    return null;
+                }
+                // Tourist (or any other signed-in role)
+                if (relType === 'SupportTicket') return '/TouristSupport/Details/' + relId;
                 return null;
             }
 
@@ -680,7 +691,7 @@
                     var id = item && item.getAttribute('data-notif-id');
                     if (!id) return;
                     delBtn.disabled = true;
-                    fetch('/SponsorNotification/DeleteNotification/' + id, {
+                    fetch('/Notification/DeleteNotification/' + id, {
                         method: 'POST',
                         headers: { 'X-Requested-With': 'XMLHttpRequest', 'RequestVerificationToken': getToken() }
                     })
@@ -698,8 +709,10 @@
                 var item = e.target.closest('.notification-item');
                 if (item && (e.target.closest('a') === null)) {
                     var id = item.getAttribute('data-notif-id');
-                    var target = notifTarget(item.getAttribute('data-related-type'), item.getAttribute('data-related-id'));
-                    fetch('/SponsorNotification/MarkRead/' + id, {
+                    var bellBtn = document.getElementById('notificationFabBtn');
+                    var role = bellBtn ? bellBtn.getAttribute('data-user-role') : null;
+                    var target = notifTarget(item.getAttribute('data-related-type'), item.getAttribute('data-related-id'), role);
+                    fetch('/Notification/MarkRead/' + id, {
                         method: 'POST',
                         headers: { 'X-Requested-With': 'XMLHttpRequest', 'RequestVerificationToken': getToken() }
                     })
@@ -874,8 +887,9 @@
     </div>
 
     <!-- ============================================================
-         FLOATING NOTIFICATION PANEL (slide-out like AI widget; sponsors
-         load live notifications, other roles see an empty state)
+         FLOATING NOTIFICATION PANEL (slide-out like AI widget; every
+         signed-in role — Admin / Sponsor / Tourist — loads their own
+         live notifications into the box)
          ============================================================ -->
     <div class="notification-widget-panel" id="notificationPanel" aria-hidden="true">
         <div class="notification-widget-header">

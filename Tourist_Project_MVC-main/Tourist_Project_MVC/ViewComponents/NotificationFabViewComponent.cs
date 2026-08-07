@@ -21,36 +21,21 @@ namespace Tourist_Project_MVC.ViewComponents
             if (!User!.Identity!.IsAuthenticated)
                 return Content(string.Empty);
 
-            var userId = ((System.Security.Claims.ClaimsPrincipal)User).FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
+            var (role, sponsorId, userId) = _notificationService.ResolveRecipient(
+                (System.Security.Claims.ClaimsPrincipal)User, _sponsorRepo);
 
-            string role;
-            int unreadCount = 0;
-            int sponsorId = 0;
+            // For admins, materialize the pending-approval / open-ticket bell
+            // notifications up front so the badge matches the nav counts.
+            if (role == "Admin")
+                _notificationService.ScanAndCreateForAdmin();
 
-            if (User.IsInRole("Sponsor"))
-            {
-                role = "Sponsor";
-                sponsorId = _sponsorRepo.GetAll()
-                    .Where(s => s.ApplicationUserId == userId)
-                    .Select(s => s.Id)
-                    .FirstOrDefault();
-
-                if (sponsorId != 0)
-                    unreadCount = _notificationService.GetUnreadCount(sponsorId);
-            }
-            else if (User.IsInRole("Admin"))
-            {
-                role = "Admin";
-            }
-            else
-            {
-                role = "Tourist";
-            }
+            int unreadCount = _notificationService.GetUnreadCount(role, sponsorId, userId);
 
             return View("Default", new NotificationBellVM
             {
                 UnreadCount = unreadCount,
-                SponsorId = sponsorId,
+                SponsorId = sponsorId ?? 0,
+                UserId = userId,
                 UserRole = role
             });
         }

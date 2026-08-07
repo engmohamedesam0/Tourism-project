@@ -76,6 +76,13 @@ namespace Tourist_Project_MVC.Controllers
             request.ReviewedDate = DateTime.Now;
             request.ReviewedByAdminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             _context.Update(request);
+
+            // The approval was handled — clear its admin bell notifications.
+            foreach (var n in _context.Notifications.Where(n =>
+                n.RecipientRole == "Admin" && n.RelatedEntityType == "SponsorApproval"
+                && n.RelatedEntityId == id && !n.IsRead).ToList())
+                n.IsRead = true;
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
@@ -94,6 +101,13 @@ namespace Tourist_Project_MVC.Controllers
             request.ReviewedDate = DateTime.Now;
             request.ReviewedByAdminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             _context.Update(request);
+
+            // The request was handled — clear its admin bell notifications.
+            foreach (var n in _context.Notifications.Where(n =>
+                n.RecipientRole == "Admin" && n.RelatedEntityType == "SponsorApproval"
+                && n.RelatedEntityId == id && !n.IsRead).ToList())
+                n.IsRead = true;
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
