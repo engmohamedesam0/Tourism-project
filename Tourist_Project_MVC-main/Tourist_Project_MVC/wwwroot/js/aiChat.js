@@ -21,7 +21,7 @@
         var STORAGE_KEY_OPEN = 'aiWidgetOpen';
         var STORAGE_KEY_VERSION = 'aiWidgetVersion';
         var STORAGE_KEY_PANEL_POS = 'aiWidgetPanelPosition';
-        var CURRENT_VERSION = 2;
+        var CURRENT_VERSION = 3;
 
         var SNAP_THRESHOLD = 80;
         var SNAP_MARGIN = 20;
@@ -107,7 +107,12 @@
         }
 
         function getViewport() {
-            return { width: window.innerWidth, height: window.innerHeight };
+            // Use the layout viewport (excludes scrollbars) so JS positions
+            // match CSS offsets like right: 24px / bottom: 24px exactly.
+            return {
+                width: document.documentElement.clientWidth || window.innerWidth,
+                height: document.documentElement.clientHeight || window.innerHeight
+            };
         }
 
         // ============================================================
@@ -201,6 +206,28 @@
         // ============================================================
         // Position / Size Management
         // ============================================================
+        // Right-edge FAB stack guard: the notification bell and the
+        // destination favorite FAB float on the right edge above the AI
+        // button. Keep the draggable AI button clear of them so the stack
+        // stays evenly spaced and right-aligned.
+        function overlapsRightFabStack(x, y) {
+            var vp = getViewport();
+            var w = btn.offsetWidth || btnRect.width;
+            var h = btn.offsetHeight || btnRect.height;
+            // Only guard the right-edge column (where the other FABs live)
+            if (x + w < vp.width - 90) return false;
+            var others = document.querySelectorAll('#notificationFabBtn, .dest-fab');
+            for (var i = 0; i < others.length; i++) {
+                var r = others[i].getBoundingClientRect();
+                if (!r.width && !r.height) continue; // hidden / not rendered
+                if (x < r.right - 4 && x + w > r.left + 4 &&
+                    y < r.bottom - 4 && y + h > r.top + 4) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         function applyBtnPosition(x, y, animate) {
             var vp = getViewport();
             btnRect.x = clamp(x, 0, vp.width - btnRect.width);
@@ -262,7 +289,12 @@
             if (btnCenterX < vp.width / 2) {
                 x = SNAP_MARGIN;
             } else {
-                x = vp.width - btnRect.width - SNAP_MARGIN;
+                // Align with the right-edge FAB stack (bell / favorite)
+                x = vp.width - (btn.offsetWidth || btnRect.width) - DEFAULT_RIGHT;
+                // Keep the stack tidy: never rest on top of the other icons
+                if (overlapsRightFabStack(x, y)) {
+                    y = vp.height - (btn.offsetHeight || btnRect.height) - DEFAULT_BOTTOM;
+                }
             }
 
             // Clamp vertical position within safe screen bounds
@@ -1110,6 +1142,14 @@
             var savedPos = loadPosition();
             var savedSize = loadSize();
             var wasOpen = loadOpenState();
+
+            // FAB stack guard: if the saved position would overlap the
+            // other right-edge floating icons (bell / favorite), fall back
+            // to the default slot so the stack stays clean.
+            if (savedPos && overlapsRightFabStack(savedPos.x, savedPos.y)) {
+                savedPos = null;
+                try { localStorage.removeItem(STORAGE_KEY_POS); } catch (e) {}
+            }
 
             // Button position
             if (savedPos) {

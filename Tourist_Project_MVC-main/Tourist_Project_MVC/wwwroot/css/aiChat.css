@@ -713,7 +713,7 @@
 
 .notification-fab {
     right: 24px !important;
-    bottom: 130px;
+    bottom: 98px;
     background: var(--egy-dark);
     color: var(--egy-light);
     box-shadow: 0 8px 22px rgba(30, 18, 10, 0.35);
@@ -926,7 +926,7 @@
 
     .notification-fab {
         right: 14px;
-        bottom: 110px;
+        bottom: 82px;
         width: 52px;
         height: 52px;
         font-size: 1.3rem;
