@@ -12,5 +12,7 @@
     public class CompleteMissionDto
     {
         public int MissionId { get; set; }
+        public string? VerificationToken { get; set; }
+        public string? VerificationPayload { get; set; }
     }
 }
