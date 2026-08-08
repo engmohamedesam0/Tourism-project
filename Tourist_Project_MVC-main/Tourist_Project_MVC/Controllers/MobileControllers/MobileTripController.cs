@@ -6,6 +6,7 @@ using Tourist_Project_MVC.DTOs;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 using Tourist_Project_MVC.Services;
+using Tourist_Project_MVC.Data;
 
 namespace Tourist_Project_MVC.Controllers.MobileControllers
 {
@@ -23,19 +24,22 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
         private readonly IDestinationRepository _destinationRepo;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IGamificationService _gamificationService;
+        private readonly TouristContext _context;
 
         public MobileTripController(
-            ITripPlanRepository tripPlanRepository,
-            ITouristRepository touristRepository,
-            IDestinationRepository destinationRepository,
             UserManager<ApplicationUser> userManager,
-            IGamificationService gamificationService)
+            ITouristRepository touristRepo,
+            ITripPlanRepository tripPlanRepo,
+            IDestinationRepository destinationRepo,
+            IGamificationService gamificationService,
+            TouristContext context)
         {
-            _tripPlanRepo = tripPlanRepository;
-            _touristRepo = touristRepository;
-            _destinationRepo = destinationRepository;
             _userManager = userManager;
+            _touristRepo = touristRepo;
+            _tripPlanRepo = tripPlanRepo;
+            _destinationRepo = destinationRepo;
             _gamificationService = gamificationService;
+            _context = context;
         }
 
         // Npgsql maps DateTime to "timestamp without time zone" and rejects any
@@ -246,12 +250,27 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             // Same award as the website's TripController.CompleteTrip.
             var (xpAdded, newBadges) = await _gamificationService.AwardXPAsync(tourist.Id, 75, "trip-complete");
 
+            // Query updated state
+            var progress = _context.UserProgress.FirstOrDefault(up => up.TouristId == tourist.Id);
+            var badgesEarned = _context.UserBadges.Count(ub => ub.TouristId == tourist.Id);
+            int currentXP = progress?.CurrentXP ?? 0;
+            var levelInfo = LevelDefinitions.GetLevel(currentXP);
+            var nextLevelXP = LevelDefinitions.GetNextLevelXP(currentXP);
+
             return Ok(new
             {
                 message = "Trip completed successfully",
                 status = trip.Status,
                 xpAdded,
-                newBadges = newBadges?.Select(b => new { b.Name, b.Icon }).ToList()
+                newBadges = newBadges?.Select(b => new { b.Name, b.Icon }).ToList(),
+                
+                // Return updated gamification state from DB
+                currentXP = currentXP,
+                level = levelInfo.Level,
+                levelLabel = levelInfo.Name,
+                nextLevelXP = nextLevelXP,
+                placesVisited = progress?.VisitedPlaces ?? 0,
+                badgesEarned = badgesEarned
             });
         }
 

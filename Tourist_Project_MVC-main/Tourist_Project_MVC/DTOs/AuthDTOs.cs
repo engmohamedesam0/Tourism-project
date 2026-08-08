@@ -1,4 +1,4 @@
-﻿// DTOs/AuthDTOs.cs
+// DTOs/AuthDTOs.cs
 namespace Tourist_Project_MVC.DTOs
 {
     public class RegisterDto
@@ -34,6 +34,13 @@ namespace Tourist_Project_MVC.DTOs
         public string Phone { get; set; }
         public string Country { get; set; }
         public string? ProfilePictureUrl { get; set; }
-
+        public int Level { get; set; }
+        public string LevelLabel { get; set; }
+        public int CurrentXP { get; set; }
+        public int NextLevelXP { get; set; }
+        public int PlacesVisited { get; set; }
+        public int BadgesEarned { get; set; }
+        public int LoginStreak { get; set; }
+        public string FeaturedBadge { get; set; }
     }
 }

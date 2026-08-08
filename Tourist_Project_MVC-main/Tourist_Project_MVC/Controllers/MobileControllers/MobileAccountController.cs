@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Npgsql.BackendMessages;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -21,7 +21,6 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManagerr;
         private readonly ILogger<MobileAccountController> logger;
         private readonly IConfiguration _config;
         private readonly TouristContext _context;
@@ -31,7 +30,6 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             (
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager,
             ILogger<MobileAccountController> logger,
             IConfiguration config,
             TouristContext context,
@@ -41,7 +39,6 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManagerr = roleManager;
             this.logger = logger;
             _config = config;
             _context = context;
@@ -112,6 +109,21 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 return Unauthorized(new AuthResponseDto { Success = false, Message = "Invalid email or password." });
 
             return Ok(await BuildAuthResponse(user, "Login successful."));
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized(new { success = false, message = "Invalid or expired session." });
+
+            return Ok(new
+            {
+                success = true,
+                user = await BuildUserDto(user)
+            });
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
@@ -269,27 +281,91 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 System.IO.File.Delete(oldPhysicalPath);
         }
 
-        private UserDto MapToUserDto(ApplicationUser user) => new UserDto
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            Phone = user.PhoneNumber,
-            Country = user.Nationality, // note: property is now "Nationality" per your model, see #3 below
-            ProfilePictureUrl = BuildProfilePictureUrl(user.ProfilePicturePath)
-        };
-
         private async Task<AuthResponseDto> BuildAuthResponse(ApplicationUser user, string message)
         {
-            var token = await GenerateJwtToken(user); // assuming you applied the async role-claims version from before
+            var token = await GenerateJwtToken(user);
+
             return new AuthResponseDto
             {
                 Success = true,
                 Token = token,
                 Message = message,
-                User = MapToUserDto(user)
+                User = await BuildUserDto(user)
             };
+        }
+
+        private async Task<UserDto> BuildUserDto(ApplicationUser user)
+        {
+            // 1. Fetch Tourist ID using the DB Context (Async)
+            var tourist = await _context.Tourists.FirstOrDefaultAsync(t => t.ApplicationUserId == user.Id);
+
+            // 2. Setup default gamification values for brand new users
+            int currentXP = 0;
+            int placesVisited = 0;
+            int badgesEarned = 0;
+            int loginStreak = 0;
+            
+            // 3. Query the actual UserProgress table if they have a Tourist profile
+            if (tourist != null)
+            {
+                var progress = await _context.UserProgress.FirstOrDefaultAsync(up => up.TouristId == tourist.Id);
+                if (progress != null)
+                {
+                    currentXP = progress.CurrentXP;
+                    loginStreak = progress.LoginStreak;
+                }
+
+                // Keep this consistent with the website profile: a place is
+                // counted once when it appears in a completed trip or mission.
+                var visitedFromMissions = await _context.UserMissions
+                    .Where(um => um.TouristId == tourist.Id && um.Status == "Completed")
+                    .Select(um => um.Mission!.DestinationId)
+                    .Distinct()
+                    .ToListAsync();
+
+                var visitedFromTrips = await _context.TripPlans
+                    .Where(tp => tp.TouristId == tourist.Id && tp.Status == "Completed")
+                    .SelectMany(tp => tp.TripDestinations)
+                    .Select(td => td.DestinationId)
+                    .Distinct()
+                    .ToListAsync();
+
+                placesVisited = visitedFromMissions
+                    .Union(visitedFromTrips)
+                    .Distinct()
+                    .Count();
+                
+                // Count how many badges this user has earned
+                badgesEarned = await _context.UserBadges.CountAsync(ub => ub.TouristId == tourist.Id);
+            }
+            
+            // 4. Calculate their real Level via LevelDefinitions
+            var levelInfo = LevelDefinitions.GetLevel(currentXP);
+            var nextLevelXP = LevelDefinitions.GetNextLevelXP(currentXP);
+
+            // 5. Build the complete DTO with their actual Identity AND Gamification stats
+            var userDto = new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Phone = user.PhoneNumber,
+                Country = user.Nationality,
+                ProfilePictureUrl = BuildProfilePictureUrl(user.ProfilePicturePath),
+                
+                // Gamification Mapping
+                Level = levelInfo.Level,
+                LevelLabel = levelInfo.Name,
+                CurrentXP = currentXP,
+                NextLevelXP = nextLevelXP,
+                PlacesVisited = placesVisited,
+                BadgesEarned = badgesEarned,
+                LoginStreak = loginStreak,
+                FeaturedBadge = levelInfo.Name // Defaulting their featured badge to their rank title
+            };
+
+            return userDto;
         }
     }
 }
