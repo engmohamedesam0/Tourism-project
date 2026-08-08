@@ -127,6 +127,64 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateMobileProfileDto dto)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized(new { success = false, message = "Invalid or expired session." });
+
+            if (dto == null)
+                return BadRequest(new { success = false, message = "Profile data is required." });
+
+            if (dto.FirstName != null && string.IsNullOrWhiteSpace(dto.FirstName)
+                || dto.LastName != null && string.IsNullOrWhiteSpace(dto.LastName)
+                || dto.Country != null && string.IsNullOrWhiteSpace(dto.Country))
+            {
+                return BadRequest(new { success = false, message = "Name and country values cannot be empty." });
+            }
+
+            if (dto.FirstName?.Trim().Length > 100
+                || dto.LastName?.Trim().Length > 100
+                || dto.Country?.Trim().Length > 100)
+            {
+                return BadRequest(new { success = false, message = "Name and country values cannot exceed 100 characters." });
+            }
+
+            if (dto.FirstName != null)
+                user.FirstName = dto.FirstName.Trim();
+            if (dto.LastName != null)
+                user.LastName = dto.LastName.Trim();
+            if (dto.Country != null)
+                user.Nationality = dto.Country.Trim();
+
+            var userUpdate = await _userManager.UpdateAsync(user);
+            if (!userUpdate.Succeeded)
+            {
+                var errors = string.Join(" ", userUpdate.Errors.Select(error => error.Description));
+                return BadRequest(new { success = false, message = errors });
+            }
+
+            if (dto.Interests != null)
+            {
+                var tourist = _touristRepo.GetOrCreateByApplicationUser(user);
+                tourist.TravelInterests = string.Join(", ", dto.Interests
+                    .Where(interest => !string.IsNullOrWhiteSpace(interest))
+                    .Select(interest => interest.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase));
+                _touristRepo.Update(tourist);
+                _touristRepo.Save();
+            }
+
+            return Ok(new
+            {
+                success = true,
+                message = "Profile updated successfully.",
+                user = await BuildUserDto(user)
+            });
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         [HttpPost("ProfilePicture")]
         [RequestSizeLimit(6 * 1024 * 1024)]
         public async Task<IActionResult> UploadProfilePicture(
@@ -352,6 +410,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 Email = user.Email,
                 Phone = user.PhoneNumber,
                 Country = user.Nationality,
+                Interests = ParseInterests(tourist?.TravelInterests),
                 ProfilePictureUrl = BuildProfilePictureUrl(user.ProfilePicturePath),
                 
                 // Gamification Mapping
@@ -366,6 +425,15 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             };
 
             return userDto;
+        }
+
+        private static List<string> ParseInterests(string? interests)
+        {
+            return string.IsNullOrWhiteSpace(interests)
+                ? new List<string>()
+                : interests.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
         }
     }
 }
