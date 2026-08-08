@@ -33,6 +33,7 @@ namespace Tourist_Project_MVC.DTOs
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Country { get; set; }
+        public List<string> Interests { get; set; } = new();
         public string? ProfilePictureUrl { get; set; }
         public int Level { get; set; }
         public string LevelLabel { get; set; }
@@ -42,5 +43,13 @@ namespace Tourist_Project_MVC.DTOs
         public int BadgesEarned { get; set; }
         public int LoginStreak { get; set; }
         public string FeaturedBadge { get; set; }
+    }
+
+    public class UpdateMobileProfileDto
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Country { get; set; }
+        public List<string>? Interests { get; set; }
     }
 }
