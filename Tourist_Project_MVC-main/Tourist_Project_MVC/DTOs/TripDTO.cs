@@ -20,6 +20,12 @@ namespace Tourist_Project_MVC.DTOs
         public int TripId { get; set; }
     }
 
+    public class UpdateTripDestinationsDto
+    {
+        public int TripId { get; set; }
+        public List<int> DestinationIds { get; set; } = new List<int>();
+    }
+
     public class TripSummaryDto
     {
         public int Id { get; set; }
