@@ -167,6 +167,58 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
             return Ok(ToDetailsDto(trip));
         }
 
+        [HttpPost("UpdateTripDestinations")]
+        public async Task<IActionResult> UpdateTripDestinations([FromBody] UpdateTripDestinationsDto dto)
+        {
+            var applicationUser = await _userManager.GetUserAsync(User);
+            if (applicationUser == null)
+            {
+                return Unauthorized();
+            }
+            var tourist = _touristRepo.GetOrCreateByApplicationUser(applicationUser);
+
+            var trip = _tripPlanRepo.GetByIdWithDetails(dto.TripId);
+            if (trip == null || trip.TouristId != tourist.Id)
+            {
+                return NotFound(new { message = "Trip not found." });
+            }
+            if (trip.Status == "Completed")
+            {
+                return Conflict(new { message = "Completed trips cannot be edited." });
+            }
+            if (dto.DestinationIds == null || !dto.DestinationIds.Any())
+            {
+                return BadRequest(new { message = "A trip must contain at least one destination." });
+            }
+
+            var orderedIds = dto.DestinationIds.Distinct().ToList();
+            var known = _destinationRepo.GetAll().Select(d => d.Id).ToHashSet();
+            var unknown = orderedIds.Where(id => !known.Contains(id)).ToList();
+            if (unknown.Any())
+            {
+                return BadRequest(new { message = $"Unknown destination(s): {string.Join(", ", unknown)}" });
+            }
+
+            var startDate = Normalize(trip.StartDate);
+            var endDate = Normalize(trip.EndDate);
+            _tripPlanRepo.RemoveTripDestinations(trip.Id);
+            foreach (var destinationId in orderedIds.Select((id, index) => new { id, index }))
+            {
+                _tripPlanRepo.AddStop(new TripDestination
+                {
+                    TripPlanId = trip.Id,
+                    DestinationId = destinationId.id,
+                    Visit_Order = destinationId.index + 1,
+                    ArrivalDate = startDate,
+                    DepartureDate = startDate.AddDays(1) > endDate ? endDate : startDate.AddDays(1),
+                });
+            }
+
+            _tripPlanRepo.Save();
+            var saved = _tripPlanRepo.GetByIdWithDetails(trip.Id);
+            return Ok(ToDetailsDto(saved ?? trip));
+        }
+
         [HttpPost("CompleteTrip")]
         public async Task<IActionResult> CompleteTrip([FromBody] TripIdDto dto)
         {
