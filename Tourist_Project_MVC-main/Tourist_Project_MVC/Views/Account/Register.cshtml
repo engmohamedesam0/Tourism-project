@@ -258,7 +258,7 @@
                         <label asp-for="Nationality">
                             @getLoc("Register_Nationality", "Nationality")
                         </label>
-                        <div class="input-wrap">
+                        <div class="input-wrap" id="nationalityWrap">
                             <svg class="field-icon"
                                  viewBox="0 0 24 24"
                                  fill="none"
@@ -270,8 +270,30 @@
                                 <path d="M4 9V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/>
                             </svg>
                             <input asp-for="Nationality"
+                                   id="nationalityInput"
+                                   role="combobox"
+                                   aria-expanded="false"
+                                   aria-controls="nationalityList"
+                                   aria-autocomplete="list"
+                                   aria-label="@getLoc("Register_Nationality", "Nationality")"
                                    placeholder="@getLoc("Register_NationalityPlaceholder", "e.g. Egyptian, American")"
-                                   autocomplete="off" />
+                                   autocomplete="off"
+                                   data-val-validnationality="@getLoc("Register_NationalityRequiredList", "Please select a nationality from the list.")" />
+                            <svg class="field-icon field-icon-right"
+                                 id="nationalityChevron"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2.2"
+                                 aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                            </svg>
+                            <ul class="nationality-list"
+                                id="nationalityList"
+                                role="listbox"
+                                aria-label="@getLoc("Register_Nationality", "Nationality")"></ul>
                         </div>
                         <span asp-validation-for="Nationality"
                               class="text-danger small mt-1 d-block"></span>
@@ -458,7 +480,87 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/login.css")" />
 
+<style>
+    /* =========================================================
+       NATIONALITY SEARCHABLE DROPDOWN
+       ========================================================= */
+    .field-icon-right {
+        left: auto !important;
+        right: 15px;
+        cursor: pointer;
+    }
+
+    .input-wrap.is-open .field-icon-right {
+        transform: rotate(180deg);
+    }
+
+    .nationality-list {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        right: 0;
+        z-index: 60;
+        max-height: 264px;
+        overflow-y: auto;
+        margin: 0;
+        padding: 6px;
+        list-style: none;
+        background: #ffffff;
+        border: 1px solid rgba(200, 131, 42, 0.35);
+        border-radius: 14px;
+        box-shadow: 0 18px 40px rgba(18, 12, 6, 0.18);
+        display: none;
+    }
+
+    .nationality-list.is-open {
+        display: block;
+    }
+
+    .nationality-list .nat-option {
+        padding: 9px 12px;
+        border-radius: 9px;
+        font-size: 14px;
+        color: #20262e;
+        cursor: pointer;
+        transition: background .15s ease, color .15s ease;
+    }
+
+    .nationality-list .nat-option:hover,
+    .nationality-list .nat-option.is-active {
+        background: linear-gradient(90deg, rgba(200, 131, 42, 0.16), rgba(200, 131, 42, 0.08));
+        color: #8a5a17;
+    }
+
+    .nationality-list .nat-empty {
+        padding: 12px;
+        font-size: 13px;
+        color: #9499a2;
+        text-align: center;
+    }
+
+    [data-theme="dark"] .nationality-list {
+        background: rgba(26, 18, 11, 0.97);
+        border-color: rgba(200, 131, 42, 0.45);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="dark"] .nationality-list .nat-option {
+        color: #E8DDD0;
+    }
+
+    [data-theme="dark"] .nationality-list .nat-option:hover,
+    [data-theme="dark"] .nationality-list .nat-option.is-active {
+        background: linear-gradient(90deg, rgba(200, 131, 42, 0.28), rgba(200, 131, 42, 0.12));
+        color: #f2d9a4;
+    }
+
+    [data-theme="dark"] .nationality-list .nat-empty {
+        color: #8B7D6B;
+    }
+</style>
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/nationalities.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
@@ -723,6 +825,182 @@
             submitBtn.classList.add('is-loading');
             submitBtn.disabled = true;
         });
+    }
+})();
+</script>
+
+<script>
+(function () {
+    'use strict';
+
+    /* =========================================================
+       NATIONALITY SEARCHABLE DROPDOWN
+       ========================================================= */
+
+    var input = document.getElementById('nationalityInput');
+    if (!input || !window.NATIONALITIES || !window.NATIONALITIES.length) { return; }
+
+    var wrap = document.getElementById('nationalityWrap');
+    var list = document.getElementById('nationalityList');
+    var chevron = document.getElementById('nationalityChevron');
+    var nationalities = window.NATIONALITIES.slice().sort(function (a, b) { return a.localeCompare(b); });
+
+    var matches = [];
+    var activeIndex = -1;
+    var isOpen = false;
+
+    function normalize(value) {
+        return String(value || '')
+            .trim()
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function matchesQuery(value) {
+        var q = normalize(value);
+        return q
+            ? nationalities.filter(function (n) { return normalize(n).indexOf(q) !== -1; })
+            : nationalities;
+    }
+
+    function open() {
+        if (isOpen) { return; }
+        isOpen = true;
+        list.classList.add('is-open');
+        if (wrap) { wrap.classList.add('is-open'); }
+        input.setAttribute('aria-expanded', 'true');
+    }
+
+    function close() {
+        if (!isOpen) { return; }
+        isOpen = false;
+        activeIndex = -1;
+        list.classList.remove('is-open');
+        if (wrap) { wrap.classList.remove('is-open'); }
+        input.setAttribute('aria-expanded', 'false');
+        input.removeAttribute('aria-activedescendant');
+    }
+
+    function setActive(index) {
+        activeIndex = index;
+        var items = list.querySelectorAll('.nat-option');
+        for (var i = 0; i < items.length; i++) {
+            var isActive = i === index;
+            items[i].classList.toggle('is-active', isActive);
+            items[i].setAttribute('aria-selected', isActive ? 'true' : 'false');
+        }
+        if (index >= 0) {
+            input.setAttribute('aria-activedescendant', 'natOption-' + index);
+            if (items[index] && items[index].scrollIntoView) {
+                items[index].scrollIntoView({ block: 'nearest' });
+            }
+        }
+    }
+
+    function render() {
+        list.innerHTML = '';
+        if (!matches.length) {
+            var empty = document.createElement('li');
+            empty.className = 'nat-empty';
+            empty.textContent = 'No matching nationality';
+            list.appendChild(empty);
+            activeIndex = -1;
+            input.removeAttribute('aria-activedescendant');
+            return;
+        }
+        matches.forEach(function (name, i) {
+            var li = document.createElement('li');
+            li.className = 'nat-option' + (i === activeIndex ? ' is-active' : '');
+            li.id = 'natOption-' + i;
+            li.setAttribute('role', 'option');
+            li.setAttribute('aria-selected', i === activeIndex ? 'true' : 'false');
+            li.textContent = name;
+
+            li.addEventListener('mousedown', function (event) {
+                event.preventDefault();
+                select(name);
+            });
+            li.addEventListener('mouseenter', function () { setActive(i); });
+            list.appendChild(li);
+        });
+        if (activeIndex >= 0) {
+            input.setAttribute('aria-activedescendant', 'natOption-' + activeIndex);
+            if (list.children[activeIndex] && list.children[activeIndex].scrollIntoView) {
+                list.children[activeIndex].scrollIntoView({ block: 'nearest' });
+            }
+        }
+    }
+
+    function filter() {
+        matches = matchesQuery(input.value);
+        activeIndex = matches.length ? 0 : -1;
+        render();
+        open();
+    }
+
+    function select(name) {
+        input.value = name;
+        input.focus();
+        close();
+        if (window.jQuery && jQuery.validator) {
+            try { jQuery(input).valid(); } catch (err) { /* ignore */ }
+        }
+    }
+
+    input.addEventListener('focus', filter);
+    input.addEventListener('input', filter);
+
+    input.addEventListener('keydown', function (event) {
+        var key = event.key;
+        if (key === 'ArrowDown') {
+            event.preventDefault();
+            if (!isOpen || !matches.length) { filter(); }
+            setActive(Math.min(activeIndex + 1, matches.length - 1));
+        } else if (key === 'ArrowUp') {
+            event.preventDefault();
+            if (!isOpen || !matches.length) { filter(); }
+            setActive(Math.max(activeIndex - 1, 0));
+        } else if (key === 'Enter') {
+            if (isOpen && matches.length) {
+                event.preventDefault();
+                select(matches[activeIndex >= 0 ? activeIndex : 0]);
+            }
+        } else if (key === 'Escape') {
+            close();
+        } else if (key === 'Tab') {
+            if (isOpen && matches.length && activeIndex >= 0) {
+                select(matches[activeIndex]);
+            } else {
+                close();
+            }
+        }
+    });
+
+    input.addEventListener('blur', function () {
+        window.setTimeout(close, 120);
+    });
+
+    if (chevron) {
+        chevron.addEventListener('mousedown', function (event) { event.preventDefault(); });
+        chevron.addEventListener('click', function () {
+            if (isOpen) { close(); } else { filter(); input.focus(); }
+        });
+    }
+
+    document.addEventListener('mousedown', function (event) {
+        if (wrap && !wrap.contains(event.target)) { close(); }
+    });
+
+    /* Validation: the chosen value must come from the list */
+    if (window.jQuery && jQuery.validator) {
+        jQuery.validator.addMethod('validnationality', function (value) {
+            var q = normalize(value);
+            return !q || nationalities.some(function (n) { return normalize(n) === q; });
+        }, 'Please select a nationality from the list.');
+        if (jQuery.validator.unobtrusive) {
+            jQuery.validator.unobtrusive.adapters.addBool('validnationality');
+        }
     }
 })();
 </script>

@@ -13,8 +13,8 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    [Migration("20260807202734_newmigration")]
-    partial class newmigration
+    [Migration("20260810144631_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -545,13 +545,19 @@ namespace Tourist_Project_MVC.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("RecipientRole")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecipientUserId")
+                        .HasColumnType("text");
+
                     b.Property<int?>("RelatedEntityId")
                         .HasColumnType("integer");
 
                     b.Property<string>("RelatedEntityType")
                         .HasColumnType("text");
 
-                    b.Property<int>("SponsorId")
+                    b.Property<int?>("SponsorId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Type")
@@ -1215,8 +1221,7 @@ namespace Tourist_Project_MVC.Migrations
                     b.HasOne("Tourist_Project_MVC.Models.Sponsor", null)
                         .WithMany()
                         .HasForeignKey("SponsorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Tourist_Project_MVC.Models.Redemption", b =>

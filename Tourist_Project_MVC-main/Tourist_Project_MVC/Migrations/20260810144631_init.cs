@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Tourist_Project_MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class newmigration : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -384,7 +384,9 @@ namespace Tourist_Project_MVC.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SponsorId = table.Column<int>(type: "integer", nullable: false),
+                    SponsorId = table.Column<int>(type: "integer", nullable: true),
+                    RecipientRole = table.Column<string>(type: "text", nullable: true),
+                    RecipientUserId = table.Column<string>(type: "text", nullable: true),
                     Type = table.Column<string>(type: "text", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false),
                     IsRead = table.Column<bool>(type: "boolean", nullable: false),
