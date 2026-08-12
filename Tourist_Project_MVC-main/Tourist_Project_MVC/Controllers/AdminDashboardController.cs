@@ -475,16 +475,20 @@ namespace Tourist_Project_MVC.Controllers
 
             var destResult = await _arcgisSync.SyncDestinationsAsync(destinations);
             var branchResult = await _arcgisSync.SyncBranchesAsync(branches);
+            var touristsTableResult = await _arcgisSync.SyncTouristsTableAsync();
+            var touristNatResult = await _arcgisSync.SyncTouristNationalityLayerAsync();
 
-            if (destResult.Success && branchResult.Success)
+            if (destResult.Success && branchResult.Success && touristsTableResult.Success && touristNatResult.Success)
             {
                 TempData["ArcGISMessage"] = $"✅ Pushed to ArcGIS — {destResult.AddedCount} destinations added, " +
-                    $"{destResult.UpdatedCount} updated; {branchResult.AddedCount} branches added, {branchResult.UpdatedCount} updated.";
+                    $"{destResult.UpdatedCount} updated; {branchResult.AddedCount} branches added, {branchResult.UpdatedCount} updated; " +
+                    $"tourists table: {touristsTableResult.AddedCount} added, {touristsTableResult.UpdatedCount} updated; " +
+                    $"nationality layer: {touristNatResult.AddedCount} added, {touristNatResult.UpdatedCount} updated.";
                 TempData["ArcGISMessageType"] = "success";
             }
             else
             {
-                var errors = string.Join(" | ", new[] { destResult.Error, branchResult.Error }.Where(e => e != null));
+                var errors = string.Join(" | ", new[] { destResult.Error, branchResult.Error, touristsTableResult.Error, touristNatResult.Error }.Where(e => e != null));
                 TempData["ArcGISMessage"] = $"❌ ArcGIS push failed: {errors}";
                 TempData["ArcGISMessageType"] = "danger";
             }

@@ -19,6 +19,8 @@ public interface IArcGISSyncService
 {
     Task<ArcGISSyncResult> SyncDestinationsAsync(IEnumerable<Destination> destinations, CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncBranchesAsync(IEnumerable<Branch> branches, CancellationToken ct = default);
+    Task<ArcGISSyncResult> SyncTouristsTableAsync(CancellationToken ct = default);
+    Task<ArcGISSyncResult> SyncTouristNationalityLayerAsync(CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncDestinationsFromArcGIS(CancellationToken ct = default);
     Task<(bool Success, string? Error, int? CreatedObjectId, int? CreatedId)> AddDestinationToArcGISAsync(Destination destination, CancellationToken ct = default);
     Task<ArcGISSyncResult> DeleteDestinationFromArcGISAsync(int destinationId, CancellationToken ct = default);
@@ -53,6 +55,8 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
 
     private string? DestinationsLayerUrl => _config["ArcGIS:DestinationsLayerUrl"];
     private string? BranchesLayerUrl => _config["ArcGIS:BranchesLayerUrl"];
+    private string? TouristsTableUrl => _config["ArcGIS:TouristsTableUrl"];
+    private string? TouristNationalityLayerUrl => _config["ArcGIS:TouristNationalityLayerUrl"];
 
     private static string LayerUrl(string? baseUrl)
     {
@@ -528,6 +532,449 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
             _logger.LogError(ex, "ArcGIS branches sync failed");
             return ArcGISSyncResult.Failed($"ArcGIS branches sync failed: {ex.Message}");
         }
+    }
+
+    public async Task<ArcGISSyncResult> SyncTouristsTableAsync(CancellationToken ct = default)
+    {
+        // Per-person tourists table (non-spatial). One row per tourist, joined
+        // with the ApplicationUser identity fields. Database is the source of
+        // truth -> push-only, full refresh (add/update/delete) so the table
+        // self-heals on register/edit/delete.
+        var layerUrl = LayerUrl(TouristsTableUrl);
+        if (string.IsNullOrWhiteSpace(layerUrl)) return ArcGISSyncResult.Ok();
+
+        string token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            _logger.LogError("ArcGIS tourists table sync skipped: API Key is missing");
+            return ArcGISSyncResult.Failed("API Key is missing.");
+        }
+
+        try
+        {
+            // 1) All tourists that have a linked login account.
+            var tourists = await (
+                from t in _context.Tourists
+                join u in _context.Users on t.ApplicationUserId equals u.Id
+                select new { Tourist = t, User = u }
+            ).ToListAsync(ct);
+
+            var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+
+            var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
+            var idField = ResolveField(fieldMap, "TouristId") ?? "TouristId";
+
+            // 2) What is currently on the table (ObjectId + TouristId).
+            var remoteFeatures = await QueryAllTableIdsAsync(client, layerUrl, token, idField, ct);
+
+            var dbIds = new HashSet<int>();
+            var adds = new List<object>();
+            var updates = new List<object>();
+            var deletes = new List<int>();
+            var addedIds = new List<int>();
+            var updatedIds = new List<int>();
+
+            foreach (var item in tourists)
+            {
+                var t = item.Tourist;
+                var u = item.User;
+                dbIds.Add(t.Id);
+
+                var attrs = new Dictionary<string, object>
+                {
+                    [ResolveField(fieldMap, "TouristId") ?? "TouristId"] = t.Id,
+                    [ResolveField(fieldMap, "UserId") ?? "UserId"] = u.Id,
+                    [ResolveField(fieldMap, "Email") ?? "Email"] = u.Email ?? string.Empty,
+                    [ResolveField(fieldMap, "FirstName") ?? "FirstName"] = u.FirstName,
+                    [ResolveField(fieldMap, "LastName") ?? "LastName"] = u.LastName,
+                    [ResolveField(fieldMap, "FullName") ?? "FullName"] = $"{u.FirstName} {u.LastName}".Trim(),
+                    [ResolveField(fieldMap, "Nationality") ?? "Nationality"] = u.Nationality ?? string.Empty,
+                    [ResolveField(fieldMap, "PhoneNumber") ?? "PhoneNumber"] = u.PhoneNumber ?? string.Empty,
+                    [ResolveField(fieldMap, "IdNumber") ?? "IdNumber"] = t.IdNumber ?? string.Empty,
+                    [ResolveField(fieldMap, "Passport") ?? "Passport"] = t.Passport ?? string.Empty,
+                    [ResolveField(fieldMap, "PointBalance") ?? "PointBalance"] = t.point_Balance,
+                    [ResolveField(fieldMap, "RegisterDate") ?? "RegisterDate"] = t.RegisterDate.ToString("yyyy-MM-dd"),
+                    [ResolveField(fieldMap, "Status") ?? "Status"] = t.Status ?? "Active"
+                };
+
+                var existing = remoteFeatures.FirstOrDefault(f => f.TouristId == t.Id);
+                if (existing.ObjectId > 0)
+                {
+                    var updAttrs = new Dictionary<string, object> { ["OBJECTID"] = existing.ObjectId };
+                    foreach (var kv in attrs) updAttrs[kv.Key] = kv.Value;
+                    updates.Add(new { attributes = updAttrs });
+                    updatedIds.Add(t.Id);
+                }
+                else
+                {
+                    adds.Add(new { attributes = attrs });
+                    addedIds.Add(t.Id);
+                }
+            }
+
+            // 3) Rows on the table whose tourist no longer exists locally -> delete.
+            foreach (var remote in remoteFeatures)
+            {
+                if (!dbIds.Contains(remote.TouristId))
+                {
+                    deletes.Add(remote.ObjectId);
+                }
+            }
+
+            if (adds.Count == 0 && updates.Count == 0 && deletes.Count == 0) return ArcGISSyncResult.Ok();
+
+            var formFields = new Dictionary<string, string>
+            {
+                ["f"] = "json"
+            };
+            if (adds.Count > 0)
+                formFields["adds"] = JsonSerializer.Serialize(adds, _jsonOptions);
+            if (updates.Count > 0)
+                formFields["updates"] = JsonSerializer.Serialize(updates, _jsonOptions);
+            if (deletes.Count > 0)
+                formFields["deletes"] = string.Join(",", deletes);
+
+            var content = new FormUrlEncodedContent(formFields);
+
+            var url = $"{layerUrl}/applyEdits?token={Uri.EscapeDataString(token)}";
+            var response = await client.PostAsync(url, content, ct);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errBody = await response.Content.ReadAsStringAsync(ct);
+                _logger.LogError("ArcGIS tourists table sync failed with HTTP status {Status}. Body: {Body}", response.StatusCode, errBody);
+                return ArcGISSyncResult.Failed($"ArcGIS returned HTTP {(int)response.StatusCode}: {errBody}");
+            }
+
+            var body = await response.Content.ReadAsStringAsync(ct);
+            _logger.LogInformation("ArcGIS tourists table applyEdits response: {Body}", body);
+
+            using var doc = JsonDocument.Parse(body);
+
+            if (doc.RootElement.TryGetProperty("error", out var error))
+            {
+                var errMsg = ExtractArcGISErrorMessage(error);
+                _logger.LogError("ArcGIS tourists table applyEdits returned top-level error: {Error}", errMsg);
+                return ArcGISSyncResult.Failed($"ArcGIS applyEdits error: {errMsg}");
+            }
+
+            if (doc.RootElement.TryGetProperty("addResults", out var addResults))
+            {
+                int i = 0;
+                foreach (var result in addResults.EnumerateArray())
+                {
+                    if (result.TryGetProperty("success", out var successProp) && !successProp.GetBoolean())
+                    {
+                        var errMsg = ExtractArcGISErrorMessage(result);
+                        var targetId = i < addedIds.Count ? addedIds[i] : -1;
+                        _logger.LogError("ArcGIS tourists table add failed for TouristId={TargetId}: {Error}", targetId, errMsg);
+                        return ArcGISSyncResult.Failed($"ArcGIS tourists table add failed for TouristId={targetId}: {errMsg}");
+                    }
+                    i++;
+                }
+            }
+
+            if (doc.RootElement.TryGetProperty("updateResults", out var updateResults))
+            {
+                int i = 0;
+                foreach (var result in updateResults.EnumerateArray())
+                {
+                    if (result.TryGetProperty("success", out var successProp) && !successProp.GetBoolean())
+                    {
+                        var errMsg = ExtractArcGISErrorMessage(result);
+                        var targetId = i < updatedIds.Count ? updatedIds[i] : -1;
+                        _logger.LogError("ArcGIS tourists table update failed for TouristId={TargetId}: {Error}", targetId, errMsg);
+                        return ArcGISSyncResult.Failed($"ArcGIS tourists table update failed for TouristId={targetId}: {errMsg}");
+                    }
+                    i++;
+                }
+            }
+
+            if (doc.RootElement.TryGetProperty("deleteResults", out var deleteResults))
+            {
+                int i = 0;
+                foreach (var result in deleteResults.EnumerateArray())
+                {
+                    if (result.TryGetProperty("success", out var successProp) && !successProp.GetBoolean())
+                    {
+                        var errMsg = ExtractArcGISErrorMessage(result);
+                        var targetOid = i < deletes.Count ? deletes[i] : -1;
+                        _logger.LogError("ArcGIS tourists table delete failed for OBJECTID={TargetOid}: {Error}", targetOid, errMsg);
+                        return ArcGISSyncResult.Failed($"ArcGIS tourists table delete failed for OBJECTID={targetOid}: {errMsg}");
+                    }
+                    i++;
+                }
+            }
+
+            _logger.LogInformation("ArcGIS tourists table sync complete: {Added} added, {Updated} updated, {Deleted} deleted",
+                adds.Count, updates.Count, deletes.Count);
+
+            return ArcGISSyncResult.Ok(added: adds.Count, updated: updates.Count + deletes.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ArcGIS tourists table sync failed");
+            return ArcGISSyncResult.Failed($"ArcGIS tourists table sync failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>Returns (ObjectId, TouristId) for every row currently on the tourists table.</summary>
+    private async Task<List<(int ObjectId, int TouristId)>> QueryAllTableIdsAsync(HttpClient client, string layerUrl, string token, string idField, CancellationToken ct)
+    {
+        var result = new List<(int ObjectId, int TouristId)>();
+        var queryUrl = $"{layerUrl}/query?where=1%3D1&outFields=ObjectId,{Uri.EscapeDataString(idField)}&returnGeometry=false&resultRecordCount=1000&f=json&token={Uri.EscapeDataString(token)}";
+        using var response = await client.GetAsync(queryUrl, ct);
+        if (!response.IsSuccessStatusCode) return result;
+        using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
+        if (doc.RootElement.TryGetProperty("features", out var features))
+        {
+            foreach (var feature in features.EnumerateArray())
+            {
+                if (!feature.TryGetProperty("attributes", out var attrs)) continue;
+                int objectId = 0;
+                int touristId = 0;
+                foreach (var property in attrs.EnumerateObject())
+                {
+                    if (property.Name.Equals("ObjectId", StringComparison.OrdinalIgnoreCase) && property.Value.ValueKind == JsonValueKind.Number)
+                        objectId = property.Value.GetInt32();
+                    if (property.Name.Equals(idField, StringComparison.OrdinalIgnoreCase) && property.Value.ValueKind == JsonValueKind.Number)
+                        touristId = property.Value.GetInt32();
+                }
+                if (objectId > 0) result.Add((objectId, touristId));
+            }
+        }
+        return result;
+    }
+
+    public async Task<ArcGISSyncResult> SyncTouristNationalityLayerAsync(CancellationToken ct = default)
+    {
+        // Aggregated tourists-by-nationality bubble layer. One feature per
+        // nationality at the country center, with a TouristCount field.
+        // Database is the source of truth -> push-only, full refresh on every
+        // run (add/update/delete) so the layer self-heals on register/edit/delete.
+        var layerUrl = LayerUrl(TouristNationalityLayerUrl);
+        if (string.IsNullOrWhiteSpace(layerUrl)) return ArcGISSyncResult.Ok();
+
+        string token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            _logger.LogError("ArcGIS tourist nationality sync skipped: API Key is missing");
+            return ArcGISSyncResult.Failed("API Key is missing.");
+        }
+
+        try
+        {
+            // 1) Aggregate tourists by nationality (only records with a login account).
+            var aggregates = await (
+                from t in _context.Tourists
+                join u in _context.Users on t.ApplicationUserId equals u.Id
+                where u.Nationality != null && u.Nationality != ""
+                group t by u.Nationality into g
+                select new { Nationality = g.Key, Count = g.Count() }
+            ).ToListAsync(ct);
+
+            var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+
+            var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
+            var natField = ResolveField(fieldMap, "Nationality") ?? "Nationality";
+            var countField = ResolveField(fieldMap, "TouristCount") ?? "TouristCount";
+            var latField = ResolveField(fieldMap, "Latitude") ?? "Latitude";
+            var lngField = ResolveField(fieldMap, "Longitude") ?? "Longitude";
+
+            // 2) What is currently on the layer (ObjectId + Nationality).
+            var remoteFeatures = await QueryAllNationalityFeaturesAsync(client, layerUrl, token, natField, ct);
+
+            var newSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var adds = new List<object>();
+            var updates = new List<object>();
+            var deletes = new List<int>();
+            var addedNames = new List<string>();
+            var updatedNames = new List<string>();
+
+            foreach (var agg in aggregates)
+            {
+                var centroid = NationalityCentroids.Get(agg.Nationality);
+                if (centroid == null)
+                {
+                    _logger.LogWarning("ArcGIS tourist nationality sync: no centroid for '{Nationality}' — skipped", agg.Nationality);
+                    continue;
+                }
+                newSet.Add(agg.Nationality);
+
+                var attrs = new Dictionary<string, object>
+                {
+                    [natField] = agg.Nationality,
+                    [countField] = agg.Count,
+                    [latField] = centroid.Value.Latitude,
+                    [lngField] = centroid.Value.Longitude
+                };
+                var geometry = new
+                {
+                    x = centroid.Value.Longitude,
+                    y = centroid.Value.Latitude,
+                    spatialReference = new { wkid = 4326 }
+                };
+
+                var existing = remoteFeatures.FirstOrDefault(f =>
+                    string.Equals(f.Nationality, agg.Nationality, StringComparison.OrdinalIgnoreCase));
+
+                if (existing.ObjectId > 0)
+                {
+                    updates.Add(new
+                    {
+                        attributes = new Dictionary<string, object>
+                        {
+                            ["OBJECTID"] = existing.ObjectId,
+                            [natField] = agg.Nationality,
+                            [countField] = agg.Count,
+                            [latField] = centroid.Value.Latitude,
+                            [lngField] = centroid.Value.Longitude
+                        },
+                        geometry = geometry
+                    });
+                    updatedNames.Add(agg.Nationality);
+                }
+                else
+                {
+                    adds.Add(new { attributes = attrs, geometry = geometry });
+                    addedNames.Add(agg.Nationality);
+                }
+            }
+
+            // 3) Stale features (nationality no longer present in the DB) -> delete.
+            foreach (var remote in remoteFeatures)
+            {
+                if (!newSet.Contains(remote.Nationality))
+                {
+                    deletes.Add(remote.ObjectId);
+                }
+            }
+
+            if (adds.Count == 0 && updates.Count == 0 && deletes.Count == 0) return ArcGISSyncResult.Ok();
+
+            var formFields = new Dictionary<string, string>
+            {
+                ["f"] = "json"
+            };
+            if (adds.Count > 0)
+                formFields["adds"] = JsonSerializer.Serialize(adds, _jsonOptions);
+            if (updates.Count > 0)
+                formFields["updates"] = JsonSerializer.Serialize(updates, _jsonOptions);
+            if (deletes.Count > 0)
+                formFields["deletes"] = string.Join(",", deletes);
+
+            var content = new FormUrlEncodedContent(formFields);
+
+            var url = $"{layerUrl}/applyEdits?token={Uri.EscapeDataString(token)}";
+            var response = await client.PostAsync(url, content, ct);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errBody = await response.Content.ReadAsStringAsync(ct);
+                _logger.LogError("ArcGIS tourist nationality sync failed with HTTP status {Status}. Body: {Body}", response.StatusCode, errBody);
+                return ArcGISSyncResult.Failed($"ArcGIS returned HTTP {(int)response.StatusCode}: {errBody}");
+            }
+
+            var body = await response.Content.ReadAsStringAsync(ct);
+            _logger.LogInformation("ArcGIS tourist nationality applyEdits response: {Body}", body);
+
+            using var doc = JsonDocument.Parse(body);
+
+            if (doc.RootElement.TryGetProperty("error", out var error))
+            {
+                var errMsg = ExtractArcGISErrorMessage(error);
+                _logger.LogError("ArcGIS tourist nationality applyEdits returned top-level error: {Error}", errMsg);
+                return ArcGISSyncResult.Failed($"ArcGIS applyEdits error: {errMsg}");
+            }
+
+            if (doc.RootElement.TryGetProperty("addResults", out var addResults))
+            {
+                int i = 0;
+                foreach (var result in addResults.EnumerateArray())
+                {
+                    if (result.TryGetProperty("success", out var successProp) && !successProp.GetBoolean())
+                    {
+                        var errMsg = ExtractArcGISErrorMessage(result);
+                        var target = i < addedNames.Count ? addedNames[i] : "?";
+                        _logger.LogError("ArcGIS tourist nationality add failed for {Nationality}: {Error}", target, errMsg);
+                        return ArcGISSyncResult.Failed($"ArcGIS tourist nationality add failed for {target}: {errMsg}");
+                    }
+                    i++;
+                }
+            }
+
+            if (doc.RootElement.TryGetProperty("updateResults", out var updateResults))
+            {
+                int i = 0;
+                foreach (var result in updateResults.EnumerateArray())
+                {
+                    if (result.TryGetProperty("success", out var successProp) && !successProp.GetBoolean())
+                    {
+                        var errMsg = ExtractArcGISErrorMessage(result);
+                        var target = i < updatedNames.Count ? updatedNames[i] : "?";
+                        _logger.LogError("ArcGIS tourist nationality update failed for {Nationality}: {Error}", target, errMsg);
+                        return ArcGISSyncResult.Failed($"ArcGIS tourist nationality update failed for {target}: {errMsg}");
+                    }
+                    i++;
+                }
+            }
+
+            if (doc.RootElement.TryGetProperty("deleteResults", out var deleteResults))
+            {
+                int i = 0;
+                foreach (var result in deleteResults.EnumerateArray())
+                {
+                    if (result.TryGetProperty("success", out var successProp) && !successProp.GetBoolean())
+                    {
+                        var errMsg = ExtractArcGISErrorMessage(result);
+                        var targetOid = i < deletes.Count ? deletes[i] : -1;
+                        _logger.LogError("ArcGIS tourist nationality delete failed for OBJECTID={TargetOid}: {Error}", targetOid, errMsg);
+                        return ArcGISSyncResult.Failed($"ArcGIS tourist nationality delete failed for OBJECTID={targetOid}: {errMsg}");
+                    }
+                    i++;
+                }
+            }
+
+            _logger.LogInformation("ArcGIS tourist nationality sync complete: {Added} added, {Updated} updated, {Deleted} deleted",
+                adds.Count, updates.Count, deletes.Count);
+
+            return ArcGISSyncResult.Ok(added: adds.Count, updated: updates.Count + deletes.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ArcGIS tourist nationality sync failed");
+            return ArcGISSyncResult.Failed($"ArcGIS tourist nationality sync failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>Returns (ObjectId, Nationality) for every feature currently on the layer.</summary>
+    private async Task<List<(int ObjectId, string Nationality)>> QueryAllNationalityFeaturesAsync(HttpClient client, string layerUrl, string token, string natField, CancellationToken ct)
+    {
+        var result = new List<(int ObjectId, string Nationality)>();
+        var queryUrl = $"{layerUrl}/query?where=1%3D1&outFields=ObjectId,{Uri.EscapeDataString(natField)}&returnGeometry=false&resultRecordCount=1000&f=json&token={Uri.EscapeDataString(token)}";
+        using var response = await client.GetAsync(queryUrl, ct);
+        if (!response.IsSuccessStatusCode) return result;
+        using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
+        if (doc.RootElement.TryGetProperty("features", out var features))
+        {
+            foreach (var feature in features.EnumerateArray())
+            {
+                if (!feature.TryGetProperty("attributes", out var attrs)) continue;
+                int objectId = 0;
+                string? nationality = null;
+                foreach (var property in attrs.EnumerateObject())
+                {
+                    if (property.Name.Equals("ObjectId", StringComparison.OrdinalIgnoreCase) && property.Value.ValueKind == JsonValueKind.Number)
+                        objectId = property.Value.GetInt32();
+                    if (property.Name.Equals(natField, StringComparison.OrdinalIgnoreCase) && property.Value.ValueKind == JsonValueKind.String)
+                        nationality = property.Value.GetString();
+                }
+                if (objectId > 0) result.Add((objectId, nationality ?? string.Empty));
+            }
+        }
+        return result;
     }
 
     public async Task<ArcGISDestinationSnapshot> GetDestinationSnapshotAsync(int? databaseId = null, CancellationToken ct = default)

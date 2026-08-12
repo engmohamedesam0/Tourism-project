@@ -24,7 +24,8 @@ namespace Tourist_Project_MVC.Controllers
         private readonly IGamificationService _gamificationService;
         private readonly IConfiguration _config;
         private readonly INotificationService _notificationService;
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, TouristContext context, IWebHostEnvironment env, IGamificationService gamificationService, IConfiguration config, INotificationService notificationService)
+        private readonly IArcGISSyncService _arcgisSync;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ITouristRepository touristRepo, TouristContext context, IWebHostEnvironment env, IGamificationService gamificationService, IConfiguration config, INotificationService notificationService, IArcGISSyncService arcgisSync)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -35,6 +36,7 @@ namespace Tourist_Project_MVC.Controllers
             this._gamificationService = gamificationService;
             this._config = config;
             this._notificationService = notificationService;
+            this._arcgisSync = arcgisSync;
         }
         [HttpGet]
         public IActionResult Register()
@@ -126,6 +128,20 @@ namespace Tourist_Project_MVC.Controllers
                           // tourist-specific data and the FK link.
                           var tourist = _touristRepo.GetOrCreateByApplicationUser(createdUser);
                           _touristRepo.Save();
+
+                          // Keep the ArcGIS tourists layers current (per-person table +
+                          // aggregated nationality bubbles). Fire-and-forget style: an
+                          // ArcGIS hiccup must never break sign-up.
+                          try
+                          {
+                              await _arcgisSync.SyncTouristsTableAsync();
+                              await _arcgisSync.SyncTouristNationalityLayerAsync();
+                          }
+                          catch (Exception)
+                          {
+                              // Registration must not fail because the sync did; the
+                              // admin dashboard "Sync to ArcGIS" button can retry.
+                          }
                       }
 
                       return RedirectToAction("Login");

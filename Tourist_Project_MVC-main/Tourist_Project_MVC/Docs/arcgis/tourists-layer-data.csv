@@ -1,0 +1,14 @@
+﻿TouristId,UserId,Email,FirstName,LastName,FullName,Nationality,PhoneNumber,IdNumber,Passport,PointBalance,RegisterDate,Status
+1,seed-tourist-1,ahmed.hassan@egyxplore.com,Ahmed,Hassan,Ahmed Hassan,Egyptian,,EG123456789,,350,2026-01-10,Active
+2,seed-tourist-2,james.wilson@egyxplore.com,James,Wilson,James Wilson,American,,,US987654321,120,2026-02-15,Active
+3,seed-tourist-3,sophie.muller@egyxplore.com,Sophie,Muller,Sophie Muller,German,,,DE456789123,200,2026-03-01,Active
+4,seed-tourist-4,yuki.tanaka@egyxplore.com,Yuki,Tanaka,Yuki Tanaka,Japanese,,,JP321654987,80,2026-03-20,Active
+5,seed-tourist-5,mohamed.ali@egyxplore.com,Mohamed,Ali,Mohamed Ali,Egyptian,,EG987654321,,500,2026-01-05,Active
+6,seed-tourist-6,emma.johnson@egyxplore.com,Emma,Johnson,Emma Johnson,British,,,GB112233445,240,2026-02-22,Active
+7,seed-tourist-7,lukas.weber@egyxplore.com,Lukas,Weber,Lukas Weber,German,,,DE778899001,160,2026-03-12,Active
+8,seed-tourist-8,mei.chen@egyxplore.com,Mei,Chen,Mei Chen,Chinese,,,CN556677889,95,2026-04-02,Active
+9,seed-tourist-9,omar.farouk@egyxplore.com,Omar,Farouk,Omar Farouk,Egyptian,,EG556677889,,310,2026-01-18,Active
+10,seed-tourist-10,hannah.becker@egyxplore.com,Hannah,Becker,Hannah Becker,French,,,FR223344556,175,2026-02-09,Active
+11,seed-tourist-11,khalid.nasser@egyxplore.com,Khalid,Nasser,Khalid Nasser,Emirati,,AE445566778,,420,2026-01-25,Active
+12,seed-tourist-12,sara.rossi@egyxplore.com,Sara,Rossi,Sara Rossi,Italian,,,IT334455667,130,2026-03-28,Active
+13,seed-admin-1,admin@egyxplore.com,Admin,User,Admin User,Egyptian,,,,0,2026-08-10,Active
