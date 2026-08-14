@@ -3,257 +3,43 @@
 @{
     ViewData["Title"] = "Admin Dashboard";
     ViewData["IsHomePage"] = false;
-    var currentYear = DateTime.Now.Year;
-    var partialName = "~/Views/AdminDashboard/Sections/_" + char.ToUpperInvariant(Model.ActiveSection[0]) + Model.ActiveSection.Substring(1) + ".cshtml";
+    ViewData["FullWidth"] = true;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
 }
 
-<div class="dashboard-wrapper">
-    <div class="container-fluid px-2 px-md-4">
-
-        <!-- DASHBOARD HEADER -->
-        <div class="dash-header-card mb-4">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-                <div>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb breadcrumb-custom">
-                            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><partial name="_EgyxploreWordmark" /></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">@Localizer["Dashboard"].Value</li>
-                        </ol>
-                    </nav>
-                    <div class="d-flex align-items-center gap-3">
-                        <h1 class="dash-title mb-0">@Localizer["AdminDashboard_Heading"].Value</h1>
-                        <span class="dash-sponsor-badge"><i class="bi bi-shield-lock-fill"></i> @Localizer["AdminDashboard_Administrator"].Value</span>
-                    </div>
-                </div>
-                <div class="d-flex flex-wrap align-items-center gap-3">
-                    @await Html.PartialAsync("_AdminModuleToggle", null, new ViewDataDictionary(ViewData) { { "AdminModule", Model.ActiveSection }, { "ActiveView", "Dashboard" } })
-                </div>
+<!-- Full-bleed ArcGIS Online dashboard: no page header, no margins -->
+@if (!string.IsNullOrWhiteSpace(Model.ArcGISDashboardUrl))
+{
+    <div class="arcgis-dashboard-embed">
+        @if (TempData["ArcGISMessage"] != null)
+        {
+            var msgType = TempData["ArcGISMessageType"]?.ToString() ?? "info";
+            <div class="alert alert-@msgType alert-dismissible fade show arcgis-dashboard-toast" role="alert" id="arcgis-toast">
+                @TempData["ArcGISMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        </div>
-
-        <!-- ADMIN DASHBOARD SHELL -->
-        <div class="admin-dash-shell">
-            <aside class="admin-dash-sidebar">
-                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="overview" class="admin-dash-nav-link @(Model.ActiveSection == "overview" ? "active" : "")">
-                    <i class="bi bi-speedometer2"></i> @Localizer["Nav_Overview"].Value
-                </a>
-                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="tourists" class="admin-dash-nav-link @(Model.ActiveSection == "tourists" ? "active" : "")">
-                    <i class="bi bi-people-fill"></i> @Localizer["Nav_Tourists"].Value
-                </a>
-                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="missions" class="admin-dash-nav-link @(Model.ActiveSection == "missions" ? "active" : "")">
-                    <i class="bi bi-trophy-fill"></i> @Localizer["Nav_Missions"].Value
-                </a>
-                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="sponsors" class="admin-dash-nav-link @(Model.ActiveSection == "sponsors" ? "active" : "")">
-                    <i class="bi bi-building-fill"></i> @Localizer["Nav_Sponsors"].Value
-                </a>
-                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="destinations" class="admin-dash-nav-link @(Model.ActiveSection == "destinations" ? "active" : "")">
-                    <i class="bi bi-geo-alt-fill"></i> @Localizer["Nav_Destinations"].Value
-                </a>
-                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="rewards" class="admin-dash-nav-link @(Model.ActiveSection == "rewards" ? "active" : "")">
-                    <i class="bi bi-gift-fill"></i> @Localizer["Nav_AllRewards"].Value
-                </a>
-                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="levels" class="admin-dash-nav-link @(Model.ActiveSection == "levels" ? "active" : "")">
-                    <i class="bi bi-bar-chart-steps"></i> @Localizer["Nav_Levels"].Value
-                </a>
-                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="badges" class="admin-dash-nav-link @(Model.ActiveSection == "badges" ? "active" : "")">
-                    <i class="bi bi-award-fill"></i> @Localizer["Nav_Badges"].Value
-                </a>
-                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="support" class="admin-dash-nav-link @(Model.ActiveSection == "support" ? "active" : "")">
-                    <i class="bi bi-headset"></i> @Localizer["Nav_Support"].Value
-                </a>
-                <a asp-controller="AdminDashboard" asp-action="Index" asp-route-section="reviews" class="admin-dash-nav-link @(Model.ActiveSection == "reviews" ? "active" : "")">
-                    <i class="bi bi-star-fill"></i> @Localizer["Nav_Reviews"].Value
-                </a>
-            </aside>
-
-            <div class="admin-dash-content">
-                @await Html.PartialAsync(partialName, Model)
-            </div>
-        </div>
-
+        }
+        <iframe src="@Model.ArcGISDashboardUrl"
+                title="@Localizer["ArcGISDashboard_PoweredBy"].Value"
+                allowfullscreen
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <a href="@Model.ArcGISDashboardUrl" target="_blank" rel="noopener noreferrer"
+           class="arcgis-dashboard-fullscreen"
+           title="@Localizer["ArcGISDashboard_OpenFullscreen"].Value">
+            <i class="bi bi-arrows-fullscreen"></i>
+        </a>
     </div>
-</div>
-
-@section Scripts {
-    @if (Model.ActiveSection == "overview")
-    {
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            // --- 1. Initialize Map ---
-            (function () {
-                window.allBranchLatlngs = [@foreach (var b in Model.AllBranches) {<text>[@b.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture), @b.Lng.ToString(System.Globalization.CultureInfo.InvariantCulture)],</text>}];
-
-                var dashboardMap = EGYMaps.initWfsMap({
-                    mapElId: 'dashboardMap',
-                    layer: 'branches',
-                    propMap: {
-                        id: ['Id', 'id', 'SponsorId'],
-                        name: ['Name', 'name', 'branch_name']
-                    },
-                    markerStyle: {
-                        radius: 9,
-                        fillColor: '#C8832A',
-                        color: '#fff',
-                        weight: 2,
-                        opacity: 1,
-                        fillOpacity: 0.9
-                    },
-                     popupHtml: function (ctx) {
-                         var p = ctx.attributes || {};
-                         var name = p['Name'] || p['name'] || p['branch_name'] || 'Unnamed Branch';
-                         return '<div style="text-align:center;">' +
-                                '<strong class="popup-name">' + name + '</strong>' +
-                                '<br><span class="popup-verified"><i class="bi bi-shield-check"></i> Verified Partner</span>' +
-                                '</div>';
-                     },
-                    onLayerReady: function () {
-                        if (window.allBranchLatlngs && window.allBranchLatlngs.length && dashboardMap && dashboardMap.fitBounds) {
-                            dashboardMap.fitBounds(window.allBranchLatlngs);
-                        }
-                    }
-                });
-
-                window.filterMap = function (filterType) {
-                    document.querySelectorAll('.chip-btn').forEach(btn => btn.classList.remove('chip-active'));
-                    event.currentTarget.classList.add('chip-active');
-                };
-            })();
-
-            // --- 2. Initialize Charts ---
-            (function () {
-                Chart.defaults.font.family = "'Nunito', sans-serif";
-                Chart.defaults.color = '#1E120A';
-
-                var themePrimary = '#C8832A';
-                var themeDark = '#1E120A';
-                var themeLight = 'rgba(200, 131, 42, 0.1)';
-
-                var monthLabels = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => $"\"{r.MonthLabel}\"")))];
-                var redemptionsData = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => r.Redemptions)))];
-                var viewsData = [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(r => r.Views)))];
-
-                var ctxTrend = document.getElementById('monthlyTrendChart');
-                if (ctxTrend) {
-                    new Chart(ctxTrend, {
-                        type: 'line',
-                        data: {
-                            labels: monthLabels,
-                            datasets: [
-                                {
-                                    label: 'Redemptions',
-                                    data: redemptionsData,
-                                    borderColor: themePrimary,
-                                    backgroundColor: themeLight,
-                                    borderWidth: 3,
-                                    pointBackgroundColor: '#fff',
-                                    pointBorderColor: themePrimary,
-                                    pointRadius: 4,
-                                    pointHoverRadius: 6,
-                                    fill: true,
-                                    tension: 0.4
-                                },
-                                {
-                                    label: 'Views',
-                                    data: viewsData,
-                                    borderColor: themeDark,
-                                    backgroundColor: 'transparent',
-                                    borderWidth: 2,
-                                    borderDash: [5, 5],
-                                    pointRadius: 3,
-                                    tension: 0.4
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                    labels: { usePointStyle: true, boxWidth: 8 }
-                                }
-                            },
-                            scales: {
-                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
-                                x: { grid: { display: false } }
-                            },
-                            interaction: {
-                                mode: 'index',
-                                intersect: false,
-                            }
-                        }
-                    });
-                }
-
-                @if (Model.DashboardTopRewards.Any())
-                {
-                    <text>
-                    var rewardLabels = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => $"\"{r.RewardTitle}\"")))];
-                    var rewardData = [@Html.Raw(string.Join(",", Model.DashboardTopRewards.Select(r => r.Redemptions)))];
-
-                    var ctxRewards = document.getElementById('topRewardsChart');
-                    if (ctxRewards) {
-                        new Chart(ctxRewards, {
-                            type: 'bar',
-                            data: {
-                                labels: rewardLabels,
-                                datasets: [{
-                                    label: 'Total Claims',
-                                    data: rewardData,
-                                    backgroundColor: themePrimary,
-                                    borderRadius: 6,
-                                    barThickness: 24
-                                }]
-                            },
-                            options: {
-                                indexAxis: 'y',
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: { display: false }
-                                },
-                                scales: {
-                                    x: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
-                                    y: { grid: { display: false } }
-                                }
-                            }
-                        });
-                    }
-                    </text>
-                }
-
-                var ctxPie = document.getElementById('engagementPieChart');
-                if (ctxPie) {
-                    new Chart(ctxPie, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Redemptions', 'Views'],
-                            datasets: [{
-                                data: [@Model.TotalRedemptions, @Model.TotalMissionsCompleted],
-                                backgroundColor: [themePrimary, themeDark],
-                                borderWidth: 2,
-                                borderColor: '#ffffff',
-                                hoverOffset: 4
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                    labels: { padding: 20, usePointStyle: true }
-                                }
-                            },
-                            cutout: '70%'
-                        }
-                    });
-                }
-            })();
-        </script>
-    }
+}
+else
+{
+    <div class="arcgis-dashboard-embed arcgis-dashboard-embed-empty">
+        <div class="alert alert-warning d-flex align-items-center gap-2 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>@Localizer["ArcGISDashboard_NotConfigured"].Value</span>
+        </div>
+    </div>
 }

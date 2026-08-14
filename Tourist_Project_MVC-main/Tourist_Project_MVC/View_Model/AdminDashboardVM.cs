@@ -6,6 +6,12 @@ namespace Tourist_Project_MVC.View_Model
     {
         public string ActiveSection { get; set; } = "overview";
 
+        /// <summary>
+        /// URL of the ArcGIS Online dashboard (ArcGIS:DashboardUrl in appsettings).
+        /// When set, the overview section renders the ArcGIS dashboard instead of the custom one.
+        /// </summary>
+        public string ArcGISDashboardUrl { get; set; } = "";
+
         public int TotalTourists { get; set; }
         public int TotalSponsors { get; set; }
         public int TotalDestinations { get; set; }

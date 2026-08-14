@@ -2512,6 +2512,18 @@
   <data name="Nav_Overview" xml:space="preserve">
     <value>Overview</value>
   </data>
+  <data name="ArcGISDashboard_PoweredBy" xml:space="preserve">
+    <value>ArcGIS Dashboard</value>
+  </data>
+  <data name="ArcGISDashboard_OpenFullscreen" xml:space="preserve">
+    <value>Open fullscreen in ArcGIS</value>
+  </data>
+  <data name="ArcGISDashboard_NotConfigured" xml:space="preserve">
+    <value>The ArcGIS dashboard is not configured yet. Set ArcGIS:DashboardUrl in appsettings.json.</value>
+  </data>
+  <data name="Nav_SyncArcGIS" xml:space="preserve">
+    <value>Sync with ArcGIS</value>
+  </data>
   <data name="Nav_Levels" xml:space="preserve">
     <value>Levels</value>
   </data>

@@ -588,3 +588,69 @@
         animation-duration: 0.01ms !important;
     }
 }
+
+/* ==========================================================================
+   ARCGIS ONLINE DASHBOARD EMBED (full-bleed, no header / no margins)
+   ========================================================================== */
+.arcgis-dashboard-embed {
+    position: relative;
+    height: calc(100vh - var(--nav-offset, 80px));
+    min-height: 480px;
+    background: #FFFFFF;
+    overflow: hidden;
+}
+
+.arcgis-dashboard-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+/* Floating feedback toast (sync / add-destination messages) */
+.arcgis-dashboard-toast {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1050;
+    max-width: min(90%, 720px);
+    box-shadow: var(--dash-shadow-md);
+}
+
+/* Floating "open fullscreen in ArcGIS" button */
+.arcgis-dashboard-fullscreen {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    z-index: 1050;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    color: var(--dash-primary);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--dash-border-hover);
+    box-shadow: var(--dash-shadow-md);
+    text-decoration: none;
+    transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.arcgis-dashboard-fullscreen:hover {
+    transform: scale(1.08);
+    background: #FFFFFF;
+    color: var(--dash-primary-hover);
+}
+
+.arcgis-dashboard-embed-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+[data-theme="dark"] .arcgis-dashboard-fullscreen {
+    background: rgba(30, 41, 59, 0.92);
+    border-color: rgba(255, 255, 255, 0.12);
+}
