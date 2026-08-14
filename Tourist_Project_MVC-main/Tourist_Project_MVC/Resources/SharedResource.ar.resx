@@ -2524,6 +2524,9 @@
   <data name="Nav_SyncArcGIS" xml:space="preserve">
     <value>مزامنة مع ArcGIS</value>
   </data>
+  <data name="Nav_PullArcGIS" xml:space="preserve">
+    <value>سحب من ArcGIS</value>
+  </data>
   <data name="Nav_Levels" xml:space="preserve">
     <value>المستويات</value>
   </data>

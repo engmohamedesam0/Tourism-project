@@ -267,6 +267,15 @@
                                             </button>
                                         </form>
                                     </li>
+                                    <li>
+                                        <form method="post" action="/AdminDashboard/SyncFromArcGIS" style="margin:0;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="dropdown-item" style="width:100%; text-align:start;"
+                                                    onclick="this.disabled=true; this.innerHTML='<span class=\'spinner-border spinner-border-sm me-2\' role=\'status\'></span> Pulling…';">
+                                                <i class="bi bi-cloud-arrow-down me-2"></i> @Localizer["Nav_PullArcGIS"].Value
+                                            </button>
+                                        </form>
+                                    </li>
                                     <li><hr class="dropdown-divider" /></li>
                                 }
                                 @if (!User.IsInRole("Admin") && !User.IsInRole("Sponsor"))

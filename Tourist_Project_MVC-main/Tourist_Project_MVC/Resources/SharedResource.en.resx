@@ -2524,6 +2524,9 @@
   <data name="Nav_SyncArcGIS" xml:space="preserve">
     <value>Sync with ArcGIS</value>
   </data>
+  <data name="Nav_PullArcGIS" xml:space="preserve">
+    <value>Pull from ArcGIS</value>
+  </data>
   <data name="Nav_Levels" xml:space="preserve">
     <value>Levels</value>
   </data>
