@@ -56,6 +56,8 @@ namespace Tourist_Project_MVC.Services
             await SeedGeoAsync<Branch>(context, seedDir, "branches.json",
                 (e, el) => e.Location = new Point(el.GetProperty("lng").GetDouble(), el.GetProperty("lat").GetDouble()) { SRID = 4326 });
             await SeedTableAsync<MenuItem>(context, seedDir, "menu-items.json");
+            await SeedGeoAsync<Utility>(context, seedDir, "utilities.json",
+                (e, el) => e.Location = new Point(el.GetProperty("lng").GetDouble(), el.GetProperty("lat").GetDouble()) { SRID = 4326 });
 
             // Pull-sync Destinations from ArcGIS BEFORE seeding dependent tables (Missions, TripDestinations).
             // ArcGIS is the primary source of truth for destination data.

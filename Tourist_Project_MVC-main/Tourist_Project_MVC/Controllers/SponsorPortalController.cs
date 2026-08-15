@@ -43,7 +43,7 @@ namespace Tourist_Project_MVC.Controllers
             if (sponsor != null)
                 return RedirectToAction("Index");
 
-            return View();
+            return View(new CompleteSponsorProfileViewModel());
         }
 
         [HttpPost]
@@ -59,6 +59,12 @@ namespace Tourist_Project_MVC.Controllers
 
             if (ModelState.IsValid)
             {
+                if (!SponsorCategories.IsValid(vm.SponsorType))
+                {
+                    ModelState.AddModelError("SponsorType", "Please choose a valid category from the list.");
+                    return View(vm);
+                }
+
                 var sponsor = new Sponsor
                 {
                     Name = vm.BusinessName,

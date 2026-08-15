@@ -1,0 +1,49 @@
+@model Tourist_Project_MVC.Models.Utility
+
+@{
+    ViewData["Title"] = Localizer["Utility_DeleteTitle"].Value;
+}
+
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-header py-3"
+             style="background: linear-gradient(135deg, #7a1c1c, #C8832A);">
+            <h4 class="text-white mb-0">
+                <i class="bi bi-trash-fill me-2"></i> @Localizer["Utility_DeleteHeading"].Value
+            </h4>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="alert alert-warning">
+                <strong>@Localizer["Utility_DeleteConfirm"].Value</strong>
+            </div>
+
+            <dl class="row">
+                <dt class="col-sm-3">@Localizer["Utility_ColName"].Value</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
+
+                <dt class="col-sm-3">@Localizer["Utility_ColType"].Value</dt>
+                <dd class="col-sm-9">@Model.Type</dd>
+
+                <dt class="col-sm-3">@Localizer["Utility_ColCity"].Value</dt>
+                <dd class="col-sm-9">@(Model.City ?? "—")</dd>
+
+                <dt class="col-sm-3">@Localizer["Utility_ColAddress"].Value</dt>
+                <dd class="col-sm-9">@(Model.Address ?? "—")</dd>
+
+                <dt class="col-sm-3">@Localizer["Utility_ColContact"].Value</dt>
+                <dd class="col-sm-9">@(Model.ContactNumber ?? "—")</dd>
+
+                <dt class="col-sm-3">@Localizer["Utility_ColHours"].Value</dt>
+                <dd class="col-sm-9">@(Model.OpenHours ?? "—")</dd>
+            </dl>
+
+            <form asp-action="DeleteConfirmed" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">@Localizer["Utility_DeleteBtn"].Value</button>
+                <a asp-action="Index" class="btn btn-secondary">@Localizer["Utility_CancelBtn"].Value</a>
+            </form>
+        </div>
+    </div>
+</div>

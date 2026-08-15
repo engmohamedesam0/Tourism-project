@@ -28,7 +28,9 @@
 
                 <div class="mb-3">
                     <label asp-for="Type" class="form-label fw-bold"></label>
-                    <input asp-for="Type" class="form-control" />
+                    <select asp-for="Type" asp-items="Model.TypeOptions" class="form-select">
+                        <option value="">-- @Localizer["Sponsor_SelectCategoryPlaceholder"].Value --</option>
+                    </select>
                     <span asp-validation-for="Type" class="text-danger"></span>
                 </div>
 

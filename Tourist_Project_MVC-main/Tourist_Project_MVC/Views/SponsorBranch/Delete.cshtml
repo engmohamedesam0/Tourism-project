@@ -16,6 +16,9 @@
             <dt class="col-sm-3">@Localizer["SponsorBranch_ColName"].Value</dt>
             <dd class="col-sm-9">@Model.Name</dd>
 
+            <dt class="col-sm-3">@Localizer["SponsorBranch_ColCategory"].Value</dt>
+            <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Category) ? "—" : Model.Category)</dd>
+
             <dt class="col-sm-3">@Localizer["SponsorBranch_ColAddress"].Value</dt>
             <dd class="col-sm-9">@Model.Address</dd>
 

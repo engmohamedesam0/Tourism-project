@@ -14,6 +14,12 @@ namespace Tourist_Project_MVC.Models
 
         public string Name { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
+
+        // Category of this branch, auto-set from the owning sponsor's category
+        // (sponsor.Type) whenever the branch is created or edited, and re-synced
+        // when an admin changes the sponsor's category.
+        public string Category { get; set; } = string.Empty;
+
         public Point Location { get; set; } = null!;
         public int? ContactNumber { get; set; }
 

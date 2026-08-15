@@ -73,7 +73,7 @@ namespace Tourist_Project_MVC.Controllers
             var sponsor = ResolveCurrentSponsor();
             if (sponsor == null) return RedirectToAction("CompleteProfile", "SponsorPortal");
 
-            return View("Create", new SponsorBranchVM { SponsorId = sponsor.Id });
+            return View("Create", new SponsorBranchVM { SponsorId = sponsor.Id, Category = sponsor.Type });
         }
 
         [HttpPost]
@@ -89,6 +89,7 @@ namespace Tourist_Project_MVC.Controllers
                 {
                     Name = vm.Name,
                     Address = vm.Address,
+                    Category = sponsor.Type, // branch category always follows its sponsor
                     Location = new Point(vm.Long, vm.Lat) { SRID = 4326 },
                     ContactNumber = vm.ContactNumber,
                     SponsorId = sponsor.Id
@@ -125,6 +126,7 @@ namespace Tourist_Project_MVC.Controllers
                 Lat = (float)branch.Location.Y,
                 Long = (float)branch.Location.X,
                 ContactNumber = branch.ContactNumber,
+                Category = sponsor.Type,
                 SponsorId = branch.SponsorId
             };
             return View("Edit", vm);
@@ -145,6 +147,7 @@ namespace Tourist_Project_MVC.Controllers
             {
                 branch.Name = vm.Name;
                 branch.Address = vm.Address;
+                branch.Category = sponsor.Type; // branch category always follows its sponsor
                 branch.Location = new Point(vm.Long, vm.Lat) { SRID = 4326 };
                 branch.ContactNumber = vm.ContactNumber;
                 _branchRepo.Update(branch);

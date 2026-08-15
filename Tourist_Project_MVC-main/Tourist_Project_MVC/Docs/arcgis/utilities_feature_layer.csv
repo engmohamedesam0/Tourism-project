@@ -1,0 +1,127 @@
+Id,Name,Type,Address,City,ContactNumber,OpenHours,latitude,longitude
+1,Cairo Police Headquarters,Police Station,"El Sheikh Rihan St, Downtown, Cairo",Cairo,23912000,24 hours,30.0497,31.241
+2,Giza Police Station,Police Station,"Tahrir St, Giza",Giza,35726000,24 hours,30.0094,31.2089
+3,Alexandria Police Headquarters,Police Station,"El Geish St, Sidi Gaber, Alexandria",Alexandria,35720000,24 hours,31.1981,29.9126
+4,Luxor Police Station,Police Station,"El Karnak St, Luxor",Luxor,952371234,24 hours,25.6872,32.6396
+5,Sharm El-Sheikh Police Station,Police Station,"Peace Rd, Hadaba, Sharm El-Sheikh",Sharm El-Sheikh,693600123,24 hours,27.9158,34.3302
+6,Cairo Fire Station (Ramses),Fire Station,"Ramses St, Downtown, Cairo",Cairo,180,24 hours,30.058,31.244
+7,Giza Fire Station,Fire Station,"Pyramids Rd, Giza",Giza,35728000,24 hours,30.0145,31.2085
+8,Alexandria Fire Station,Fire Station,"El Sultan Hussein St, Alexandria",Alexandria,35790000,24 hours,31.2001,29.9184
+9,Luxor Fire Station,Fire Station,"El Maabad St, Luxor",Luxor,952374567,24 hours,25.6989,32.6394
+10,Hurghada Fire Station,Fire Station,"El Nasr Rd, Hurghada",Hurghada,653441234,24 hours,27.2574,33.8106
+11,Kasr El Aini Teaching Hospital,Hospital,"Kasr El Aini St, Old Cairo",Cairo,23645500,24 hours,30.0287,31.227
+12,Al-Salam International Hospital,Hospital,"Corniche El Maadi, Cairo",Cairo,25240000,24 hours,30,31.23
+13,Dar Al Fouad Hospital,Hospital,"26th July Corridor, 6th of October City, Giza",Giza,23855000,24 hours,29.9355,30.9292
+14,Luxor International Hospital,Hospital,"El Karnak St, Luxor",Luxor,952378978,24 hours,25.687,32.6395
+15,Aswan University Hospital,Hospital,"El Sadat Rd, Aswan",Aswan,972313540,24 hours,24.1077,32.8937
+16,Sharm International Hospital,Hospital,"El Salam Rd, Sharm El-Sheikh",Sharm El-Sheikh,693600100,24 hours,27.9158,34.3302
+17,Seif Pharmacy — Zamalek,Pharmacy,"26th of July St, Zamalek, Cairo",Cairo,27351234,8 AM - 2 AM,30.0614,31.2167
+18,El Ezaby Pharmacy — Nasr City,Pharmacy,"Makram Ebeid St, Nasr City, Cairo",Cairo,19600,24 hours,30.0592,31.3348
+19,El Nour Pharmacy — Alexandria,Pharmacy,"Mostafa Kamel St, Alexandria",Alexandria,35462345,24 hours,31.2001,29.9043
+20,Luxor Pharmacy,Pharmacy,"El Sharia El Kebir, Luxor",Luxor,952371222,9 AM - 12 AM,25.6958,32.6429
+21,57357 Children's Cancer Hospital,Hospital,"El Sekka El Gedida, Abbassia, Cairo",Cairo,,24 hours,30.0557,31.2256
+22,Ain Shams University Hospital (El Demerdash),Hospital,"Abbassia, Cairo",Cairo,,24 hours,30.081,31.281
+23,Ain Shams Specialized Hospital,Hospital,"Abbassia, Cairo",Cairo,,24 hours,30.082,31.279
+24,National Cancer Institute,Hospital,"Fom El Khalig, Cairo",Cairo,,24 hours,30.029,31.229
+25,Nasser Institute for Research and Treatment,Hospital,"Shubra, Cairo",Cairo,,24 hours,30.048,31.24
+26,National Heart Institute,Hospital,"Imbaba (Kit Kat), Giza",Giza,,24 hours,30.08,31.213
+27,Abou El Reish Pediatric Hospital,Hospital,"Manial, Giza",Giza,,24 hours,30.031,31.207
+28,El Galaa Hospital,Hospital,"El Qobba, Cairo",Cairo,,24 hours,30.089,31.296
+29,Cleopatra Hospital,Hospital,"Heliopolis, Cairo",Cairo,,24 hours,30.096,31.319
+30,Anglo-American Hospital,Hospital,"Zamalek, Cairo",Cairo,,24 hours,30.064,31.218
+31,Coptic Hospital,Hospital,"Fagala, Cairo",Cairo,,24 hours,30.057,31.256
+32,Nile Badrawi Hospital,Hospital,"Corniche El Nil, Maadi, Cairo",Cairo,,24 hours,29.996,31.231
+33,Dar El Hekma Hospital,Hospital,"Nasr City, Cairo",Cairo,,24 hours,30.062,31.334
+34,Dar El Shefa Hospital,Hospital,"Shubra, Cairo",Cairo,,24 hours,30.088,31.244
+35,El Nozha International Hospital,Hospital,"Heliopolis, Cairo",Cairo,,24 hours,30.107,31.348
+36,Cairo Medical Center,Hospital,"Heliopolis, Cairo",Cairo,,24 hours,30.09,31.32
+37,Saudi German Hospital Cairo,Hospital,New Cairo,Cairo,,24 hours,30.032,31.475
+38,Sheikh Zayed Specialized Hospital,Hospital,"Sheikh Zayed, Giza",Giza,,24 hours,29.995,30.98
+39,October 6 University Hospital,Hospital,"6th of October City, Giza",Giza,,24 hours,29.935,30.925
+40,Watany Eye Hospital,Hospital,"Nasr City, Cairo",Cairo,,24 hours,30.063,31.334
+41,Ibn Sina Hospital,Hospital,"Dokki, Giza",Giza,,24 hours,30.038,31.204
+42,Behman Hospital,Hospital,"Maadi, Cairo",Cairo,,24 hours,29.972,31.258
+43,Misr International Hospital,Hospital,"Dokki, Giza",Giza,,24 hours,30.038,31.203
+44,International Medical Center,Hospital,Cairo–Ismailia Desert Road,Cairo,,24 hours,30.09,31.58
+45,Heliopolis Cardiac Center,Hospital,"Heliopolis, Cairo",Cairo,,24 hours,30.1,31.332
+46,Arab Contractors Medical Center,Hospital,"Gabal Akhdar, Cairo",Cairo,,24 hours,30.085,31.31
+47,Alexandria Main University Hospital (El Meery),Hospital,"Shatby, Alexandria",Alexandria,,24 hours,31.206,29.929
+48,El Shatby Pediatric Hospital,Hospital,"Shatby, Alexandria",Alexandria,,24 hours,31.205,29.931
+49,El Hadara Hospital (Queen Nariman),Hospital,"El Hadara, Alexandria",Alexandria,,24 hours,31.18,29.936
+50,El Mowassah Hospital,Hospital,"El Attarin, Alexandria",Alexandria,,24 hours,31.199,29.898
+51,Alexandria Medical Center,Hospital,"Smouha, Alexandria",Alexandria,,24 hours,31.215,29.947
+52,Victoria Hospital,Hospital,"Victoria, Alexandria",Alexandria,,24 hours,31.242,29.962
+53,Borg El Arab University Hospital,Hospital,"Borg El Arab, Alexandria",Alexandria,,24 hours,30.917,29.567
+54,Saudi German Hospital Alexandria,Hospital,"Agamy, Alexandria",Alexandria,,24 hours,31.14,29.8
+55,Red Sea Hospital,Hospital,Hurghada,Hurghada,,24 hours,27.26,33.81
+56,El Gouna Hospital,Hospital,"El Gouna, Hurghada",Hurghada,,24 hours,27.3856,33.6781
+57,The Egyptian Hospital,Hospital,"Sheraton Rd, Hurghada",Hurghada,,24 hours,27.226,33.833
+58,Port Ghalib Hospital,Hospital,"Port Ghalib, Marsa Alam",Marsa Alam,,24 hours,25.552,34.648
+59,Mansoura University Hospital,Hospital,Mansoura,Mansoura,,24 hours,31.04,31.36
+60,Mansoura International Hospital,Hospital,Mansoura,Mansoura,,24 hours,31.045,31.365
+61,Tanta University Hospital,Hospital,Tanta,Tanta,,24 hours,30.79,31
+62,Mahalla Cardiac Center,Hospital,El Mahalla El Kubra,El Mahalla El Kubra,,24 hours,30.972,31.163
+63,Zagazig University Hospital,Hospital,Zagazig,Zagazig,,24 hours,30.59,31.5
+64,Zagazig General Hospital,Hospital,Zagazig,Zagazig,,24 hours,30.586,31.497
+65,Port Said General Hospital,Hospital,Port Said,Port Said,,24 hours,31.265,32.302
+66,Ismailia Cardiac Center,Hospital,Ismailia,Ismailia,,24 hours,30.595,32.265
+67,Suez General Hospital,Hospital,Suez,Suez,,24 hours,29.966,32.55
+68,Damietta General Hospital,Hospital,Damietta,Damietta,,24 hours,31.415,31.813
+69,Kafr El Sheikh General Hospital,Hospital,Kafr El Sheikh,Kafr El Sheikh,,24 hours,31.11,30.936
+70,Damanhur Medical Institute,Hospital,Damanhur,Damanhur,,24 hours,31.033,30.468
+71,Beni Suef University Hospital,Hospital,Beni Suef,Beni Suef,,24 hours,29.076,31.093
+72,Fayoum University Hospital,Hospital,Fayoum,Fayoum,,24 hours,29.306,30.843
+73,Minia University Hospital,Hospital,Minya,Minya,,24 hours,28.095,30.75
+74,Assiut University Hospital,Hospital,Assiut,Assiut,,24 hours,27.18,31.185
+75,Sohag University Hospital,Hospital,Sohag,Sohag,,24 hours,26.558,31.695
+76,Qena General Hospital,Hospital,Qena,Qena,,24 hours,26.164,32.727
+77,Marsa Matrouh General Hospital,Hospital,Marsa Matrouh,Marsa Matrouh,,24 hours,31.352,27.238
+78,South Sinai Hospital,Hospital,El Tor,El Tor,,24 hours,28.237,33.619
+79,Qasr El Nil Police Station,Police Station,"Downtown, Cairo",Cairo,122,24 hours,30.044,31.235
+80,El Sayeda Zeinab Police Station,Police Station,"Sayeda Zeinab, Cairo",Cairo,122,24 hours,30.033,31.237
+81,Nasr City Police Station,Police Station,"Nasr City, Cairo",Cairo,122,24 hours,30.062,31.334
+82,Heliopolis Police Station,Police Station,"Heliopolis, Cairo",Cairo,122,24 hours,30.099,31.33
+83,Maadi Police Station,Police Station,"Maadi, Cairo",Cairo,122,24 hours,29.964,31.253
+84,Zamalek Police Station,Police Station,"Zamalek, Cairo",Cairo,122,24 hours,30.064,31.218
+85,Shubra Police Station,Police Station,"Shubra, Cairo",Cairo,122,24 hours,30.078,31.244
+86,Old Cairo Police Station,Police Station,"Masr El Qadima, Cairo",Cairo,122,24 hours,30.01,31.231
+87,Dokki Police Station,Police Station,"Dokki, Giza",Giza,122,24 hours,30.038,31.204
+88,Agouza Police Station,Police Station,"Agouza, Giza",Giza,122,24 hours,30.058,31.215
+89,Imbaba Police Station,Police Station,"Imbaba, Giza",Giza,122,24 hours,30.084,31.216
+90,El Haram Police Station,Police Station,"Haram, Giza",Giza,122,24 hours,30.005,31.16
+91,6th October Police Station,Police Station,"6th of October City, Giza",Giza,122,24 hours,29.94,30.915
+92,El Raml Police Station,Police Station,"El Raml, Alexandria",Alexandria,122,24 hours,31.2,29.905
+93,Moharram Bey Police Station,Police Station,"Moharram Bey, Alexandria",Alexandria,122,24 hours,31.19,29.92
+94,Sidi Gaber Police Station,Police Station,"Sidi Gaber, Alexandria",Alexandria,122,24 hours,31.219,29.945
+95,Montazah Police Station,Police Station,"Montazah, Alexandria",Alexandria,122,24 hours,31.29,30.017
+96,Mansoura Police Station,Police Station,Mansoura,Mansoura,122,24 hours,31.043,31.352
+97,Tanta Police Station,Police Station,Tanta,Tanta,122,24 hours,30.788,30.999
+98,Port Said Police Station,Police Station,Port Said,Port Said,122,24 hours,31.262,32.301
+99,Hurghada Police Station,Police Station,Hurghada,Hurghada,122,24 hours,27.258,33.811
+100,Aswan Police Station,Police Station,Aswan,Aswan,122,24 hours,24.088,32.9
+101,Assiut Police Station,Police Station,Assiut,Assiut,122,24 hours,27.183,31.171
+102,Heliopolis Fire Station,Fire Station,"Heliopolis, Cairo",Cairo,180,24 hours,30.098,31.33
+103,Nasr City Fire Station,Fire Station,"Nasr City, Cairo",Cairo,180,24 hours,30.061,31.333
+104,Maadi Fire Station,Fire Station,"Maadi, Cairo",Cairo,180,24 hours,29.968,31.252
+105,Dokki Fire Station,Fire Station,"Dokki, Giza",Giza,180,24 hours,30.037,31.205
+106,6th October Fire Station,Fire Station,"6th of October City, Giza",Giza,180,24 hours,29.938,30.918
+107,Smouha Fire Station,Fire Station,"Smouha, Alexandria",Alexandria,180,24 hours,31.217,29.946
+108,Mansoura Fire Station,Fire Station,Mansoura,Mansoura,180,24 hours,31.041,31.356
+109,Tanta Fire Station,Fire Station,Tanta,Tanta,180,24 hours,30.786,30.997
+110,Port Said Fire Station,Fire Station,Port Said,Port Said,180,24 hours,31.26,32.3
+111,Aswan Fire Station,Fire Station,Aswan,Aswan,180,24 hours,24.086,32.898
+112,Sharm El-Sheikh Fire Station,Fire Station,Sharm El-Sheikh,Sharm El-Sheikh,180,24 hours,27.9158,34.3302
+113,Seif Pharmacy — Heliopolis (Korba),Pharmacy,"Korba, Heliopolis, Cairo",Cairo,,24 hours,30.1,31.33
+114,Seif Pharmacy — Nasr City,Pharmacy,"Nasr City, Cairo",Cairo,,24 hours,30.061,31.335
+115,Seif Pharmacy — Mohandessin,Pharmacy,"Mohandessin, Giza",Giza,,24 hours,30.055,31.21
+116,Seif Pharmacy — Maadi,Pharmacy,"Maadi, Cairo",Cairo,,24 hours,29.966,31.254
+117,Seif Pharmacy — Sidi Gaber,Pharmacy,"Sidi Gaber, Alexandria",Alexandria,,24 hours,31.22,29.946
+118,El Ezaby Pharmacy — Heliopolis,Pharmacy,"Heliopolis, Cairo",Cairo,19600,24 hours,30.098,31.329
+119,El Ezaby Pharmacy — Dokki,Pharmacy,"48 Giza St, Dokki, Giza",Giza,19600,24 hours,30.037,31.207
+120,El Ezaby Pharmacy — 6th of October,Pharmacy,"3rd District, 6th of October City, Giza",Giza,19600,24 hours,29.933,30.92
+121,El Ezaby Pharmacy — Hurghada,Pharmacy,Hurghada,Hurghada,19600,24 hours,27.26,33.81
+122,El Ezaby Pharmacy — Sharm El-Sheikh,Pharmacy,Sharm El-Sheikh,Sharm El-Sheikh,19600,24 hours,27.9158,34.3302
+123,El Ezaby Pharmacy — Mansoura,Pharmacy,Mansoura,Mansoura,19600,24 hours,31.042,31.355
+124,19011 Pharmacy — Downtown Cairo,Pharmacy,"Downtown, Cairo",Cairo,19011,24 hours,30.05,31.24
+125,19011 Pharmacy — Dokki,Pharmacy,"Dokki, Giza",Giza,19011,24 hours,30.037,31.205
+126,19011 Pharmacy — Alexandria,Pharmacy,Alexandria,Alexandria,19011,24 hours,31.201,29.906

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Tourist_Project_MVC.Models;
 
 namespace Tourist_Project_MVC.View_Model
@@ -13,6 +14,10 @@ namespace Tourist_Project_MVC.View_Model
         [Display(Name="Type of Service")]
         [Required(ErrorMessage = "This Field required")]
         public  string Type { get; set; }
+
+        // Dropdown options for the category select (populated from SponsorCategories).
+        public IEnumerable<SelectListItem> TypeOptions =>
+            SponsorCategories.ToSelectList(Type);
 
         [Display(Name ="Address")]
         [Required(ErrorMessage = "This Field required")]

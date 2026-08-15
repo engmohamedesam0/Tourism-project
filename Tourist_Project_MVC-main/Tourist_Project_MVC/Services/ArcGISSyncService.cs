@@ -21,6 +21,7 @@ public interface IArcGISSyncService
     Task<ArcGISSyncResult> SyncBranchesAsync(IEnumerable<Branch> branches, CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncTouristsTableAsync(CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncTouristNationalityLayerAsync(CancellationToken ct = default);
+    Task<ArcGISSyncResult> SyncRedemptionsAsync(CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncDestinationsFromArcGIS(CancellationToken ct = default);
     Task<(bool Success, string? Error, int? CreatedObjectId, int? CreatedId)> AddDestinationToArcGISAsync(Destination destination, CancellationToken ct = default);
     Task<ArcGISSyncResult> DeleteDestinationFromArcGISAsync(int destinationId, CancellationToken ct = default);
@@ -57,6 +58,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
     private string? BranchesLayerUrl => _config["ArcGIS:BranchesLayerUrl"];
     private string? TouristsTableUrl => _config["ArcGIS:TouristsTableUrl"];
     private string? TouristNationalityLayerUrl => _config["ArcGIS:TouristNationalityLayerUrl"];
+    private string? RedemptionsTableUrl => _config["ArcGIS:RedemptionsTableUrl"];
 
     private static string LayerUrl(string? baseUrl)
     {
@@ -409,6 +411,11 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
             var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
             var idField = ResolveField(fieldMap, "Id") ?? "Id";
 
+            // The new branches layer (created from the branches CSV) carries a
+            // Category column; push it when the layer has the field so branches
+            // added through the app stay in sync with the CSV-imported ones.
+            var hasCategoryField = fieldMap?.ContainsKey("Category") == true;
+
             foreach (var b in list.Where(x => x.Location != null))
             {
                 var existingOid = await QueryObjectIdAsync(client, layerUrl, b.Id, token, idField, ct);
@@ -419,41 +426,28 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
                     spatialReference = new { wkid = 4326 }
                 };
 
+                var attrs = new Dictionary<string, object>
+                {
+                    [ResolveField(fieldMap, "Id") ?? "Id"] = b.Id,
+                    [ResolveField(fieldMap, "SponsorId") ?? "SponsorId"] = b.SponsorId,
+                    [ResolveField(fieldMap, "Name") ?? "Name"] = b.Name,
+                    [ResolveField(fieldMap, "Address") ?? "Address"] = b.Address,
+                    [ResolveField(fieldMap, "ContactNumber") ?? "ContactNumber"] = b.ContactNumber ?? 0,
+                    [ResolveField(fieldMap, "latitude") ?? "latitude"] = b.Location.Y,
+                    [ResolveField(fieldMap, "longitude") ?? "longitude"] = b.Location.X
+                };
+                if (hasCategoryField)
+                    attrs[ResolveField(fieldMap, "Category") ?? "Category"] = b.Category ?? "";
+
                 if (existingOid.HasValue)
                 {
-                    updates.Add(new
-                    {
-                        attributes = new Dictionary<string, object>
-                        {
-                            ["OBJECTID"] = existingOid.Value,
-                            [ResolveField(fieldMap, "Id") ?? "Id"] = b.Id,
-                            [ResolveField(fieldMap, "SponsorId") ?? "SponsorId"] = b.SponsorId,
-                            [ResolveField(fieldMap, "Name") ?? "Name"] = b.Name,
-                            [ResolveField(fieldMap, "Address") ?? "Address"] = b.Address,
-                            [ResolveField(fieldMap, "ContactNumber") ?? "ContactNumber"] = b.ContactNumber ?? 0,
-                            [ResolveField(fieldMap, "latitude") ?? "latitude"] = b.Location.Y,
-                            [ResolveField(fieldMap, "longitude") ?? "longitude"] = b.Location.X
-                        },
-                        geometry = geometry
-                    });
+                    attrs["OBJECTID"] = existingOid.Value;
+                    updates.Add(new { attributes = attrs, geometry = geometry });
                     updatesTargetOids.Add(existingOid.Value);
                 }
                 else
                 {
-                    adds.Add(new
-                    {
-                        attributes = new Dictionary<string, object>
-                        {
-                            [ResolveField(fieldMap, "Id") ?? "Id"] = b.Id,
-                            [ResolveField(fieldMap, "SponsorId") ?? "SponsorId"] = b.SponsorId,
-                            [ResolveField(fieldMap, "Name") ?? "Name"] = b.Name,
-                            [ResolveField(fieldMap, "Address") ?? "Address"] = b.Address,
-                            [ResolveField(fieldMap, "ContactNumber") ?? "ContactNumber"] = b.ContactNumber ?? 0,
-                            [ResolveField(fieldMap, "latitude") ?? "latitude"] = b.Location.Y,
-                            [ResolveField(fieldMap, "longitude") ?? "longitude"] = b.Location.X
-                        },
-                        geometry = geometry
-                    });
+                    adds.Add(new { attributes = attrs, geometry = geometry });
                     addsTargetOids.Add(b.Id);
                 }
             }
@@ -972,6 +966,211 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
                         nationality = property.Value.GetString();
                 }
                 if (objectId > 0) result.Add((objectId, nationality ?? string.Empty));
+            }
+        }
+        return result;
+    }
+
+    public async Task<ArcGISSyncResult> SyncRedemptionsAsync(CancellationToken ct = default)
+    {
+        // Per-reward redemptions table (non-spatial). One row per redemption,
+        // joined with the reward title so the ArcGIS dashboard can answer
+        // "which single reward gets redeemed the most across everyone?".
+        // Database is the source of truth -> push-only, full refresh
+        // (add/update/delete) so the table self-heals on redemption/delete.
+        var layerUrl = LayerUrl(RedemptionsTableUrl);
+        if (string.IsNullOrWhiteSpace(layerUrl)) return ArcGISSyncResult.Ok();
+
+        string token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            _logger.LogError("ArcGIS redemptions table sync skipped: API Key is missing");
+            return ArcGISSyncResult.Failed("API Key is missing.");
+        }
+
+        try
+        {
+            // 1) All redemptions with their reward title.
+            var redemptions = await _context.Redemptions
+                .Include(r => r.Reward)
+                .OrderBy(r => r.Id)
+                .ToListAsync(ct);
+
+            var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+
+            var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
+            var idField = ResolveField(fieldMap, "RedemptionId") ?? "RedemptionId";
+
+            // 2) What is currently on the table (ObjectId + RedemptionId).
+            var remoteFeatures = await QueryAllRedemptionIdsAsync(client, layerUrl, token, idField, ct);
+
+            var dbIds = new HashSet<int>();
+            var adds = new List<object>();
+            var updates = new List<object>();
+            var deletes = new List<int>();
+            var addedIds = new List<int>();
+            var updatedIds = new List<int>();
+
+            foreach (var r in redemptions)
+            {
+                dbIds.Add(r.Id);
+
+                var attrs = new Dictionary<string, object>
+                {
+                    [ResolveField(fieldMap, "RedemptionId") ?? "RedemptionId"] = r.Id,
+                    [ResolveField(fieldMap, "RewardTitle") ?? "RewardTitle"] = r.Reward?.Title ?? string.Empty,
+                    [ResolveField(fieldMap, "TouristId") ?? "TouristId"] = r.TouristId,
+                    [ResolveField(fieldMap, "BranchId") ?? "BranchId"] = r.BranchId,
+                    [ResolveField(fieldMap, "PointsRedeemed") ?? "PointsRedeemed"] = r.PointsRedeemed,
+                    [ResolveField(fieldMap, "RedemptionDate") ?? "RedemptionDate"] = r.RedemptionDate.ToString("yyyy-MM-dd"),
+                    [ResolveField(fieldMap, "Status") ?? "Status"] = string.IsNullOrWhiteSpace(r.Status) ? "Active" : r.Status
+                };
+
+                var existing = remoteFeatures.FirstOrDefault(f => f.RedemptionId == r.Id);
+                if (existing.ObjectId > 0)
+                {
+                    var updAttrs = new Dictionary<string, object> { ["OBJECTID"] = existing.ObjectId };
+                    foreach (var kv in attrs) updAttrs[kv.Key] = kv.Value;
+                    updates.Add(new { attributes = updAttrs });
+                    updatedIds.Add(r.Id);
+                }
+                else
+                {
+                    adds.Add(new { attributes = attrs });
+                    addedIds.Add(r.Id);
+                }
+            }
+
+            // 3) Rows on the table whose redemption no longer exists locally -> delete.
+            foreach (var remote in remoteFeatures)
+            {
+                if (!dbIds.Contains(remote.RedemptionId))
+                {
+                    deletes.Add(remote.ObjectId);
+                }
+            }
+
+            if (adds.Count == 0 && updates.Count == 0 && deletes.Count == 0) return ArcGISSyncResult.Ok();
+
+            var formFields = new Dictionary<string, string>
+            {
+                ["f"] = "json"
+            };
+            if (adds.Count > 0)
+                formFields["adds"] = JsonSerializer.Serialize(adds, _jsonOptions);
+            if (updates.Count > 0)
+                formFields["updates"] = JsonSerializer.Serialize(updates, _jsonOptions);
+            if (deletes.Count > 0)
+                formFields["deletes"] = string.Join(",", deletes);
+
+            var content = new FormUrlEncodedContent(formFields);
+
+            var url = $"{layerUrl}/applyEdits?token={Uri.EscapeDataString(token)}";
+            var response = await client.PostAsync(url, content, ct);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errBody = await response.Content.ReadAsStringAsync(ct);
+                _logger.LogError("ArcGIS redemptions table sync failed with HTTP status {Status}. Body: {Body}", response.StatusCode, errBody);
+                return ArcGISSyncResult.Failed($"ArcGIS returned HTTP {(int)response.StatusCode}: {errBody}");
+            }
+
+            var body = await response.Content.ReadAsStringAsync(ct);
+            _logger.LogInformation("ArcGIS redemptions table applyEdits response: {Body}", body);
+
+            using var doc = JsonDocument.Parse(body);
+
+            if (doc.RootElement.TryGetProperty("error", out var error))
+            {
+                var errMsg = ExtractArcGISErrorMessage(error);
+                _logger.LogError("ArcGIS redemptions table applyEdits returned top-level error: {Error}", errMsg);
+                return ArcGISSyncResult.Failed($"ArcGIS applyEdits error: {errMsg}");
+            }
+
+            if (doc.RootElement.TryGetProperty("addResults", out var addResults))
+            {
+                int i = 0;
+                foreach (var result in addResults.EnumerateArray())
+                {
+                    if (result.TryGetProperty("success", out var successProp) && !successProp.GetBoolean())
+                    {
+                        var errMsg = ExtractArcGISErrorMessage(result);
+                        var targetId = i < addedIds.Count ? addedIds[i] : -1;
+                        _logger.LogError("ArcGIS redemptions table add failed for RedemptionId={TargetId}: {Error}", targetId, errMsg);
+                        return ArcGISSyncResult.Failed($"ArcGIS redemptions table add failed for RedemptionId={targetId}: {errMsg}");
+                    }
+                    i++;
+                }
+            }
+
+            if (doc.RootElement.TryGetProperty("updateResults", out var updateResults))
+            {
+                int i = 0;
+                foreach (var result in updateResults.EnumerateArray())
+                {
+                    if (result.TryGetProperty("success", out var successProp) && !successProp.GetBoolean())
+                    {
+                        var errMsg = ExtractArcGISErrorMessage(result);
+                        var targetId = i < updatedIds.Count ? updatedIds[i] : -1;
+                        _logger.LogError("ArcGIS redemptions table update failed for RedemptionId={TargetId}: {Error}", targetId, errMsg);
+                        return ArcGISSyncResult.Failed($"ArcGIS redemptions table update failed for RedemptionId={targetId}: {errMsg}");
+                    }
+                    i++;
+                }
+            }
+
+            if (doc.RootElement.TryGetProperty("deleteResults", out var deleteResults))
+            {
+                int i = 0;
+                foreach (var result in deleteResults.EnumerateArray())
+                {
+                    if (result.TryGetProperty("success", out var successProp) && !successProp.GetBoolean())
+                    {
+                        var errMsg = ExtractArcGISErrorMessage(result);
+                        var targetOid = i < deletes.Count ? deletes[i] : -1;
+                        _logger.LogError("ArcGIS redemptions table delete failed for OBJECTID={TargetOid}: {Error}", targetOid, errMsg);
+                        return ArcGISSyncResult.Failed($"ArcGIS redemptions table delete failed for OBJECTID={targetOid}: {errMsg}");
+                    }
+                    i++;
+                }
+            }
+
+            _logger.LogInformation("ArcGIS redemptions table sync complete: {Added} added, {Updated} updated, {Deleted} deleted",
+                adds.Count, updates.Count, deletes.Count);
+
+            return ArcGISSyncResult.Ok(added: adds.Count, updated: updates.Count + deletes.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ArcGIS redemptions table sync failed");
+            return ArcGISSyncResult.Failed($"ArcGIS redemptions table sync failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>Returns (ObjectId, RedemptionId) for every row currently on the redemptions table.</summary>
+    private async Task<List<(int ObjectId, int RedemptionId)>> QueryAllRedemptionIdsAsync(HttpClient client, string layerUrl, string token, string idField, CancellationToken ct)
+    {
+        var result = new List<(int ObjectId, int RedemptionId)>();
+        var queryUrl = $"{layerUrl}/query?where=1%3D1&outFields=ObjectId,{Uri.EscapeDataString(idField)}&returnGeometry=false&resultRecordCount=1000&f=json&token={Uri.EscapeDataString(token)}";
+        using var response = await client.GetAsync(queryUrl, ct);
+        if (!response.IsSuccessStatusCode) return result;
+        using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
+        if (doc.RootElement.TryGetProperty("features", out var features))
+        {
+            foreach (var feature in features.EnumerateArray())
+            {
+                if (!feature.TryGetProperty("attributes", out var attrs)) continue;
+                int objectId = 0;
+                int redemptionId = 0;
+                foreach (var property in attrs.EnumerateObject())
+                {
+                    if (property.Name.Equals("ObjectId", StringComparison.OrdinalIgnoreCase) && property.Value.ValueKind == JsonValueKind.Number)
+                        objectId = property.Value.GetInt32();
+                    if (property.Name.Equals(idField, StringComparison.OrdinalIgnoreCase) && property.Value.ValueKind == JsonValueKind.Number)
+                        redemptionId = property.Value.GetInt32();
+                }
+                if (objectId > 0) result.Add((objectId, redemptionId));
             }
         }
         return result;

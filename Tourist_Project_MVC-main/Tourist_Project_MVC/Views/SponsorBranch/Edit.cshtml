@@ -20,6 +20,12 @@
             </div>
 
             <div class="mb-3">
+                <label asp-for="Category" class="form-label"></label>
+                <input asp-for="Category" class="form-control" disabled />
+                <small class="text-muted">@Localizer["SponsorBranch_CategoryAutoHint"].Value</small>
+            </div>
+
+            <div class="mb-3">
                 <label asp-for="Address" class="form-label"></label>
                 <input asp-for="Address" class="form-control" />
                 <span asp-validation-for="Address" class="text-danger"></span>

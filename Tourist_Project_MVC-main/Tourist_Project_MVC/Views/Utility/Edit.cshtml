@@ -1,0 +1,85 @@
+@model Tourist_Project_MVC.View_Model.UtilityVM
+
+@{
+    ViewData["Title"] = Localizer["Utility_EditTitle"].Value;
+}
+
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-header py-3"
+             style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
+            <h4 class="text-white mb-0">
+                <i class="bi bi-pencil-fill me-2"></i> @Localizer["Utility_EditHeading"].Value
+            </h4>
+        </div>
+
+        <div class="card-body p-4">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Type" class="form-label fw-bold"></label>
+                    <select asp-for="Type" asp-items="Model.TypeOptions" class="form-select">
+                        <option value="">-- @Localizer["Utility_SelectTypePlaceholder"].Value --</option>
+                    </select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="City" class="form-label fw-bold"></label>
+                        <input asp-for="City" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ContactNumber" class="form-label fw-bold"></label>
+                        <input asp-for="ContactNumber" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Address" class="form-label fw-bold"></label>
+                    <input asp-for="Address" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="OpenHours" class="form-label fw-bold"></label>
+                    <input asp-for="OpenHours" class="form-control" placeholder="e.g. 24 hours" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Lat" class="form-label fw-bold"></label>
+                        <input asp-for="Lat" class="form-control" type="number" step="any" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Long" class="form-label fw-bold"></label>
+                        <input asp-for="Long" class="form-control" type="number" step="any" />
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-warning px-4">
+                        <i class="bi bi-check-lg me-1"></i> @Localizer["Utility_UpdateBtn"].Value
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-x-lg me-1"></i> @Localizer["Utility_CancelBtn"].Value
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

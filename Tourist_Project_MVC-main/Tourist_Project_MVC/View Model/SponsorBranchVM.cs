@@ -24,6 +24,10 @@ namespace Tourist_Project_MVC.View_Model
         [Display(Name = "Phone Number")]
         public int? ContactNumber { get; set; }
 
+        // Category inherited automatically from the owning sponsor (read-only
+        // in the form; never entered manually).
+        public string? Category { get; set; }
+
         public int SponsorId { get; set; }
     }
 }

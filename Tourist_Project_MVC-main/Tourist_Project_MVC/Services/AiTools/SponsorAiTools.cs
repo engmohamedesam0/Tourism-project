@@ -127,6 +127,7 @@ namespace Tourist_Project_MVC.Services.AiTools
                     {
                         Name = draft.Name.Trim(),
                         Address = draft.Address.Trim(),
+                        Category = sponsor.Type, // branch category always follows its sponsor
                         Location = new Point(lon, lat) { SRID = 4326 },
                         ContactNumber = draft.ContactNumber,
                         SponsorId = sponsor.Id

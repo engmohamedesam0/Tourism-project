@@ -2800,4 +2800,97 @@
   <data name="AccessDenied_BackToHome" xml:space="preserve">
     <value>العودة إلى الرئيسية</value>
   </data>
+  <data name="Sponsor_SelectCategoryPlaceholder" xml:space="preserve">
+    <value>اختر الفئة</value>
+  </data>
+  <data name="SponsorBranch_ColCategory" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="SponsorBranch_CategoryAutoHint" xml:space="preserve">
+    <value>تُؤخذ الفئة تلقائيًا من فئة الراعي.</value>
+  </data>
+  <data name="Nav_Utilities" xml:space="preserve">
+    <value>المرافق</value>
+  </data>
+  <data name="Utility_IndexTitle" xml:space="preserve">
+    <value>المرافق في مصر</value>
+  </data>
+  <data name="Utility_IndexHeading" xml:space="preserve">
+    <value>المرافق المتاحة في مصر</value>
+  </data>
+  <data name="Utility_CreateBtn" xml:space="preserve">
+    <value>إضافة مرفق</value>
+  </data>
+  <data name="Utility_CreateTitle" xml:space="preserve">
+    <value>إضافة مرفق</value>
+  </data>
+  <data name="Utility_CreateHeading" xml:space="preserve">
+    <value>إضافة مرفق جديد</value>
+  </data>
+  <data name="Utility_EditTitle" xml:space="preserve">
+    <value>تعديل المرفق</value>
+  </data>
+  <data name="Utility_EditHeading" xml:space="preserve">
+    <value>تعديل المرفق</value>
+  </data>
+  <data name="Utility_DeleteTitle" xml:space="preserve">
+    <value>حذف المرفق</value>
+  </data>
+  <data name="Utility_DeleteHeading" xml:space="preserve">
+    <value>حذف المرفق</value>
+  </data>
+  <data name="Utility_DeleteConfirm" xml:space="preserve">
+    <value>هل أنت متأكد من حذف هذا المرفق؟ لا يمكن التراجع عن هذا الإجراء.</value>
+  </data>
+  <data name="Utility_DeleteBtn" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Utility_SaveBtn" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Utility_UpdateBtn" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="Utility_CancelBtn" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Utility_SelectTypePlaceholder" xml:space="preserve">
+    <value>اختر النوع</value>
+  </data>
+  <data name="Utility_SearchPlaceholder" xml:space="preserve">
+    <value>ابحث بالاسم أو المدينة أو العنوان...</value>
+  </data>
+  <data name="Utility_AllTypes" xml:space="preserve">
+    <value>جميع الأنواع</value>
+  </data>
+  <data name="Utility_TotalLabel" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="Utility_ColName" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="Utility_ColType" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Utility_ColCity" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="Utility_ColAddress" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Utility_ColContact" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+  <data name="Utility_ColHours" xml:space="preserve">
+    <value>ساعات العمل</value>
+  </data>
+  <data name="Utility_ColActions" xml:space="preserve">
+    <value>إجراءات</value>
+  </data>
+  <data name="Utility_EditTip" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Utility_DeleteTip" xml:space="preserve">
+    <value>حذف</value>
+  </data>
 </root>

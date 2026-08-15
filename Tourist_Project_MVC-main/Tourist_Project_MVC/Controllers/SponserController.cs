@@ -98,6 +98,12 @@ namespace Tourist_Project_MVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (!SponsorCategories.IsValid(sponsorFromReq.Type))
+                {
+                    ModelState.AddModelError("Type", "Please choose a valid category from the list.");
+                    return View("Edit", sponsorFromReq);
+                }
+
                 Sponsor sponsorFromDB = sponsorRepo.GetById(sponsorFromReq.Id);
                 sponsorFromDB.Name = sponsorFromReq.Name;
                 sponsorFromDB.Type = sponsorFromReq.Type;
@@ -105,6 +111,20 @@ namespace Tourist_Project_MVC.Controllers
                 sponsorFromDB.ContactNumber = sponsorFromReq.ContactInfo;
                 sponsorRepo.Update(sponsorFromDB);
                 sponsorRepo.Save();
+
+                // Keep every branch category in sync with its sponsor's category
+                // so a branch always reflects the sponsor it belongs to.
+                var branches = _context.Branches.Where(b => b.SponsorId == sponsorFromDB.Id).ToList();
+                foreach (var b in branches)
+                {
+                    b.Category = sponsorFromDB.Type;
+                }
+                if (branches.Count > 0)
+                {
+                    _context.Branches.UpdateRange(branches);
+                    _context.SaveChanges();
+                }
+
                 return RedirectToAction("Index");
             }
             return RedirectToAction("Edit", sponsorFromReq);
@@ -126,6 +146,12 @@ namespace Tourist_Project_MVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (!SponsorCategories.IsValid(sponsorFromReq.Type))
+                {
+                    ModelState.AddModelError("Type", "Please choose a valid category from the list.");
+                    return View("Create", sponsorFromReq);
+                }
+
                 Sponsor newSponsor = new Sponsor()
                 {
                     Name = sponsorFromReq.Name,

@@ -4,6 +4,21 @@
     ViewData["Title"] = Localizer["SponsorBranch_IndexTitle"].Value;
 }
 
+@section Styles {
+    <style>
+        .badge-category {
+            background-color: #FDF6EC;
+            color: var(--egy-primary);
+            border: 1px solid var(--egy-accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+    </style>
+}
+
 <div class="inner-page-wrapper">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -32,6 +47,7 @@
                     <tr>
                         <th>@Localizer["SponsorBranch_ColHash"].Value</th>
                         <th>@Localizer["SponsorBranch_ColName"].Value</th>
+                        <th>@Localizer["SponsorBranch_ColCategory"].Value</th>
                         <th>@Localizer["SponsorBranch_ColAddress"].Value</th>
                         <th>@Localizer["SponsorBranch_ColCoordinates"].Value</th>
                         <th>@Localizer["SponsorBranch_ColPhone"].Value</th>
@@ -47,6 +63,16 @@
                         <tr>
                             <td class="fw-bold text-muted">@i.ToString("D2")</td>
                             <td><div class="fw-bold">@item.Name</div></td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Category))
+                                {
+                                    <span class="badge-category">@item.Category</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
                             <td>@item.Address</td>
                             <td><small class="text-muted">@item.Location.Y, @item.Location.X</small></td>
                             <td>@(item.ContactNumber?.ToString() ?? "—")</td>

@@ -13,6 +13,7 @@ namespace Tourist_Project_MVC.Data
         public DbSet<TripDestination> TripDestinations { get; set; }
         public DbSet<Sponsor> Sponsors { get; set; }
         public DbSet<Branch> Branches { get; set; }
+        public DbSet<Utility> Utilities { get; set; }
         public DbSet<RewardBranch> RewardBranches { get; set; }
         public DbSet<Reward> Rewards { get; set; }
         public DbSet<Redemption> Redemptions { get; set; }
@@ -98,6 +99,10 @@ namespace Tourist_Project_MVC.Data
 
             modelBuilder.Entity<Branch>()
                 .Property(b => b.Location)
+                .HasColumnType("geometry");
+
+            modelBuilder.Entity<Utility>()
+                .Property(u => u.Location)
                 .HasColumnType("geometry");
 
             // Reward <-> Branch many-to-many join (RewardBranch).

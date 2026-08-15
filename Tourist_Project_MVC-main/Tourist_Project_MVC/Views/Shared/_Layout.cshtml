@@ -389,6 +389,11 @@
                                             <i class="bi bi-star-fill me-2"></i> @Localizer["Nav_AllRewards"].Value
                                         </a>
                                     </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Utility" asp-action="Index">
+                                            <i class="bi bi-life-preserver me-2"></i> @Localizer["Nav_Utilities"].Value
+                                        </a>
+                                    </li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Role" asp-action="ManageAccounts">
@@ -503,16 +508,26 @@
                                     <i class="bi bi-geo-fill"></i> @Localizer["Nav_NearMe"].Value
                                 </a>
                             </li>
-<li class="nav-item">
-                                    <a class="nav-link" asp-controller="TouristReward" asp-action="Index">
-                                        <i class="bi bi-gift-fill"></i> @Localizer["Nav_Rewards"].Value
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Features" asp-action="Index">
-                                        <i class="bi bi-phone-fill"></i> @Localizer["Nav_Features"].Value
-                                    </a>
-                                </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Utility" asp-action="Index">
+                                    <i class="bi bi-life-preserver"></i> @Localizer["Nav_Utilities"].Value
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="NearMe" asp-action="Index">
+                                    <i class="bi bi-geo-fill"></i> @Localizer["Nav_NearMe"].Value
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Utility" asp-action="Index">
+                                    <i class="bi bi-life-preserver"></i> @Localizer["Nav_Utilities"].Value
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Features" asp-action="Index">
+                                    <i class="bi bi-phone-fill"></i> @Localizer["Nav_Features"].Value
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="About" asp-action="Index">
                                     <i class="bi bi-info-circle-fill"></i> @Localizer["Nav_About"].Value
