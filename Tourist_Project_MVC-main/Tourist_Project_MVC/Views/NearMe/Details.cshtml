@@ -54,15 +54,10 @@
                 </div>
             </div>
 
-            <!-- Map placeholder -->
+            <!-- Branch location map (focused on the branch) -->
             <div id="sponsorMap" class="sponsor-map-container"
-                 data-lat="@displayLat" data-lng="@displayLong" data-id="@Model.Id">
-                <div class="map-watermark">
-                    <i class="bi bi-geo-alt" style="font-size: 2.5rem;"></i>
-                    <p class="mb-0 mt-2 small">Map will render here</p>
-                    <small class="text-muted">data-lat="@displayLat" data-lng="@displayLong"</small>
-                </div>
-            </div>
+                 data-lat="@displayLat" data-lng="@displayLong" data-id="@Model.Id"
+                 aria-label="Map showing the location of @Model.Name"></div>
         </div>
     </div>
 
@@ -217,20 +212,11 @@
 @section Scripts {
     <style>
         .sponsor-map-container {
-            height: 240px;
+            height: 300px;
             border-radius: 12px;
-            border: 1px dashed rgba(200, 131, 42, 0.5);
-            background: repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
-        }
-
-        .map-watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: var(--egy-muted-gold);
-            opacity: 0.65;
+            overflow: hidden;
+            background: #e8e4dc;
+            border: 1px solid rgba(200, 131, 42, 0.35);
         }
 
         .stat-mini-card {
@@ -255,4 +241,23 @@
             letter-spacing: 1px;
         }
     </style>
+
+    <script>
+        (function () {
+            var mapEl = document.getElementById("sponsorMap");
+            if (!mapEl) return;
+            var lat = parseFloat(mapEl.getAttribute("data-lat"));
+            var lng = parseFloat(mapEl.getAttribute("data-lng"));
+            if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) return;
+
+            if (window.EGYMaps && EGYMaps.initPointMap) {
+                EGYMaps.initPointMap({
+                    mapElId: "sponsorMap",
+                    lat: lat,
+                    lng: lng,
+                    title: "@Html.Raw(Model.Name)"
+                });
+            }
+        })();
+    </script>
 }

@@ -681,5 +681,81 @@ var EGYMaps = (function () {
     if (view && view.resize) view.resize();
   }
 
-  return { initWfsMap: initWfsMap, initLocationPicker: initLocationPicker, resize: resize };
+  /**
+   * Renders a single-location map (OSM basemap) centered on a point with a
+   * pin marker — used on detail pages such as the sponsor/branch details so
+   * the tourist sees exactly where the branch is. No-op when the element is
+   * missing, already initialized, or the coordinates are invalid/zero.
+   */
+  function initPointMap(opts) {
+    opts = opts || {};
+    var mapEl = document.getElementById(opts.mapElId);
+    if (!mapEl || _maps[opts.mapElId]) return null;
+    var lat = parseFloat(opts.lat);
+    var lng = parseFloat(opts.lng);
+    if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) return null;
+
+    (async function () {
+      await _waitForArcgisLoader();
+
+      var cfg = await _ensureConfig();
+      await _ensureApiKey(cfg);
+
+      var EsriMap = await $arcgis.import("@arcgis/core/Map.js");
+      var MapView = await $arcgis.import("@arcgis/core/views/MapView.js");
+      var Graphic = await $arcgis.import("@arcgis/core/Graphic.js");
+      var GraphicsLayer = await $arcgis.import(
+        "@arcgis/core/layers/GraphicsLayer.js",
+      );
+
+      var map = new EsriMap({ basemap: "osm" });
+      mapEl.innerHTML = "";
+
+      var view = new MapView({
+        container: mapEl,
+        map: map,
+        center: [lng, lat],
+        zoom: opts.zoom || 14,
+        constraints: { minZoom: 6 },
+      });
+      _maps[opts.mapElId] = view;
+
+      var markerLayer = new GraphicsLayer();
+      map.add(markerLayer);
+      markerLayer.add(
+        new Graphic({
+          geometry: {
+            type: "point",
+            longitude: lng,
+            latitude: lat,
+            spatialReference: { wkid: 4326 },
+          },
+          attributes: { title: opts.title || "" },
+          symbol: {
+            type: "simple-marker",
+            style: "pin",
+            color: [200, 131, 42, 1],
+            size: 26,
+            outline: { color: [255, 255, 255, 0.95], width: 2 },
+          },
+          popupTemplate: opts.title
+            ? { title: opts.title, content: opts.title }
+            : null,
+        }),
+      );
+
+      return { map: map, view: view };
+    })().catch(function (error) {
+      console.warn("ArcGIS point map initialization failed", error);
+      mapEl.innerHTML =
+        '<div class="p-4 text-center text-muted">Map unavailable.</div>';
+    });
+  }
+
+  return {
+    initWfsMap: initWfsMap,
+    initLocationPicker: initLocationPicker,
+    initPointMap: initPointMap,
+    resize: resize,
+  };
 })();
