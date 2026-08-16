@@ -20,7 +20,8 @@ namespace Tourist_Project_MVC.Services
         private static readonly IReadOnlyDictionary<string, string> SectionTitles = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["tourists"] = "For Tourists",
-            ["sponsors"] = "For Sponsors"
+            ["sponsors"] = "For Sponsors",
+            ["admins"] = "For Admins"
         };
 
         private volatile bool _loaded;
@@ -285,7 +286,24 @@ namespace Tourist_Project_MVC.Services
         private static string ApplyAutolinks(string html, string section)
         {
             var isSponsor = section.Equals("sponsors", StringComparison.OrdinalIgnoreCase);
-            var linkMap = isSponsor
+            var isAdmin = section.Equals("admins", StringComparison.OrdinalIgnoreCase);
+
+            var linkMap = isAdmin
+                ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["Admin Dashboard"] = "/AdminDashboard",
+                    ["Destinations"]    = "/Destination/Index",
+                    ["Missions"]        = "/Mission/Index",
+                    ["Rewards"]         = "/Reward/Index",
+                    ["Sponsors"]        = "/Sponsor/Index",
+                    ["Approvals"]       = "/SponsorApproval/Index",
+                    ["Support Inbox"]   = "/AdminSupport/Index",
+                    ["Utilities"]       = "/Utility/Index",
+                    ["Accounts"]        = "/Role/ManageAccounts",
+                    ["Tourists"]        = "/Tourist/Index",
+                    ["Trip Plans"]      = "/TripPlan/Index"
+                }
+                : isSponsor
                 ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["Dashboard"] = "/SponsorPortal/Dashboard",

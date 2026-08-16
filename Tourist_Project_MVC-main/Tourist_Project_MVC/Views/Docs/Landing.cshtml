@@ -35,7 +35,28 @@
         {
             <div class="docs-sidebar-section" data-section-id="@(section.Id)">
                 <div class="docs-sidebar-section-header d-flex align-items-center justify-content-between">
-                    <div class="docs-sidebar-section-title">@(section.Title)</div>
+                    <div class="docs-sidebar-section-title d-flex align-items-center gap-2">
+                        @if (section.Id.Equals("tourists", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <span class="sec-badge sec-badge-tourist"><i class="bi bi-compass-fill"></i></span>
+                            <span class="sec-title-text">For Tourists</span>
+                        }
+                        else if (section.Id.Equals("sponsors", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <span class="sec-badge sec-badge-sponsor"><i class="bi bi-briefcase-fill"></i></span>
+                            <span class="sec-title-text">For Sponsors</span>
+                        }
+                        else if (section.Id.Equals("admins", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <span class="sec-badge sec-badge-admin"><i class="bi bi-person-gear-fill"></i></span>
+                            <span class="sec-title-text">For Admins</span>
+                        }
+                        else
+                        {
+                            <span class="sec-badge sec-badge-default"><i class="bi bi-folder-fill"></i></span>
+                            <span class="sec-title-text">@(section.Title)</span>
+                        }
+                    </div>
                     <button type="button" class="docs-sidebar-toggle-section" aria-expanded="true" aria-label="Toggle @(section.Title) section">
                         <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
                     </button>
@@ -62,7 +83,14 @@
         <section class="docs-hero">
             <span class="docs-hero-category">Documentation & Help Center</span>
             <h1 class="docs-hero-title">EGYXPLORE Documentation</h1>
-            <p class="docs-hero-description">Discover comprehensive guides, interactive features, and support documentation tailored for Tourists and Sponsors.</p>
+            @if (User.IsInRole("Admin"))
+            {
+                <p class="docs-hero-description">Discover comprehensive guides, interactive features, and support documentation tailored for Tourists, Sponsors, and Admins.</p>
+            }
+            else
+            {
+                <p class="docs-hero-description">Discover comprehensive guides, interactive features, and support documentation tailored for Tourists and Sponsors.</p>
+            }
         </section>
 
         <!-- Search Bar -->
@@ -76,8 +104,22 @@
             </button>
             <div id="docsFilterMenu" class="docs-filter-menu">
                 <button type="button" class="docs-filter-item active" data-section="">All Sections</button>
-                <button type="button" class="docs-filter-item" data-section="tourists">For Tourists</button>
-                <button type="button" class="docs-filter-item" data-section="sponsors">For Sponsors</button>
+                @if (User.IsInRole("Admin"))
+                {
+                    <button type="button" class="docs-filter-item" data-section="tourists">For Tourists</button>
+                    <button type="button" class="docs-filter-item" data-section="sponsors">For Sponsors</button>
+                    <button type="button" class="docs-filter-item" data-section="admins">For Admins</button>
+                }
+                else if (User.IsInRole("Sponsor"))
+                {
+                    <button type="button" class="docs-filter-item" data-section="tourists">For Tourists</button>
+                    <button type="button" class="docs-filter-item" data-section="sponsors">For Sponsors</button>
+                }
+                else
+                {
+                    @* Guest or Tourist account *@
+                    <button type="button" class="docs-filter-item" data-section="tourists">For Tourists</button>
+                }
             </div>
             <div id="docsSearchResults" class="docs-search-results"></div>
         </div>
