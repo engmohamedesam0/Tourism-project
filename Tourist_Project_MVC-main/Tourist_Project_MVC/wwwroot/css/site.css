@@ -2611,13 +2611,18 @@ img, video, .esri-view-root, .esri-view-surface, canvas,
     background: var(--bg-surface, #ffffff) !important;
 }
 
-/* Shell container width & shadow */
+/* Shell container width, z-index & shadow */
+.esri-popup,
 .esri-popup__main-container {
-    width: 480px !important;
+    z-index: 90 !important;
+}
+
+.esri-popup__main-container {
+    width: 360px !important;
     max-width: calc(100vw - 32px) !important;
-    border-radius: 18px !important;
+    border-radius: 16px !important;
     border: 1px solid rgba(200, 131, 42, 0.25) !important;
-    box-shadow: 0 16px 40px rgba(26, 18, 10, 0.22), 0 4px 12px rgba(200, 131, 42, 0.08) !important;
+    box-shadow: 0 12px 32px rgba(26, 18, 10, 0.2), 0 4px 12px rgba(200, 131, 42, 0.08) !important;
     background: var(--bg-surface, #ffffff) !important;
     animation: popupCardIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both !important;
 }
@@ -2633,7 +2638,7 @@ img, video, .esri-view-root, .esri-view-surface, canvas,
     font-family: 'Nunito', sans-serif;
     color: var(--text-heading, #2b1b0d);
     background: var(--bg-surface, #ffffff);
-    border-radius: 18px;
+    border-radius: 16px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -2644,7 +2649,7 @@ img, video, .esri-view-root, .esri-view-surface, canvas,
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 7px 12px;
+    padding: 6px 10px;
     background: var(--bg-surface, #ffffff);
     border-bottom: 1px solid rgba(200, 131, 42, 0.12);
 }
@@ -2693,14 +2698,14 @@ img, video, .esri-view-root, .esri-view-surface, canvas,
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    padding: 10px 12px 12px;
-    gap: 12px;
+    padding: 8px 10px 10px;
+    gap: 10px;
 }
 
 /* Left Column: Image Gallery */
 .egy-popup-gallery {
-    width: 170px;
-    min-width: 170px;
+    width: 130px;
+    min-width: 130px;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -2709,7 +2714,7 @@ img, video, .esri-view-root, .esri-view-surface, canvas,
 .popup-gallery-main {
     position: relative;
     width: 100%;
-    height: 145px;
+    height: 120px;
     border-radius: 10px;
     overflow: hidden;
     background: #f4efe6;

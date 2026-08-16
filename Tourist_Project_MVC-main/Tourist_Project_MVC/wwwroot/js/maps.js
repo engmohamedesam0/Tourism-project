@@ -358,7 +358,7 @@ var EGYMaps = (function () {
           }
 
           // 2. DOM card lookup by Name to find the exact SQL Destination.Id
-          var name = attrs.Name || attrs.name || attrs.TITLE || attrs.Title;
+          var name = attrs.Name || attrs.name || attrs.English_Name || attrs.english_name || attrs.TITLE || attrs.Title;
           if (name) {
             var card = document.querySelector('#exploreList .explore-card[data-name="' + String(name).replace(/"/g, '\\"') + '"]');
             if (card) {
@@ -381,9 +381,9 @@ var EGYMaps = (function () {
         }
 
         function _fixImgUrl(url) {
-          if (!url) return "/images/placeholder-destination.jpg";
+          if (!url) return "/assets/img/egypt_feature1.jpg";
           var u = String(url).trim();
-          if (!u) return "/images/placeholder-destination.jpg";
+          if (!u || u === "/images/placeholder-destination.jpg") return "/assets/img/egypt_feature1.jpg";
           if (u.indexOf("~/") === 0) u = u.substring(1);
           if (u.indexOf("http://") !== 0 && u.indexOf("https://") !== 0 && u.indexOf("/") !== 0) {
             u = "/" + u;
@@ -393,29 +393,53 @@ var EGYMaps = (function () {
 
         function createCustomPopupTemplate(graphic) {
           var attrs = graphic.attributes || {};
-          var id           = _getId(attrs);
-          var name         = attrs.Name || attrs.name || attrs.TITLE || attrs.Title || "Destination";
-          var category     = attrs.Category || attrs.category || "Explore";
-          var city         = attrs.City || attrs.city || "Cairo";
-          var desc         = attrs.Description || attrs.description || "National Museum of Egyptian Civilization is a famous museum showcasing Egypt's rich heritage, history, and unique artifacts that tell the story of ancient and modern Egypt.";
-          
-          var photoUrls = attrs.PhotoUrls || attrs.photoUrls || attrs.PhotoUrl || attrs.photoUrl ||
-                          attrs.Photo_Urls || attrs.Photo_Url || attrs.Image || attrs.image ||
-                          attrs.ImageUrl || attrs.imageUrl || attrs.Photos || attrs.photos ||
-                          attrs.URL || attrs.url || attrs.photosData || "";
+          var rawName = attrs.Name || attrs.name || attrs.English_Name || attrs.english_name || attrs.TITLE || attrs.Title || "";
+          var id = _getId(attrs);
 
-          if (!photoUrls && id) {
-            var cardEl = document.querySelector('.explore-card[data-id="' + id + '"]');
-            if (cardEl) {
-              photoUrls = cardEl.getAttribute('data-photos') || "";
-              if (!photoUrls) {
-                var cardImgs = Array.from(cardEl.querySelectorAll('img')).map(function(i){ return i.src || i.getAttribute('data-src'); }).filter(Boolean);
-                if (cardImgs.length > 0) photoUrls = cardImgs.join('|');
+          var cardEl = null;
+          if (id > 0) {
+            cardEl = document.querySelector('#exploreList .explore-card[data-id="' + id + '"]');
+          }
+          if (!cardEl && rawName) {
+            cardEl = document.querySelector('#exploreList .explore-card[data-name="' + String(rawName).replace(/"/g, '\\"') + '"]');
+          }
+          if (!cardEl && graphic.geometry) {
+            var gLat = graphic.geometry.latitude;
+            var gLng = graphic.geometry.longitude;
+            if (gLat && gLng) {
+              var allCards = document.querySelectorAll('#exploreList .explore-card');
+              for (var c = 0; c < allCards.length; c++) {
+                var cLat = parseFloat(allCards[c].getAttribute('data-lat'));
+                var cLng = parseFloat(allCards[c].getAttribute('data-lng'));
+                if (!isNaN(cLat) && !isNaN(cLng) && Math.abs(cLat - gLat) < 0.005 && Math.abs(cLng - gLng) < 0.005) {
+                  cardEl = allCards[c];
+                  break;
+                }
               }
             }
           }
 
-          var rating       = attrs.Rating || attrs.rating || 4.9;
+          if (cardEl) {
+            if (!id || id <= 0) id = parseInt(cardEl.getAttribute('data-id')) || 0;
+            if (!rawName) rawName = cardEl.getAttribute('data-name') || "";
+          }
+
+          var name     = rawName || "Destination";
+          var category = attrs.Category || attrs.category || (cardEl ? cardEl.getAttribute('data-category') : null) || "Explore";
+          var city     = attrs.City || attrs.city || attrs.Governorate || attrs.governorate || (cardEl ? cardEl.getAttribute('data-city') : null) || "Cairo";
+          var desc     = attrs.Description || attrs.description || (cardEl ? cardEl.getAttribute('data-description') : null) || "";
+          
+          var photoUrls = attrs.PhotoUrls || attrs.photoUrls || attrs.PhotoUrl || attrs.photoUrl ||
+                          attrs.Photo_Urls || attrs.Photo_Url || attrs.Image || attrs.image ||
+                          attrs.ImageUrl || attrs.imageUrl || attrs.Photos || attrs.photos ||
+                          attrs.URL || attrs.url || attrs.photosData || (cardEl ? cardEl.getAttribute('data-photos') : "");
+
+          if (!photoUrls && cardEl) {
+            var cardImgs = Array.from(cardEl.querySelectorAll('img')).map(function(i){ return i.src || i.getAttribute('data-src'); }).filter(Boolean);
+            if (cardImgs.length > 0) photoUrls = cardImgs.join('|');
+          }
+
+          var rating       = attrs.Rating || attrs.rating || (cardEl ? cardEl.getAttribute('data-rating') : null) || 4.5;
           var reviewsCount = attrs.ReviewCount || attrs.reviewCount || attrs.Visits || 21;
           var openAt       = attrs.OpenAt || attrs.openAt;
           var closeAt      = attrs.CloseAt || attrs.closeAt;
@@ -423,7 +447,6 @@ var EGYMaps = (function () {
           var lat = graphic.geometry ? graphic.geometry.latitude : (attrs.Y || 30.0444);
           var lng = graphic.geometry ? graphic.geometry.longitude : (attrs.X || 31.2357);
 
-          // Grid field fallbacks: Ensure TYPE shows real destination category, NEVER 'EXPLORE'
           var rawCat = category && category !== "Explore" ? category : "";
           var typeVal = attrs.Type || attrs.type || rawCat || "Museum";
           var estVisitVal = attrs.EstimatedVisit || (typeVal.indexOf("Museum") > -1 ? "2–3 Hours" : typeVal.indexOf("Pharaonic") > -1 ? "2–4 Hours" : "1–2 Hours");
@@ -436,7 +459,7 @@ var EGYMaps = (function () {
               if (t && images.indexOf(t) === -1) images.push(t);
             });
           }
-          if (images.length === 0) images.push("/images/placeholder-destination.jpg");
+          if (images.length === 0) images.push("/assets/img/egypt_feature1.jpg");
 
           var uid = 'pop_' + Math.random().toString(36).substr(2, 7);
           var isFavorited = (window.EGY_FAVORITED_IDS || []).indexOf(parseInt(id)) > -1;
@@ -460,7 +483,7 @@ var EGYMaps = (function () {
 
             galleryThumbsHtml = '<div class="popup-gallery-thumbs" id="' + uid + '-thumbs">';
             images.forEach(function(src, i) {
-              galleryThumbsHtml += '<img src="' + _safeEsc(src) + '" class="popup-thumb-img' + (i === 0 ? ' active' : '') + '" data-index="' + i + '" alt="Thumb ' + (i+1) + '" onerror="this.onerror=null;this.src=\'/images/placeholder-destination.jpg\';" />';
+              galleryThumbsHtml += '<img src="' + _safeEsc(src) + '" class="popup-thumb-img' + (i === 0 ? ' active' : '') + '" data-index="' + i + '" alt="Thumb ' + (i+1) + '" onerror="this.onerror=null;this.src=\'/assets/img/egypt_feature1.jpg\';" />';
             });
             galleryThumbsHtml += '</div>';
           }
@@ -468,7 +491,7 @@ var EGYMaps = (function () {
           var galleryHtml =
             '<div class="egy-popup-gallery">' +
               '<div class="popup-gallery-main">' +
-                '<img id="' + uid + '-main-img" src="' + _safeEsc(images[0]) + '" alt="' + _safeEsc(name) + '" onerror="this.onerror=null;this.src=\'/images/placeholder-destination.jpg\';" />' +
+                '<img id="' + uid + '-main-img" src="' + _safeEsc(images[0]) + '" alt="' + _safeEsc(name) + '" onerror="this.onerror=null;this.src=\'/assets/img/egypt_feature1.jpg\';" />' +
                 galleryArrowsHtml +
                 galleryDotsHtml +
               '</div>' +
@@ -479,12 +502,10 @@ var EGYMaps = (function () {
           var infoHtml =
             '<div class="egy-popup-info">' +
               '<div class="popup-top-badge-row">' +
-                '<span class="popup-mini-label">DESTINATION</span>' +
-                '<span class="popup-explore-badge">EXPLORE</span>' +
+                '<span class="popup-cat-badge"><i class="bi bi-compass me-1"></i>' + _safeEsc(category) + '</span>' +
               '</div>' +
               '<h4 class="popup-dest-title">' + _safeEsc(name) + '</h4>' +
               '<div class="popup-cat-loc-row">' +
-                '<span class="popup-cat-badge">' + _safeEsc(category) + '</span>' +
                 '<span class="popup-loc-text"><i class="bi bi-geo-alt-fill me-1"></i>' + _safeEsc(city) + ', Egypt</span>' +
               '</div>' +
               '<div class="popup-rating-row">' +
@@ -492,7 +513,7 @@ var EGYMaps = (function () {
                 '<strong class="popup-rating-num">' + parseFloat(rating).toFixed(1) + '</strong>' +
                 '<span class="popup-review-count">(' + reviewsCount + ')</span>' +
               '</div>' +
-              '<p class="popup-dest-desc">' + _safeEsc(desc) + '</p>' +
+              '<p class="popup-dest-desc">' + _safeEsc(desc || (category + " destination in " + city + ".")) + '</p>' +
               '<div class="popup-info-grid">' +
                 '<div class="popup-grid-item">' +
                   '<div class="popup-grid-header"><i class="bi bi-bank"></i> TYPE</div>' +
@@ -707,6 +728,14 @@ var EGYMaps = (function () {
           opts.center ? opts.center[0] : 30.0444,
         ],
         zoom: opts.zoom || 7,
+        popup: {
+          dockEnabled: false,
+          dockOptions: {
+            buttonEnabled: false,
+            breakpoint: false
+          },
+          alignment: "top-center"
+        }
       });
 
       var localLoader = document.createElement("div");
