@@ -61,9 +61,10 @@
 /* 2. Left sidebar — flat, no card chrome, quiet hairline divider */
 .docs-sidebar {
     position: sticky;
-    top: calc(var(--nav-offset, 80px) + 20px);
-    max-height: calc(100vh - var(--nav-offset, 80px) - 32px);
+    top: 90px;
+    max-height: calc(100vh - 100px);
     overflow-y: auto;
+    overflow-x: hidden;
     background: transparent;
     border-right: 1px solid var(--docs-border);
     padding: 4px 20px 24px 2px;
@@ -82,31 +83,85 @@
     align-items: center;
     gap: 8px;
     padding: 4px 8px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 .docs-sidebar-brand:hover {
     color: var(--docs-accent);
 }
 
-.docs-sidebar-section-title {
-    font-family: var(--docs-font);
-    font-weight: 600;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--docs-text-tertiary);
-    padding: 18px 8px 6px;
+.docs-sidebar-section {
+    margin-bottom: 8px;
 }
 
-.docs-sidebar-section-title:first-of-type {
-    padding-top: 4px;
+.docs-sidebar-section-header {
+    padding: 6px 8px;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.docs-sidebar-section-header:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.docs-sidebar-section-title {
+    font-family: var(--docs-font);
+    font-weight: 700;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--docs-text-secondary);
+    transition: color 0.25s ease;
+    user-select: none;
+}
+
+.sec-title-text {
+    background: linear-gradient(135deg, #1d1d1f 0%, #434346 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sec-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.docs-sidebar-section-header:hover .sec-badge {
+    transform: scale(1.1);
+}
+
+.sec-badge-tourist,
+.sec-badge-sponsor,
+.sec-badge-admin,
+.sec-badge-default {
+    background: #1d1d1f;
+    color: #ffffff;
+    border: 1px solid #1d1d1f;
+}
+
+.sec-badge-admin {
+    background: linear-gradient(135deg, #1d1d1f 0%, #2e2e32 100%);
+    border-color: var(--egy-accent, #C8832A);
+    color: #ffffff;
 }
 
 .docs-sidebar-list {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 0 4px;
+    overflow: hidden;
+    max-height: 2000px;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease,
+                margin 0.3s ease;
+    opacity: 1;
 }
 
 .docs-sidebar-list li + li {
@@ -114,27 +169,50 @@
 }
 
 .docs-sidebar-list a {
+    position: relative;
+    z-index: 1;
     display: block;
-    padding: 6px 8px;
-    border-radius: var(--docs-radius-sm);
+    padding: 7px 12px 7px 14px;
+    border-radius: 8px;
     color: var(--docs-text-secondary);
     text-decoration: none;
-    font-size: 0.86rem;
+    font-size: 0.855rem;
     font-weight: 400;
-    line-height: 1.4;
-    transition: background 0.12s ease, color 0.12s ease;
+    line-height: 1.5;
+    letter-spacing: -0.006em;
+    transition: color 0.22s ease,
+                background 0.22s ease,
+                transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.22s ease;
 }
 
 .docs-sidebar-list a:hover {
     background: var(--docs-bg-hover);
     color: var(--docs-text);
+    transform: translateX(2px);
 }
 
+.docs-sidebar-list a:active {
+    transform: scale(0.98);
+}
+
+.docs-sidebar-list a:focus-visible {
+    outline: 2px solid var(--docs-accent);
+    outline-offset: -2px;
+}
+
+/* Active link: its background is owned by the sliding indicator pill,
+   so it stays transparent — only text color/weight change here. */
 .docs-sidebar-list a.active {
-    background: var(--docs-accent-tint);
+    background: transparent;
     color: var(--docs-accent);
     font-weight: 600;
-    box-shadow: none;
+    transform: translateX(2px);
+}
+
+.docs-sidebar-list a.active:hover {
+    background: transparent;
+    transform: translateX(2px);
 }
 
 /* Mobile sidebar toggle */
@@ -660,54 +738,80 @@
     padding: 4px 0;
 }
 
-.docs-toc-title {
-    font-family: var(--docs-font);
-    font-weight: 600;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--docs-text-tertiary);
-    margin-bottom: 12px;
+.docs-toc-card {
+    background: var(--docs-bg-subtle);
+    border: 1px solid var(--docs-border);
+    border-radius: var(--docs-radius);
+    padding: 16px 18px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
 
+.docs-toc-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--docs-border);
+}
+
+.docs-toc-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: #1d1d1f;
+    color: #ffffff;
+    font-size: 0.75rem;
+}
+
+.docs-toc-title {
+    font-family: var(--docs-font);
+    font-weight: 700;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--docs-text-secondary);
+    margin-bottom: 0;
+}
+
+.docs-toc-list,
 .docs-toc ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    border-left: 1px solid var(--docs-border);
-    padding-left: 14px;
 }
 
+.docs-toc-list li + li,
 .docs-toc li + li {
     margin-top: 6px;
 }
 
+.docs-toc-list a,
 .docs-toc a {
     display: block;
     color: var(--docs-text-secondary);
     text-decoration: none;
     font-size: 0.82rem;
     font-weight: 400;
-    padding: 2px 0;
-    border-left: 2px solid transparent;
-    margin-left: -15px;
-    padding-left: 13px;
-    transition: color 0.12s ease, border-color 0.12s ease;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: color 0.15s ease, background 0.15s ease;
 }
 
+.docs-toc-list a:hover,
 .docs-toc a:hover {
     color: var(--docs-text);
+    background: var(--docs-bg-hover);
 }
 
+.docs-toc-list a.active,
 .docs-toc a.active {
     color: var(--docs-accent);
-    border-left-color: var(--docs-accent);
+    background: var(--docs-accent-tint);
     font-weight: 600;
-}
-
-.docs-toc a.level-3 {
-    padding-left: 26px;
-    font-size: 0.78rem;
 }
 
 /* 11. Misc */
@@ -801,15 +905,6 @@
 /* ==========================================================================
    EGYXPLORE — Docs Premium Redesign Enhancements
    ========================================================================== */
-
-/* Global Transition Rule */
-.docs-shell, .docs-shell * {
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.2s ease;
-}
-
-.docs-shell img, .docs-shell pre, .docs-shell .docs-hero::after, .docs-shell iframe {
-    transition: none !important;
-}
 
 /* Page Load Fade In Animation */
 .docs-shell {
@@ -1038,7 +1133,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 6px;
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition: transform 0.25s ease, color 0.25s ease, background 0.2s ease;
 }
 
 .docs-sidebar-toggle-section:hover {
@@ -1047,15 +1142,19 @@
 }
 
 .docs-sidebar-toggle-section svg {
-    transition: transform 0.2s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .docs-sidebar-section.collapsed .docs-sidebar-toggle-section svg {
     transform: rotate(-90deg);
 }
 
+/* Smooth collapse animation instead of display:none */
 .docs-sidebar-section.collapsed .docs-sidebar-list {
-    display: none;
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+    overflow: hidden;
 }
 
 /* Autolink Styling */
@@ -1139,4 +1238,381 @@
 @keyframes docsPdfSpin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Sidebar Navigation Upgrade — sliding active pill, scroll-synced highlight
+   --------------------------------------------------------------------------
+   A single absolutely-positioned "pill" glides between nav items via
+   transform + height transitions instead of a static block. The pill owns
+   the active background + accent indicator; the link itself only carries the
+   text color/weight.
+
+   IMPORTANT: The sidebar already has position: sticky from section 2 above.
+   Sticky elements also create a containing block for absolutely-positioned
+   children, so no extra `position: relative` is needed here.
+   ========================================================================== */
+
+.docs-sidebar-indicator {
+    position: absolute;
+    top: 0;
+    left: 2px;
+    right: 20px;
+    height: 0;
+    border-radius: 8px;
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--docs-accent, #C8832A) 12%, transparent),
+        color-mix(in srgb, var(--docs-accent, #C8832A) 6%, transparent));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--docs-accent, #C8832A) 20%, transparent);
+    transform: translateY(0);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                height   0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity  0.25s ease;
+    will-change: transform, height;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 1;
+}
+
+/* Left accent bar — travels with the pill */
+.docs-sidebar-indicator::before {
+    content: "";
+    position: absolute;
+    top: 20%;
+    bottom: 20%;
+    left: 0;
+    width: 3px;
+    border-radius: 3px;
+    background: linear-gradient(to bottom, var(--docs-accent, #C8832A), var(--egy-accent, #E8A045));
+    box-shadow: 0 0 8px color-mix(in srgb, var(--docs-accent, #C8832A) 40%, transparent);
+    transition: opacity 0.3s ease;
+}
+
+/* Subtle glow on the pill (only visible on light mode) */
+.docs-sidebar-indicator::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(ellipse at 10% 50%,
+        color-mix(in srgb, var(--docs-accent, #C8832A) 8%, transparent),
+        transparent 70%);
+    pointer-events: none;
+}
+
+.docs-sidebar-indicator.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Tint the section title whose group contains the active item */
+.docs-sidebar-section.has-active > .docs-sidebar-section-header .docs-sidebar-section-title {
+    color: var(--docs-accent, #C8832A);
+    transition: color 0.3s ease;
+}
+
+/* Custom smooth scrollbar for sidebar */
+.docs-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.docs-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.docs-sidebar::-webkit-scrollbar-thumb {
+    background: var(--docs-border-strong, rgba(0, 0, 0, 0.12));
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.docs-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--docs-text-tertiary, #86868b);
+}
+
+/* In the mobile drawer the sidebar padding is 20px on every side */
+@media (max-width: 767.98px) {
+    .docs-sidebar-indicator {
+        left: 20px;
+        right: 20px;
+    }
+}
+
+/* Dark-mode: boost the pill contrast slightly */
+[data-theme="dark"] .docs-sidebar-indicator {
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--docs-accent, #C8832A) 20%, transparent),
+        color-mix(in srgb, var(--docs-accent, #C8832A) 10%, transparent));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--docs-accent, #C8832A) 32%, transparent);
+}
+
+[data-theme="dark"] .docs-sidebar-indicator::after {
+    background: radial-gradient(ellipse at 10% 50%,
+        color-mix(in srgb, var(--docs-accent, #C8832A) 12%, transparent),
+        transparent 70%);
+}
+
+/* Prefers reduced motion: collapse transitions to near-instant */
+@media (prefers-reduced-motion: reduce) {
+    .docs-sidebar-indicator {
+        transition-duration: 0.01ms !important;
+    }
+    .docs-sidebar-list {
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* =========================================
+   Promo cards (docs sidebar & right TOC)
+   ========================================= */
+.docs-promo-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #fffdf7 0%, #fff5e3 100%);
+    border: 1px solid rgba(200, 131, 42, 0.28);
+    box-shadow: 0 10px 28px rgba(30, 18, 10, 0.10),
+                inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    overflow: hidden;
+}
+
+.docs-promo-card::before {
+    content: "";
+    position: absolute;
+    inset: -50% -35% auto auto;
+    width: 190px;
+    height: 190px;
+    background: radial-gradient(circle, rgba(200, 131, 42, 0.18), transparent 70%);
+    pointer-events: none;
+}
+
+.promo-body {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.promo-title {
+    margin: 0;
+    font-family: 'Cinzel', serif;
+    font-size: 1.02rem;
+    font-weight: 700;
+    line-height: 1.3;
+    background: linear-gradient(120deg, #8a5a1d 0%, #C8832A 50%, #E8A045 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #C8832A;
+}
+
+.promo-desc {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: #6b5a45;
+}
+
+.promo-link {
+    margin-top: 2px;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #9a6a1f;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(200, 131, 42, 0.4);
+    padding-bottom: 1px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.promo-link:hover {
+    color: #C8832A;
+    border-color: #C8832A;
+}
+
+.promo-media {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    width: 96px;
+    height: 96px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: inset 0 0 0 1px rgba(200, 131, 42, 0.35),
+                0 8px 18px rgba(30, 18, 10, 0.28);
+}
+
+.promo-img-left,
+.promo-img-right {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Dark-mode promo card: keep the warm gold feel, deepen the card surface */
+[data-theme="dark"] .docs-promo-card {
+    background: linear-gradient(145deg, #241a10 0%, #1E120A 100%);
+    border-color: rgba(200, 131, 42, 0.4);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(232, 160, 69, 0.12);
+}
+
+[data-theme="dark"] .promo-desc {
+    color: rgba(245, 240, 232, 0.72);
+}
+
+[data-theme="dark"] .promo-link {
+    color: #E8A045;
+    border-color: rgba(232, 160, 69, 0.45);
+}
+
+/* Narrow screens: stack the card vertically */
+@media (max-width: 420px) {
+    .docs-promo-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .promo-media {
+        width: 84px;
+        height: 84px;
+    }
+}
+
+/* =========================================
+   "On This Page" — bottom-of-article card
+   ========================================= */
+.docs-toc-bottom {
+    margin-top: 40px;
+    padding: 22px 24px 20px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #fffdf7 0%, #fff5e3 100%);
+    border: 1px solid rgba(200, 131, 42, 0.28);
+    box-shadow: 0 10px 28px rgba(30, 18, 10, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    scroll-margin-top: calc(var(--nav-offset, 80px) + 20px);
+}
+
+.docs-toc-bottom-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.docs-toc-bottom-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #C8832A 0%, #E8A045 100%);
+    color: #fff;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 10px rgba(200, 131, 42, 0.35);
+}
+
+.docs-toc-bottom-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    background: linear-gradient(120deg, #8a5a1d 0%, #C8832A 55%, #E8A045 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #C8832A;
+}
+
+.docs-toc-bottom-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.docs-toc-bottom-list li.level-3 a {
+    padding-left: 28px;
+    font-size: 0.84rem;
+}
+
+.docs-toc-bottom-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 10px;
+    color: #6b5a45;
+    font-size: 0.88rem;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.docs-toc-bottom-list a::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(200, 131, 42, 0.45);
+    flex-shrink: 0;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.docs-toc-bottom-list a:hover {
+    background: rgba(200, 131, 42, 0.10);
+    color: #9a6a1f;
+}
+
+.docs-toc-bottom-list a:hover::before {
+    background: #C8832A;
+    transform: scale(1.3);
+}
+
+.docs-toc-bottom-list a.active {
+    color: #C8832A;
+    font-weight: 600;
+    background: rgba(200, 131, 42, 0.12);
+}
+
+.docs-toc-bottom-list a.active::before {
+    background: #C8832A;
+}
+
+/* Dark-mode variants */
+[data-theme="dark"] .docs-toc-bottom {
+    background: linear-gradient(145deg, #241a10 0%, #1E120A 100%);
+    border-color: rgba(200, 131, 42, 0.4);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(232, 160, 69, 0.12);
+}
+
+[data-theme="dark"] .docs-toc-bottom-list a {
+    color: rgba(245, 240, 232, 0.75);
+}
+
+[data-theme="dark"] .docs-toc-bottom-list a:hover,
+[data-theme="dark"] .docs-toc-bottom-list a.active {
+    color: #E8A045;
+    background: rgba(232, 160, 69, 0.12);
+}
+
+@media (max-width: 575.98px) {
+    .docs-toc-bottom {
+        padding: 18px 16px 16px;
+        margin-top: 32px;
+    }
 }
