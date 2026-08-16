@@ -577,12 +577,6 @@
   <data name="Trip_Duration" xml:space="preserve">
     <value>المدة</value>
   </data>
-  <data name="Trip_Budget" xml:space="preserve">
-    <value>الميزانية</value>
-  </data>
-  <data name="Trip_BudgetPlaceholder" xml:space="preserve">
-    <value>مثال: 1000</value>
-  </data>
   <data name="Trip_Companions" xml:space="preserve">
     <value>المرافقون</value>
   </data>
@@ -1458,9 +1452,6 @@
   </data>
   <data name="SponsorNotification_Download" xml:space="preserve">
     <value>تنزيل</value>
-  </data>
-  <data name="TripDetails_Budget" xml:space="preserve">
-    <value>الميزانية</value>
   </data>
   <data name="SponsorReward_MyRewards" xml:space="preserve">
     <value>مكافآتي</value>
@@ -2377,6 +2368,9 @@
   <data name="TripDetails_Companions" xml:space="preserve">
     <value>الرفاق</value>
   </data>
+  <data name="TripDetails_Budget" xml:space="preserve">
+    <value>الميزانية</value>
+  </data>
   <data name="AdminSupport_Submitter" xml:space="preserve">
     <value>مقدّم الطلب</value>
   </data>
@@ -2749,8 +2743,8 @@
   <data name="Trip_SetParameters" xml:space="preserve">
     <value>ضع معلمات رحلتك، واختر وجهاتك المصرية المفضلة، وبنِ جدولاً مخصصاً.</value>
   </data>
-  <data name="Trip_FiltersBudget" xml:space="preserve">
-    <value>المرشحات والميزانية</value>
+  <data name="Trip_Filters" xml:space="preserve">
+    <value>المرشحات</value>
   </data>
   <data name="Trip_PickDestinations" xml:space="preserve">
     <value>اختر الوجهات</value>

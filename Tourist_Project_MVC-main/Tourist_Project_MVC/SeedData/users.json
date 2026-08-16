@@ -1,17 +1,5142 @@
 [
-  { "Id": "seed-admin-1",            "FirstName": "Admin",        "LastName": "User",        "Nationality": "Egyptian",  "Email": "admin@egyxplore.com",     "UserName": "admin@egyxplore.com",     "Password": "AdminPass123!",   "Role": "Admin" },
-  { "Id": "seed-sponsor-elfishawy",  "FirstName": "Fishawy",      "LastName": "Manager",     "Nationality": "Egyptian",  "Email": "elfishawy@egyxplore.com", "UserName": "elfishawy@egyxplore.com", "Password": "SponsorPass123!", "Role": "Sponsor" },
-
-  { "Id": "seed-tourist-1",  "FirstName": "Ahmed",   "LastName": "Hassan",   "Nationality": "Egyptian", "Email": "ahmed.hassan@egyxplore.com",   "UserName": "ahmed.hassan@egyxplore.com",   "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-2",  "FirstName": "James",   "LastName": "Wilson",   "Nationality": "American", "Email": "james.wilson@egyxplore.com",   "UserName": "james.wilson@egyxplore.com",   "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-3",  "FirstName": "Sophie",  "LastName": "Muller",   "Nationality": "German",   "Email": "sophie.muller@egyxplore.com",  "UserName": "sophie.muller@egyxplore.com",  "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-4",  "FirstName": "Yuki",    "LastName": "Tanaka",   "Nationality": "Japanese", "Email": "yuki.tanaka@egyxplore.com",    "UserName": "yuki.tanaka@egyxplore.com",    "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-5",  "FirstName": "Mohamed", "LastName": "Ali",      "Nationality": "Egyptian", "Email": "mohamed.ali@egyxplore.com",    "UserName": "mohamed.ali@egyxplore.com",    "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-6",  "FirstName": "Emma",    "LastName": "Johnson",  "Nationality": "British",  "Email": "emma.johnson@egyxplore.com",   "UserName": "emma.johnson@egyxplore.com",   "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-7",  "FirstName": "Lukas",   "LastName": "Weber",    "Nationality": "German",   "Email": "lukas.weber@egyxplore.com",    "UserName": "lukas.weber@egyxplore.com",    "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-8",  "FirstName": "Mei",     "LastName": "Chen",     "Nationality": "Chinese",  "Email": "mei.chen@egyxplore.com",       "UserName": "mei.chen@egyxplore.com",       "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-9",  "FirstName": "Omar",    "LastName": "Farouk",   "Nationality": "Egyptian", "Email": "omar.farouk@egyxplore.com",    "UserName": "omar.farouk@egyxplore.com",    "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-10", "FirstName": "Hannah",  "LastName": "Becker",   "Nationality": "French",   "Email": "hannah.becker@egyxplore.com",  "UserName": "hannah.becker@egyxplore.com",  "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-11", "FirstName": "Khalid",  "LastName": "Nasser",   "Nationality": "Emirati",  "Email": "khalid.nasser@egyxplore.com",  "UserName": "khalid.nasser@egyxplore.com",  "Password": "TouristPass123!", "Role": "User" },
-  { "Id": "seed-tourist-12", "FirstName": "Sara",    "LastName": "Rossi",    "Nationality": "Italian",  "Email": "sara.rossi@egyxplore.com",     "UserName": "sara.rossi@egyxplore.com",     "Password": "TouristPass123!", "Role": "User" }
+  {
+    "Id": "seed-admin-1",
+    "FirstName": "Admin",
+    "LastName": "User",
+    "Nationality": "Egyptian",
+    "Email": "admin@egyxplore.com",
+    "UserName": "admin@egyxplore.com",
+    "Password": "AdminPass123!",
+    "Role": "Admin"
+  },
+  {
+    "Id": "seed-sponsor-elfishawy",
+    "FirstName": "Fishawy",
+    "LastName": "Manager",
+    "Nationality": "Egyptian",
+    "Email": "elfishawy@egyxplore.com",
+    "UserName": "elfishawy@egyxplore.com",
+    "Password": "SponsorPass123!",
+    "Role": "Sponsor"
+  },
+  {
+    "Id": "seed-tourist-1",
+    "FirstName": "Ahmed",
+    "LastName": "Hassan",
+    "Nationality": "Egyptian",
+    "Email": "ahmed.hassan@egyxplore.com",
+    "UserName": "ahmed.hassan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-2",
+    "FirstName": "James",
+    "LastName": "Wilson",
+    "Nationality": "American",
+    "Email": "james.wilson@egyxplore.com",
+    "UserName": "james.wilson@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-3",
+    "FirstName": "Sophie",
+    "LastName": "Muller",
+    "Nationality": "German",
+    "Email": "sophie.muller@egyxplore.com",
+    "UserName": "sophie.muller@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-4",
+    "FirstName": "Yuki",
+    "LastName": "Tanaka",
+    "Nationality": "Japanese",
+    "Email": "yuki.tanaka@egyxplore.com",
+    "UserName": "yuki.tanaka@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-5",
+    "FirstName": "Mohamed",
+    "LastName": "Ali",
+    "Nationality": "Egyptian",
+    "Email": "mohamed.ali@egyxplore.com",
+    "UserName": "mohamed.ali@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-6",
+    "FirstName": "Emma",
+    "LastName": "Johnson",
+    "Nationality": "British",
+    "Email": "emma.johnson@egyxplore.com",
+    "UserName": "emma.johnson@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-7",
+    "FirstName": "Lukas",
+    "LastName": "Weber",
+    "Nationality": "German",
+    "Email": "lukas.weber@egyxplore.com",
+    "UserName": "lukas.weber@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-8",
+    "FirstName": "Mei",
+    "LastName": "Chen",
+    "Nationality": "Chinese",
+    "Email": "mei.chen@egyxplore.com",
+    "UserName": "mei.chen@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-9",
+    "FirstName": "Omar",
+    "LastName": "Farouk",
+    "Nationality": "Egyptian",
+    "Email": "omar.farouk@egyxplore.com",
+    "UserName": "omar.farouk@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-10",
+    "FirstName": "Hannah",
+    "LastName": "Becker",
+    "Nationality": "French",
+    "Email": "hannah.becker@egyxplore.com",
+    "UserName": "hannah.becker@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-11",
+    "FirstName": "Khalid",
+    "LastName": "Nasser",
+    "Nationality": "Emirati",
+    "Email": "khalid.nasser@egyxplore.com",
+    "UserName": "khalid.nasser@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-12",
+    "FirstName": "Sara",
+    "LastName": "Rossi",
+    "Nationality": "Italian",
+    "Email": "sara.rossi@egyxplore.com",
+    "UserName": "sara.rossi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-13",
+    "FirstName": "Hany",
+    "LastName": "Shaker",
+    "Nationality": "Egyptian",
+    "Email": "hany.shaker@egyxplore.com",
+    "UserName": "hany.shaker@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-14",
+    "FirstName": "Emma",
+    "LastName": "Richter",
+    "Nationality": "German",
+    "Email": "emma.richter@egyxplore.com",
+    "UserName": "emma.richter@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-15",
+    "FirstName": "Diego",
+    "LastName": "Lopez",
+    "Nationality": "Mexican",
+    "Email": "diego.lopez@egyxplore.com",
+    "UserName": "diego.lopez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-16",
+    "FirstName": "Ali",
+    "LastName": "Arslan",
+    "Nationality": "Turkish",
+    "Email": "ali.arslan@egyxplore.com",
+    "UserName": "ali.arslan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-17",
+    "FirstName": "Yasmin",
+    "LastName": "Soliman",
+    "Nationality": "Egyptian",
+    "Email": "yasmin.soliman@egyxplore.com",
+    "UserName": "yasmin.soliman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-18",
+    "FirstName": "Joseph",
+    "LastName": "Smith",
+    "Nationality": "American",
+    "Email": "joseph.smith@egyxplore.com",
+    "UserName": "joseph.smith@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-19",
+    "FirstName": "Sota",
+    "LastName": "Kato",
+    "Nationality": "Japanese",
+    "Email": "sota.kato@egyxplore.com",
+    "UserName": "sota.kato@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-20",
+    "FirstName": "Sameh",
+    "LastName": "Fathy",
+    "Nationality": "Egyptian",
+    "Email": "sameh.fathy@egyxplore.com",
+    "UserName": "sameh.fathy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-21",
+    "FirstName": "Jonas",
+    "LastName": "Hartmann",
+    "Nationality": "German",
+    "Email": "jonas.hartmann@egyxplore.com",
+    "UserName": "jonas.hartmann@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-22",
+    "FirstName": "Valentina",
+    "LastName": "Perez",
+    "Nationality": "Mexican",
+    "Email": "valentina.perez@egyxplore.com",
+    "UserName": "valentina.perez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-23",
+    "FirstName": "Miguel",
+    "LastName": "Vieira",
+    "Nationality": "Brazilian",
+    "Email": "miguel.vieira@egyxplore.com",
+    "UserName": "miguel.vieira@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-24",
+    "FirstName": "Vihaan",
+    "LastName": "Mishra",
+    "Nationality": "Indian",
+    "Email": "vihaan.mishra@egyxplore.com",
+    "UserName": "vihaan.mishra@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-25",
+    "FirstName": "Livia",
+    "LastName": "Santos",
+    "Nationality": "Brazilian",
+    "Email": "livia.santos@egyxplore.com",
+    "UserName": "livia.santos@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-26",
+    "FirstName": "Youssef",
+    "LastName": "Salah",
+    "Nationality": "Egyptian",
+    "Email": "youssef.salah@egyxplore.com",
+    "UserName": "youssef.salah@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-27",
+    "FirstName": "Dina",
+    "LastName": "Hegazy",
+    "Nationality": "Egyptian",
+    "Email": "dina.hegazy@egyxplore.com",
+    "UserName": "dina.hegazy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-28",
+    "FirstName": "Manuela",
+    "LastName": "Silva",
+    "Nationality": "Brazilian",
+    "Email": "manuela.silva@egyxplore.com",
+    "UserName": "manuela.silva@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-29",
+    "FirstName": "Mustafa",
+    "LastName": "Kurt",
+    "Nationality": "Turkish",
+    "Email": "mustafa.kurt@egyxplore.com",
+    "UserName": "mustafa.kurt@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-30",
+    "FirstName": "Riku",
+    "LastName": "Yamamoto",
+    "Nationality": "Japanese",
+    "Email": "riku.yamamoto@egyxplore.com",
+    "UserName": "riku.yamamoto@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-31",
+    "FirstName": "Sophie",
+    "LastName": "Taylor",
+    "Nationality": "British",
+    "Email": "sophie.taylor@egyxplore.com",
+    "UserName": "sophie.taylor@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-32",
+    "FirstName": "Emma",
+    "LastName": "Bruno",
+    "Nationality": "Italian",
+    "Email": "emma.bruno@egyxplore.com",
+    "UserName": "emma.bruno@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-33",
+    "FirstName": "Reda",
+    "LastName": "Nasser",
+    "Nationality": "Egyptian",
+    "Email": "reda.nasser@egyxplore.com",
+    "UserName": "reda.nasser@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-34",
+    "FirstName": "James",
+    "LastName": "Martinez",
+    "Nationality": "American",
+    "Email": "james.martinez@egyxplore.com",
+    "UserName": "james.martinez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-35",
+    "FirstName": "Beatrice",
+    "LastName": "Conti",
+    "Nationality": "Italian",
+    "Email": "beatrice.conti@egyxplore.com",
+    "UserName": "beatrice.conti@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-36",
+    "FirstName": "Shaimaa",
+    "LastName": "Radwan",
+    "Nationality": "Egyptian",
+    "Email": "shaimaa.radwan@egyxplore.com",
+    "UserName": "shaimaa.radwan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-37",
+    "FirstName": "Peng",
+    "LastName": "Zhao",
+    "Nationality": "Chinese",
+    "Email": "peng.zhao@egyxplore.com",
+    "UserName": "peng.zhao@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-38",
+    "FirstName": "Mahmoud",
+    "LastName": "Hegazy",
+    "Nationality": "Egyptian",
+    "Email": "mahmoud.hegazy@egyxplore.com",
+    "UserName": "mahmoud.hegazy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-39",
+    "FirstName": "Reem",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "reem.badawi@egyxplore.com",
+    "UserName": "reem.badawi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-40",
+    "FirstName": "Xiu",
+    "LastName": "Gao",
+    "Nationality": "Chinese",
+    "Email": "xiu.gao@egyxplore.com",
+    "UserName": "xiu.gao@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-41",
+    "FirstName": "Omar",
+    "LastName": "Kamal",
+    "Nationality": "Egyptian",
+    "Email": "omar.kamal@egyxplore.com",
+    "UserName": "omar.kamal@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-42",
+    "FirstName": "Manuela",
+    "LastName": "Oliveira",
+    "Nationality": "Brazilian",
+    "Email": "manuela.oliveira@egyxplore.com",
+    "UserName": "manuela.oliveira@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-43",
+    "FirstName": "Omer",
+    "LastName": "Sener",
+    "Nationality": "Turkish",
+    "Email": "omer.sener@egyxplore.com",
+    "UserName": "omer.sener@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-44",
+    "FirstName": "Ayman",
+    "LastName": "Farouk",
+    "Nationality": "Egyptian",
+    "Email": "ayman.farouk@egyxplore.com",
+    "UserName": "ayman.farouk@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-45",
+    "FirstName": "Qiang",
+    "LastName": "Lin",
+    "Nationality": "Chinese",
+    "Email": "qiang.lin@egyxplore.com",
+    "UserName": "qiang.lin@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-46",
+    "FirstName": "Lucia",
+    "LastName": "Ruiz",
+    "Nationality": "Spanish",
+    "Email": "lucia.ruiz@egyxplore.com",
+    "UserName": "lucia.ruiz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-47",
+    "FirstName": "Hany",
+    "LastName": "Mostafa",
+    "Nationality": "Egyptian",
+    "Email": "hany.mostafa@egyxplore.com",
+    "UserName": "hany.mostafa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-48",
+    "FirstName": "Nikita",
+    "LastName": "Fedorov",
+    "Nationality": "Russian",
+    "Email": "nikita.fedorov@egyxplore.com",
+    "UserName": "nikita.fedorov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-49",
+    "FirstName": "Vihaan",
+    "LastName": "Reddy",
+    "Nationality": "Indian",
+    "Email": "vihaan.reddy@egyxplore.com",
+    "UserName": "vihaan.reddy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-50",
+    "FirstName": "Reem",
+    "LastName": "Rashed",
+    "Nationality": "Egyptian",
+    "Email": "reem.rashed@egyxplore.com",
+    "UserName": "reem.rashed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-51",
+    "FirstName": "Majed",
+    "LastName": "Al-Malki",
+    "Nationality": "Saudi",
+    "Email": "majed.al-malki@egyxplore.com",
+    "UserName": "majed.al-malki@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-52",
+    "FirstName": "William",
+    "LastName": "Thomas",
+    "Nationality": "American",
+    "Email": "william.thomas@egyxplore.com",
+    "UserName": "william.thomas@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-53",
+    "FirstName": "Asmaa",
+    "LastName": "Attia",
+    "Nationality": "Egyptian",
+    "Email": "asmaa.attia@egyxplore.com",
+    "UserName": "asmaa.attia@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-54",
+    "FirstName": "Amira",
+    "LastName": "Radwan",
+    "Nationality": "Egyptian",
+    "Email": "amira.radwan@egyxplore.com",
+    "UserName": "amira.radwan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-55",
+    "FirstName": "Riku",
+    "LastName": "Shimizu",
+    "Nationality": "Japanese",
+    "Email": "riku.shimizu@egyxplore.com",
+    "UserName": "riku.shimizu@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-56",
+    "FirstName": "Sara",
+    "LastName": "Fathy",
+    "Nationality": "Egyptian",
+    "Email": "sara.fathy@egyxplore.com",
+    "UserName": "sara.fathy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-57",
+    "FirstName": "Mariam",
+    "LastName": "Soliman",
+    "Nationality": "Egyptian",
+    "Email": "mariam.soliman@egyxplore.com",
+    "UserName": "mariam.soliman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-58",
+    "FirstName": "Tamer",
+    "LastName": "Rashed",
+    "Nationality": "Egyptian",
+    "Email": "tamer.rashed@egyxplore.com",
+    "UserName": "tamer.rashed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-59",
+    "FirstName": "Elena",
+    "LastName": "Smirnov",
+    "Nationality": "Russian",
+    "Email": "elena.smirnov@egyxplore.com",
+    "UserName": "elena.smirnov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-60",
+    "FirstName": "Santiago",
+    "LastName": "Perez",
+    "Nationality": "Mexican",
+    "Email": "santiago.perez@egyxplore.com",
+    "UserName": "santiago.perez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-61",
+    "FirstName": "Merve",
+    "LastName": "Aydin",
+    "Nationality": "Turkish",
+    "Email": "merve.aydin@egyxplore.com",
+    "UserName": "merve.aydin@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-62",
+    "FirstName": "Mahmoud",
+    "LastName": "Mostafa",
+    "Nationality": "Egyptian",
+    "Email": "mahmoud.mostafa@egyxplore.com",
+    "UserName": "mahmoud.mostafa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-63",
+    "FirstName": "Mia",
+    "LastName": "Schulz",
+    "Nationality": "German",
+    "Email": "mia.schulz@egyxplore.com",
+    "UserName": "mia.schulz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-64",
+    "FirstName": "Adel",
+    "LastName": "Salah",
+    "Nationality": "Egyptian",
+    "Email": "adel.salah@egyxplore.com",
+    "UserName": "adel.salah@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-65",
+    "FirstName": "Daria",
+    "LastName": "Lebedev",
+    "Nationality": "Russian",
+    "Email": "daria.lebedev@egyxplore.com",
+    "UserName": "daria.lebedev@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-66",
+    "FirstName": "Shaimaa",
+    "LastName": "Rashed",
+    "Nationality": "Egyptian",
+    "Email": "shaimaa.rashed@egyxplore.com",
+    "UserName": "shaimaa.rashed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-67",
+    "FirstName": "Marie",
+    "LastName": "Muller",
+    "Nationality": "German",
+    "Email": "marie.muller@egyxplore.com",
+    "UserName": "marie.muller@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-68",
+    "FirstName": "Shahad",
+    "LastName": "Al-Subaie",
+    "Nationality": "Saudi",
+    "Email": "shahad.al-subaie@egyxplore.com",
+    "UserName": "shahad.al-subaie@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-69",
+    "FirstName": "Hany",
+    "LastName": "Radwan",
+    "Nationality": "Egyptian",
+    "Email": "hany.radwan@egyxplore.com",
+    "UserName": "hany.radwan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-70",
+    "FirstName": "Nour",
+    "LastName": "Shaaban",
+    "Nationality": "Egyptian",
+    "Email": "nour.shaaban@egyxplore.com",
+    "UserName": "nour.shaaban@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-71",
+    "FirstName": "Maria",
+    "LastName": "Ruiz",
+    "Nationality": "Spanish",
+    "Email": "maria.ruiz@egyxplore.com",
+    "UserName": "maria.ruiz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-72",
+    "FirstName": "Leon",
+    "LastName": "Koch",
+    "Nationality": "German",
+    "Email": "leon.koch@egyxplore.com",
+    "UserName": "leon.koch@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-73",
+    "FirstName": "Ira",
+    "LastName": "Pillai",
+    "Nationality": "Indian",
+    "Email": "ira.pillai@egyxplore.com",
+    "UserName": "ira.pillai@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-74",
+    "FirstName": "Natalia",
+    "LastName": "Fedorov",
+    "Nationality": "Russian",
+    "Email": "natalia.fedorov@egyxplore.com",
+    "UserName": "natalia.fedorov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-75",
+    "FirstName": "William",
+    "LastName": "Green",
+    "Nationality": "British",
+    "Email": "william.green@egyxplore.com",
+    "UserName": "william.green@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-76",
+    "FirstName": "Rana",
+    "LastName": "Ibrahim",
+    "Nationality": "Egyptian",
+    "Email": "rana.ibrahim@egyxplore.com",
+    "UserName": "rana.ibrahim@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-77",
+    "FirstName": "Dina",
+    "LastName": "Amer",
+    "Nationality": "Egyptian",
+    "Email": "dina.amer@egyxplore.com",
+    "UserName": "dina.amer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-78",
+    "FirstName": "Julia",
+    "LastName": "Barbosa",
+    "Nationality": "Brazilian",
+    "Email": "julia.barbosa@egyxplore.com",
+    "UserName": "julia.barbosa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-79",
+    "FirstName": "Nihal",
+    "LastName": "Rashed",
+    "Nationality": "Egyptian",
+    "Email": "nihal.rashed@egyxplore.com",
+    "UserName": "nihal.rashed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-80",
+    "FirstName": "Hagar",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "hagar.diab@egyxplore.com",
+    "UserName": "hagar.diab@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-81",
+    "FirstName": "Amr",
+    "LastName": "Abdelaziz",
+    "Nationality": "Egyptian",
+    "Email": "amr.abdelaziz@egyxplore.com",
+    "UserName": "amr.abdelaziz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-82",
+    "FirstName": "Wei",
+    "LastName": "Huang",
+    "Nationality": "Chinese",
+    "Email": "wei.huang@egyxplore.com",
+    "UserName": "wei.huang@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-83",
+    "FirstName": "Reda",
+    "LastName": "Abdelrahman",
+    "Nationality": "Egyptian",
+    "Email": "reda.abdelrahman@egyxplore.com",
+    "UserName": "reda.abdelrahman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-84",
+    "FirstName": "Islam",
+    "LastName": "Mahmoud",
+    "Nationality": "Egyptian",
+    "Email": "islam.mahmoud@egyxplore.com",
+    "UserName": "islam.mahmoud@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-85",
+    "FirstName": "Esraa",
+    "LastName": "Nasser",
+    "Nationality": "Egyptian",
+    "Email": "esraa.nasser@egyxplore.com",
+    "UserName": "esraa.nasser@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-86",
+    "FirstName": "Nihal",
+    "LastName": "Abdelrahman",
+    "Nationality": "Egyptian",
+    "Email": "nihal.abdelrahman@egyxplore.com",
+    "UserName": "nihal.abdelrahman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-87",
+    "FirstName": "Giorgia",
+    "LastName": "Russo",
+    "Nationality": "Italian",
+    "Email": "giorgia.russo@egyxplore.com",
+    "UserName": "giorgia.russo@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-88",
+    "FirstName": "Nour",
+    "LastName": "Hegazy",
+    "Nationality": "Egyptian",
+    "Email": "nour.hegazy@egyxplore.com",
+    "UserName": "nour.hegazy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-89",
+    "FirstName": "Mohamed",
+    "LastName": "Attia",
+    "Nationality": "Egyptian",
+    "Email": "mohamed.attia@egyxplore.com",
+    "UserName": "mohamed.attia@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-90",
+    "FirstName": "Rania",
+    "LastName": "Kamal",
+    "Nationality": "Egyptian",
+    "Email": "rania.kamal@egyxplore.com",
+    "UserName": "rania.kamal@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-91",
+    "FirstName": "Defne",
+    "LastName": "Akar",
+    "Nationality": "Turkish",
+    "Email": "defne.akar@egyxplore.com",
+    "UserName": "defne.akar@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-92",
+    "FirstName": "Mariam",
+    "LastName": "Salah",
+    "Nationality": "Egyptian",
+    "Email": "mariam.salah@egyxplore.com",
+    "UserName": "mariam.salah@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-93",
+    "FirstName": "Omar",
+    "LastName": "Salah",
+    "Nationality": "Egyptian",
+    "Email": "omar.salah@egyxplore.com",
+    "UserName": "omar.salah@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-94",
+    "FirstName": "Daria",
+    "LastName": "Mikhailov",
+    "Nationality": "Russian",
+    "Email": "daria.mikhailov@egyxplore.com",
+    "UserName": "daria.mikhailov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-95",
+    "FirstName": "Reyansh",
+    "LastName": "Kumar",
+    "Nationality": "Indian",
+    "Email": "reyansh.kumar@egyxplore.com",
+    "UserName": "reyansh.kumar@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-96",
+    "FirstName": "Reda",
+    "LastName": "Mahmoud",
+    "Nationality": "Egyptian",
+    "Email": "reda.mahmoud@egyxplore.com",
+    "UserName": "reda.mahmoud@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-97",
+    "FirstName": "Reem",
+    "LastName": "Hegazy",
+    "Nationality": "Egyptian",
+    "Email": "reem.hegazy@egyxplore.com",
+    "UserName": "reem.hegazy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-98",
+    "FirstName": "Mahmoud",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "mahmoud.badawi@egyxplore.com",
+    "UserName": "mahmoud.badawi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-99",
+    "FirstName": "Khaled",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "khaled.badawi@egyxplore.com",
+    "UserName": "khaled.badawi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-100",
+    "FirstName": "Salma",
+    "LastName": "Shaker",
+    "Nationality": "Egyptian",
+    "Email": "salma.shaker@egyxplore.com",
+    "UserName": "salma.shaker@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-101",
+    "FirstName": "Hagar",
+    "LastName": "Ghanem",
+    "Nationality": "Egyptian",
+    "Email": "hagar.ghanem@egyxplore.com",
+    "UserName": "hagar.ghanem@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-102",
+    "FirstName": "Sofia",
+    "LastName": "Mikhailov",
+    "Nationality": "Russian",
+    "Email": "sofia.mikhailov@egyxplore.com",
+    "UserName": "sofia.mikhailov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-103",
+    "FirstName": "Elizabeth",
+    "LastName": "Johnson",
+    "Nationality": "American",
+    "Email": "elizabeth.johnson@egyxplore.com",
+    "UserName": "elizabeth.johnson@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-104",
+    "FirstName": "Omnia",
+    "LastName": "Shaker",
+    "Nationality": "Egyptian",
+    "Email": "omnia.shaker@egyxplore.com",
+    "UserName": "omnia.shaker@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-105",
+    "FirstName": "Emiliano",
+    "LastName": "Garcia",
+    "Nationality": "Mexican",
+    "Email": "emiliano.garcia@egyxplore.com",
+    "UserName": "emiliano.garcia@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-106",
+    "FirstName": "Salma",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "salma.diab@egyxplore.com",
+    "UserName": "salma.diab@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-107",
+    "FirstName": "Amira",
+    "LastName": "El-Sayed",
+    "Nationality": "Egyptian",
+    "Email": "amira.el-sayed@egyxplore.com",
+    "UserName": "amira.el-sayed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-108",
+    "FirstName": "Elif",
+    "LastName": "Sahin",
+    "Nationality": "Turkish",
+    "Email": "elif.sahin@egyxplore.com",
+    "UserName": "elif.sahin@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-109",
+    "FirstName": "Mila",
+    "LastName": "Simon",
+    "Nationality": "French",
+    "Email": "mila.simon@egyxplore.com",
+    "UserName": "mila.simon@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-110",
+    "FirstName": "Emma",
+    "LastName": "Richard",
+    "Nationality": "French",
+    "Email": "emma.richard@egyxplore.com",
+    "UserName": "emma.richard@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-111",
+    "FirstName": "Nada",
+    "LastName": "Abdelrahman",
+    "Nationality": "Egyptian",
+    "Email": "nada.abdelrahman@egyxplore.com",
+    "UserName": "nada.abdelrahman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-112",
+    "FirstName": "Asmaa",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "asmaa.diab@egyxplore.com",
+    "UserName": "asmaa.diab@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-113",
+    "FirstName": "Dmitri",
+    "LastName": "Ivanov",
+    "Nationality": "Russian",
+    "Email": "dmitri.ivanov@egyxplore.com",
+    "UserName": "dmitri.ivanov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-114",
+    "FirstName": "Hugo",
+    "LastName": "Laurent",
+    "Nationality": "French",
+    "Email": "hugo.laurent@egyxplore.com",
+    "UserName": "hugo.laurent@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-115",
+    "FirstName": "Ivan",
+    "LastName": "Semenov",
+    "Nationality": "Russian",
+    "Email": "ivan.semenov@egyxplore.com",
+    "UserName": "ivan.semenov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-116",
+    "FirstName": "Myra",
+    "LastName": "Bose",
+    "Nationality": "Indian",
+    "Email": "myra.bose@egyxplore.com",
+    "UserName": "myra.bose@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-117",
+    "FirstName": "Isabella",
+    "LastName": "Silva",
+    "Nationality": "Brazilian",
+    "Email": "isabella.silva@egyxplore.com",
+    "UserName": "isabella.silva@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-118",
+    "FirstName": "Elena",
+    "LastName": "Nikolaev",
+    "Nationality": "Russian",
+    "Email": "elena.nikolaev@egyxplore.com",
+    "UserName": "elena.nikolaev@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-119",
+    "FirstName": "Samuel",
+    "LastName": "Alves",
+    "Nationality": "Brazilian",
+    "Email": "samuel.alves@egyxplore.com",
+    "UserName": "samuel.alves@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-120",
+    "FirstName": "Valeria",
+    "LastName": "Martin",
+    "Nationality": "Spanish",
+    "Email": "valeria.martin@egyxplore.com",
+    "UserName": "valeria.martin@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-121",
+    "FirstName": "Ahmed",
+    "LastName": "Kamal",
+    "Nationality": "Egyptian",
+    "Email": "ahmed.kamal@egyxplore.com",
+    "UserName": "ahmed.kamal@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-122",
+    "FirstName": "Lea",
+    "LastName": "Zimmermann",
+    "Nationality": "German",
+    "Email": "lea.zimmermann@egyxplore.com",
+    "UserName": "lea.zimmermann@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-123",
+    "FirstName": "Sofia",
+    "LastName": "Diaz",
+    "Nationality": "Mexican",
+    "Email": "sofia.diaz@egyxplore.com",
+    "UserName": "sofia.diaz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-124",
+    "FirstName": "Shaimaa",
+    "LastName": "Radwan",
+    "Nationality": "Egyptian",
+    "Email": "shaimaa.radwan2@egyxplore.com",
+    "UserName": "shaimaa.radwan2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-125",
+    "FirstName": "Sara",
+    "LastName": "Al-Mutairi",
+    "Nationality": "Saudi",
+    "Email": "sara.al-mutairi@egyxplore.com",
+    "UserName": "sara.al-mutairi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-126",
+    "FirstName": "Alvaro",
+    "LastName": "Munoz",
+    "Nationality": "Spanish",
+    "Email": "alvaro.munoz@egyxplore.com",
+    "UserName": "alvaro.munoz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-127",
+    "FirstName": "Jules",
+    "LastName": "Roux",
+    "Nationality": "French",
+    "Email": "jules.roux@egyxplore.com",
+    "UserName": "jules.roux@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-128",
+    "FirstName": "Mary",
+    "LastName": "Davis",
+    "Nationality": "American",
+    "Email": "mary.davis@egyxplore.com",
+    "UserName": "mary.davis@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-129",
+    "FirstName": "Elizabeth",
+    "LastName": "Wilson",
+    "Nationality": "American",
+    "Email": "elizabeth.wilson@egyxplore.com",
+    "UserName": "elizabeth.wilson@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-130",
+    "FirstName": "Ben",
+    "LastName": "Fischer",
+    "Nationality": "German",
+    "Email": "ben.fischer@egyxplore.com",
+    "UserName": "ben.fischer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-131",
+    "FirstName": "Theo",
+    "LastName": "Silva",
+    "Nationality": "Brazilian",
+    "Email": "theo.silva@egyxplore.com",
+    "UserName": "theo.silva@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-132",
+    "FirstName": "Aurora",
+    "LastName": "Bianchi",
+    "Nationality": "Italian",
+    "Email": "aurora.bianchi@egyxplore.com",
+    "UserName": "aurora.bianchi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-133",
+    "FirstName": "Mohamed",
+    "LastName": "Farouk",
+    "Nationality": "Egyptian",
+    "Email": "mohamed.farouk@egyxplore.com",
+    "UserName": "mohamed.farouk@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-134",
+    "FirstName": "Jonas",
+    "LastName": "Neumann",
+    "Nationality": "German",
+    "Email": "jonas.neumann@egyxplore.com",
+    "UserName": "jonas.neumann@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-135",
+    "FirstName": "Emma",
+    "LastName": "Hoffmann",
+    "Nationality": "German",
+    "Email": "emma.hoffmann@egyxplore.com",
+    "UserName": "emma.hoffmann@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-136",
+    "FirstName": "Nada",
+    "LastName": "Kamal",
+    "Nationality": "Egyptian",
+    "Email": "nada.kamal@egyxplore.com",
+    "UserName": "nada.kamal@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-137",
+    "FirstName": "Omar",
+    "LastName": "Hegazy",
+    "Nationality": "Egyptian",
+    "Email": "omar.hegazy@egyxplore.com",
+    "UserName": "omar.hegazy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-138",
+    "FirstName": "Adel",
+    "LastName": "Mostafa",
+    "Nationality": "Egyptian",
+    "Email": "adel.mostafa@egyxplore.com",
+    "UserName": "adel.mostafa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-139",
+    "FirstName": "Emily",
+    "LastName": "Smith",
+    "Nationality": "British",
+    "Email": "emily.smith@egyxplore.com",
+    "UserName": "emily.smith@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-140",
+    "FirstName": "Salma",
+    "LastName": "Salah",
+    "Nationality": "Egyptian",
+    "Email": "salma.salah@egyxplore.com",
+    "UserName": "salma.salah@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-141",
+    "FirstName": "Poppy",
+    "LastName": "Brown",
+    "Nationality": "British",
+    "Email": "poppy.brown@egyxplore.com",
+    "UserName": "poppy.brown@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-142",
+    "FirstName": "Angel",
+    "LastName": "Flores",
+    "Nationality": "Mexican",
+    "Email": "angel.flores@egyxplore.com",
+    "UserName": "angel.flores@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-143",
+    "FirstName": "Walid",
+    "LastName": "Amer",
+    "Nationality": "Egyptian",
+    "Email": "walid.amer@egyxplore.com",
+    "UserName": "walid.amer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-144",
+    "FirstName": "James",
+    "LastName": "Robinson",
+    "Nationality": "British",
+    "Email": "james.robinson@egyxplore.com",
+    "UserName": "james.robinson@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-145",
+    "FirstName": "Lucas",
+    "LastName": "Thomas",
+    "Nationality": "French",
+    "Email": "lucas.thomas@egyxplore.com",
+    "UserName": "lucas.thomas@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-146",
+    "FirstName": "Sara",
+    "LastName": "Zaki",
+    "Nationality": "Egyptian",
+    "Email": "sara.zaki@egyxplore.com",
+    "UserName": "sara.zaki@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-147",
+    "FirstName": "Karim",
+    "LastName": "Ibrahim",
+    "Nationality": "Egyptian",
+    "Email": "karim.ibrahim@egyxplore.com",
+    "UserName": "karim.ibrahim@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-148",
+    "FirstName": "Omnia",
+    "LastName": "Kamal",
+    "Nationality": "Egyptian",
+    "Email": "omnia.kamal@egyxplore.com",
+    "UserName": "omnia.kamal@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-149",
+    "FirstName": "Miguel",
+    "LastName": "Souza",
+    "Nationality": "Brazilian",
+    "Email": "miguel.souza@egyxplore.com",
+    "UserName": "miguel.souza@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-150",
+    "FirstName": "Giulia",
+    "LastName": "Bianchi",
+    "Nationality": "Italian",
+    "Email": "giulia.bianchi@egyxplore.com",
+    "UserName": "giulia.bianchi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-151",
+    "FirstName": "Walid",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "walid.badawi@egyxplore.com",
+    "UserName": "walid.badawi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-152",
+    "FirstName": "Majed",
+    "LastName": "Al-Hazmi",
+    "Nationality": "Saudi",
+    "Email": "majed.al-hazmi@egyxplore.com",
+    "UserName": "majed.al-hazmi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-153",
+    "FirstName": "Laila",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "laila.badawi@egyxplore.com",
+    "UserName": "laila.badawi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-154",
+    "FirstName": "Tamer",
+    "LastName": "Soliman",
+    "Nationality": "Egyptian",
+    "Email": "tamer.soliman@egyxplore.com",
+    "UserName": "tamer.soliman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-155",
+    "FirstName": "Daria",
+    "LastName": "Mikhailov",
+    "Nationality": "Russian",
+    "Email": "daria.mikhailov2@egyxplore.com",
+    "UserName": "daria.mikhailov2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-156",
+    "FirstName": "Lina",
+    "LastName": "Weber",
+    "Nationality": "German",
+    "Email": "lina.weber@egyxplore.com",
+    "UserName": "lina.weber@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-157",
+    "FirstName": "Rana",
+    "LastName": "Zaki",
+    "Nationality": "Egyptian",
+    "Email": "rana.zaki@egyxplore.com",
+    "UserName": "rana.zaki@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-158",
+    "FirstName": "Adel",
+    "LastName": "Mansour",
+    "Nationality": "Egyptian",
+    "Email": "adel.mansour@egyxplore.com",
+    "UserName": "adel.mansour@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-159",
+    "FirstName": "Salma",
+    "LastName": "Nasser",
+    "Nationality": "Egyptian",
+    "Email": "salma.nasser@egyxplore.com",
+    "UserName": "salma.nasser@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-160",
+    "FirstName": "Mona",
+    "LastName": "Mahmoud",
+    "Nationality": "Egyptian",
+    "Email": "mona.mahmoud@egyxplore.com",
+    "UserName": "mona.mahmoud@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-161",
+    "FirstName": "Farida",
+    "LastName": "El-Sayed",
+    "Nationality": "Egyptian",
+    "Email": "farida.el-sayed@egyxplore.com",
+    "UserName": "farida.el-sayed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-162",
+    "FirstName": "Isabella",
+    "LastName": "Lopes",
+    "Nationality": "Brazilian",
+    "Email": "isabella.lopes@egyxplore.com",
+    "UserName": "isabella.lopes@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-163",
+    "FirstName": "Tamer",
+    "LastName": "Mostafa",
+    "Nationality": "Egyptian",
+    "Email": "tamer.mostafa@egyxplore.com",
+    "UserName": "tamer.mostafa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-164",
+    "FirstName": "Mona",
+    "LastName": "Shaker",
+    "Nationality": "Egyptian",
+    "Email": "mona.shaker@egyxplore.com",
+    "UserName": "mona.shaker@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-165",
+    "FirstName": "Laila",
+    "LastName": "Farouk",
+    "Nationality": "Egyptian",
+    "Email": "laila.farouk@egyxplore.com",
+    "UserName": "laila.farouk@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-166",
+    "FirstName": "Mary",
+    "LastName": "Johnson",
+    "Nationality": "American",
+    "Email": "mary.johnson@egyxplore.com",
+    "UserName": "mary.johnson@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-167",
+    "FirstName": "Miguel",
+    "LastName": "Gonzalez",
+    "Nationality": "Mexican",
+    "Email": "miguel.gonzalez@egyxplore.com",
+    "UserName": "miguel.gonzalez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-168",
+    "FirstName": "Nabil",
+    "LastName": "Zaki",
+    "Nationality": "Egyptian",
+    "Email": "nabil.zaki@egyxplore.com",
+    "UserName": "nabil.zaki@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-169",
+    "FirstName": "Mariam",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "mariam.badawi@egyxplore.com",
+    "UserName": "mariam.badawi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-170",
+    "FirstName": "Yasmin",
+    "LastName": "Radwan",
+    "Nationality": "Egyptian",
+    "Email": "yasmin.radwan@egyxplore.com",
+    "UserName": "yasmin.radwan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-171",
+    "FirstName": "Amira",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "amira.badawi@egyxplore.com",
+    "UserName": "amira.badawi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-172",
+    "FirstName": "Reda",
+    "LastName": "Amer",
+    "Nationality": "Egyptian",
+    "Email": "reda.amer@egyxplore.com",
+    "UserName": "reda.amer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-173",
+    "FirstName": "Yuki",
+    "LastName": "Yamada",
+    "Nationality": "Japanese",
+    "Email": "yuki.yamada@egyxplore.com",
+    "UserName": "yuki.yamada@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-174",
+    "FirstName": "Farida",
+    "LastName": "El-Sayed",
+    "Nationality": "Egyptian",
+    "Email": "farida.el-sayed2@egyxplore.com",
+    "UserName": "farida.el-sayed2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-175",
+    "FirstName": "Amira",
+    "LastName": "Hamdy",
+    "Nationality": "Egyptian",
+    "Email": "amira.hamdy@egyxplore.com",
+    "UserName": "amira.hamdy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-176",
+    "FirstName": "Yui",
+    "LastName": "Hayashi",
+    "Nationality": "Japanese",
+    "Email": "yui.hayashi@egyxplore.com",
+    "UserName": "yui.hayashi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-177",
+    "FirstName": "Maria",
+    "LastName": "Munoz",
+    "Nationality": "Spanish",
+    "Email": "maria.munoz@egyxplore.com",
+    "UserName": "maria.munoz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-178",
+    "FirstName": "Nour",
+    "LastName": "Abdelaziz",
+    "Nationality": "Egyptian",
+    "Email": "nour.abdelaziz@egyxplore.com",
+    "UserName": "nour.abdelaziz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-179",
+    "FirstName": "Islam",
+    "LastName": "Attia",
+    "Nationality": "Egyptian",
+    "Email": "islam.attia@egyxplore.com",
+    "UserName": "islam.attia@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-180",
+    "FirstName": "Esraa",
+    "LastName": "Fathy",
+    "Nationality": "Egyptian",
+    "Email": "esraa.fathy@egyxplore.com",
+    "UserName": "esraa.fathy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-181",
+    "FirstName": "Mohamed",
+    "LastName": "Ghanem",
+    "Nationality": "Egyptian",
+    "Email": "mohamed.ghanem@egyxplore.com",
+    "UserName": "mohamed.ghanem@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-182",
+    "FirstName": "Ahmed",
+    "LastName": "El-Sayed",
+    "Nationality": "Egyptian",
+    "Email": "ahmed.el-sayed@egyxplore.com",
+    "UserName": "ahmed.el-sayed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-183",
+    "FirstName": "Cheng",
+    "LastName": "Luo",
+    "Nationality": "Chinese",
+    "Email": "cheng.luo@egyxplore.com",
+    "UserName": "cheng.luo@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-184",
+    "FirstName": "Sherif",
+    "LastName": "Mahmoud",
+    "Nationality": "Egyptian",
+    "Email": "sherif.mahmoud@egyxplore.com",
+    "UserName": "sherif.mahmoud@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-185",
+    "FirstName": "Karim",
+    "LastName": "Mahmoud",
+    "Nationality": "Egyptian",
+    "Email": "karim.mahmoud@egyxplore.com",
+    "UserName": "karim.mahmoud@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-186",
+    "FirstName": "Emma",
+    "LastName": "Jimenez",
+    "Nationality": "Spanish",
+    "Email": "emma.jimenez@egyxplore.com",
+    "UserName": "emma.jimenez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-187",
+    "FirstName": "Reem",
+    "LastName": "Hamdy",
+    "Nationality": "Egyptian",
+    "Email": "reem.hamdy@egyxplore.com",
+    "UserName": "reem.hamdy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-188",
+    "FirstName": "Adam",
+    "LastName": "Morel",
+    "Nationality": "French",
+    "Email": "adam.morel@egyxplore.com",
+    "UserName": "adam.morel@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-189",
+    "FirstName": "Adel",
+    "LastName": "Abdelrahman",
+    "Nationality": "Egyptian",
+    "Email": "adel.abdelrahman@egyxplore.com",
+    "UserName": "adel.abdelrahman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-190",
+    "FirstName": "Farida",
+    "LastName": "Kamal",
+    "Nationality": "Egyptian",
+    "Email": "farida.kamal@egyxplore.com",
+    "UserName": "farida.kamal@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-191",
+    "FirstName": "Nihal",
+    "LastName": "Nasser",
+    "Nationality": "Egyptian",
+    "Email": "nihal.nasser@egyxplore.com",
+    "UserName": "nihal.nasser@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-192",
+    "FirstName": "Aditya",
+    "LastName": "Mishra",
+    "Nationality": "Indian",
+    "Email": "aditya.mishra@egyxplore.com",
+    "UserName": "aditya.mishra@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-193",
+    "FirstName": "Mariam",
+    "LastName": "Soliman",
+    "Nationality": "Egyptian",
+    "Email": "mariam.soliman2@egyxplore.com",
+    "UserName": "mariam.soliman2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-194",
+    "FirstName": "Walid",
+    "LastName": "Hamdy",
+    "Nationality": "Egyptian",
+    "Email": "walid.hamdy@egyxplore.com",
+    "UserName": "walid.hamdy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-195",
+    "FirstName": "Heba",
+    "LastName": "Hassan",
+    "Nationality": "Egyptian",
+    "Email": "heba.hassan@egyxplore.com",
+    "UserName": "heba.hassan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-196",
+    "FirstName": "Mahmoud",
+    "LastName": "Mansour",
+    "Nationality": "Egyptian",
+    "Email": "mahmoud.mansour@egyxplore.com",
+    "UserName": "mahmoud.mansour@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-197",
+    "FirstName": "Renata",
+    "LastName": "Perez",
+    "Nationality": "Mexican",
+    "Email": "renata.perez@egyxplore.com",
+    "UserName": "renata.perez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-198",
+    "FirstName": "Theo",
+    "LastName": "Costa",
+    "Nationality": "Brazilian",
+    "Email": "theo.costa@egyxplore.com",
+    "UserName": "theo.costa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-199",
+    "FirstName": "Mohamed",
+    "LastName": "Rashed",
+    "Nationality": "Egyptian",
+    "Email": "mohamed.rashed@egyxplore.com",
+    "UserName": "mohamed.rashed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-200",
+    "FirstName": "Arthur",
+    "LastName": "Durand",
+    "Nationality": "French",
+    "Email": "arthur.durand@egyxplore.com",
+    "UserName": "arthur.durand@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-201",
+    "FirstName": "Martin",
+    "LastName": "Diaz",
+    "Nationality": "Spanish",
+    "Email": "martin.diaz@egyxplore.com",
+    "UserName": "martin.diaz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-202",
+    "FirstName": "Sophia",
+    "LastName": "Santos",
+    "Nationality": "Brazilian",
+    "Email": "sophia.santos@egyxplore.com",
+    "UserName": "sophia.santos@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-203",
+    "FirstName": "Laila",
+    "LastName": "Soliman",
+    "Nationality": "Egyptian",
+    "Email": "laila.soliman@egyxplore.com",
+    "UserName": "laila.soliman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-204",
+    "FirstName": "Luiza",
+    "LastName": "Carvalho",
+    "Nationality": "Brazilian",
+    "Email": "luiza.carvalho@egyxplore.com",
+    "UserName": "luiza.carvalho@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-205",
+    "FirstName": "Amr",
+    "LastName": "Mostafa",
+    "Nationality": "Egyptian",
+    "Email": "amr.mostafa@egyxplore.com",
+    "UserName": "amr.mostafa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-206",
+    "FirstName": "Majed",
+    "LastName": "Al-Asiri",
+    "Nationality": "Saudi",
+    "Email": "majed.al-asiri@egyxplore.com",
+    "UserName": "majed.al-asiri@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-207",
+    "FirstName": "Giulia",
+    "LastName": "Costa",
+    "Nationality": "Italian",
+    "Email": "giulia.costa@egyxplore.com",
+    "UserName": "giulia.costa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-208",
+    "FirstName": "Hany",
+    "LastName": "Mostafa",
+    "Nationality": "Egyptian",
+    "Email": "hany.mostafa2@egyxplore.com",
+    "UserName": "hany.mostafa2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-209",
+    "FirstName": "Ahmed",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "ahmed.diab@egyxplore.com",
+    "UserName": "ahmed.diab@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-210",
+    "FirstName": "Ira",
+    "LastName": "Verma",
+    "Nationality": "Indian",
+    "Email": "ira.verma@egyxplore.com",
+    "UserName": "ira.verma@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-211",
+    "FirstName": "Mikhail",
+    "LastName": "Sokolov",
+    "Nationality": "Russian",
+    "Email": "mikhail.sokolov@egyxplore.com",
+    "UserName": "mikhail.sokolov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-212",
+    "FirstName": "Nikita",
+    "LastName": "Lebedev",
+    "Nationality": "Russian",
+    "Email": "nikita.lebedev@egyxplore.com",
+    "UserName": "nikita.lebedev@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-213",
+    "FirstName": "Shaimaa",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "shaimaa.badawi@egyxplore.com",
+    "UserName": "shaimaa.badawi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-214",
+    "FirstName": "Melis",
+    "LastName": "Yildiz",
+    "Nationality": "Turkish",
+    "Email": "melis.yildiz@egyxplore.com",
+    "UserName": "melis.yildiz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-215",
+    "FirstName": "Cheng",
+    "LastName": "Sun",
+    "Nationality": "Chinese",
+    "Email": "cheng.sun@egyxplore.com",
+    "UserName": "cheng.sun@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-216",
+    "FirstName": "Arthur",
+    "LastName": "Santos",
+    "Nationality": "Brazilian",
+    "Email": "arthur.santos@egyxplore.com",
+    "UserName": "arthur.santos@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-217",
+    "FirstName": "Alexander",
+    "LastName": "Vasiliev",
+    "Nationality": "Russian",
+    "Email": "alexander.vasiliev@egyxplore.com",
+    "UserName": "alexander.vasiliev@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-218",
+    "FirstName": "Navya",
+    "LastName": "Nair",
+    "Nationality": "Indian",
+    "Email": "navya.nair@egyxplore.com",
+    "UserName": "navya.nair@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-219",
+    "FirstName": "Khaled",
+    "LastName": "Kamal",
+    "Nationality": "Egyptian",
+    "Email": "khaled.kamal@egyxplore.com",
+    "UserName": "khaled.kamal@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-220",
+    "FirstName": "Asmaa",
+    "LastName": "Ibrahim",
+    "Nationality": "Egyptian",
+    "Email": "asmaa.ibrahim@egyxplore.com",
+    "UserName": "asmaa.ibrahim@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-221",
+    "FirstName": "Defne",
+    "LastName": "Sener",
+    "Nationality": "Turkish",
+    "Email": "defne.sener@egyxplore.com",
+    "UserName": "defne.sener@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-222",
+    "FirstName": "Walid",
+    "LastName": "Shaaban",
+    "Nationality": "Egyptian",
+    "Email": "walid.shaaban@egyxplore.com",
+    "UserName": "walid.shaaban@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-223",
+    "FirstName": "Hany",
+    "LastName": "Mahmoud",
+    "Nationality": "Egyptian",
+    "Email": "hany.mahmoud@egyxplore.com",
+    "UserName": "hany.mahmoud@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-224",
+    "FirstName": "Nabil",
+    "LastName": "Abdelrahman",
+    "Nationality": "Egyptian",
+    "Email": "nabil.abdelrahman@egyxplore.com",
+    "UserName": "nabil.abdelrahman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-225",
+    "FirstName": "Olga",
+    "LastName": "Nikolaev",
+    "Nationality": "Russian",
+    "Email": "olga.nikolaev@egyxplore.com",
+    "UserName": "olga.nikolaev@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-226",
+    "FirstName": "Hany",
+    "LastName": "Mansour",
+    "Nationality": "Egyptian",
+    "Email": "hany.mansour@egyxplore.com",
+    "UserName": "hany.mansour@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-227",
+    "FirstName": "Sora",
+    "LastName": "Yoshida",
+    "Nationality": "Japanese",
+    "Email": "sora.yoshida@egyxplore.com",
+    "UserName": "sora.yoshida@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-228",
+    "FirstName": "Reem",
+    "LastName": "Al-Qahtani",
+    "Nationality": "Saudi",
+    "Email": "reem.al-qahtani@egyxplore.com",
+    "UserName": "reem.al-qahtani@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-229",
+    "FirstName": "Nada",
+    "LastName": "Radwan",
+    "Nationality": "Egyptian",
+    "Email": "nada.radwan@egyxplore.com",
+    "UserName": "nada.radwan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-230",
+    "FirstName": "Lena",
+    "LastName": "Meyer",
+    "Nationality": "German",
+    "Email": "lena.meyer@egyxplore.com",
+    "UserName": "lena.meyer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-231",
+    "FirstName": "Sameh",
+    "LastName": "Hamdy",
+    "Nationality": "Egyptian",
+    "Email": "sameh.hamdy@egyxplore.com",
+    "UserName": "sameh.hamdy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-232",
+    "FirstName": "Heitor",
+    "LastName": "Lopes",
+    "Nationality": "Brazilian",
+    "Email": "heitor.lopes@egyxplore.com",
+    "UserName": "heitor.lopes@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-233",
+    "FirstName": "Tarek",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "tarek.diab@egyxplore.com",
+    "UserName": "tarek.diab@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-234",
+    "FirstName": "Walid",
+    "LastName": "Ibrahim",
+    "Nationality": "Egyptian",
+    "Email": "walid.ibrahim@egyxplore.com",
+    "UserName": "walid.ibrahim@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-235",
+    "FirstName": "Qiang",
+    "LastName": "Zhao",
+    "Nationality": "Chinese",
+    "Email": "qiang.zhao@egyxplore.com",
+    "UserName": "qiang.zhao@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-236",
+    "FirstName": "Ashraf",
+    "LastName": "Ali",
+    "Nationality": "Egyptian",
+    "Email": "ashraf.ali@egyxplore.com",
+    "UserName": "ashraf.ali@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-237",
+    "FirstName": "Rania",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "rania.diab@egyxplore.com",
+    "UserName": "rania.diab@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-238",
+    "FirstName": "Yasmin",
+    "LastName": "Saleh",
+    "Nationality": "Egyptian",
+    "Email": "yasmin.saleh@egyxplore.com",
+    "UserName": "yasmin.saleh@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-239",
+    "FirstName": "Haru",
+    "LastName": "Watanabe",
+    "Nationality": "Japanese",
+    "Email": "haru.watanabe@egyxplore.com",
+    "UserName": "haru.watanabe@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-240",
+    "FirstName": "Bo",
+    "LastName": "Ma",
+    "Nationality": "Chinese",
+    "Email": "bo.ma@egyxplore.com",
+    "UserName": "bo.ma@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-241",
+    "FirstName": "Paula",
+    "LastName": "Alonso",
+    "Nationality": "Spanish",
+    "Email": "paula.alonso@egyxplore.com",
+    "UserName": "paula.alonso@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-242",
+    "FirstName": "Emiliano",
+    "LastName": "Gonzalez",
+    "Nationality": "Mexican",
+    "Email": "emiliano.gonzalez@egyxplore.com",
+    "UserName": "emiliano.gonzalez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-243",
+    "FirstName": "Jade",
+    "LastName": "Leroy",
+    "Nationality": "French",
+    "Email": "jade.leroy@egyxplore.com",
+    "UserName": "jade.leroy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-244",
+    "FirstName": "Shaimaa",
+    "LastName": "Shaaban",
+    "Nationality": "Egyptian",
+    "Email": "shaimaa.shaaban@egyxplore.com",
+    "UserName": "shaimaa.shaaban@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-245",
+    "FirstName": "Angel",
+    "LastName": "Lopez",
+    "Nationality": "Mexican",
+    "Email": "angel.lopez@egyxplore.com",
+    "UserName": "angel.lopez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-246",
+    "FirstName": "Rin",
+    "LastName": "Kobayashi",
+    "Nationality": "Japanese",
+    "Email": "rin.kobayashi@egyxplore.com",
+    "UserName": "rin.kobayashi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-247",
+    "FirstName": "Mila",
+    "LastName": "Leroy",
+    "Nationality": "French",
+    "Email": "mila.leroy@egyxplore.com",
+    "UserName": "mila.leroy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-248",
+    "FirstName": "Sara",
+    "LastName": "Al-Rashidi",
+    "Nationality": "Saudi",
+    "Email": "sara.al-rashidi@egyxplore.com",
+    "UserName": "sara.al-rashidi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-249",
+    "FirstName": "Laila",
+    "LastName": "Soliman",
+    "Nationality": "Egyptian",
+    "Email": "laila.soliman2@egyxplore.com",
+    "UserName": "laila.soliman2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-250",
+    "FirstName": "Yang",
+    "LastName": "Xu",
+    "Nationality": "Chinese",
+    "Email": "yang.xu@egyxplore.com",
+    "UserName": "yang.xu@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-251",
+    "FirstName": "Andrei",
+    "LastName": "Volkov",
+    "Nationality": "Russian",
+    "Email": "andrei.volkov@egyxplore.com",
+    "UserName": "andrei.volkov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-252",
+    "FirstName": "Martina",
+    "LastName": "Romero",
+    "Nationality": "Spanish",
+    "Email": "martina.romero@egyxplore.com",
+    "UserName": "martina.romero@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-253",
+    "FirstName": "Elias",
+    "LastName": "Fischer",
+    "Nationality": "German",
+    "Email": "elias.fischer@egyxplore.com",
+    "UserName": "elias.fischer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-254",
+    "FirstName": "Elena",
+    "LastName": "Diaz",
+    "Nationality": "Mexican",
+    "Email": "elena.diaz@egyxplore.com",
+    "UserName": "elena.diaz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-255",
+    "FirstName": "Nada",
+    "LastName": "Fathy",
+    "Nationality": "Egyptian",
+    "Email": "nada.fathy@egyxplore.com",
+    "UserName": "nada.fathy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-256",
+    "FirstName": "Diya",
+    "LastName": "Pillai",
+    "Nationality": "Indian",
+    "Email": "diya.pillai@egyxplore.com",
+    "UserName": "diya.pillai@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-257",
+    "FirstName": "Amira",
+    "LastName": "Nasser",
+    "Nationality": "Egyptian",
+    "Email": "amira.nasser@egyxplore.com",
+    "UserName": "amira.nasser@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-258",
+    "FirstName": "Mona",
+    "LastName": "El-Sayed",
+    "Nationality": "Egyptian",
+    "Email": "mona.el-sayed@egyxplore.com",
+    "UserName": "mona.el-sayed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-259",
+    "FirstName": "Noah",
+    "LastName": "Lefebvre",
+    "Nationality": "French",
+    "Email": "noah.lefebvre@egyxplore.com",
+    "UserName": "noah.lefebvre@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-260",
+    "FirstName": "Lea",
+    "LastName": "Moreau",
+    "Nationality": "French",
+    "Email": "lea.moreau@egyxplore.com",
+    "UserName": "lea.moreau@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-261",
+    "FirstName": "Dina",
+    "LastName": "Kamal",
+    "Nationality": "Egyptian",
+    "Email": "dina.kamal@egyxplore.com",
+    "UserName": "dina.kamal@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-262",
+    "FirstName": "Nihal",
+    "LastName": "Soliman",
+    "Nationality": "Egyptian",
+    "Email": "nihal.soliman@egyxplore.com",
+    "UserName": "nihal.soliman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-263",
+    "FirstName": "Livia",
+    "LastName": "Carvalho",
+    "Nationality": "Brazilian",
+    "Email": "livia.carvalho@egyxplore.com",
+    "UserName": "livia.carvalho@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-264",
+    "FirstName": "Sora",
+    "LastName": "Sasaki",
+    "Nationality": "Japanese",
+    "Email": "sora.sasaki@egyxplore.com",
+    "UserName": "sora.sasaki@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-265",
+    "FirstName": "Nabil",
+    "LastName": "Abdelrahman",
+    "Nationality": "Egyptian",
+    "Email": "nabil.abdelrahman2@egyxplore.com",
+    "UserName": "nabil.abdelrahman2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-266",
+    "FirstName": "Eren",
+    "LastName": "Sahin",
+    "Nationality": "Turkish",
+    "Email": "eren.sahin@egyxplore.com",
+    "UserName": "eren.sahin@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-267",
+    "FirstName": "Omar",
+    "LastName": "Saleh",
+    "Nationality": "Egyptian",
+    "Email": "omar.saleh@egyxplore.com",
+    "UserName": "omar.saleh@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-268",
+    "FirstName": "Rania",
+    "LastName": "El-Sayed",
+    "Nationality": "Egyptian",
+    "Email": "rania.el-sayed@egyxplore.com",
+    "UserName": "rania.el-sayed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-269",
+    "FirstName": "Jing",
+    "LastName": "Zhang",
+    "Nationality": "Chinese",
+    "Email": "jing.zhang@egyxplore.com",
+    "UserName": "jing.zhang@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-270",
+    "FirstName": "Lama",
+    "LastName": "Al-Otaibi",
+    "Nationality": "Saudi",
+    "Email": "lama.al-otaibi@egyxplore.com",
+    "UserName": "lama.al-otaibi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-271",
+    "FirstName": "Aurora",
+    "LastName": "Ricci",
+    "Nationality": "Italian",
+    "Email": "aurora.ricci@egyxplore.com",
+    "UserName": "aurora.ricci@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-272",
+    "FirstName": "Andrei",
+    "LastName": "Egorov",
+    "Nationality": "Russian",
+    "Email": "andrei.egorov@egyxplore.com",
+    "UserName": "andrei.egorov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-273",
+    "FirstName": "Faisal",
+    "LastName": "Al-Anazi",
+    "Nationality": "Saudi",
+    "Email": "faisal.al-anazi@egyxplore.com",
+    "UserName": "faisal.al-anazi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-274",
+    "FirstName": "Natalia",
+    "LastName": "Nikolaev",
+    "Nationality": "Russian",
+    "Email": "natalia.nikolaev@egyxplore.com",
+    "UserName": "natalia.nikolaev@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-275",
+    "FirstName": "Walid",
+    "LastName": "Ghanem",
+    "Nationality": "Egyptian",
+    "Email": "walid.ghanem@egyxplore.com",
+    "UserName": "walid.ghanem@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-276",
+    "FirstName": "Lea",
+    "LastName": "Wagner",
+    "Nationality": "German",
+    "Email": "lea.wagner@egyxplore.com",
+    "UserName": "lea.wagner@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-277",
+    "FirstName": "Esraa",
+    "LastName": "Farouk",
+    "Nationality": "Egyptian",
+    "Email": "esraa.farouk@egyxplore.com",
+    "UserName": "esraa.farouk@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-278",
+    "FirstName": "Mona",
+    "LastName": "Attia",
+    "Nationality": "Egyptian",
+    "Email": "mona.attia@egyxplore.com",
+    "UserName": "mona.attia@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-279",
+    "FirstName": "Adel",
+    "LastName": "Hamdy",
+    "Nationality": "Egyptian",
+    "Email": "adel.hamdy@egyxplore.com",
+    "UserName": "adel.hamdy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-280",
+    "FirstName": "Sameh",
+    "LastName": "Mahmoud",
+    "Nationality": "Egyptian",
+    "Email": "sameh.mahmoud@egyxplore.com",
+    "UserName": "sameh.mahmoud@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-281",
+    "FirstName": "Sohaila",
+    "LastName": "Rashed",
+    "Nationality": "Egyptian",
+    "Email": "sohaila.rashed@egyxplore.com",
+    "UserName": "sohaila.rashed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-282",
+    "FirstName": "Tommaso",
+    "LastName": "Costa",
+    "Nationality": "Italian",
+    "Email": "tommaso.costa@egyxplore.com",
+    "UserName": "tommaso.costa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-283",
+    "FirstName": "Islam",
+    "LastName": "Zaki",
+    "Nationality": "Egyptian",
+    "Email": "islam.zaki@egyxplore.com",
+    "UserName": "islam.zaki@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-284",
+    "FirstName": "Mohamed",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "mohamed.diab@egyxplore.com",
+    "UserName": "mohamed.diab@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-285",
+    "FirstName": "Ayman",
+    "LastName": "Ali",
+    "Nationality": "Egyptian",
+    "Email": "ayman.ali@egyxplore.com",
+    "UserName": "ayman.ali@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-286",
+    "FirstName": "Nikita",
+    "LastName": "Mikhailov",
+    "Nationality": "Russian",
+    "Email": "nikita.mikhailov@egyxplore.com",
+    "UserName": "nikita.mikhailov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-287",
+    "FirstName": "Hugo",
+    "LastName": "Leroy",
+    "Nationality": "French",
+    "Email": "hugo.leroy@egyxplore.com",
+    "UserName": "hugo.leroy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-288",
+    "FirstName": "Yasmin",
+    "LastName": "Kamal",
+    "Nationality": "Egyptian",
+    "Email": "yasmin.kamal@egyxplore.com",
+    "UserName": "yasmin.kamal@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-289",
+    "FirstName": "Samuel",
+    "LastName": "Almeida",
+    "Nationality": "Brazilian",
+    "Email": "samuel.almeida@egyxplore.com",
+    "UserName": "samuel.almeida@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-290",
+    "FirstName": "Karim",
+    "LastName": "Attia",
+    "Nationality": "Egyptian",
+    "Email": "karim.attia@egyxplore.com",
+    "UserName": "karim.attia@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-291",
+    "FirstName": "Sohaila",
+    "LastName": "Farouk",
+    "Nationality": "Egyptian",
+    "Email": "sohaila.farouk@egyxplore.com",
+    "UserName": "sohaila.farouk@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-292",
+    "FirstName": "Kerem",
+    "LastName": "Kurt",
+    "Nationality": "Turkish",
+    "Email": "kerem.kurt@egyxplore.com",
+    "UserName": "kerem.kurt@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-293",
+    "FirstName": "Hassan",
+    "LastName": "Kamal",
+    "Nationality": "Egyptian",
+    "Email": "hassan.kamal@egyxplore.com",
+    "UserName": "hassan.kamal@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-294",
+    "FirstName": "Hagar",
+    "LastName": "Amer",
+    "Nationality": "Egyptian",
+    "Email": "hagar.amer@egyxplore.com",
+    "UserName": "hagar.amer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-295",
+    "FirstName": "Pedro",
+    "LastName": "Pereira",
+    "Nationality": "Brazilian",
+    "Email": "pedro.pereira@egyxplore.com",
+    "UserName": "pedro.pereira@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-296",
+    "FirstName": "Miguel",
+    "LastName": "Gutierrez",
+    "Nationality": "Mexican",
+    "Email": "miguel.gutierrez@egyxplore.com",
+    "UserName": "miguel.gutierrez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-297",
+    "FirstName": "Yuto",
+    "LastName": "Sasaki",
+    "Nationality": "Japanese",
+    "Email": "yuto.sasaki@egyxplore.com",
+    "UserName": "yuto.sasaki@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-298",
+    "FirstName": "Anastasia",
+    "LastName": "Smirnov",
+    "Nationality": "Russian",
+    "Email": "anastasia.smirnov@egyxplore.com",
+    "UserName": "anastasia.smirnov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-299",
+    "FirstName": "Riku",
+    "LastName": "Takahashi",
+    "Nationality": "Japanese",
+    "Email": "riku.takahashi@egyxplore.com",
+    "UserName": "riku.takahashi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-300",
+    "FirstName": "Adel",
+    "LastName": "Salah",
+    "Nationality": "Egyptian",
+    "Email": "adel.salah2@egyxplore.com",
+    "UserName": "adel.salah2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-301",
+    "FirstName": "Santiago",
+    "LastName": "Morales",
+    "Nationality": "Mexican",
+    "Email": "santiago.morales@egyxplore.com",
+    "UserName": "santiago.morales@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-302",
+    "FirstName": "Yasmin",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "yasmin.diab@egyxplore.com",
+    "UserName": "yasmin.diab@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-303",
+    "FirstName": "Ayman",
+    "LastName": "El-Sayed",
+    "Nationality": "Egyptian",
+    "Email": "ayman.el-sayed@egyxplore.com",
+    "UserName": "ayman.el-sayed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-304",
+    "FirstName": "Leo",
+    "LastName": "Girard",
+    "Nationality": "French",
+    "Email": "leo.girard@egyxplore.com",
+    "UserName": "leo.girard@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-305",
+    "FirstName": "Giorgia",
+    "LastName": "Conti",
+    "Nationality": "Italian",
+    "Email": "giorgia.conti@egyxplore.com",
+    "UserName": "giorgia.conti@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-306",
+    "FirstName": "Aya",
+    "LastName": "Nasser",
+    "Nationality": "Egyptian",
+    "Email": "aya.nasser@egyxplore.com",
+    "UserName": "aya.nasser@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-307",
+    "FirstName": "William",
+    "LastName": "Roberts",
+    "Nationality": "British",
+    "Email": "william.roberts@egyxplore.com",
+    "UserName": "william.roberts@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-308",
+    "FirstName": "Omnia",
+    "LastName": "Ibrahim",
+    "Nationality": "Egyptian",
+    "Email": "omnia.ibrahim@egyxplore.com",
+    "UserName": "omnia.ibrahim@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-309",
+    "FirstName": "Anna",
+    "LastName": "Braun",
+    "Nationality": "German",
+    "Email": "anna.braun@egyxplore.com",
+    "UserName": "anna.braun@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-310",
+    "FirstName": "Yasmin",
+    "LastName": "El-Sayed",
+    "Nationality": "Egyptian",
+    "Email": "yasmin.el-sayed@egyxplore.com",
+    "UserName": "yasmin.el-sayed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-311",
+    "FirstName": "Arthur",
+    "LastName": "Ribeiro",
+    "Nationality": "Brazilian",
+    "Email": "arthur.ribeiro@egyxplore.com",
+    "UserName": "arthur.ribeiro@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-312",
+    "FirstName": "Ivan",
+    "LastName": "Kuznetsov",
+    "Nationality": "Russian",
+    "Email": "ivan.kuznetsov@egyxplore.com",
+    "UserName": "ivan.kuznetsov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-313",
+    "FirstName": "Noura",
+    "LastName": "Al-Amri",
+    "Nationality": "Saudi",
+    "Email": "noura.al-amri@egyxplore.com",
+    "UserName": "noura.al-amri@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-314",
+    "FirstName": "Amelia",
+    "LastName": "Robinson",
+    "Nationality": "British",
+    "Email": "amelia.robinson@egyxplore.com",
+    "UserName": "amelia.robinson@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-315",
+    "FirstName": "Mahmoud",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "mahmoud.badawi2@egyxplore.com",
+    "UserName": "mahmoud.badawi2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-316",
+    "FirstName": "Sara",
+    "LastName": "Al-Shammari",
+    "Nationality": "Saudi",
+    "Email": "sara.al-shammari@egyxplore.com",
+    "UserName": "sara.al-shammari@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-317",
+    "FirstName": "Kerem",
+    "LastName": "Celik",
+    "Nationality": "Turkish",
+    "Email": "kerem.celik@egyxplore.com",
+    "UserName": "kerem.celik@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-318",
+    "FirstName": "Vivaan",
+    "LastName": "Yadav",
+    "Nationality": "Indian",
+    "Email": "vivaan.yadav@egyxplore.com",
+    "UserName": "vivaan.yadav@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-319",
+    "FirstName": "Jonas",
+    "LastName": "Koch",
+    "Nationality": "German",
+    "Email": "jonas.koch@egyxplore.com",
+    "UserName": "jonas.koch@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-320",
+    "FirstName": "Barbara",
+    "LastName": "Hernandez",
+    "Nationality": "American",
+    "Email": "barbara.hernandez@egyxplore.com",
+    "UserName": "barbara.hernandez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-321",
+    "FirstName": "Heba",
+    "LastName": "Abdelaziz",
+    "Nationality": "Egyptian",
+    "Email": "heba.abdelaziz@egyxplore.com",
+    "UserName": "heba.abdelaziz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-322",
+    "FirstName": "Sarah",
+    "LastName": "Anderson",
+    "Nationality": "American",
+    "Email": "sarah.anderson@egyxplore.com",
+    "UserName": "sarah.anderson@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-323",
+    "FirstName": "Amr",
+    "LastName": "Mahmoud",
+    "Nationality": "Egyptian",
+    "Email": "amr.mahmoud@egyxplore.com",
+    "UserName": "amr.mahmoud@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-324",
+    "FirstName": "Ehab",
+    "LastName": "Shaker",
+    "Nationality": "Egyptian",
+    "Email": "ehab.shaker@egyxplore.com",
+    "UserName": "ehab.shaker@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-325",
+    "FirstName": "Khaled",
+    "LastName": "Shaker",
+    "Nationality": "Egyptian",
+    "Email": "khaled.shaker@egyxplore.com",
+    "UserName": "khaled.shaker@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-326",
+    "FirstName": "Isabella",
+    "LastName": "Carvalho",
+    "Nationality": "Brazilian",
+    "Email": "isabella.carvalho@egyxplore.com",
+    "UserName": "isabella.carvalho@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-327",
+    "FirstName": "Rania",
+    "LastName": "Fathy",
+    "Nationality": "Egyptian",
+    "Email": "rania.fathy@egyxplore.com",
+    "UserName": "rania.fathy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-328",
+    "FirstName": "Sophia",
+    "LastName": "Santos",
+    "Nationality": "Brazilian",
+    "Email": "sophia.santos2@egyxplore.com",
+    "UserName": "sophia.santos2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-329",
+    "FirstName": "Aya",
+    "LastName": "Hassan",
+    "Nationality": "Egyptian",
+    "Email": "aya.hassan@egyxplore.com",
+    "UserName": "aya.hassan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-330",
+    "FirstName": "Tamer",
+    "LastName": "Saleh",
+    "Nationality": "Egyptian",
+    "Email": "tamer.saleh@egyxplore.com",
+    "UserName": "tamer.saleh@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-331",
+    "FirstName": "Mateo",
+    "LastName": "Sanchez",
+    "Nationality": "Mexican",
+    "Email": "mateo.sanchez@egyxplore.com",
+    "UserName": "mateo.sanchez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-332",
+    "FirstName": "Mustafa",
+    "LastName": "Koc",
+    "Nationality": "Turkish",
+    "Email": "mustafa.koc@egyxplore.com",
+    "UserName": "mustafa.koc@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-333",
+    "FirstName": "Ashraf",
+    "LastName": "Shaker",
+    "Nationality": "Egyptian",
+    "Email": "ashraf.shaker@egyxplore.com",
+    "UserName": "ashraf.shaker@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-334",
+    "FirstName": "Luiza",
+    "LastName": "Oliveira",
+    "Nationality": "Brazilian",
+    "Email": "luiza.oliveira@egyxplore.com",
+    "UserName": "luiza.oliveira@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-335",
+    "FirstName": "Artem",
+    "LastName": "Alexeev",
+    "Nationality": "Russian",
+    "Email": "artem.alexeev@egyxplore.com",
+    "UserName": "artem.alexeev@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-336",
+    "FirstName": "Maha",
+    "LastName": "Hassan",
+    "Nationality": "Egyptian",
+    "Email": "maha.hassan@egyxplore.com",
+    "UserName": "maha.hassan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-337",
+    "FirstName": "Aya",
+    "LastName": "Amer",
+    "Nationality": "Egyptian",
+    "Email": "aya.amer@egyxplore.com",
+    "UserName": "aya.amer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-338",
+    "FirstName": "Lorenzo",
+    "LastName": "Russo",
+    "Nationality": "Italian",
+    "Email": "lorenzo.russo@egyxplore.com",
+    "UserName": "lorenzo.russo@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-339",
+    "FirstName": "Mateo",
+    "LastName": "Gomez",
+    "Nationality": "Spanish",
+    "Email": "mateo.gomez@egyxplore.com",
+    "UserName": "mateo.gomez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-340",
+    "FirstName": "Salma",
+    "LastName": "Hamdy",
+    "Nationality": "Egyptian",
+    "Email": "salma.hamdy@egyxplore.com",
+    "UserName": "salma.hamdy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-341",
+    "FirstName": "Hugo",
+    "LastName": "Girard",
+    "Nationality": "French",
+    "Email": "hugo.girard@egyxplore.com",
+    "UserName": "hugo.girard@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-342",
+    "FirstName": "Julia",
+    "LastName": "Fernandez",
+    "Nationality": "Spanish",
+    "Email": "julia.fernandez@egyxplore.com",
+    "UserName": "julia.fernandez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-343",
+    "FirstName": "Alejandro",
+    "LastName": "Gutierrez",
+    "Nationality": "Mexican",
+    "Email": "alejandro.gutierrez@egyxplore.com",
+    "UserName": "alejandro.gutierrez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-344",
+    "FirstName": "Michael",
+    "LastName": "Thomas",
+    "Nationality": "American",
+    "Email": "michael.thomas@egyxplore.com",
+    "UserName": "michael.thomas@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-345",
+    "FirstName": "Angel",
+    "LastName": "Garcia",
+    "Nationality": "Mexican",
+    "Email": "angel.garcia@egyxplore.com",
+    "UserName": "angel.garcia@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-346",
+    "FirstName": "Alexei",
+    "LastName": "Kuznetsov",
+    "Nationality": "Russian",
+    "Email": "alexei.kuznetsov@egyxplore.com",
+    "UserName": "alexei.kuznetsov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-347",
+    "FirstName": "Vivaan",
+    "LastName": "Shah",
+    "Nationality": "Indian",
+    "Email": "vivaan.shah@egyxplore.com",
+    "UserName": "vivaan.shah@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-348",
+    "FirstName": "Ayman",
+    "LastName": "Ali",
+    "Nationality": "Egyptian",
+    "Email": "ayman.ali2@egyxplore.com",
+    "UserName": "ayman.ali2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-349",
+    "FirstName": "Arthur",
+    "LastName": "Alves",
+    "Nationality": "Brazilian",
+    "Email": "arthur.alves@egyxplore.com",
+    "UserName": "arthur.alves@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-350",
+    "FirstName": "Andrei",
+    "LastName": "Kozlov",
+    "Nationality": "Russian",
+    "Email": "andrei.kozlov@egyxplore.com",
+    "UserName": "andrei.kozlov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-351",
+    "FirstName": "Sofia",
+    "LastName": "Perez",
+    "Nationality": "Mexican",
+    "Email": "sofia.perez@egyxplore.com",
+    "UserName": "sofia.perez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-352",
+    "FirstName": "Aadhya",
+    "LastName": "Nair",
+    "Nationality": "Indian",
+    "Email": "aadhya.nair@egyxplore.com",
+    "UserName": "aadhya.nair@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-353",
+    "FirstName": "Cheng",
+    "LastName": "Lin",
+    "Nationality": "Chinese",
+    "Email": "cheng.lin@egyxplore.com",
+    "UserName": "cheng.lin@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-354",
+    "FirstName": "Elizabeth",
+    "LastName": "Smith",
+    "Nationality": "American",
+    "Email": "elizabeth.smith@egyxplore.com",
+    "UserName": "elizabeth.smith@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-355",
+    "FirstName": "Riko",
+    "LastName": "Watanabe",
+    "Nationality": "Japanese",
+    "Email": "riko.watanabe@egyxplore.com",
+    "UserName": "riko.watanabe@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-356",
+    "FirstName": "Navya",
+    "LastName": "Sharma",
+    "Nationality": "Indian",
+    "Email": "navya.sharma@egyxplore.com",
+    "UserName": "navya.sharma@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-357",
+    "FirstName": "Saanvi",
+    "LastName": "Bose",
+    "Nationality": "Indian",
+    "Email": "saanvi.bose@egyxplore.com",
+    "UserName": "saanvi.bose@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-358",
+    "FirstName": "Rania",
+    "LastName": "Abdelrahman",
+    "Nationality": "Egyptian",
+    "Email": "rania.abdelrahman@egyxplore.com",
+    "UserName": "rania.abdelrahman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-359",
+    "FirstName": "Ashraf",
+    "LastName": "Saleh",
+    "Nationality": "Egyptian",
+    "Email": "ashraf.saleh@egyxplore.com",
+    "UserName": "ashraf.saleh@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-360",
+    "FirstName": "Ishaan",
+    "LastName": "Mishra",
+    "Nationality": "Indian",
+    "Email": "ishaan.mishra@egyxplore.com",
+    "UserName": "ishaan.mishra@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-361",
+    "FirstName": "Hagar",
+    "LastName": "Attia",
+    "Nationality": "Egyptian",
+    "Email": "hagar.attia@egyxplore.com",
+    "UserName": "hagar.attia@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-362",
+    "FirstName": "Tarek",
+    "LastName": "Fathy",
+    "Nationality": "Egyptian",
+    "Email": "tarek.fathy@egyxplore.com",
+    "UserName": "tarek.fathy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-363",
+    "FirstName": "Emma",
+    "LastName": "Bertrand",
+    "Nationality": "French",
+    "Email": "emma.bertrand@egyxplore.com",
+    "UserName": "emma.bertrand@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-364",
+    "FirstName": "Abdullah",
+    "LastName": "Al-Harbi",
+    "Nationality": "Saudi",
+    "Email": "abdullah.al-harbi@egyxplore.com",
+    "UserName": "abdullah.al-harbi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-365",
+    "FirstName": "Mostafa",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "mostafa.diab@egyxplore.com",
+    "UserName": "mostafa.diab@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-366",
+    "FirstName": "Ben",
+    "LastName": "Meyer",
+    "Nationality": "German",
+    "Email": "ben.meyer@egyxplore.com",
+    "UserName": "ben.meyer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-367",
+    "FirstName": "Daniel",
+    "LastName": "Alonso",
+    "Nationality": "Spanish",
+    "Email": "daniel.alonso@egyxplore.com",
+    "UserName": "daniel.alonso@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-368",
+    "FirstName": "Shahad",
+    "LastName": "Al-Ahmadi",
+    "Nationality": "Saudi",
+    "Email": "shahad.al-ahmadi@egyxplore.com",
+    "UserName": "shahad.al-ahmadi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-369",
+    "FirstName": "Burak",
+    "LastName": "Celik",
+    "Nationality": "Turkish",
+    "Email": "burak.celik@egyxplore.com",
+    "UserName": "burak.celik@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-370",
+    "FirstName": "Sergei",
+    "LastName": "Nikolaev",
+    "Nationality": "Russian",
+    "Email": "sergei.nikolaev@egyxplore.com",
+    "UserName": "sergei.nikolaev@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-371",
+    "FirstName": "Omnia",
+    "LastName": "Eid",
+    "Nationality": "Egyptian",
+    "Email": "omnia.eid@egyxplore.com",
+    "UserName": "omnia.eid@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-372",
+    "FirstName": "Daniela",
+    "LastName": "Fernandez",
+    "Nationality": "Spanish",
+    "Email": "daniela.fernandez@egyxplore.com",
+    "UserName": "daniela.fernandez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-373",
+    "FirstName": "Mohamed",
+    "LastName": "Salah",
+    "Nationality": "Egyptian",
+    "Email": "mohamed.salah@egyxplore.com",
+    "UserName": "mohamed.salah@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-374",
+    "FirstName": "Elena",
+    "LastName": "Ivanov",
+    "Nationality": "Russian",
+    "Email": "elena.ivanov@egyxplore.com",
+    "UserName": "elena.ivanov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-375",
+    "FirstName": "Oscar",
+    "LastName": "Brown",
+    "Nationality": "British",
+    "Email": "oscar.brown@egyxplore.com",
+    "UserName": "oscar.brown@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-376",
+    "FirstName": "Hua",
+    "LastName": "Huang",
+    "Nationality": "Chinese",
+    "Email": "hua.huang@egyxplore.com",
+    "UserName": "hua.huang@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-377",
+    "FirstName": "Sophie",
+    "LastName": "Walker",
+    "Nationality": "British",
+    "Email": "sophie.walker@egyxplore.com",
+    "UserName": "sophie.walker@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-378",
+    "FirstName": "Camila",
+    "LastName": "Rivera",
+    "Nationality": "Mexican",
+    "Email": "camila.rivera@egyxplore.com",
+    "UserName": "camila.rivera@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-379",
+    "FirstName": "Salma",
+    "LastName": "Nasser",
+    "Nationality": "Egyptian",
+    "Email": "salma.nasser2@egyxplore.com",
+    "UserName": "salma.nasser2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-380",
+    "FirstName": "Nabil",
+    "LastName": "Nasser",
+    "Nationality": "Egyptian",
+    "Email": "nabil.nasser@egyxplore.com",
+    "UserName": "nabil.nasser@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-381",
+    "FirstName": "Thomas",
+    "LastName": "Green",
+    "Nationality": "British",
+    "Email": "thomas.green@egyxplore.com",
+    "UserName": "thomas.green@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-382",
+    "FirstName": "Vivaan",
+    "LastName": "Jha",
+    "Nationality": "Indian",
+    "Email": "vivaan.jha@egyxplore.com",
+    "UserName": "vivaan.jha@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-383",
+    "FirstName": "Sherif",
+    "LastName": "Eid",
+    "Nationality": "Egyptian",
+    "Email": "sherif.eid@egyxplore.com",
+    "UserName": "sherif.eid@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-384",
+    "FirstName": "Sofia",
+    "LastName": "Diaz",
+    "Nationality": "Spanish",
+    "Email": "sofia.diaz2@egyxplore.com",
+    "UserName": "sofia.diaz2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-385",
+    "FirstName": "Mei",
+    "LastName": "Kato",
+    "Nationality": "Japanese",
+    "Email": "mei.kato@egyxplore.com",
+    "UserName": "mei.kato@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-386",
+    "FirstName": "Islam",
+    "LastName": "Mansour",
+    "Nationality": "Egyptian",
+    "Email": "islam.mansour@egyxplore.com",
+    "UserName": "islam.mansour@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-387",
+    "FirstName": "Sherif",
+    "LastName": "El-Sayed",
+    "Nationality": "Egyptian",
+    "Email": "sherif.el-sayed@egyxplore.com",
+    "UserName": "sherif.el-sayed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-388",
+    "FirstName": "Sara",
+    "LastName": "Al-Zahrani",
+    "Nationality": "Saudi",
+    "Email": "sara.al-zahrani@egyxplore.com",
+    "UserName": "sara.al-zahrani@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-389",
+    "FirstName": "Walid",
+    "LastName": "Salah",
+    "Nationality": "Egyptian",
+    "Email": "walid.salah@egyxplore.com",
+    "UserName": "walid.salah@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-390",
+    "FirstName": "Jules",
+    "LastName": "Laurent",
+    "Nationality": "French",
+    "Email": "jules.laurent@egyxplore.com",
+    "UserName": "jules.laurent@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-391",
+    "FirstName": "Cheng",
+    "LastName": "Sun",
+    "Nationality": "Chinese",
+    "Email": "cheng.sun2@egyxplore.com",
+    "UserName": "cheng.sun2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-392",
+    "FirstName": "Mio",
+    "LastName": "Matsumoto",
+    "Nationality": "Japanese",
+    "Email": "mio.matsumoto@egyxplore.com",
+    "UserName": "mio.matsumoto@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-393",
+    "FirstName": "Sofia",
+    "LastName": "Perez",
+    "Nationality": "Mexican",
+    "Email": "sofia.perez2@egyxplore.com",
+    "UserName": "sofia.perez2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-394",
+    "FirstName": "Lukas",
+    "LastName": "Schwarz",
+    "Nationality": "German",
+    "Email": "lukas.schwarz@egyxplore.com",
+    "UserName": "lukas.schwarz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-395",
+    "FirstName": "Pari",
+    "LastName": "Rao",
+    "Nationality": "Indian",
+    "Email": "pari.rao@egyxplore.com",
+    "UserName": "pari.rao@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-396",
+    "FirstName": "Louis",
+    "LastName": "Robert",
+    "Nationality": "French",
+    "Email": "louis.robert@egyxplore.com",
+    "UserName": "louis.robert@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-397",
+    "FirstName": "Marie",
+    "LastName": "Koch",
+    "Nationality": "German",
+    "Email": "marie.koch@egyxplore.com",
+    "UserName": "marie.koch@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-398",
+    "FirstName": "Zeynep",
+    "LastName": "Yilmaz",
+    "Nationality": "Turkish",
+    "Email": "zeynep.yilmaz@egyxplore.com",
+    "UserName": "zeynep.yilmaz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-399",
+    "FirstName": "Lukas",
+    "LastName": "Fischer",
+    "Nationality": "German",
+    "Email": "lukas.fischer@egyxplore.com",
+    "UserName": "lukas.fischer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-400",
+    "FirstName": "Sophia",
+    "LastName": "Almeida",
+    "Nationality": "Brazilian",
+    "Email": "sophia.almeida@egyxplore.com",
+    "UserName": "sophia.almeida@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-401",
+    "FirstName": "Andrei",
+    "LastName": "Kozlov",
+    "Nationality": "Russian",
+    "Email": "andrei.kozlov2@egyxplore.com",
+    "UserName": "andrei.kozlov2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-402",
+    "FirstName": "Nada",
+    "LastName": "Soliman",
+    "Nationality": "Egyptian",
+    "Email": "nada.soliman@egyxplore.com",
+    "UserName": "nada.soliman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-403",
+    "FirstName": "Bandar",
+    "LastName": "Al-Otaibi",
+    "Nationality": "Saudi",
+    "Email": "bandar.al-otaibi@egyxplore.com",
+    "UserName": "bandar.al-otaibi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-404",
+    "FirstName": "Aoi",
+    "LastName": "Takahashi",
+    "Nationality": "Japanese",
+    "Email": "aoi.takahashi@egyxplore.com",
+    "UserName": "aoi.takahashi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-405",
+    "FirstName": "Yuki",
+    "LastName": "Kato",
+    "Nationality": "Japanese",
+    "Email": "yuki.kato@egyxplore.com",
+    "UserName": "yuki.kato@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-406",
+    "FirstName": "Isabella",
+    "LastName": "Oliveira",
+    "Nationality": "Brazilian",
+    "Email": "isabella.oliveira@egyxplore.com",
+    "UserName": "isabella.oliveira@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-407",
+    "FirstName": "Jonas",
+    "LastName": "Koch",
+    "Nationality": "German",
+    "Email": "jonas.koch2@egyxplore.com",
+    "UserName": "jonas.koch2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-408",
+    "FirstName": "Mostafa",
+    "LastName": "Hassan",
+    "Nationality": "Egyptian",
+    "Email": "mostafa.hassan@egyxplore.com",
+    "UserName": "mostafa.hassan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-409",
+    "FirstName": "Fang",
+    "LastName": "Wu",
+    "Nationality": "Chinese",
+    "Email": "fang.wu@egyxplore.com",
+    "UserName": "fang.wu@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-410",
+    "FirstName": "Rania",
+    "LastName": "Mostafa",
+    "Nationality": "Egyptian",
+    "Email": "rania.mostafa@egyxplore.com",
+    "UserName": "rania.mostafa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-411",
+    "FirstName": "Reem",
+    "LastName": "Mahmoud",
+    "Nationality": "Egyptian",
+    "Email": "reem.mahmoud@egyxplore.com",
+    "UserName": "reem.mahmoud@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-412",
+    "FirstName": "Peng",
+    "LastName": "Li",
+    "Nationality": "Chinese",
+    "Email": "peng.li@egyxplore.com",
+    "UserName": "peng.li@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-413",
+    "FirstName": "Rana",
+    "LastName": "Nasser",
+    "Nationality": "Egyptian",
+    "Email": "rana.nasser@egyxplore.com",
+    "UserName": "rana.nasser@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-414",
+    "FirstName": "Camila",
+    "LastName": "Rivera",
+    "Nationality": "Mexican",
+    "Email": "camila.rivera2@egyxplore.com",
+    "UserName": "camila.rivera2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-415",
+    "FirstName": "Ayman",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "ayman.badawi@egyxplore.com",
+    "UserName": "ayman.badawi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-416",
+    "FirstName": "Daniel",
+    "LastName": "Rodriguez",
+    "Nationality": "Spanish",
+    "Email": "daniel.rodriguez@egyxplore.com",
+    "UserName": "daniel.rodriguez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-417",
+    "FirstName": "Asmaa",
+    "LastName": "Shaaban",
+    "Nationality": "Egyptian",
+    "Email": "asmaa.shaaban@egyxplore.com",
+    "UserName": "asmaa.shaaban@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-418",
+    "FirstName": "Hua",
+    "LastName": "He",
+    "Nationality": "Chinese",
+    "Email": "hua.he@egyxplore.com",
+    "UserName": "hua.he@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-419",
+    "FirstName": "Lena",
+    "LastName": "Kruger",
+    "Nationality": "German",
+    "Email": "lena.kruger@egyxplore.com",
+    "UserName": "lena.kruger@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-420",
+    "FirstName": "Omer",
+    "LastName": "Dogan",
+    "Nationality": "Turkish",
+    "Email": "omer.dogan@egyxplore.com",
+    "UserName": "omer.dogan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-421",
+    "FirstName": "Mariana",
+    "LastName": "Cruz",
+    "Nationality": "Mexican",
+    "Email": "mariana.cruz@egyxplore.com",
+    "UserName": "mariana.cruz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-422",
+    "FirstName": "Elias",
+    "LastName": "Richter",
+    "Nationality": "German",
+    "Email": "elias.richter@egyxplore.com",
+    "UserName": "elias.richter@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-423",
+    "FirstName": "Youssef",
+    "LastName": "Hassan",
+    "Nationality": "Egyptian",
+    "Email": "youssef.hassan@egyxplore.com",
+    "UserName": "youssef.hassan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-424",
+    "FirstName": "Dana",
+    "LastName": "Al-Amri",
+    "Nationality": "Saudi",
+    "Email": "dana.al-amri@egyxplore.com",
+    "UserName": "dana.al-amri@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-425",
+    "FirstName": "Maximilian",
+    "LastName": "Fischer",
+    "Nationality": "German",
+    "Email": "maximilian.fischer@egyxplore.com",
+    "UserName": "maximilian.fischer@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-426",
+    "FirstName": "Omar",
+    "LastName": "Ghanem",
+    "Nationality": "Egyptian",
+    "Email": "omar.ghanem@egyxplore.com",
+    "UserName": "omar.ghanem@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-427",
+    "FirstName": "Maria",
+    "LastName": "Petrov",
+    "Nationality": "Russian",
+    "Email": "maria.petrov@egyxplore.com",
+    "UserName": "maria.petrov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-428",
+    "FirstName": "Sophia",
+    "LastName": "Pereira",
+    "Nationality": "Brazilian",
+    "Email": "sophia.pereira@egyxplore.com",
+    "UserName": "sophia.pereira@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-429",
+    "FirstName": "Hany",
+    "LastName": "Farouk",
+    "Nationality": "Egyptian",
+    "Email": "hany.farouk@egyxplore.com",
+    "UserName": "hany.farouk@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-430",
+    "FirstName": "Farida",
+    "LastName": "Ghanem",
+    "Nationality": "Egyptian",
+    "Email": "farida.ghanem@egyxplore.com",
+    "UserName": "farida.ghanem@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-431",
+    "FirstName": "Heitor",
+    "LastName": "Martins",
+    "Nationality": "Brazilian",
+    "Email": "heitor.martins@egyxplore.com",
+    "UserName": "heitor.martins@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-432",
+    "FirstName": "Lina",
+    "LastName": "Bertrand",
+    "Nationality": "French",
+    "Email": "lina.bertrand@egyxplore.com",
+    "UserName": "lina.bertrand@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-433",
+    "FirstName": "Anastasia",
+    "LastName": "Vasiliev",
+    "Nationality": "Russian",
+    "Email": "anastasia.vasiliev@egyxplore.com",
+    "UserName": "anastasia.vasiliev@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-434",
+    "FirstName": "Amira",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "amira.badawi2@egyxplore.com",
+    "UserName": "amira.badawi2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-435",
+    "FirstName": "Sohaila",
+    "LastName": "Hassan",
+    "Nationality": "Egyptian",
+    "Email": "sohaila.hassan@egyxplore.com",
+    "UserName": "sohaila.hassan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-436",
+    "FirstName": "Sohaila",
+    "LastName": "Rashed",
+    "Nationality": "Egyptian",
+    "Email": "sohaila.rashed2@egyxplore.com",
+    "UserName": "sohaila.rashed2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-437",
+    "FirstName": "Alejandro",
+    "LastName": "Morales",
+    "Nationality": "Mexican",
+    "Email": "alejandro.morales@egyxplore.com",
+    "UserName": "alejandro.morales@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-438",
+    "FirstName": "Olga",
+    "LastName": "Volkov",
+    "Nationality": "Russian",
+    "Email": "olga.volkov@egyxplore.com",
+    "UserName": "olga.volkov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-439",
+    "FirstName": "Alejandro",
+    "LastName": "Rivera",
+    "Nationality": "Mexican",
+    "Email": "alejandro.rivera@egyxplore.com",
+    "UserName": "alejandro.rivera@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-440",
+    "FirstName": "Sakura",
+    "LastName": "Matsumoto",
+    "Nationality": "Japanese",
+    "Email": "sakura.matsumoto@egyxplore.com",
+    "UserName": "sakura.matsumoto@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-441",
+    "FirstName": "Emir",
+    "LastName": "Aydin",
+    "Nationality": "Turkish",
+    "Email": "emir.aydin@egyxplore.com",
+    "UserName": "emir.aydin@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-442",
+    "FirstName": "Dina",
+    "LastName": "Hamdy",
+    "Nationality": "Egyptian",
+    "Email": "dina.hamdy@egyxplore.com",
+    "UserName": "dina.hamdy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-443",
+    "FirstName": "Ece",
+    "LastName": "Gunes",
+    "Nationality": "Turkish",
+    "Email": "ece.gunes@egyxplore.com",
+    "UserName": "ece.gunes@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-444",
+    "FirstName": "Francesco",
+    "LastName": "Ferrari",
+    "Nationality": "Italian",
+    "Email": "francesco.ferrari@egyxplore.com",
+    "UserName": "francesco.ferrari@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-445",
+    "FirstName": "Islam",
+    "LastName": "Hassan",
+    "Nationality": "Egyptian",
+    "Email": "islam.hassan@egyxplore.com",
+    "UserName": "islam.hassan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-446",
+    "FirstName": "Leon",
+    "LastName": "Hartmann",
+    "Nationality": "German",
+    "Email": "leon.hartmann@egyxplore.com",
+    "UserName": "leon.hartmann@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-447",
+    "FirstName": "Sofia",
+    "LastName": "Sanchez",
+    "Nationality": "Spanish",
+    "Email": "sofia.sanchez@egyxplore.com",
+    "UserName": "sofia.sanchez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-448",
+    "FirstName": "Mona",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "mona.diab@egyxplore.com",
+    "UserName": "mona.diab@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-449",
+    "FirstName": "Adel",
+    "LastName": "Farouk",
+    "Nationality": "Egyptian",
+    "Email": "adel.farouk@egyxplore.com",
+    "UserName": "adel.farouk@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-450",
+    "FirstName": "Sofia",
+    "LastName": "Mikhailov",
+    "Nationality": "Russian",
+    "Email": "sofia.mikhailov2@egyxplore.com",
+    "UserName": "sofia.mikhailov2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-451",
+    "FirstName": "Khaled",
+    "LastName": "Salah",
+    "Nationality": "Egyptian",
+    "Email": "khaled.salah@egyxplore.com",
+    "UserName": "khaled.salah@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-452",
+    "FirstName": "Ahmed",
+    "LastName": "Fathy",
+    "Nationality": "Egyptian",
+    "Email": "ahmed.fathy@egyxplore.com",
+    "UserName": "ahmed.fathy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-453",
+    "FirstName": "Hagar",
+    "LastName": "Mostafa",
+    "Nationality": "Egyptian",
+    "Email": "hagar.mostafa@egyxplore.com",
+    "UserName": "hagar.mostafa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-454",
+    "FirstName": "Ashraf",
+    "LastName": "Shaaban",
+    "Nationality": "Egyptian",
+    "Email": "ashraf.shaaban@egyxplore.com",
+    "UserName": "ashraf.shaaban@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-455",
+    "FirstName": "Hany",
+    "LastName": "Badawi",
+    "Nationality": "Egyptian",
+    "Email": "hany.badawi@egyxplore.com",
+    "UserName": "hany.badawi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-456",
+    "FirstName": "Chloe",
+    "LastName": "Girard",
+    "Nationality": "French",
+    "Email": "chloe.girard@egyxplore.com",
+    "UserName": "chloe.girard@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-457",
+    "FirstName": "Nabil",
+    "LastName": "Saleh",
+    "Nationality": "Egyptian",
+    "Email": "nabil.saleh@egyxplore.com",
+    "UserName": "nabil.saleh@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-458",
+    "FirstName": "Yasmin",
+    "LastName": "Diab",
+    "Nationality": "Egyptian",
+    "Email": "yasmin.diab2@egyxplore.com",
+    "UserName": "yasmin.diab2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-459",
+    "FirstName": "Ginevra",
+    "LastName": "De Luca",
+    "Nationality": "Italian",
+    "Email": "ginevra.de.luca@egyxplore.com",
+    "UserName": "ginevra.de.luca@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-460",
+    "FirstName": "Beyza",
+    "LastName": "Sener",
+    "Nationality": "Turkish",
+    "Email": "beyza.sener@egyxplore.com",
+    "UserName": "beyza.sener@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-461",
+    "FirstName": "Karim",
+    "LastName": "Shaaban",
+    "Nationality": "Egyptian",
+    "Email": "karim.shaaban@egyxplore.com",
+    "UserName": "karim.shaaban@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-462",
+    "FirstName": "Bernardo",
+    "LastName": "Barbosa",
+    "Nationality": "Brazilian",
+    "Email": "bernardo.barbosa@egyxplore.com",
+    "UserName": "bernardo.barbosa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-463",
+    "FirstName": "Mateo",
+    "LastName": "Jimenez",
+    "Nationality": "Spanish",
+    "Email": "mateo.jimenez@egyxplore.com",
+    "UserName": "mateo.jimenez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-464",
+    "FirstName": "Hassan",
+    "LastName": "Rashed",
+    "Nationality": "Egyptian",
+    "Email": "hassan.rashed@egyxplore.com",
+    "UserName": "hassan.rashed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-465",
+    "FirstName": "Yui",
+    "LastName": "Yoshida",
+    "Nationality": "Japanese",
+    "Email": "yui.yoshida@egyxplore.com",
+    "UserName": "yui.yoshida@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-466",
+    "FirstName": "Reyansh",
+    "LastName": "Mishra",
+    "Nationality": "Indian",
+    "Email": "reyansh.mishra@egyxplore.com",
+    "UserName": "reyansh.mishra@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-467",
+    "FirstName": "Leo",
+    "LastName": "Durand",
+    "Nationality": "French",
+    "Email": "leo.durand@egyxplore.com",
+    "UserName": "leo.durand@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-468",
+    "FirstName": "Susan",
+    "LastName": "Hernandez",
+    "Nationality": "American",
+    "Email": "susan.hernandez@egyxplore.com",
+    "UserName": "susan.hernandez@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-469",
+    "FirstName": "Lucas",
+    "LastName": "Morel",
+    "Nationality": "French",
+    "Email": "lucas.morel@egyxplore.com",
+    "UserName": "lucas.morel@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-470",
+    "FirstName": "Emma",
+    "LastName": "Romero",
+    "Nationality": "Spanish",
+    "Email": "emma.romero@egyxplore.com",
+    "UserName": "emma.romero@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-471",
+    "FirstName": "Sofia",
+    "LastName": "Smirnov",
+    "Nationality": "Russian",
+    "Email": "sofia.smirnov@egyxplore.com",
+    "UserName": "sofia.smirnov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-472",
+    "FirstName": "Adel",
+    "LastName": "Ghanem",
+    "Nationality": "Egyptian",
+    "Email": "adel.ghanem@egyxplore.com",
+    "UserName": "adel.ghanem@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-473",
+    "FirstName": "Tommaso",
+    "LastName": "Rizzo",
+    "Nationality": "Italian",
+    "Email": "tommaso.rizzo@egyxplore.com",
+    "UserName": "tommaso.rizzo@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-474",
+    "FirstName": "Shaimaa",
+    "LastName": "Mostafa",
+    "Nationality": "Egyptian",
+    "Email": "shaimaa.mostafa@egyxplore.com",
+    "UserName": "shaimaa.mostafa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-475",
+    "FirstName": "Giorgia",
+    "LastName": "Colombo",
+    "Nationality": "Italian",
+    "Email": "giorgia.colombo@egyxplore.com",
+    "UserName": "giorgia.colombo@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-476",
+    "FirstName": "Laura",
+    "LastName": "Costa",
+    "Nationality": "Brazilian",
+    "Email": "laura.costa@egyxplore.com",
+    "UserName": "laura.costa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-477",
+    "FirstName": "Youssef",
+    "LastName": "Radwan",
+    "Nationality": "Egyptian",
+    "Email": "youssef.radwan@egyxplore.com",
+    "UserName": "youssef.radwan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-478",
+    "FirstName": "Livia",
+    "LastName": "Martins",
+    "Nationality": "Brazilian",
+    "Email": "livia.martins@egyxplore.com",
+    "UserName": "livia.martins@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-479",
+    "FirstName": "Bin",
+    "LastName": "Zhang",
+    "Nationality": "Chinese",
+    "Email": "bin.zhang@egyxplore.com",
+    "UserName": "bin.zhang@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-480",
+    "FirstName": "Lucas",
+    "LastName": "Moreau",
+    "Nationality": "French",
+    "Email": "lucas.moreau@egyxplore.com",
+    "UserName": "lucas.moreau@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-481",
+    "FirstName": "Farida",
+    "LastName": "Ibrahim",
+    "Nationality": "Egyptian",
+    "Email": "farida.ibrahim@egyxplore.com",
+    "UserName": "farida.ibrahim@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-482",
+    "FirstName": "Arthur",
+    "LastName": "Soares",
+    "Nationality": "Brazilian",
+    "Email": "arthur.soares@egyxplore.com",
+    "UserName": "arthur.soares@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-483",
+    "FirstName": "Shahad",
+    "LastName": "Al-Harbi",
+    "Nationality": "Saudi",
+    "Email": "shahad.al-harbi@egyxplore.com",
+    "UserName": "shahad.al-harbi@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-484",
+    "FirstName": "Asmaa",
+    "LastName": "Mansour",
+    "Nationality": "Egyptian",
+    "Email": "asmaa.mansour@egyxplore.com",
+    "UserName": "asmaa.mansour@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-485",
+    "FirstName": "Abrar",
+    "LastName": "Al-Juhani",
+    "Nationality": "Saudi",
+    "Email": "abrar.al-juhani@egyxplore.com",
+    "UserName": "abrar.al-juhani@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-486",
+    "FirstName": "Aoi",
+    "LastName": "Sato",
+    "Nationality": "Japanese",
+    "Email": "aoi.sato@egyxplore.com",
+    "UserName": "aoi.sato@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-487",
+    "FirstName": "Lea",
+    "LastName": "Girard",
+    "Nationality": "French",
+    "Email": "lea.girard@egyxplore.com",
+    "UserName": "lea.girard@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-488",
+    "FirstName": "Dina",
+    "LastName": "Farouk",
+    "Nationality": "Egyptian",
+    "Email": "dina.farouk@egyxplore.com",
+    "UserName": "dina.farouk@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-489",
+    "FirstName": "Peng",
+    "LastName": "Sun",
+    "Nationality": "Chinese",
+    "Email": "peng.sun@egyxplore.com",
+    "UserName": "peng.sun@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-490",
+    "FirstName": "Sameh",
+    "LastName": "Abdelrahman",
+    "Nationality": "Egyptian",
+    "Email": "sameh.abdelrahman@egyxplore.com",
+    "UserName": "sameh.abdelrahman@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-491",
+    "FirstName": "Sohaila",
+    "LastName": "Radwan",
+    "Nationality": "Egyptian",
+    "Email": "sohaila.radwan@egyxplore.com",
+    "UserName": "sohaila.radwan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-492",
+    "FirstName": "Mahmoud",
+    "LastName": "Abdelaziz",
+    "Nationality": "Egyptian",
+    "Email": "mahmoud.abdelaziz@egyxplore.com",
+    "UserName": "mahmoud.abdelaziz@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-493",
+    "FirstName": "Yang",
+    "LastName": "Guo",
+    "Nationality": "Chinese",
+    "Email": "yang.guo@egyxplore.com",
+    "UserName": "yang.guo@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-494",
+    "FirstName": "Hannah",
+    "LastName": "Richter",
+    "Nationality": "German",
+    "Email": "hannah.richter@egyxplore.com",
+    "UserName": "hannah.richter@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-495",
+    "FirstName": "Farida",
+    "LastName": "Hamdy",
+    "Nationality": "Egyptian",
+    "Email": "farida.hamdy@egyxplore.com",
+    "UserName": "farida.hamdy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-496",
+    "FirstName": "Emma",
+    "LastName": "Costa",
+    "Nationality": "Italian",
+    "Email": "emma.costa@egyxplore.com",
+    "UserName": "emma.costa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-497",
+    "FirstName": "Laila",
+    "LastName": "Ali",
+    "Nationality": "Egyptian",
+    "Email": "laila.ali@egyxplore.com",
+    "UserName": "laila.ali@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-498",
+    "FirstName": "Ekaterina",
+    "LastName": "Kozlov",
+    "Nationality": "Russian",
+    "Email": "ekaterina.kozlov@egyxplore.com",
+    "UserName": "ekaterina.kozlov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-499",
+    "FirstName": "Burak",
+    "LastName": "Aslan",
+    "Nationality": "Turkish",
+    "Email": "burak.aslan@egyxplore.com",
+    "UserName": "burak.aslan@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-500",
+    "FirstName": "Hany",
+    "LastName": "Rashed",
+    "Nationality": "Egyptian",
+    "Email": "hany.rashed@egyxplore.com",
+    "UserName": "hany.rashed@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-501",
+    "FirstName": "Leonardo",
+    "LastName": "Reyes",
+    "Nationality": "Mexican",
+    "Email": "leonardo.reyes@egyxplore.com",
+    "UserName": "leonardo.reyes@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-502",
+    "FirstName": "Reem",
+    "LastName": "Nasser",
+    "Nationality": "Egyptian",
+    "Email": "reem.nasser@egyxplore.com",
+    "UserName": "reem.nasser@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-503",
+    "FirstName": "Nihal",
+    "LastName": "Zaki",
+    "Nationality": "Egyptian",
+    "Email": "nihal.zaki@egyxplore.com",
+    "UserName": "nihal.zaki@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-504",
+    "FirstName": "Ayaan",
+    "LastName": "Mishra",
+    "Nationality": "Indian",
+    "Email": "ayaan.mishra@egyxplore.com",
+    "UserName": "ayaan.mishra@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-505",
+    "FirstName": "Asmaa",
+    "LastName": "Ali",
+    "Nationality": "Egyptian",
+    "Email": "asmaa.ali@egyxplore.com",
+    "UserName": "asmaa.ali@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-506",
+    "FirstName": "Mona",
+    "LastName": "Hegazy",
+    "Nationality": "Egyptian",
+    "Email": "mona.hegazy@egyxplore.com",
+    "UserName": "mona.hegazy@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-507",
+    "FirstName": "Nour",
+    "LastName": "Abdelaziz",
+    "Nationality": "Egyptian",
+    "Email": "nour.abdelaziz2@egyxplore.com",
+    "UserName": "nour.abdelaziz2@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-508",
+    "FirstName": "Oscar",
+    "LastName": "Clarke",
+    "Nationality": "British",
+    "Email": "oscar.clarke@egyxplore.com",
+    "UserName": "oscar.clarke@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-509",
+    "FirstName": "Sergei",
+    "LastName": "Ivanov",
+    "Nationality": "Russian",
+    "Email": "sergei.ivanov@egyxplore.com",
+    "UserName": "sergei.ivanov@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-510",
+    "FirstName": "Giorgia",
+    "LastName": "Costa",
+    "Nationality": "Italian",
+    "Email": "giorgia.costa@egyxplore.com",
+    "UserName": "giorgia.costa@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-511",
+    "FirstName": "Robert",
+    "LastName": "Taylor",
+    "Nationality": "American",
+    "Email": "robert.taylor@egyxplore.com",
+    "UserName": "robert.taylor@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  },
+  {
+    "Id": "seed-tourist-512",
+    "FirstName": "Sherif",
+    "LastName": "Ali",
+    "Nationality": "Egyptian",
+    "Email": "sherif.ali@egyxplore.com",
+    "UserName": "sherif.ali@egyxplore.com",
+    "Password": "TouristPass123!",
+    "Role": "User"
+  }
 ]

@@ -312,7 +312,7 @@ namespace Tourist_Project_MVC.Services
                 }
                 : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["Trip Planner"] = "/TripPlan/Index",
+                    ["Trip Planner"] = "/Trip",
                     ["Explore"]      = "/Explore/Index",
                     ["Rewards"]      = "/TouristReward/Index",
                     ["Profile"]      = "/TouristProfile/Index",

@@ -162,20 +162,12 @@
                     <div class="filter-bar h-100 d-flex flex-column justify-content-between p-3 rounded-3" style="background: var(--bg-body); border: 1px solid var(--border-subtle);">
                         <div>
                              <h5 class="fw-bold mb-3" style="font-family:'Cinzel',serif; color:var(--text-primary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
-                                 <i class="bi bi-sliders me-2 text-gold"></i> @await Html.PartialAsync("_FilterIcon") @Localizer["Trip_FiltersBudget"].Value
+                                 <i class="bi bi-sliders me-2 text-gold"></i> @await Html.PartialAsync("_FilterIcon") @Localizer["Trip_Filters"].Value
                              </h5>
                             
                             <div class="filter-field mb-3">
                                 <label class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["Trip_Duration"].Value</label>
                                 <div class="p-2 rounded-3 text-center fw-bold fs-5 text-dark" style="background: var(--bg-surface); border: 1px solid var(--border-medium); color: var(--text-primary) !important;" id="tripDuration">—</div>
-                            </div>
-
-                            <div class="filter-field mb-3">
-                                <label class="form-label fw-bold mb-1 small text-uppercase text-muted">@Localizer["Trip_Budget"].Value</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-currency-dollar text-gold"></i></span>
-                                    <input asp-for="Budget" class="form-control border-start-0 ps-0 text-dark fw-semibold" type="number" min="0" step="0.01" placeholder="@Localizer["Trip_BudgetPlaceholder"].Value" />
-                                </div>
                             </div>
 
                             <div class="filter-field mb-3">
@@ -189,34 +181,29 @@
                             <div class="filter-field mb-3" id="tripInterests">
                                 <label class="form-label fw-bold mb-2 small text-uppercase text-muted d-block">@Localizer["Trip_Interests"].Value</label>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <div class="interest-chip">
-                                        <input type="checkbox" id="int-hidden" data-status="Pending" hidden />
-                                        <label for="int-hidden" class="chip-label"><i class="bi bi-gem me-1 text-gold"></i>@Localizer["Trip_HiddenGems"].Value</label>
-                                    </div>
-                                    <div class="interest-chip">
-                                        <input type="checkbox" id="int-temples" data-category="Temple" hidden />
-                                        <label for="int-temples" class="chip-label"><i class="bi bi-bank me-1 text-gold"></i>@Localizer["Trip_Temples"].Value</label>
-                                    </div>
-                                    <div class="interest-chip">
-                                        <input type="checkbox" id="int-museums" data-category="Museum" hidden />
-                                        <label for="int-museums" class="chip-label"><i class="bi bi-building me-1 text-gold"></i>@Localizer["Trip_Museums"].Value</label>
-                                    </div>
-                                    <div class="interest-chip">
-                                        <input type="checkbox" id="int-nature" data-category="Natural" hidden />
-                                        <label for="int-nature" class="chip-label"><i class="bi bi-tree me-1 text-gold"></i>@Localizer["Trip_Nature"].Value</label>
-                                    </div>
-                                    <div class="interest-chip">
-                                        <input type="checkbox" id="int-adventure" data-category="Archaeological" hidden />
-                                        <label for="int-adventure" class="chip-label"><i class="bi bi-compass me-1 text-gold"></i>@Localizer["Trip_Adventure"].Value</label>
-                                    </div>
-                                    <div class="interest-chip">
-                                        <input type="checkbox" id="int-historical" data-category="Historical" hidden />
-                                        <label for="int-historical" class="chip-label"><i class="bi bi-hourglass-split me-1 text-gold"></i>@Localizer["Trip_Historical"].Value</label>
-                                    </div>
-                                    <div class="interest-chip">
-                                        <input type="checkbox" id="int-religious" data-category="Religious" hidden />
-                                        <label for="int-religious" class="chip-label"><i class="bi bi-moon-stars me-1 text-gold"></i>@Localizer["Trip_Religious"].Value</label>
-                                    </div>
+                                    @{
+                                        var tripCategories = (ViewBag.TripCategories as List<string>) ?? new List<string>();
+                                        var tripHiddenStatuses = (ViewBag.TripHiddenStatuses as List<string>) ?? new List<string>();
+                                        var chipId = 0;
+                                    }
+                                    @foreach (var cat in tripCategories)
+                                    {
+                                        var id = "int-cat-" + chipId;
+                                        chipId++;
+                                        <div class="interest-chip">
+                                            <input type="checkbox" id="@id" data-category="@cat" hidden />
+                                            <label for="@id" class="chip-label"><i class="bi bi-pin-map me-1 text-gold"></i>@cat</label>
+                                        </div>
+                                    }
+                                    @foreach (var st in tripHiddenStatuses)
+                                    {
+                                        var id = "int-status-" + chipId;
+                                        chipId++;
+                                        <div class="interest-chip">
+                                            <input type="checkbox" id="@id" data-status="@st" hidden />
+                                            <label for="@id" class="chip-label"><i class="bi bi-gem me-1 text-gold"></i>@Localizer["Trip_HiddenGems"].Value</label>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -283,7 +270,7 @@
                              @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
                              {
                                  { "EmptyStateTitle", "No Destinations Match" },
-                                 { "EmptyStateDescription", "No destinations match your current filters. Adjust the budget, interests or search to see more options." },
+                                 { "EmptyStateDescription", "No destinations match your current filters. Adjust the interests or search to see more options." },
                                  { "EmptyStateActionText", "Clear Filters" },
                                  { "EmptyStateCompact", true }
                              })
@@ -293,9 +280,8 @@
                             <div class="picker-row p-3 mb-2 rounded-3"
                                  data-dest-id="@Model.Stops[i].DestinationId"
                                  data-category="@Model.Stops[i].Category"
-                                 data-status="@Model.Stops[i].Status"
-                                 data-price="@(Model.Stops[i].TicketPrice?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")"
-                                 data-lat="@Model.Stops[i].Lat.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                  data-status="@Model.Stops[i].Status"
+                                  data-lat="@Model.Stops[i].Lat.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                  data-lng="@Model.Stops[i].Lng.ToString(System.Globalization.CultureInfo.InvariantCulture)">
                                 <div class="d-flex align-items-start justify-content-between gap-2 w-100">
                                     <div class="form-check custom-dest-check flex-grow-1">
@@ -624,7 +610,6 @@
     }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script>
     (function () {
         var tripPropMap = {
@@ -664,96 +649,108 @@
             return _firstDefined(p, tripPropMap.id, ['']);
         }
 
-        var tripMap = EGYMaps.initWfsMap({
-            mapElId: 'tripBuilderMap',
-            layer: 'destinations',
-            propMap: tripPropMap,
-            popupHtml: buildPopup,
-            markerStyle: { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
-            onLayerReady: function () {
-                applyTripFilter();
-            }
-        });
+        var tripMap = null;
+        try {
+            tripMap = EGYMaps.initWfsMap({
+                mapElId: 'tripBuilderMap',
+                layer: 'destinations',
+                propMap: tripPropMap,
+                popupHtml: buildPopup,
+                markerStyle: { radius: 8, fillColor: '#C8832A', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
+                onLayerReady: function () {
+                    applyTripFilter();
+                }
+            });
+        } catch (e) {
+            console.warn('Trip map init failed', e);
+        }
 
-        var $checks = $('.stop-select');
-        var $board = $('#itineraryBoard');
-        var $empty = $('#emptyHint');
-        var $preview = $('#itineraryPreview');
+        var checks = document.querySelectorAll('.stop-select');
+        var board = document.getElementById('itineraryBoard');
+        var empty = document.getElementById('emptyHint');
+        var preview = document.getElementById('itineraryPreview');
         var stopOverlays = [];
         var rowById = {};
 
-        $('.picker-row').each(function () {
-            var id = $(this).attr('data-dest-id');
-            if (id) rowById[String(id)] = $(this);
+        document.querySelectorAll('.picker-row').forEach(function (row) {
+            var id = row.getAttribute('data-dest-id');
+            if (id) rowById[String(id)] = row;
         });
 
-        function rowMatches($row) {
-            var cat = $row.data('category');
-            var st = $row.data('status');
-            var price = parseFloat($row.data('price')) || 0;
+        function selectedInterests() {
             var interests = [];
-            $('#tripInterests input:checked').each(function () {
-                interests.push({ cat: $(this).data('category'), st: $(this).data('status') });
+            document.querySelectorAll('#tripInterests input:checked').forEach(function (el) {
+                interests.push({ cat: el.dataset.category, st: el.dataset.status });
             });
-            var budget = parseFloat($('#Budget').val());
-            var budgetSet = !isNaN(budget);
+            return interests;
+        }
+
+        function rowMatches(row) {
+            var cat = row.dataset.category || '';
+            var st = row.dataset.status || '';
+            var interests = selectedInterests();
 
             var interestMatch = interests.length === 0;
             for (var j = 0; j < interests.length; j++) {
                 if (interests[j].cat && cat === interests[j].cat) { interestMatch = true; break; }
                 if (interests[j].st && st === interests[j].st) { interestMatch = true; break; }
             }
-            var budgetMatch = !budgetSet || price <= budget;
-            return interestMatch && budgetMatch;
+
+            return interestMatch;
         }
 
         function tripPredicate(feature) {
-            var p = feature.attributes || {};
             var id = destId(feature);
             var row = rowById[String(id)];
             return row ? rowMatches(row) : false;
         }
 
         function clearStopOverlays() {
-            stopOverlays.forEach(function (m) { if (tripMap && tripMap.map && tripMap.map.hasLayer(m)) tripMap.map.removeLayer(m); });
+            stopOverlays.forEach(function (m) {
+                if (tripMap && tripMap.map && tripMap.map.hasLayer && tripMap.map.hasLayer(m)) tripMap.map.removeLayer(m);
+            });
             stopOverlays = [];
         }
 
         function refresh() {
-            var selected = $checks.filter(':checked');
-            $preview.empty();
+            var selected = Array.prototype.filter.call(checks, function (c) { return c.checked; });
+            preview.innerHTML = '';
             clearStopOverlays();
 
             if (selected.length === 0) {
-                $empty.show();
-                $board.find('.itinerary-stop').remove();
+                empty.style.display = '';
+                board.querySelectorAll('.itinerary-stop').forEach(function (el) { el.remove(); });
                 return;
             }
 
-            $empty.hide();
-            $board.find('.itinerary-stop').remove();
+            empty.style.display = 'none';
+            board.querySelectorAll('.itinerary-stop').forEach(function (el) { el.remove(); });
             var latlngs = [];
 
-            selected.each(function (idx) {
-                var $row = $(this).closest('.picker-row');
-                var name = $row.find('.dest-name-text').text();
-                var arr = $row.find('input[type=date]').eq(0).val();
-                var dep = $row.find('input[type=date]').eq(1).val();
-                var lat = parseFloat($row.attr('data-lat'));
-                var lng = parseFloat($row.attr('data-lng'));
+            selected.forEach(function (checkbox, idx) {
+                var row = checkbox.closest('.picker-row');
+                var nameEl = row.querySelector('.dest-name-text');
+                var name = nameEl ? nameEl.textContent : '';
+                var dateInputs = row.querySelectorAll('input[type=date]');
+                var arr = dateInputs[0] ? dateInputs[0].value : '';
+                var dep = dateInputs[1] ? dateInputs[1].value : '';
+                var lat = parseFloat(row.getAttribute('data-lat'));
+                var lng = parseFloat(row.getAttribute('data-lng'));
 
-                var $stop = $('<div class="itinerary-stop"></div>');
-                $stop.append('<div class="itinerary-order">' + (idx + 1) + '</div>');
-                $stop.append('<div><strong class="text-dark fs-6">' + name + '</strong>' +
+                var stop = document.createElement('div');
+                stop.className = 'itinerary-stop';
+                stop.innerHTML = '<div class="itinerary-order">' + (idx + 1) + '</div>' +
+                    '<div><strong class="text-dark fs-6">' + _esc(name) + '</strong>' +
                     '<div class="text-secondary small mt-1"><i class="bi bi-clock me-1 text-gold"></i>' +
                     (arr ? 'Arrive ' + arr : '') +
-                    (dep ? ' &middot; Depart ' + dep : '') + '</div></div>');
-                $board.append($stop);
+                    (dep ? ' &middot; Depart ' + dep : '') + '</div></div>';
+                board.appendChild(stop);
 
-                $preview.append('<li>' + name + '</li>');
+                preview.insertAdjacentHTML('beforeend', '<li>' + _esc(name) + '</li>');
 
                 if (!isNaN(lat) && !isNaN(lng) && tripMap && tripMap.addStopOverlay) {
                     var overlay = tripMap.addStopOverlay(lat, lng, idx + 1);
+                    stopOverlays.push(overlay);
                     latlngs.push([lat, lng]);
                 }
             });
@@ -763,54 +760,43 @@
             }
         }
 
-        $checks.on('change', function () {
-            $(this).closest('.picker-row').find('.picker-dates').toggleClass('d-none', !this.checked);
-            refresh();
+        checks.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                var dates = checkbox.closest('.picker-row').querySelector('.picker-dates');
+                if (dates) dates.classList.toggle('d-none', !checkbox.checked);
+                refresh();
+            });
         });
 
         refresh();
 
-        // Search Input Filter
-        $('#destSearchInput').on('keyup input', function () {
-            var val = $(this).val().toLowerCase();
-            $('.picker-row').each(function () {
-                var name = $(this).find('.dest-name-text').text().toLowerCase();
-                if (name.indexOf(val) !== -1) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        });
-
         // ---- Planning filter bar ----
         function updateDuration() {
-            var start = $('#StartDate').val();
-            var end = $('#EndDate').val();
+            var start = document.getElementById('StartDate').value;
+            var end = document.getElementById('EndDate').value;
+            var el = document.getElementById('tripDuration');
             if (start && end) {
                 var d1 = new Date(start), d2 = new Date(end);
                 var days = Math.round((d2 - d1) / 86400000) + 1;
-                $('#tripDuration').text((days > 0 ? days : 0) + (days === 1 ? ' day' : ' days'));
+                el.textContent = (days > 0 ? days : 0) + (days === 1 ? ' day' : ' days');
             } else {
-                $('#tripDuration').text('—');
+                el.textContent = '—';
             }
         }
 
+        function searchValue() {
+            var el = document.getElementById('destSearchInput');
+            return (el ? el.value : '').toLowerCase().trim();
+        }
+
         function applyTripFilter() {
-            var interests = [];
-            $('#tripInterests input:checked').each(function () {
-                interests.push({ cat: $(this).data('category'), st: $(this).data('status') });
-            });
+            var interests = selectedInterests();
+            var hasFilter = interests.length > 0;
+            var searchVal = searchValue();
 
-            var budgetRaw = $('#Budget').val();
-            var budget = parseFloat(budgetRaw);
-            var budgetSet = !isNaN(budget);
-            var hasFilter = interests.length > 0 || budgetSet;
-
-            $('.picker-row').each(function () {
-                var cat = $(this).data('category');
-                var st = $(this).data('status');
-                var price = parseFloat($(this).data('price')) || 0;
+            document.querySelectorAll('.picker-row').forEach(function (row) {
+                var cat = row.dataset.category || '';
+                var st = row.dataset.status || '';
 
                 var interestMatch = interests.length === 0;
                 for (var j = 0; j < interests.length; j++) {
@@ -818,16 +804,15 @@
                     if (interests[j].st && st === interests[j].st) { interestMatch = true; break; }
                 }
 
-                var budgetMatch = !budgetSet || price <= budget;
-                var match = interestMatch && budgetMatch;
+                var nameEl = row.querySelector('.dest-name-text');
+                var name = (nameEl ? nameEl.textContent : '').toLowerCase();
+                var searchMatch = !searchVal || name.indexOf(searchVal) !== -1;
 
-                if (!hasFilter || match) {
-                    $(this).show();
-                    $(this).toggleClass('match-highlight', hasFilter && match);
-                } else {
-                    $(this).hide();
-                    $(this).removeClass('match-highlight');
-                }
+                var match = interestMatch && searchMatch;
+                var show = match || (!hasFilter && !searchVal);
+
+                row.style.display = show ? '' : 'none';
+                row.classList.toggle('match-highlight', hasFilter && match);
             });
 
             if (tripMap && tripMap.filterMarkers) tripMap.filterMarkers(tripPredicate);
@@ -838,10 +823,10 @@
         function fitTripBounds() {
             if (!tripMap || !tripMap.fitBounds) return;
             var latlngs = [];
-            $('.picker-row').each(function () {
-                if ($(this).css('display') === 'none') return;
-                var lat = parseFloat($(this).attr('data-lat'));
-                var lng = parseFloat($(this).attr('data-lng'));
+            document.querySelectorAll('.picker-row').forEach(function (row) {
+                if (row.style.display === 'none') return;
+                var lat = parseFloat(row.getAttribute('data-lat'));
+                var lng = parseFloat(row.getAttribute('data-lng'));
                 if (!isNaN(lat) && !isNaN(lng)) latlngs.push([lat, lng]);
             });
             if (latlngs.length === 0) return;
@@ -849,9 +834,12 @@
         }
 
         function toggleTripEmpty() {
-            var visible = $('.picker-row:visible');
-            var empty = document.getElementById('tripEmptyFilter');
-            if (empty) empty.style.display = visible.length === 0 ? '' : 'none';
+            var visible = false;
+            document.querySelectorAll('.picker-row').forEach(function (row) {
+                if (row.style.display !== 'none') visible = true;
+            });
+            var el = document.getElementById('tripEmptyFilter');
+            if (el) el.style.display = visible ? 'none' : '';
         }
 
         // Clear Filters button inside the picker empty state
@@ -859,22 +847,24 @@
         if (tripEmptyFilter) {
             tripEmptyFilter.addEventListener('click', function (e) {
                 if (!e.target.closest('.empty-state-action')) return;
-                $('#tripInterests input').prop('checked', false);
-                $('#Budget').val('');
-                $('#destSearchInput').val('');
-                $('.picker-row').show();
+                document.querySelectorAll('#tripInterests input').forEach(function (el) { el.checked = false; });
+                document.getElementById('destSearchInput').value = '';
                 applyTripFilter();
             });
         }
 
-        $('#StartDate, #EndDate').on('change', updateDuration);
-        $('#tripFilterBtn').on('click', applyTripFilter);
-        $('#tripInterests input, #Budget').on('change', function () {
-            if ($('#tripInterests input:checked').length || $('#Budget').val()) applyTripFilter();
+        document.getElementById('StartDate').addEventListener('change', updateDuration);
+        document.getElementById('EndDate').addEventListener('change', updateDuration);
+        document.getElementById('tripFilterBtn').addEventListener('click', applyTripFilter);
+        document.querySelectorAll('#tripInterests input').forEach(function (el) {
+            el.addEventListener('change', applyTripFilter);
         });
+        document.getElementById('destSearchInput').addEventListener('keyup', applyTripFilter);
+        document.getElementById('destSearchInput').addEventListener('input', applyTripFilter);
 
         updateDuration();
     })();
 </script>
+
 }
 

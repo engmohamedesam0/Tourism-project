@@ -100,16 +100,37 @@ namespace Tourist_Project_MVC.Controllers
             }
 
             // Build the picker from all available destinations.
+            var allDestinations = _destinationRepo.GetAll().ToList();
+
+            // Data-driven filter chips: derive the categories and "hidden" statuses
+            // from the actual destination data instead of hardcoding values that may
+            // drift from what admins enter (e.g. "Museums & Galleries" vs "Museum").
+            ViewBag.TripCategories = allDestinations
+                .Where(d => !string.IsNullOrWhiteSpace(d.Category))
+                .Select(d => d.Category!)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(c => c, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            ViewBag.TripHiddenStatuses = allDestinations
+                .Where(d => !string.Equals(d.Status, "Active", StringComparison.OrdinalIgnoreCase))
+                .Select(d => d.Status)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(s => s, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
             var vm = new TripBuilderVM
             {
-                Stops = _destinationRepo.GetAll().Select(d => new TripStopVM
+                Stops = allDestinations.Select(d => new TripStopVM
                 {
                     DestinationId = d.Id,
                     DestinationName = d.Name,
                     City = d.City,
                     Category = d.Category,
                     Status = d.Status,
-                    TicketPrice = d.TicketPrice,
+                    // Effective display/filter price: the local ticket price when set,
+                    // otherwise the Egyptian ticket price (the field the seed data uses).
+                    TicketPrice = d.TicketPrice ?? d.EgyptianPrice,
                     Lat = d.Location != null ? d.Location.Y : 0,
                     Lng = d.Location != null ? d.Location.X : 0,
                     ArrivalDate = DateTime.Today,
@@ -125,7 +146,6 @@ namespace Tourist_Project_MVC.Controllers
                 vm.Title = draft.Title;
                 vm.StartDate = draft.StartDate;
                 vm.EndDate = draft.EndDate;
-                vm.Budget = draft.Budget;
                 vm.Companions = draft.Companions;
 
                 var draftStops = draft.TripDestinations.ToDictionary(td => td.DestinationId);
@@ -203,7 +223,6 @@ namespace Tourist_Project_MVC.Controllers
                 draft.Title = vm.Title;
                 draft.StartDate = vm.StartDate;
                 draft.EndDate = vm.EndDate;
-                draft.Budget = vm.Budget;
                 draft.Companions = vm.Companions;
                 draft.Status = "Active";
                 draft.TripDestinations.Clear();
@@ -227,7 +246,6 @@ namespace Tourist_Project_MVC.Controllers
                     Title = vm.Title,
                     StartDate = vm.StartDate,
                     EndDate = vm.EndDate,
-                    Budget = vm.Budget,
                     Companions = vm.Companions,
                     Status = "Active",
                     TouristId = tourist.Id,
@@ -285,6 +303,16 @@ namespace Tourist_Project_MVC.Controllers
                 .Where(d => !trip.TripDestinations.Any(td => td.DestinationId == d.Id))
                 .ToList();
             ViewBag.FavoritedDestinationIds = _favoriteRepo.GetFavoritedItemIds(tourist.Id, FavoriteItemType.Destination);
+
+            // Estimated budget for the trip party: sum of the ticket price of every
+            // destination on the plan (local price, falling back to the Egyptian
+            // price), multiplied by the number of travelers (1 tourist + companions).
+            var ticketsTotal = trip.TripDestinations.Sum(td =>
+                td.Destination == null
+                    ? 0m
+                    : (td.Destination.TicketPrice ?? (decimal?)td.Destination.EgyptianPrice) ?? 0m);
+            var travelers = 1 + (trip.Companions ?? 0);
+            ViewBag.TripBudgetEstimate = ticketsTotal * travelers;
 
             return View(trip);
         }

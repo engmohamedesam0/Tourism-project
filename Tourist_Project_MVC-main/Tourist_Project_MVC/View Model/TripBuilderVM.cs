@@ -14,10 +14,7 @@ namespace Tourist_Project_MVC.View_Model
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; } = DateTime.Today.AddDays(7);
 
-        // Planning inputs captured on the draft/active trip (Items 2 & 4).
-        [Range(0, double.MaxValue, ErrorMessage = "Budget must be a positive amount.")]
-        public decimal? Budget { get; set; }
-
+        // Planning input captured on the draft/active trip.
         [Range(1, 100, ErrorMessage = "Companions must be at least 1.")]
         public int? Companions { get; set; }
 

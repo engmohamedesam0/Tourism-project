@@ -55,11 +55,11 @@
                 }
                 <span class="badge-status @statusBadge px-3 py-2 fs-6">@statusLabel</span>
 
-                @if (Model.Budget.HasValue)
+                @if (ViewBag.TripBudgetEstimate is decimal tripBudgetEstimate && tripBudgetEstimate > 0)
                 {
                     <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill" style="background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);">
                         <i class="bi bi-cash-coin text-gold"></i>
-                        <span class="small text-white">@Localizer["TripDetails_Budget"].Value: <strong class="text-white">@Model.Budget.Value.ToString("C")</strong></span>
+                        <span class="small text-white">@Localizer["TripDetails_Budget"].Value: <strong class="text-white">@tripBudgetEstimate.ToString("C")</strong></span>
                     </div>
                 }
                 @if (Model.Companions.HasValue)
@@ -415,8 +415,6 @@
     }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js"></script>
 <script>
     (function () {
         var detailsPropMap = {
@@ -452,46 +450,68 @@
             return fallback[0] || '';
         }
 
-        var detailsMap = EGYMaps.initWfsMap({
-            mapElId: 'tripDetailsMap',
-            layer: 'destinations',
-            propMap: detailsPropMap,
-            popupHtml: buildPopup,
-            markerStyle: { radius: 6, fillColor: '#888', color: '#555', weight: 1, opacity: 0.6, fillOpacity: 0.3 },
-            onLayerReady: function () {
-                var latlngs = [];
-                document.querySelectorAll('#stopList li.trip-stop-card').forEach(function (li) {
-                    var lat = parseFloat(li.getAttribute('data-lat'));
-                    var lng = parseFloat(li.getAttribute('data-lng'));
-                    var id = li.getAttribute('data-id');
-                    var badge = li.querySelector('.stop-order-badge');
-                    var order = badge ? badge.textContent.trim() : '?';
-                    var nameEl = li.querySelector('h6');
-                    var name = nameEl ? nameEl.textContent.trim() : 'Stop ' + order;
-
-                    if (!isNaN(lat) && !isNaN(lng) && detailsMap && detailsMap.addStopOverlay) {
-                        detailsMap.addStopOverlay(lat, lng, '#' + order);
-                        latlngs.push([lat, lng]);
+        var detailsMap = null;
+        try {
+            detailsMap = EGYMaps.initWfsMap({
+                mapElId: 'tripDetailsMap',
+                layer: 'destinations',
+                propMap: detailsPropMap,
+                popupHtml: buildPopup,
+                markerStyle: { radius: 6, fillColor: '#888', color: '#555', weight: 1, opacity: 0.6, fillOpacity: 0.3 },
+                onLayerReady: function () {
+                    var latlngs = [];
+                    document.querySelectorAll('#stopList li.trip-stop-card').forEach(function (li) {
+                        var lat = parseFloat(li.getAttribute('data-lat'));
+                        var lng = parseFloat(li.getAttribute('data-lng'));
+                        var badge = li.querySelector('.stop-order-badge');
+                        var order = badge ? badge.textContent.trim() : '?';
+                        if (!isNaN(lat) && !isNaN(lng) && detailsMap && detailsMap.addStopOverlay) {
+                            detailsMap.addStopOverlay(lat, lng, '#' + order);
+                            latlngs.push([lat, lng]);
+                        }
+                    });
+                    if (latlngs.length > 0 && detailsMap && detailsMap.fitBounds) {
+                        detailsMap.fitBounds(latlngs);
                     }
-                });
-                if (latlngs.length > 0 && detailsMap && detailsMap.fitBounds) {
-                    detailsMap.fitBounds(latlngs);
                 }
-            }
-        });
+            });
+        } catch (e) {
+            console.warn('Trip map init failed', e);
+        }
 
-        var token = $('input[name=__RequestVerificationToken]').val();
+        var list = document.getElementById('stopList');
+
+        function getToken() {
+            var el = document.querySelector('input[name="__RequestVerificationToken"]');
+            return el ? el.value : '';
+        }
+
+        function postForm(url, data) {
+            return fetch(url, {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': getToken() },
+                body: new URLSearchParams(data)
+            });
+        }
 
         function getStopIds() {
-            return $('#stopList li').map(function () {
-                return parseInt($(this).data('stop-id'), 10);
-            }).get();
+            return Array.prototype.map.call(document.querySelectorAll('#stopList li'), function (li) {
+                return parseInt(li.getAttribute('data-stop-id'), 10);
+            });
+        }
+
+        function formatShortDate(iso) {
+            if (!iso) return '';
+            var parts = iso.split('-').map(Number);
+            if (parts.length !== 3 || isNaN(parts[0])) return iso;
+            var d = new Date(parts[0], parts[1] - 1, parts[2]);
+            return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
         }
 
         function buildStopCardHtml(stop) {
             return '<li class="trip-stop-card p-3 mb-3 rounded-3" data-stop-id="' + stop.stopId + '" data-lat="' + stop.lat + '" data-lng="' + stop.lng + '" data-id="' + stop.destinationId + '" style="background: var(--bg-surface); border: 1px solid var(--border-subtle) !important; transition: all 0.2s ease;">' +
                 '<div class="d-flex align-items-center gap-3">' +
-                '<span class="stop-handle text-muted" title="Drag to reorder" style="cursor: grab; font-size: 1.2rem;"><i class="bi bi-grip-vertical"></i></span>' +
+                '<span class="stop-handle text-muted" title="Drag to reorder" draggable="true" style="cursor: grab; font-size: 1.2rem;"><i class="bi bi-grip-vertical"></i></span>' +
                 '<div class="stop-order-badge">' + stop.order + '</div>' +
                 '<div class="flex-grow-1">' +
                 '<h6 class="fw-bold text-dark mb-0 fs-6">' + _esc(stop.destinationName) + '</h6>' +
@@ -501,8 +521,8 @@
                 '<i class="bi ' + (stop.isFavorited ? 'bi-heart-fill' : 'bi-heart') + ' favorite-btn-icon"></i>' +
                 '</button>' +
                 '<div class="stop-dates text-dark small text-end bg-light px-3 py-1 rounded-2 border">' +
-                '<div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">' + stop.arrivalDate + '</strong></div>' +
-                '<div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">' + stop.departureDate + '</strong></div>' +
+                '<div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">' + formatShortDate(stop.arrivalDateInput) + '</strong></div>' +
+                '<div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">' + formatShortDate(stop.departureDateInput) + '</strong></div>' +
                 '</div>' +
                 '</div>' +
                 '<div class="stop-date-editor d-none mt-3 p-3 bg-light rounded-3 border">' +
@@ -533,216 +553,311 @@
                 '</li>';
         }
 
-        // Reorder
-        var list = document.getElementById('stopList');
-        if (list) {
-            new Sortable(list, {
-                handle: '.stop-handle',
-                ghostClass: 'sortable-ghost',
-                animation: 150,
-                onEnd: function () {
-                    var orderedIds = getStopIds();
-                    $('#reorderNotice').removeClass('d-none');
+        // ---------- Reorder via native HTML5 drag & drop (no Sortable CDN) ----------
+        var dragging = null;
 
-                    $.ajax({
-                        url: '@Url.Action("ReorderStops", "Trip", new { id = Model.Id })',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        headers: { 'RequestVerificationToken': token },
-                        data: JSON.stringify(orderedIds),
-                        success: function () {
-                            $('#stopList li').each(function (idx) {
-                                $(this).find('.stop-order-badge').text(idx + 1);
-                            });
-                        }
-                    });
-                }
+        function renumberStops() {
+            var items = list ? list.querySelectorAll('li.trip-stop-card') : [];
+            Array.prototype.forEach.call(items, function (li, idx) {
+                var badge = li.querySelector('.stop-order-badge');
+                if (badge) badge.textContent = idx + 1;
+            });
+            var count = items.length;
+            var badge = document.querySelector('#stopsCount .badge');
+            if (badge) badge.textContent = count + ' Stop' + (count === 1 ? '' : 's');
+        }
+
+        function persistOrder() {
+            var orderedIds = getStopIds();
+            var notice = document.getElementById('reorderNotice');
+            if (notice) notice.classList.remove('d-none');
+
+            fetch('@Url.Action("ReorderStops", "Trip", new { id = Model.Id })', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': getToken()
+                },
+                body: JSON.stringify(orderedIds)
+            })
+                .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+                .then(function () { renumberStops(); })
+                .catch(function (err) { console.error('Reorder failed', err); });
+        }
+
+        if (list) {
+            // The drag handle is the drag source (so the whole card can be
+            // picked up by its handle); the card itself must NOT be draggable,
+            // otherwise dragstart fires with the card as target and the handle
+            // check below would cancel every drag.
+            Array.prototype.forEach.call(list.querySelectorAll('li.trip-stop-card'), function (li) {
+                var handle = li.querySelector('.stop-handle');
+                if (handle) handle.setAttribute('draggable', 'true');
+            });
+
+            list.addEventListener('dragstart', function (e) {
+                var handle = e.target.closest ? e.target.closest('.stop-handle') : null;
+                if (!handle) { e.preventDefault(); return; }
+                var li = handle.closest('li.trip-stop-card');
+                if (!li) { e.preventDefault(); return; }
+                dragging = li;
+                li.classList.add('sortable-ghost');
+                e.dataTransfer.effectAllowed = 'move';
+                try { e.dataTransfer.setData('text/plain', li.getAttribute('data-stop-id')); } catch (err) { }
+                // Show the whole card as the drag image instead of just the handle.
+                try { e.dataTransfer.setDragImage(li, 20, 20); } catch (err) { }
+            });
+
+            list.addEventListener('dragover', function (e) {
+                if (!dragging) return;
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                var target = e.target.closest ? e.target.closest('li.trip-stop-card') : null;
+                if (!target || target === dragging) return;
+                var rect = target.getBoundingClientRect();
+                var after = (e.clientY - rect.top) > (rect.height / 2);
+                if (after) { target.after(dragging); } else { target.before(dragging); }
+            });
+
+            list.addEventListener('drop', function (e) { e.preventDefault(); });
+
+            list.addEventListener('dragend', function () {
+                if (dragging) { dragging.classList.remove('sortable-ghost'); dragging = null; }
+                // Reflect the new list order immediately, then persist it.
+                renumberStops();
+                persistOrder();
             });
         }
 
-        // Toggle inline date editor
-        $('#stopList').on('click', '.btn-edit-dates', function () {
-            $(this).closest('.trip-stop-card').find('.stop-date-editor').toggleClass('d-none');
-        });
+        // ---------- Stop actions (delegated, vanilla) ----------
+        if (list) {
+            list.addEventListener('click', function (e) {
+                var saveBtn = e.target.closest ? e.target.closest('.btn-save-dates') : null;
+                if (saveBtn) { saveDates(saveBtn); return; }
 
-        // Save dates
-        $('#stopList').on('click', '.btn-save-dates', function () {
-            var $card = $(this).closest('.trip-stop-card');
-            var stopId = $(this).data('stop-id');
-            var arrival = $card.find('.edit-arrival').val();
-            var departure = $card.find('.edit-departure').val();
-
-            $.ajax({
-                url: '@Url.Action("UpdateStopDates", "Trip")',
-                type: 'POST',
-                data: { stopId: stopId, arrival: arrival, departure: departure },
-                headers: { 'RequestVerificationToken': token },
-                success: function () {
-                    $card.find('.stop-dates').html(
-                        '<div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">' + arrival + '</strong></div><div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">' + departure + '</strong></div>');
-                    $card.find('.stop-date-editor').addClass('d-none');
+                var editBtn = e.target.closest ? e.target.closest('.btn-edit-dates') : null;
+                if (editBtn) {
+                    var editor = editBtn.closest('.trip-stop-card').querySelector('.stop-date-editor');
+                    if (editor) editor.classList.toggle('d-none');
+                    return;
                 }
-            });
-        });
 
-        // Remove stop
-        $('#stopList').on('click', '.btn-remove-stop', function () {
+                var removeBtn = e.target.closest ? e.target.closest('.btn-remove-stop') : null;
+                if (removeBtn) { removeStop(removeBtn); }
+            });
+        }
+
+        function saveDates(btn) {
+            var card = btn.closest('.trip-stop-card');
+            var stopId = btn.getAttribute('data-stop-id');
+            var arrivalInput = card.querySelector('.edit-arrival');
+            var departureInput = card.querySelector('.edit-departure');
+            var arrival = arrivalInput ? arrivalInput.value : '';
+            var departure = departureInput ? departureInput.value : '';
+
+            if (!arrival || !departure) {
+                alert('Please pick both an arrival and a departure date before saving.');
+                return;
+            }
+
+            postForm('@Url.Action("UpdateStopDates", "Trip")', { stopId: stopId, arrival: arrival, departure: departure })
+                .then(function (r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
+                .then(function () {
+                    var datesEl = card.querySelector('.stop-dates');
+                    if (datesEl) {
+                        datesEl.innerHTML =
+                            '<div><i class="bi bi-calendar-check me-1 text-gold"></i>Arr: <strong class="text-dark">' + formatShortDate(arrival) + '</strong></div>' +
+                            '<div><i class="bi bi-calendar-x me-1 text-gold"></i>Dep: <strong class="text-dark">' + formatShortDate(departure) + '</strong></div>';
+                    }
+                    var editor = card.querySelector('.stop-date-editor');
+                    if (editor) editor.classList.add('d-none');
+                })
+                .catch(function (err) {
+                    console.error('Save dates failed', err);
+                    alert('Could not save the dates. Please try again.');
+                });
+        }
+
+        function removeStop(btn) {
             if (!confirm('Remove this stop from your trip?')) return;
-            var $card = $(this).closest('.trip-stop-card');
-            var stopId = $(this).data('stop-id');
+            var card = btn.closest('.trip-stop-card');
+            var stopId = btn.getAttribute('data-stop-id');
 
-            $.ajax({
-                url: '@Url.Action("DeleteStop", "Trip")',
-                type: 'POST',
-                data: { stopId: stopId },
-                headers: { 'RequestVerificationToken': token },
-                success: function () {
-                    $card.remove();
-                    $('#stopList li').each(function (idx) {
-                        $(this).find('.stop-order-badge').text(idx + 1);
-                    });
-                    var count = $('#stopList li').length;
-                    $('#stopsCount .badge').text(count + ' Stop' + (count === 1 ? '' : 's'));
-                }
+            postForm('@Url.Action("DeleteStop", "Trip")', { stopId: stopId })
+                .then(function (r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
+                .then(function () {
+                    card.remove();
+                    renumberStops();
+                })
+                .catch(function (err) {
+                    console.error('Remove stop failed', err);
+                    alert('Could not remove the stop. Please try again.');
+                });
+        }
+
+        // ---------- Add stop modal ----------
+        function openModal(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            if (window.bootstrap && bootstrap.Modal) {
+                bootstrap.Modal.getOrCreateInstance(el).show();
+            } else {
+                el.classList.add('show');
+                el.style.display = 'block';
+            }
+        }
+
+        function closeModal(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            if (window.bootstrap && bootstrap.Modal && bootstrap.Modal.getInstance(el)) {
+                bootstrap.Modal.getInstance(el).hide();
+            } else {
+                el.classList.remove('show');
+                el.style.display = 'none';
+            }
+        }
+
+        var addStopBtn = document.getElementById('addStopBtn');
+        if (addStopBtn) {
+            addStopBtn.addEventListener('click', function () {
+                var search = document.getElementById('addStopSearchInput');
+                var cat = document.getElementById('addStopCategoryFilter');
+                if (search) search.value = '';
+                if (cat) cat.value = '';
+                document.querySelectorAll('#availableDestinationsList .list-group-item').forEach(function (el) { el.style.display = ''; });
+                document.querySelectorAll('#availableDestinationsList .dest-select-checkbox').forEach(function (el) { el.checked = false; });
+                updateSelectedCount();
             });
-        });
+        }
 
-        // Add stop - open modal + reset filters
-        $('#addStopBtn').on('click', function () {
-            $('#addStopSearchInput').val('');
-            $('#addStopCategoryFilter').val('');
-            $('#availableDestinationsList .list-group-item').show();
-            $('#availableDestinationsList .dest-select-checkbox').prop('checked', false);
-            updateSelectedCount();
-            $('#addStopModal').modal('show');
-        });
-
-        // Filter available destinations in add-stop modal
         function filterAddStopDestinations() {
-            var searchVal = $('#addStopSearchInput').val().toLowerCase().trim();
-            var categoryVal = $('#addStopCategoryFilter').val().toLowerCase();
+            var searchVal = (document.getElementById('addStopSearchInput').value || '').toLowerCase().trim();
+            var categoryVal = (document.getElementById('addStopCategoryFilter').value || '').toLowerCase();
 
-            $('#availableDestinationsList .list-group-item').each(function () {
-                var $item = $(this);
-                var name = ($item.data('dest-name') || '').toLowerCase();
-                var city = ($item.data('dest-city') || '').toLowerCase();
-                var category = ($item.data('dest-category') || '').toLowerCase();
+            document.querySelectorAll('#availableDestinationsList .list-group-item').forEach(function (item) {
+                var name = (item.dataset.destName || '').toLowerCase();
+                var city = (item.dataset.destCity || '').toLowerCase();
+                var category = (item.dataset.destCategory || '').toLowerCase();
 
                 var matchesSearch = name.indexOf(searchVal) !== -1 || city.indexOf(searchVal) !== -1;
                 var matchesCategory = categoryVal === '' || category === categoryVal;
                 var show = matchesSearch && matchesCategory;
 
-                $item.toggle(show);
-
+                item.style.display = show ? '' : 'none';
                 if (!show) {
-                    $item.find('.dest-select-checkbox').prop('checked', false);
+                    var cb = item.querySelector('.dest-select-checkbox');
+                    if (cb) cb.checked = false;
                 }
             });
             updateSelectedCount();
         }
 
         function updateSelectedCount() {
-            var count = $('#availableDestinationsList .dest-select-checkbox:checked').length;
-            $('.selected-count').text(count + ' selected');
-            var $btn = $('#addSelectedBtn');
-            $btn.prop('disabled', count === 0);
-            if (count > 0) {
-                $btn.text('@Localizer["TripDetails_AddSelected"].Value' + ' (' + count + ')');
-            } else {
-                $btn.text('@Localizer["TripDetails_AddSelected"].Value');
+            var count = document.querySelectorAll('#availableDestinationsList .dest-select-checkbox:checked').length;
+            var label = document.querySelector('.selected-count');
+            if (label) label.textContent = count + ' selected';
+            var btn = document.getElementById('addSelectedBtn');
+            if (!btn) return;
+            btn.disabled = count === 0;
+            btn.textContent = count > 0
+                ? '@Localizer["TripDetails_AddSelected"].Value' + ' (' + count + ')'
+                : '@Localizer["TripDetails_AddSelected"].Value';
+        }
+
+        var searchInput = document.getElementById('addStopSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', filterAddStopDestinations);
+            searchInput.addEventListener('input', filterAddStopDestinations);
+        }
+        var catFilter = document.getElementById('addStopCategoryFilter');
+        if (catFilter) catFilter.addEventListener('change', filterAddStopDestinations);
+
+        document.querySelectorAll('#availableDestinationsList .dest-select-checkbox').forEach(function (cb) {
+            cb.addEventListener('change', updateSelectedCount);
+        });
+
+        function appendStopCard(stop) {
+            if (!list) return;
+            var wrap = document.createElement('div');
+            wrap.innerHTML = buildStopCardHtml(stop);
+            var node = wrap.firstElementChild;
+            if (node) list.insertBefore(node, list.firstChild);
+            var emptyState = list.parentElement ? list.parentElement.querySelector('.text-center.py-5') : null;
+            if (emptyState) emptyState.remove();
+            renumberStops();
+            if (detailsMap && detailsMap.addStopOverlay && stop.lat && stop.lng) {
+                detailsMap.addStopOverlay(stop.lat, stop.lng, '#' + stop.order);
             }
         }
 
-        $('#addStopSearchInput').on('keyup input', function () {
-            filterAddStopDestinations();
-        });
+        var addSelectedBtn = document.getElementById('addSelectedBtn');
+        if (addSelectedBtn) {
+            addSelectedBtn.addEventListener('click', function () {
+                var destIds = Array.prototype.map.call(
+                    document.querySelectorAll('#availableDestinationsList .dest-select-checkbox:checked'),
+                    function (cb) { return parseInt(cb.getAttribute('data-dest-id'), 10); }
+                );
+                if (!destIds.length) return;
 
-        $('#addStopCategoryFilter').on('change', function () {
-            filterAddStopDestinations();
-        });
+                var params = new URLSearchParams();
+                params.append('id', '@Model.Id');
+                destIds.forEach(function (id) { params.append('destinationIds', id); });
 
-        $('#availableDestinationsList').on('change', '.dest-select-checkbox', function () {
-            updateSelectedCount();
-        });
-
-        // Add selected destinations in batch
-        $('#addSelectedBtn').on('click', function () {
-            var destIds = $('#availableDestinationsList .dest-select-checkbox:checked').map(function () {
-                return parseInt($(this).data('dest-id'), 10);
-            }).get();
-
-            if (!destIds.length) return;
-
-            $.ajax({
-                url: '@Url.Action("AddStops", "Trip", new { id = Model.Id })',
-                type: 'POST',
-                data: { id: @Model.Id, destinationIds: destIds },
-                headers: { 'RequestVerificationToken': token },
-                success: function (response) {
-                    if (response.added && response.added.length) {
-                        var $emptyState = $('#stopList').siblings('.text-center.py-5');
-                        if ($emptyState.length) $emptyState.remove();
-
-                        response.added.forEach(function (stop) {
-                            var $newCard = $(buildStopCardHtml(stop));
-                            $('#stopList').prepend($newCard);
-                            if (detailsMap && detailsMap.addStopOverlay && stop.lat && stop.lng) {
-                                detailsMap.addStopOverlay(stop.lat, stop.lng, '#' + stop.order);
-                            }
-                        });
-
-                        var count = $('#stopList li').length;
-                        $('#stopsCount .badge').text(count + ' Stop' + (count === 1 ? '' : 's'));
-
-                        response.added.forEach(function (stop) {
-                            $('#availableDestinationsList .list-group-item[data-dest-id="' + stop.destinationId + '"]').remove();
-                        });
-
-                        $('#availableDestinationsList .dest-select-checkbox').prop('checked', false);
-                        updateSelectedCount();
-                        $('#addStopModal').modal('hide');
-                    }
-                }
+                fetch('@Url.Action("AddStops", "Trip", new { id = Model.Id })', {
+                    method: 'POST',
+                    headers: { 'RequestVerificationToken': getToken() },
+                    body: params
+                })
+                    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+                    .then(function (response) {
+                        if (response.added && response.added.length) {
+                            response.added.forEach(function (stop) { appendStopCard(stop); });
+                            response.added.forEach(function (stop) {
+                                var item = document.querySelector('#availableDestinationsList .list-group-item[data-dest-id="' + stop.destinationId + '"]');
+                                if (item) item.remove();
+                            });
+                            document.querySelectorAll('#availableDestinationsList .dest-select-checkbox').forEach(function (cb) { cb.checked = false; });
+                            updateSelectedCount();
+                            closeModal('addStopModal');
+                        }
+                    })
+                    .catch(function (err) { console.error('Add stops failed', err); });
             });
-        });
+        }
 
-        // Add stop - confirm from modal
-        $('#availableDestinationsList').on('click', '.btn-add-stop', function () {
-            var $item = $(this).closest('.list-group-item');
-            var destId = $(this).data('dest-id');
-            var destName = $item.find('h6').text().trim();
-            var destCity = $item.find('.text-secondary').text().trim();
-            var destCategory = $item.find('.badge').text().trim();
-            var destLat = parseFloat($item.data('dest-lat')) || 0;
-            var destLng = parseFloat($item.data('dest-lng')) || 0;
+        document.querySelectorAll('#availableDestinationsList .btn-add-stop').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var destId = btn.getAttribute('data-dest-id');
+                if (!destId) return;
 
-            $.ajax({
-                url: '@Url.Action("AddStop", "Trip", new { id = Model.Id })',
-                type: 'POST',
-                data: { id: @Model.Id, destinationId: destId },
-                headers: { 'RequestVerificationToken': token },
-                success: function (response) {
-                    if (response.alreadyExists) {
-                        $('#addStopModal').modal('hide');
-                        return;
-                    }
-                    if (response.success) {
-                        $('#addStopModal').modal('hide');
-                        var $emptyState = $('#stopList').siblings('.text-center.py-5');
-                        if ($emptyState.length) {
-                            $emptyState.remove();
+                var params = new URLSearchParams();
+                params.append('id', '@Model.Id');
+                params.append('destinationId', destId);
+
+                fetch('@Url.Action("AddStop", "Trip", new { id = Model.Id })', {
+                    method: 'POST',
+                    headers: { 'RequestVerificationToken': getToken() },
+                    body: params
+                })
+                    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+                    .then(function (response) {
+                        if (response.alreadyExists) { closeModal('addStopModal'); return; }
+                        if (response.success) {
+                            closeModal('addStopModal');
+                            appendStopCard(response);
                         }
-                        var $newCard = $(buildStopCardHtml(response));
-                        $('#stopList').prepend($newCard);
-                        var count = $('#stopList li').length;
-                        $('#stopsCount .badge').text(count + ' Stop' + (count === 1 ? '' : 's'));
-                        if (detailsMap && detailsMap.addStopOverlay) {
-                            detailsMap.addStopOverlay(response.lat, response.lng, '#' + response.order);
-                        }
-                    }
-                }
+                    })
+                    .catch(function (err) { console.error('Add stop failed', err); });
             });
         });
     })();
 </script>
+
 }
