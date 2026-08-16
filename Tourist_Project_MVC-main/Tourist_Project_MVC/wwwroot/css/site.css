@@ -2582,3 +2582,448 @@ img, video, .esri-view-root, .esri-view-surface, canvas,
     outline: none;
     box-shadow: 0 0 0 0.25rem rgba(200, 131, 42, 0.2), 0 0 0 1000px var(--bg-input) inset !important;
 }
+
+/* =============================================
+   CUSTOM ARCGIS POPUP STYLING — EGYXPLORE COMPACT PREVIEW CARD
+   ============================================= */
+
+/* Completely disable Esri internal scrolling & extra wrappers */
+.esri-popup__main-container,
+.esri-popup__content,
+.esri-popup__body,
+.esri-popup__content-node {
+    overflow: hidden !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Hide default Esri header, footer, navigation bar */
+.esri-popup__header,
+.esri-popup__footer,
+.esri-popup__navigation,
+.esri-popup__action,
+.esri-popup__inline-actions-container {
+    display: none !important;
+}
+
+.esri-popup__pointer {
+    background: var(--bg-surface, #ffffff) !important;
+}
+
+/* Shell container width & shadow */
+.esri-popup__main-container {
+    width: 480px !important;
+    max-width: calc(100vw - 32px) !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(200, 131, 42, 0.25) !important;
+    box-shadow: 0 16px 40px rgba(26, 18, 10, 0.22), 0 4px 12px rgba(200, 131, 42, 0.08) !important;
+    background: var(--bg-surface, #ffffff) !important;
+    animation: popupCardIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both !important;
+}
+
+@keyframes popupCardIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* Base Card */
+.egy-popup-card {
+    width: 100%;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-heading, #2b1b0d);
+    background: var(--bg-surface, #ffffff);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- 1. Compact Header Bar --- */
+.egy-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 12px;
+    background: var(--bg-surface, #ffffff);
+    border-bottom: 1px solid rgba(200, 131, 42, 0.12);
+}
+
+.btn-popup-zoom {
+    background: transparent;
+    border: none;
+    color: var(--egy-primary, #C8832A);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+.btn-popup-zoom:hover {
+    background: rgba(200, 131, 42, 0.08);
+}
+
+.btn-popup-close {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--text-heading, #2b1b0d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+}
+.btn-popup-close:hover {
+    background: #e63946;
+    color: #ffffff;
+    border-color: #e63946;
+    transform: scale(1.08);
+}
+
+/* --- 2. Main Two-Column Body (Zero empty space) --- */
+.egy-popup-body {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    padding: 10px 12px 12px;
+    gap: 12px;
+}
+
+/* Left Column: Image Gallery */
+.egy-popup-gallery {
+    width: 170px;
+    min-width: 170px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.popup-gallery-main {
+    position: relative;
+    width: 100%;
+    height: 145px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f4efe6;
+}
+
+.popup-gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.25s ease;
+}
+
+/* Arrow controls */
+.popup-gallery-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    background: rgba(30, 18, 10, 0.55);
+    border: none;
+    color: #ffffff;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.7rem;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+}
+.popup-gallery-arrow:hover {
+    background: var(--egy-primary, #C8832A);
+    transform: translateY(-50%) scale(1.1);
+}
+.popup-gallery-arrow--prev { left: 4px; }
+.popup-gallery-arrow--next { right: 4px; }
+
+/* Pagination dots */
+.popup-gallery-dots {
+    position: absolute;
+    bottom: 6px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    z-index: 3;
+}
+.popup-gallery-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+.popup-gallery-dot.active {
+    background: var(--egy-primary, #C8832A);
+    transform: scale(1.4);
+    box-shadow: 0 0 4px rgba(0,0,0,0.4);
+}
+
+/* Thumbnails bar */
+.popup-gallery-thumbs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 1px 0;
+    scrollbar-width: none;
+}
+.popup-gallery-thumbs::-webkit-scrollbar {
+    display: none;
+}
+.popup-thumb-img {
+    width: 38px;
+    height: 28px;
+    border-radius: 4px;
+    object-fit: cover;
+    cursor: pointer;
+    opacity: 0.6;
+    border: 1.5px solid transparent;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.popup-thumb-img:hover {
+    opacity: 0.9;
+}
+.popup-thumb-img.active {
+    opacity: 1;
+    border-color: var(--egy-primary, #C8832A);
+}
+
+/* Right Column: Information */
+.egy-popup-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.popup-top-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+.popup-mini-label {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: #8c7355;
+    text-transform: uppercase;
+}
+.popup-explore-badge {
+    background: #2b1b0d;
+    color: #f5d79a;
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.popup-dest-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--text-heading, #2b1b0d);
+    margin: 1px 0 4px;
+    line-height: 1.2;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.popup-cat-loc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+.popup-cat-badge {
+    background: rgba(200, 131, 42, 0.1);
+    color: var(--egy-primary, #C8832A);
+    border: 1px solid rgba(200, 131, 42, 0.22);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+.popup-loc-text {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--egy-primary, #C8832A);
+}
+
+.popup-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+}
+.popup-stars {
+    color: #f59e0b;
+    display: flex;
+    gap: 1px;
+    font-size: 0.72rem;
+}
+.popup-rating-num {
+    font-weight: 800;
+    color: var(--text-heading, #2b1b0d);
+}
+.popup-review-count {
+    color: #8c857b;
+    font-size: 0.7rem;
+}
+
+.popup-dest-desc {
+    font-size: 0.74rem;
+    color: #5c5449;
+    line-height: 1.35;
+    margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Compact 2-column info grid */
+.popup-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 8px;
+    margin-bottom: 8px;
+    background: rgba(200, 131, 42, 0.04);
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(200, 131, 42, 0.1);
+}
+.popup-grid-item {
+    display: flex;
+    flex-direction: column;
+}
+.popup-grid-header {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: var(--egy-primary, #C8832A);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.popup-grid-val {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-heading, #2b1b0d);
+}
+
+/* Bottom Actions */
+.popup-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.btn-popup-primary {
+    flex: 1;
+    background: linear-gradient(135deg, var(--egy-primary, #C8832A) 0%, var(--egy-accent, #e5a453) 100%);
+    color: #ffffff !important;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 20px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    letter-spacing: 0.3px;
+    box-shadow: 0 3px 8px rgba(200, 131, 42, 0.25);
+    transition: all 0.2s ease;
+}
+.btn-popup-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(200, 131, 42, 0.38);
+}
+
+.btn-popup-favorite {
+    background: #ffffff;
+    border: 1px solid rgba(200, 131, 42, 0.35);
+    color: #2b1b0d;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+.btn-popup-favorite:hover {
+    border-color: #e63946;
+    color: #e63946;
+    background: rgba(230, 57, 70, 0.05);
+}
+.btn-popup-favorite.favorited {
+    background: #e63946;
+    border-color: #e63946;
+    color: #ffffff;
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .esri-popup__main-container,
+[data-theme="dark"] .egy-popup-card,
+[data-theme="dark"] .egy-popup-header {
+    background: var(--bg-surface, #1e130a) !important;
+    color: var(--text-primary, #f5efe6);
+}
+[data-theme="dark"] .popup-dest-title {
+    color: #ffffff;
+}
+[data-theme="dark"] .btn-popup-favorite {
+    background: var(--bg-surface-elevated, #2a1b0e);
+    color: #ffffff;
+}
+
+@media (max-width: 520px) {
+    .esri-popup__main-container {
+        width: 320px !important;
+    }
+    .egy-popup-body {
+        flex-direction: column;
+    }
+    .egy-popup-gallery {
+        width: 100%;
+        min-width: 100%;
+    }
+    .popup-gallery-main {
+        height: 130px;
+    }
+}
+
+

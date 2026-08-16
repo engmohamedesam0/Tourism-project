@@ -2812,6 +2812,9 @@
   <data name="Nav_Utilities" xml:space="preserve">
     <value>Utilities</value>
   </data>
+  <data name="Nav_Reviews" xml:space="preserve">
+    <value>Reviews</value>
+  </data>
   <data name="Utility_IndexTitle" xml:space="preserve">
     <value>Utilities in Egypt</value>
   </data>

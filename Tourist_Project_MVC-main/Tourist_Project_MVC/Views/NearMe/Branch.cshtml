@@ -1,0 +1,115 @@
+@model Tourist_Project_MVC.Models.Branch
+
+@{
+    ViewData["Title"] = "Branch — " + Model.Name;
+    var displayLat = Model.Location?.Y ?? 0;
+    var displayLong = Model.Location?.X ?? 0;
+}
+
+<div class="container my-4" style="max-width: 960px;">
+
+    <!-- Header -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <div class="card-header py-3" style="background: linear-gradient(135deg, var(--egy-dark), #C8832A);">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h4 class="text-white mb-0">
+                    <i class="bi bi-geo-fill me-2"></i> @Model.Name
+                </h4>
+                <span class="badge bg-light text-dark fs-6">@Model.Sponsor?.Name</span>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <div class="row text-center mb-3">
+                <div class="col-4">
+                    <div class="stat-mini-card">
+                        <i class="bi bi-building-fill text-warning"></i>
+                        <div class="stat-mini-number" style="font-size: 1rem;">@Model.Sponsor?.Name</div>
+                        <div class="stat-mini-label">Sponsor</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="stat-mini-card">
+                        <i class="bi bi-geo-alt-fill text-danger"></i>
+                        <div class="stat-mini-number" style="font-size: 1rem;">@Model.Address</div>
+                        <div class="stat-mini-label">Address</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="stat-mini-card">
+                        <i class="bi bi-telephone-fill text-success"></i>
+                        <div class="stat-mini-number" style="font-size: 1.1rem;">@Model.ContactNumber</div>
+                        <div class="stat-mini-label">Contact</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="branchMap" class="sponsor-map-container"
+                 data-lat="@displayLat" data-lng="@displayLong"
+                 aria-label="Map showing the location of @Model.Name"></div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <a asp-controller="NearMe" asp-action="Details" asp-route-id="@Model.SponsorId" class="btn-back">
+            <i class="bi bi-arrow-left me-1"></i> Back to @(Model.Sponsor?.Name)
+        </a>
+    </div>
+
+    @if (ViewBag.ReviewSection is Tourist_Project_MVC.View_Model.EntityReviewSectionVM reviewSection)
+    {
+        @await Html.PartialAsync("_ReviewsSection", reviewSection)
+    }
+</div>
+
+@section Scripts {
+    <style>
+        .sponsor-map-container {
+            height: 300px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #e8e4dc;
+            border: 1px solid rgba(200, 131, 42, 0.35);
+        }
+
+        .stat-mini-card {
+            background: #FDF6EC;
+            border: 1px solid #E8A045;
+            border-radius: 12px;
+            padding: 12px 8px;
+        }
+
+        .stat-mini-number {
+            font-family: 'Cinzel', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--egy-dark);
+            margin: 6px 0 2px;
+        }
+
+        .stat-mini-label {
+            font-size: 0.7rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+
+    <script>
+        (function () {
+            var mapEl = document.getElementById("branchMap");
+            if (!mapEl) return;
+            var lat = parseFloat(mapEl.getAttribute("data-lat"));
+            var lng = parseFloat(mapEl.getAttribute("data-lng"));
+            if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) return;
+
+            if (window.EGYMaps && EGYMaps.initPointMap) {
+                EGYMaps.initPointMap({
+                    mapElId: "branchMap",
+                    lat: lat,
+                    lng: lng,
+                    title: "@Html.Raw(Model.Name)"
+                });
+            }
+        })();
+    </script>
+}

@@ -22,14 +22,16 @@ namespace Tourist_Project_MVC.Controllers
         private readonly IGamificationService _gamificationService;
         private readonly IFavoriteRepository _favoriteRepo;
         private readonly IArcGISSyncService _arcgisSync;
+        private readonly IReviewService _reviewService;
 
-        public DestinationController(IDestinationRepository repo, TouristContext context, IGamificationService gamificationService, IFavoriteRepository favoriteRepo, IArcGISSyncService arcgisSync)
+        public DestinationController(IDestinationRepository repo, TouristContext context, IGamificationService gamificationService, IFavoriteRepository favoriteRepo, IArcGISSyncService arcgisSync, IReviewService reviewService)
         {
             _repo = repo;
             _context = context;
             _gamificationService = gamificationService;
             _favoriteRepo = favoriteRepo;
             _arcgisSync = arcgisSync;
+            _reviewService = reviewService;
         }
 
         // GET: /Destination/Index
@@ -148,6 +150,9 @@ namespace Tourist_Project_MVC.Controllers
             // SmartDetails remains the fallback for ArcGIS-only features.
             if (destination != null)
             {
+                ViewBag.ReviewSection = _reviewService.GetSection(
+                    "Destination", destination.Id, destination.Name,
+                    canAdd: User.IsInRole("User"));
                 return View("Details", destination);
             }
 
@@ -355,30 +360,64 @@ namespace Tourist_Project_MVC.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User")]
         [ValidateAntiForgeryToken]
-        public IActionResult AddReview(int id, [Bind("Rating,Comment")] SiteReview vm)
+        public async Task<IActionResult> AddReview(int id, [Bind("Rating,Comment")] SiteReview vm)
         {
             var destination = _repo.GetById(id);
             if (destination == null) return NotFound();
 
-            if (ModelState.IsValid)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var tourist = userId != null
+                ? _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId)
+                : null;
+            if (tourist == null)
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-                var tourist = _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId);
-                if (tourist == null) return RedirectToAction("Index");
+                TempData["DestinationMessage"] = "Please sign in as a tourist to review this destination.";
+                TempData["DestinationMessageType"] = "warning";
+                return RedirectToAction("Details", new { id });
+            }
 
+            if (!ModelState.IsValid || vm.Rating < 1 || vm.Rating > 5)
+            {
+                TempData["DestinationMessage"] = "Please choose a rating between 1 and 5 stars.";
+                TempData["DestinationMessageType"] = "danger";
+                return RedirectToAction("Details", new { id });
+            }
+
+            if (string.IsNullOrWhiteSpace(vm.Comment))
+            {
+                TempData["DestinationMessage"] = "Please write a short review before submitting.";
+                TempData["DestinationMessageType"] = "danger";
+                return RedirectToAction("Details", new { id });
+            }
+
+            try
+            {
                 var review = new SiteReview
                 {
                     Rating = vm.Rating,
-                    Comment = vm.Comment,
+                    Comment = vm.Comment.Trim(),
                     DestinationId = id,
                     TouristId = tourist.Id,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
                 };
 
                 _context.SiteReviews.Add(review);
                 _context.SaveChanges();
+
+                // Destination.Rating must always reflect the tourists' reviews.
+                _reviewService.SyncDestinationRating(id);
                 _ = _gamificationService.AwardXPAsync(tourist.Id, 25, "review");
+
+                TempData["DestinationMessage"] = "Thanks! Your review has been published.";
+                TempData["DestinationMessageType"] = "success";
+            }
+            catch
+            {
+                TempData["DestinationMessage"] = "Something went wrong while saving your review. Please try again.";
+                TempData["DestinationMessageType"] = "danger";
             }
 
             return RedirectToAction("Details", new { id });

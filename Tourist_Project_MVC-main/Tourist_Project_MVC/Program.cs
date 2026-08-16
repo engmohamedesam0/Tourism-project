@@ -149,6 +149,7 @@ namespace Tourist_Project_MVC
             builder.Services.AddScoped<ISponsorRepository, SponsorRepository>();
             builder.Services.AddScoped<ITripPlanRepository, TripPlanRepository>();
             builder.Services.AddScoped<ISiteReviewRepository, SiteReviewRepository>();
+            builder.Services.AddScoped<IReviewService, ReviewService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<ISupportTicketService, SupportTicketService>();
             builder.Services.AddScoped<IBadgeRepository, BadgeRepository>();

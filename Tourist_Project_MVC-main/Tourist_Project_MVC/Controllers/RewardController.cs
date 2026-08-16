@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Claims;
 using Tourist_Project_MVC.Controllers.HubNotifications;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.DTOs;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
+using Tourist_Project_MVC.Services;
 using Tourist_Project_MVC.View_Model;
 
 namespace Tourist_Project_MVC.Controllers
@@ -20,10 +23,14 @@ namespace Tourist_Project_MVC.Controllers
         private readonly ITouristRepository _touristRepo;
         private readonly TouristContext _context;
         private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly IReviewService _reviewService;
+        private readonly IGamificationService _gamificationService;
         public RewardController(IRewardRepository repo, ISponsorRepository SponserRepo,
             UserManager<ApplicationUser> userManager, ITouristRepository touristRepo,
             TouristContext context,
-            IHubContext<NotificationHub> hubContext)
+            IHubContext<NotificationHub> hubContext,
+            IReviewService reviewService,
+            IGamificationService gamificationService)
         {
             _repo = repo;
             this.SponserRepo = SponserRepo;
@@ -31,6 +38,8 @@ namespace Tourist_Project_MVC.Controllers
             _touristRepo = touristRepo;
             _context = context;
             _hubContext = hubContext;
+            _reviewService = reviewService;
+            _gamificationService = gamificationService;
         }
         public IActionResult Index(string? search, string? rewardType)
         {
@@ -98,7 +107,72 @@ namespace Tourist_Project_MVC.Controllers
                 _context.SaveChanges();
             }
 
+            ViewBag.ReviewSection = _reviewService.GetSection(
+                "Reward", Reward.Id, Reward.Title,
+                canAdd: User.IsInRole("User"));
+
             return View("Details", Reward);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User")]
+        public IActionResult AddReview(int id, [Bind("Rating,Comment")] SiteReview vm)
+        {
+            var reward = _repo.GetById(id);
+            if (reward == null) return NotFound();
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var tourist = userId != null
+                ? _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId)
+                : null;
+            if (tourist == null)
+            {
+                TempData["RewardMessage"] = "Please sign in as a tourist to review this reward.";
+                TempData["RewardMessageType"] = "warning";
+                return RedirectToAction("Details", new { id });
+            }
+
+            if (!ModelState.IsValid || vm.Rating < 1 || vm.Rating > 5)
+            {
+                TempData["RewardMessage"] = "Please choose a rating between 1 and 5 stars.";
+                TempData["RewardMessageType"] = "danger";
+                return RedirectToAction("Details", new { id });
+            }
+
+            if (string.IsNullOrWhiteSpace(vm.Comment))
+            {
+                TempData["RewardMessage"] = "Please write a short review before submitting.";
+                TempData["RewardMessageType"] = "danger";
+                return RedirectToAction("Details", new { id });
+            }
+
+            try
+            {
+                var review = new SiteReview
+                {
+                    Rating = vm.Rating,
+                    Comment = vm.Comment.Trim(),
+                    RewardId = id,
+                    TouristId = tourist.Id,
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+
+                _context.SiteReviews.Add(review);
+                _context.SaveChanges();
+                _ = _gamificationService.AwardXPAsync(tourist.Id, 25, "review");
+
+                TempData["RewardMessage"] = "Thanks! Your review has been published.";
+                TempData["RewardMessageType"] = "success";
+            }
+            catch
+            {
+                TempData["RewardMessage"] = "Something went wrong while saving your review. Please try again.";
+                TempData["RewardMessageType"] = "danger";
+            }
+
+            return RedirectToAction("Details", new { id });
         }
 
         public IActionResult Create()

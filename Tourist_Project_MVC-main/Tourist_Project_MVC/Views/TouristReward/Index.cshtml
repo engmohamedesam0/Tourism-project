@@ -195,15 +195,20 @@
                                         </div>
                                     </div>
 
-                                    <div class="pt-3 border-top mt-auto d-flex justify-content-between align-items-center">
+                                    <div class="pt-3 border-top mt-auto d-flex justify-content-between align-items-center gap-2">
                                         <span class="fw-bold fs-5 text-gold-dark">
                                             <i class="bi bi-coin me-1 text-gold"></i> @reward.PointsRequired.ToString("N0") <span style="font-size: 0.8rem; font-weight: normal; color: #64748B;">pts</span>
                                         </span>
-                                        <form asp-action="Redeem" method="post" asp-route-rewardId="@reward.Id" onsubmit="return confirm('Redeem @reward.Title for @reward.PointsRequired points?');">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <a asp-controller="Reward" asp-action="Details" asp-route-id="@reward.Id" class="btn btn-sm btn-outline-gold rounded-pill px-3 py-2 text-decoration-none">
+                                                <i class="bi bi-chat-square-text me-1"></i> Details &amp; Reviews
+                                            </a>
+                                            <form asp-action="Redeem" method="post" asp-route-rewardId="@reward.Id" onsubmit="return confirm('Redeem @reward.Title for @reward.PointsRequired points?');">
                                             <button type="submit" class="btn btn-sm btn-redeem px-3 py-2 rounded-pill @(canAfford ? "btn-egy-primary" : "btn-disabled")" @(canAfford ? "" : "disabled")>
                                                  <i class="bi bi-gift me-1"></i> @(canAfford ? @Localizer["Reward_Redeem"].Value : @Localizer["Reward_NotEnough"].Value)
                                             </button>
                                         </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

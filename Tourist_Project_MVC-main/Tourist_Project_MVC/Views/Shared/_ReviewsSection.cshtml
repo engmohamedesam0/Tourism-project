@@ -1,0 +1,436 @@
+@model Tourist_Project_MVC.View_Model.EntityReviewSectionVM
+
+@{
+    var (formController, formAction) = Model.TargetType switch
+    {
+        "Destination" => ("Destination", "AddReview"),
+        "Mission" => ("Mission", "AddReview"),
+        "Reward" => ("Reward", "AddReview"),
+        "Branch" => ("NearMe", "AddBranchReview"),
+        "TripPlan" => ("Trip", "AddReview"),
+        _ => ("Destination", "AddReview")
+    };
+
+    // Success / error messages set by the various AddReview actions.
+    var msg = TempData["DestinationMessage"] as string
+              ?? TempData["MissionMessage"] as string
+              ?? TempData["RewardMessage"] as string
+              ?? TempData["BranchMessage"] as string
+              ?? TempData["TripMessage"] as string;
+    var msgType = TempData["DestinationMessageType"] as string
+                  ?? TempData["MissionMessageType"] as string
+                  ?? TempData["RewardMessageType"] as string
+                  ?? TempData["BranchMessageType"] as string
+                  ?? TempData["TripMessageType"] as string;
+    var rounded = Model.AverageRating.HasValue ? (int)Math.Round(Model.AverageRating.Value) : 0;
+}
+
+<section class="reviews-section mt-5" aria-label="Rating and reviews for @Model.TargetTitle">
+    <div class="reviews-section-head">
+        <div class="reviews-section-title-wrap">
+            <span class="reviews-section-icon"><i class="bi bi-chat-square-quote-fill"></i></span>
+            <div>
+                <h4 class="reviews-section-title">Rating &amp; Reviews</h4>
+                <p class="reviews-section-sub">What tourists say about <strong>@Model.TargetTitle</strong></p>
+            </div>
+        </div>
+        <div class="reviews-section-summary">
+            @if (Model.AverageRating.HasValue)
+            {
+                <span class="reviews-summary-number">@Model.AverageRating.Value.ToString("0.0")</span>
+                <span class="reviews-summary-stars" aria-label="@Model.AverageRating.Value.ToString("0.0") out of 5">
+                    @for (int star = 1; star <= 5; star++)
+                    {
+                        <i class="bi @(star <= rounded ? "bi-star-fill" : "bi-star")"></i>
+                    }
+                </span>
+                <span class="reviews-summary-count">@Model.ReviewCount @(Model.ReviewCount == 1 ? "review" : "reviews")</span>
+            }
+            else
+            {
+                <span class="reviews-summary-empty">No ratings yet</span>
+            }
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(msg))
+    {
+        <div class="alert @(msgType == "success" ? "alert-success" : msgType == "warning" ? "alert-warning" : "alert-danger") alert-dismissible fade show reviews-alert" role="alert">
+            @msg
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model.CanAddReview)
+    {
+        <div class="reviews-form-card">
+            <h6 class="reviews-form-title"><i class="bi bi-pencil-square me-1"></i> Write a review</h6>
+            <form asp-controller="@formController" asp-action="@formAction" asp-route-id="@Model.TargetId" method="post" class="row g-3 align-items-end">
+                @Html.AntiForgeryToken()
+                <div class="col-12 col-md-4">
+                    <label class="form-label small text-muted mb-1">Your rating</label>
+                    <div class="review-stars" role="radiogroup" aria-label="Choose a rating from 1 to 5 stars">
+                        <input type="radio" name="Rating" value="5" id="rst-@(Model.TargetType)-@(Model.TargetId)-5" required />
+                        <label for="rst-@(Model.TargetType)-@(Model.TargetId)-5" title="5 stars">★</label>
+                        <input type="radio" name="Rating" value="4" id="rst-@(Model.TargetType)-@(Model.TargetId)-4" />
+                        <label for="rst-@(Model.TargetType)-@(Model.TargetId)-4" title="4 stars">★</label>
+                        <input type="radio" name="Rating" value="3" id="rst-@(Model.TargetType)-@(Model.TargetId)-3" />
+                        <label for="rst-@(Model.TargetType)-@(Model.TargetId)-3" title="3 stars">★</label>
+                        <input type="radio" name="Rating" value="2" id="rst-@(Model.TargetType)-@(Model.TargetId)-2" />
+                        <label for="rst-@(Model.TargetType)-@(Model.TargetId)-2" title="2 stars">★</label>
+                        <input type="radio" name="Rating" value="1" id="rst-@(Model.TargetType)-@(Model.TargetId)-1" />
+                        <label for="rst-@(Model.TargetType)-@(Model.TargetId)-1" title="1 star">★</label>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label small text-muted mb-1">Your review</label>
+                    <textarea name="Comment" class="form-control form-control-sm" rows="2" maxlength="600" required
+                              placeholder="Share your experience… (required)"></textarea>
+                </div>
+                <div class="col-12 col-md-2">
+                    <button type="submit" class="btn btn-gold w-100">
+                        <i class="bi bi-send-fill me-1"></i> Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    }
+    else if (!User.Identity.IsAuthenticated)
+    {
+        <div class="reviews-signin-prompt">
+            <i class="bi bi-person-circle me-2"></i>
+            <a asp-controller="Account" asp-action="Login">Sign in</a> as a tourist to rate and review.
+        </div>
+    }
+
+    <div class="reviews-list">
+        @if (Model.Items.Any())
+        {
+            @foreach (var item in Model.Items)
+            {
+                <div class="reviews-item">
+                    <div class="reviews-item-avatar">
+                        @if (!string.IsNullOrEmpty(item.TouristPhotoPath))
+                        {
+                            <img src="@item.TouristPhotoPath" alt="@item.TouristName" />
+                        }
+                        else
+                        {
+                            <span>@(string.IsNullOrEmpty(item.TouristName) ? "T" : item.TouristName.Substring(0, 1).ToUpperInvariant())</span>
+                        }
+                    </div>
+                    <div class="reviews-item-body">
+                        <div class="reviews-item-top">
+                            <span class="reviews-item-name">@item.TouristName</span>
+                            <span class="reviews-item-date">@item.CreatedDate.ToString("MMM dd, yyyy")</span>
+                        </div>
+                        <div class="reviews-item-stars">
+                            @for (int star = 1; star <= 5; star++)
+                            {
+                                <i class="bi @(star <= item.Rating ? "bi-star-fill" : "bi-star")"></i>
+                            }
+                        </div>
+                        <p class="reviews-item-comment">@item.Comment</p>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="reviews-empty">No reviews yet. Be the first to share your experience!</p>
+        }
+    </div>
+</section>
+
+<style>
+    .reviews-section {
+        background: linear-gradient(145deg, #fffdf7 0%, #fff5e3 100%);
+        border: 1px solid rgba(200, 131, 42, 0.28);
+        border-radius: 20px;
+        padding: 24px 26px;
+        box-shadow: 0 10px 28px rgba(30, 18, 10, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+
+    .reviews-section-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .reviews-section-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .reviews-section-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #C8832A 0%, #E8A045 100%);
+        color: #fff;
+        font-size: 1.15rem;
+        box-shadow: 0 4px 12px rgba(200, 131, 42, 0.35);
+    }
+
+    .reviews-section-title {
+        margin: 0;
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        font-size: 1.15rem;
+        background: linear-gradient(120deg, #8a5a1d 0%, #C8832A 55%, #E8A045 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: #C8832A;
+    }
+
+    .reviews-section-sub {
+        margin: 2px 0 0;
+        font-size: 0.82rem;
+        color: #6b5a45;
+    }
+
+    .reviews-section-summary {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .reviews-summary-number {
+        font-family: 'Cinzel', serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #C8832A;
+        line-height: 1;
+    }
+
+    .reviews-summary-stars i {
+        color: #E8A045;
+        font-size: 0.95rem;
+    }
+
+    .reviews-summary-stars i.bi-star {
+        color: #d8cfc0;
+    }
+
+    .reviews-summary-count {
+        font-size: 0.82rem;
+        color: #6b5a45;
+        background: rgba(200, 131, 42, 0.12);
+        border: 1px solid rgba(200, 131, 42, 0.25);
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-weight: 600;
+    }
+
+    .reviews-summary-empty {
+        font-size: 0.85rem;
+        color: #6b5a45;
+        font-style: italic;
+    }
+
+    .reviews-alert {
+        border-radius: 12px;
+    }
+
+    .reviews-form-card {
+        background: #fff;
+        border: 1px solid rgba(200, 131, 42, 0.22);
+        border-radius: 16px;
+        padding: 16px 18px;
+        margin-bottom: 20px;
+    }
+
+    .reviews-form-title {
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        color: #1E120A;
+        margin-bottom: 12px;
+    }
+
+    .btn-gold {
+        background: linear-gradient(135deg, #C8832A 0%, #E8A045 100%);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-gold:hover {
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(200, 131, 42, 0.4);
+    }
+
+    /* Interactive 1-5 star picker (radio-driven, no JS) */
+    .review-stars {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        gap: 3px;
+    }
+
+    .review-stars input {
+        display: none;
+    }
+
+    .review-stars label {
+        font-size: 1.7rem;
+        line-height: 1;
+        color: #d8cfc0;
+        cursor: pointer;
+        transition: color 0.15s ease, transform 0.15s ease;
+    }
+
+    .review-stars label:hover,
+    .review-stars label:hover ~ label {
+        color: #E8A045;
+        transform: scale(1.12);
+    }
+
+    .review-stars input:checked ~ label {
+        color: #E8A045;
+    }
+
+    .reviews-signin-prompt {
+        background: rgba(200, 131, 42, 0.08);
+        border: 1px dashed rgba(200, 131, 42, 0.4);
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        color: #6b5a45;
+        margin-bottom: 20px;
+    }
+
+    .reviews-signin-prompt a {
+        color: #C8832A;
+        font-weight: 600;
+    }
+
+    .reviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .reviews-item {
+        display: flex;
+        gap: 14px;
+        background: #fff;
+        border: 1px solid rgba(30, 18, 10, 0.08);
+        border-radius: 14px;
+        padding: 14px 16px;
+    }
+
+    .reviews-item-avatar {
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(200, 131, 42, 0.15), rgba(232, 160, 69, 0.25));
+        border: 2px solid #E8A045;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9a6a1f;
+        font-weight: 700;
+        font-family: 'Cinzel', serif;
+        overflow: hidden;
+    }
+
+    .reviews-item-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .reviews-item-body {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .reviews-item-top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 3px;
+    }
+
+    .reviews-item-name {
+        font-weight: 700;
+        color: #1E120A;
+        font-size: 0.95rem;
+    }
+
+    .reviews-item-date {
+        font-size: 0.75rem;
+        color: #999;
+    }
+
+    .reviews-item-stars i {
+        color: #E8A045;
+        font-size: 0.8rem;
+    }
+
+    .reviews-item-stars i.bi-star {
+        color: #d8cfc0;
+    }
+
+    .reviews-item-comment {
+        margin: 5px 0 0;
+        color: #4a3f33;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        white-space: pre-line;
+    }
+
+    .reviews-empty {
+        color: #6b5a45;
+        font-style: italic;
+        margin: 0;
+    }
+
+    [data-theme="dark"] .reviews-section {
+        background: linear-gradient(145deg, #241a10 0%, #1E120A 100%);
+        border-color: rgba(200, 131, 42, 0.4);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(232, 160, 69, 0.12);
+    }
+
+    [data-theme="dark"] .reviews-section-sub,
+    [data-theme="dark"] .reviews-summary-count,
+    [data-theme="dark"] .reviews-summary-empty,
+    [data-theme="dark"] .reviews-signin-prompt,
+    [data-theme="dark"] .reviews-empty {
+        color: rgba(245, 240, 232, 0.72);
+    }
+
+    [data-theme="dark"] .reviews-form-card,
+    [data-theme="dark"] .reviews-item {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(232, 160, 69, 0.18);
+    }
+
+    [data-theme="dark"] .reviews-item-name,
+    [data-theme="dark"] .reviews-form-title {
+        color: #f5f0e8;
+    }
+
+    [data-theme="dark"] .reviews-item-comment {
+        color: rgba(245, 240, 232, 0.85);
+    }
+
+    @@media (max-width: 575.98px) {
+        .reviews-section {
+            padding: 18px 16px;
+        }
+    }
+</style>

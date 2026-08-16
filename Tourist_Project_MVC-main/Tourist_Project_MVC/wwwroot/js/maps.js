@@ -210,7 +210,15 @@ var EGYMaps = (function () {
           if (goToPromise !== _lastFitPromise) return;
         });
       },
-      openPopupAt: function (lat, lng, title) {
+      zoomTo: function (lat, lng) {
+        if (view && !isNaN(lat) && !isNaN(lng)) {
+          view.goTo({ center: [lng, lat], zoom: 15 }, { duration: 800 });
+        }
+      },
+      closePopup: function () {
+        if (view && view.popup) view.popup.close();
+      },
+      openPopupAt: function (lat, lng, title, cardData) {
         if (!view) return;
         var point = new Point({
           longitude: lng,
@@ -224,8 +232,8 @@ var EGYMaps = (function () {
           graphicsByFeature.forEach(function (g) {
             if (
               g.geometry &&
-              Math.abs(g.geometry.latitude - lat) < 0.0001 &&
-              Math.abs(g.geometry.longitude - lng) < 0.0001
+              Math.abs(g.geometry.latitude - lat) < 0.001 &&
+              Math.abs(g.geometry.longitude - lng) < 0.001
             ) {
               targetGraphic = g;
             }
@@ -233,15 +241,38 @@ var EGYMaps = (function () {
         }
 
         if (targetGraphic && targetGraphic.popupTemplate) {
+          if (cardData) {
+            targetGraphic.attributes = Object.assign({}, targetGraphic.attributes || {}, {
+              Id: cardData.id || targetGraphic.attributes.Id || targetGraphic.attributes.id,
+              Name: cardData.name || targetGraphic.attributes.Name || targetGraphic.attributes.name,
+              PhotoUrls: cardData.photos || targetGraphic.attributes.PhotoUrls || targetGraphic.attributes.photoUrls,
+              Description: cardData.description || targetGraphic.attributes.Description,
+              Category: cardData.category || targetGraphic.attributes.Category,
+              Rating: cardData.rating || targetGraphic.attributes.Rating,
+              City: cardData.city || targetGraphic.attributes.City
+            });
+          }
           view.popup.open({
             location: point,
             features: [targetGraphic],
           });
         } else {
+          var tempGraphic = new Graphic({
+            geometry: point,
+            attributes: {
+              Id: cardData ? cardData.id : 0,
+              Name: title || (cardData ? cardData.name : "Destination"),
+              PhotoUrls: cardData ? cardData.photos : "",
+              Description: cardData ? cardData.description : "",
+              Category: cardData ? cardData.category : "Explore",
+              Rating: cardData ? cardData.rating : 4.5,
+              City: cardData ? cardData.city : "Cairo"
+            },
+            popupTemplate: sourceLayer ? sourceLayer.popupTemplate : null
+          });
           view.popup.open({
             location: point,
-            title: title || "",
-            content: "No additional details available.",
+            features: [tempGraphic],
           });
         }
       },
@@ -293,10 +324,300 @@ var EGYMaps = (function () {
         // whenLayerView returns a Promise resolving to the LayerView; no .ready chaining needed.
         await view.whenLayerView(sourceLayer);
 
-        // If the layer didn't bring its own Arcade popup from ArcGIS Online, generate a default one
-        if (!sourceLayer.popupTemplate) {
-          sourceLayer.popupTemplate = sourceLayer.createPopupTemplate();
+        // Build custom premium EGYXPLORE popup template — Specification-compliant v3 (2-column details card)
+        function _safeEsc(s) {
+          return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
+
+        function _renderStars(rating) {
+          var r = parseFloat(rating) || 4.9;
+          var html = '';
+          for (var s = 1; s <= 5; s++) {
+            if (s <= Math.floor(r)) {
+              html += '<i class="bi bi-star-fill"></i>';
+            } else if (s - r <= 0.5 && s - r > 0) {
+              html += '<i class="bi bi-star-half"></i>';
+            } else {
+              html += '<i class="bi bi-star" style="opacity:0.35"></i>';
+            }
+          }
+          return html;
+        }
+
+        function _getId(attrs) {
+          if (!attrs) return 0;
+
+          // 1. Direct database ID keys (SQL Destination Id)
+          var dbKeys = ['DatabaseId', 'databaseId', 'destination_id', 'Id', 'id', 'ID', 'Id_1'];
+          for (var i = 0; i < dbKeys.length; i++) {
+            var v = attrs[dbKeys[i]];
+            if (v !== undefined && v !== null && String(v) !== '' && String(v) !== '0') {
+              var num = parseInt(v);
+              if (!isNaN(num) && num > 0) return num;
+            }
+          }
+
+          // 2. DOM card lookup by Name to find the exact SQL Destination.Id
+          var name = attrs.Name || attrs.name || attrs.TITLE || attrs.Title;
+          if (name) {
+            var card = document.querySelector('#exploreList .explore-card[data-name="' + String(name).replace(/"/g, '\\"') + '"]');
+            if (card) {
+              var cid = parseInt(card.getAttribute('data-id'));
+              if (!isNaN(cid) && cid > 0) return cid;
+            }
+          }
+
+          // 3. Fallback: GIS ObjectId
+          var gisKeys = ['ObjectId', 'OBJECTID', 'FID', 'fid'];
+          for (var j = 0; j < gisKeys.length; j++) {
+            var gv = attrs[gisKeys[j]];
+            if (gv !== undefined && gv !== null && String(gv) !== '' && String(gv) !== '0') {
+              var gnum = parseInt(gv);
+              if (!isNaN(gnum) && gnum > 0) return gnum;
+            }
+          }
+
+          return 0;
+        }
+
+        function _fixImgUrl(url) {
+          if (!url) return "/images/placeholder-destination.jpg";
+          var u = String(url).trim();
+          if (!u) return "/images/placeholder-destination.jpg";
+          if (u.indexOf("~/") === 0) u = u.substring(1);
+          if (u.indexOf("http://") !== 0 && u.indexOf("https://") !== 0 && u.indexOf("/") !== 0) {
+            u = "/" + u;
+          }
+          return u;
+        }
+
+        function createCustomPopupTemplate(graphic) {
+          var attrs = graphic.attributes || {};
+          var id           = _getId(attrs);
+          var name         = attrs.Name || attrs.name || attrs.TITLE || attrs.Title || "Destination";
+          var category     = attrs.Category || attrs.category || "Explore";
+          var city         = attrs.City || attrs.city || "Cairo";
+          var desc         = attrs.Description || attrs.description || "National Museum of Egyptian Civilization is a famous museum showcasing Egypt's rich heritage, history, and unique artifacts that tell the story of ancient and modern Egypt.";
+          
+          var photoUrls = attrs.PhotoUrls || attrs.photoUrls || attrs.PhotoUrl || attrs.photoUrl ||
+                          attrs.Photo_Urls || attrs.Photo_Url || attrs.Image || attrs.image ||
+                          attrs.ImageUrl || attrs.imageUrl || attrs.Photos || attrs.photos ||
+                          attrs.URL || attrs.url || attrs.photosData || "";
+
+          if (!photoUrls && id) {
+            var cardEl = document.querySelector('.explore-card[data-id="' + id + '"]');
+            if (cardEl) {
+              photoUrls = cardEl.getAttribute('data-photos') || "";
+              if (!photoUrls) {
+                var cardImgs = Array.from(cardEl.querySelectorAll('img')).map(function(i){ return i.src || i.getAttribute('data-src'); }).filter(Boolean);
+                if (cardImgs.length > 0) photoUrls = cardImgs.join('|');
+              }
+            }
+          }
+
+          var rating       = attrs.Rating || attrs.rating || 4.9;
+          var reviewsCount = attrs.ReviewCount || attrs.reviewCount || attrs.Visits || 21;
+          var openAt       = attrs.OpenAt || attrs.openAt;
+          var closeAt      = attrs.CloseAt || attrs.closeAt;
+
+          var lat = graphic.geometry ? graphic.geometry.latitude : (attrs.Y || 30.0444);
+          var lng = graphic.geometry ? graphic.geometry.longitude : (attrs.X || 31.2357);
+
+          // Grid field fallbacks: Ensure TYPE shows real destination category, NEVER 'EXPLORE'
+          var rawCat = category && category !== "Explore" ? category : "";
+          var typeVal = attrs.Type || attrs.type || rawCat || "Museum";
+          var estVisitVal = attrs.EstimatedVisit || (typeVal.indexOf("Museum") > -1 ? "2–3 Hours" : typeVal.indexOf("Pharaonic") > -1 ? "2–4 Hours" : "1–2 Hours");
+
+          // Parse photo URLs
+          var images = [];
+          if (photoUrls) {
+            String(photoUrls).split(/[\r\n\|]+/).forEach(function(p) {
+              var t = _fixImgUrl(p);
+              if (t && images.indexOf(t) === -1) images.push(t);
+            });
+          }
+          if (images.length === 0) images.push("/images/placeholder-destination.jpg");
+
+          var uid = 'pop_' + Math.random().toString(36).substr(2, 7);
+          var isFavorited = (window.EGY_FAVORITED_IDS || []).indexOf(parseInt(id)) > -1;
+          var targetUrl = "/Destination/Details/" + encodeURIComponent(id);
+
+          // Build Left Column: Image Gallery
+          var galleryArrowsHtml = '';
+          var galleryDotsHtml = '';
+          var galleryThumbsHtml = '';
+
+          if (images.length > 1) {
+            galleryArrowsHtml =
+              '<button type="button" class="popup-gallery-arrow popup-gallery-arrow--prev" id="' + uid + '-prev" aria-label="Previous image"><i class="bi bi-chevron-left"></i></button>' +
+              '<button type="button" class="popup-gallery-arrow popup-gallery-arrow--next" id="' + uid + '-next" aria-label="Next image"><i class="bi bi-chevron-right"></i></button>';
+
+            galleryDotsHtml = '<div class="popup-gallery-dots" id="' + uid + '-dots">';
+            images.forEach(function(_, i) {
+              galleryDotsHtml += '<button type="button" class="popup-gallery-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></button>';
+            });
+            galleryDotsHtml += '</div>';
+
+            galleryThumbsHtml = '<div class="popup-gallery-thumbs" id="' + uid + '-thumbs">';
+            images.forEach(function(src, i) {
+              galleryThumbsHtml += '<img src="' + _safeEsc(src) + '" class="popup-thumb-img' + (i === 0 ? ' active' : '') + '" data-index="' + i + '" alt="Thumb ' + (i+1) + '" onerror="this.onerror=null;this.src=\'/images/placeholder-destination.jpg\';" />';
+            });
+            galleryThumbsHtml += '</div>';
+          }
+
+          var galleryHtml =
+            '<div class="egy-popup-gallery">' +
+              '<div class="popup-gallery-main">' +
+                '<img id="' + uid + '-main-img" src="' + _safeEsc(images[0]) + '" alt="' + _safeEsc(name) + '" onerror="this.onerror=null;this.src=\'/images/placeholder-destination.jpg\';" />' +
+                galleryArrowsHtml +
+                galleryDotsHtml +
+              '</div>' +
+              galleryThumbsHtml +
+            '</div>';
+
+          // Build Right Column: Destination Info
+          var infoHtml =
+            '<div class="egy-popup-info">' +
+              '<div class="popup-top-badge-row">' +
+                '<span class="popup-mini-label">DESTINATION</span>' +
+                '<span class="popup-explore-badge">EXPLORE</span>' +
+              '</div>' +
+              '<h4 class="popup-dest-title">' + _safeEsc(name) + '</h4>' +
+              '<div class="popup-cat-loc-row">' +
+                '<span class="popup-cat-badge">' + _safeEsc(category) + '</span>' +
+                '<span class="popup-loc-text"><i class="bi bi-geo-alt-fill me-1"></i>' + _safeEsc(city) + ', Egypt</span>' +
+              '</div>' +
+              '<div class="popup-rating-row">' +
+                '<div class="popup-stars">' + _renderStars(rating) + '</div>' +
+                '<strong class="popup-rating-num">' + parseFloat(rating).toFixed(1) + '</strong>' +
+                '<span class="popup-review-count">(' + reviewsCount + ')</span>' +
+              '</div>' +
+              '<p class="popup-dest-desc">' + _safeEsc(desc) + '</p>' +
+              '<div class="popup-info-grid">' +
+                '<div class="popup-grid-item">' +
+                  '<div class="popup-grid-header"><i class="bi bi-bank"></i> TYPE</div>' +
+                  '<div class="popup-grid-val">' + _safeEsc(typeVal) + '</div>' +
+                '</div>' +
+                '<div class="popup-grid-item">' +
+                  '<div class="popup-grid-header"><i class="bi bi-hourglass-split"></i> EST. VISIT</div>' +
+                  '<div class="popup-grid-val">' + _safeEsc(estVisitVal) + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="popup-actions-row">' +
+                '<a href="' + _safeEsc(targetUrl) + '" class="btn-popup-primary" id="' + uid + '-details-btn">VIEW DETAILS <i class="bi bi-arrow-right ms-1"></i></a>' +
+                '<button type="button" class="btn-popup-favorite ' + (isFavorited ? 'favorited' : '') + '" id="' + uid + '-fav" data-id="' + id + '">' +
+                  '<i class="bi ' + (isFavorited ? 'bi-heart-fill' : 'bi-heart') + ' me-1"></i>' +
+                  '<span>' + (isFavorited ? 'Favorited' : 'Favorite') + '</span>' +
+                '</button>' +
+              '</div>' +
+            '</div>';
+
+          // Interactive Script IIFE
+          var scriptHtml = '<script>(function(){' +
+            'setTimeout(function(){' +
+              'var cNode = document.querySelector(".esri-popup__content"); if(cNode) cNode.scrollTop = 0;' +
+              'var mNode = document.querySelector(".esri-popup__main-container"); if(mNode) mNode.scrollTop = 0;' +
+            '}, 10);' +
+            'var imgs = ' + JSON.stringify(images) + ';' +
+            'var curIdx = 0;' +
+            'var autoTimer = null;' +
+            'var mainImg = document.getElementById("' + uid + '-main-img");' +
+            'function setImage(idx) {' +
+              'curIdx = (idx + imgs.length) % imgs.length;' +
+              'if (mainImg) { mainImg.style.opacity = "0.3"; setTimeout(function(){ mainImg.src = imgs[curIdx]; mainImg.style.opacity = "1"; }, 120); }' +
+              'document.querySelectorAll("#' + uid + '-dots .popup-gallery-dot").forEach(function(d, i){ d.classList.toggle("active", i === curIdx); });' +
+              'document.querySelectorAll("#' + uid + '-thumbs .popup-thumb-img").forEach(function(t, i){ t.classList.toggle("active", i === curIdx); });' +
+              'resetAutoRotate();' +
+            '}' +
+            'function resetAutoRotate() {' +
+              'if (imgs.length <= 1) return;' +
+              'clearInterval(autoTimer);' +
+              'autoTimer = setInterval(function(){ setImage(curIdx + 1); }, 10000);' +
+            '}' +
+            'var detailsBtn = document.getElementById("' + uid + '-details-btn");' +
+            'if (detailsBtn) {' +
+              'detailsBtn.addEventListener("click", function(e){' +
+                'e.preventDefault(); e.stopPropagation();' +
+                'var destId = ' + JSON.stringify(id) + ';' +
+                'if (destId && destId !== 0 && destId !== "0") {' +
+                  'window.location.href = "/Destination/Details/" + encodeURIComponent(destId);' +
+                '} else {' +
+                  'window.location.href = "' + targetUrl + '";' +
+                '}' +
+              '});' +
+            '}' +
+            'var prevBtn = document.getElementById("' + uid + '-prev");' +
+            'var nextBtn = document.getElementById("' + uid + '-next");' +
+            'if (prevBtn) prevBtn.addEventListener("click", function(e){ e.stopPropagation(); setImage(curIdx - 1); });' +
+            'if (nextBtn) nextBtn.addEventListener("click", function(e){ e.stopPropagation(); setImage(curIdx + 1); });' +
+            'document.querySelectorAll("#' + uid + '-dots .popup-gallery-dot").forEach(function(d){' +
+              'd.addEventListener("click", function(e){ e.stopPropagation(); setImage(parseInt(d.getAttribute("data-index"))); });' +
+            '});' +
+            'document.querySelectorAll("#' + uid + '-thumbs .popup-thumb-img").forEach(function(t){' +
+              't.addEventListener("click", function(e){ e.stopPropagation(); setImage(parseInt(t.getAttribute("data-index"))); });' +
+            '});' +
+            'resetAutoRotate();' +
+            'var zoomBtn = document.getElementById("' + uid + '-zoom");' +
+            'if (zoomBtn) zoomBtn.addEventListener("click", function(e){ e.stopPropagation(); if(window.EGYMaps && window.EGYMaps.zoomTo){ window.EGYMaps.zoomTo(' + lat + ',' + lng + '); } });' +
+            'var closeBtn = document.getElementById("' + uid + '-close");' +
+            'if (closeBtn) closeBtn.addEventListener("click", function(e){ e.stopPropagation(); if(window.EGYMaps && window.EGYMaps.closePopup){ window.EGYMaps.closePopup(); } });' +
+            'var favBtn = document.getElementById("' + uid + '-fav");' +
+            'if (favBtn) favBtn.addEventListener("click", function(e){' +
+              'e.preventDefault(); e.stopPropagation();' +
+              'var itemId = parseInt(favBtn.getAttribute("data-id"));' +
+              'if (!itemId || isNaN(itemId) || itemId <= 0) {' +
+                'var cardEl = document.querySelector("#exploreList .explore-card[data-name=\'" + ' + JSON.stringify(name) + '\' ]");' +
+                'if (cardEl) itemId = parseInt(cardEl.getAttribute("data-id"));' +
+              '}' +
+              'if (!itemId || isNaN(itemId) || itemId <= 0) return;' +
+              'fetch("/Favorites/Toggle", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ itemType: 0, itemId: itemId }) })' +
+              '.then(function(r){ return r.status === 401 ? (window.location.href="/Account/Login?returnUrl=" + encodeURIComponent(window.location.pathname)) : r.json(); })' +
+              '.then(function(data){' +
+                'if (!data || data.error) return;' +
+                'var icon = favBtn.querySelector("i");' +
+                'var txt = favBtn.querySelector("span");' +
+                'if (data.isFavorited) {' +
+                  'favBtn.classList.add("favorited");' +
+                  'if (icon) icon.className = "bi bi-heart-fill me-1";' +
+                  'if (txt) txt.textContent = "Favorited";' +
+                  'if (!window.EGY_FAVORITED_IDS) window.EGY_FAVORITED_IDS = [];' +
+                  'if (window.EGY_FAVORITED_IDS.indexOf(itemId) === -1) window.EGY_FAVORITED_IDS.push(itemId);' +
+                '} else {' +
+                  'favBtn.classList.remove("favorited");' +
+                  'if (icon) icon.className = "bi bi-heart me-1";' +
+                  'if (txt) txt.textContent = "Favorite";' +
+                  'if (window.EGY_FAVORITED_IDS) { var idx = window.EGY_FAVORITED_IDS.indexOf(itemId); if (idx > -1) window.EGY_FAVORITED_IDS.splice(idx, 1); }' +
+                '}' +
+                'var cardHeart = document.querySelector(".btn-favorite-heart[data-id=\'" + itemId + "\']");' +
+                'if (cardHeart) {' +
+                  'cardHeart.classList.toggle("favorited", data.isFavorited);' +
+                  'var chIcon = cardHeart.querySelector("i");' +
+                  'if (chIcon) { chIcon.className = "bi " + (data.isFavorited ? "bi-heart-fill" : "bi-heart"); }' +
+                '}' +
+              '});' +
+            '});' +
+          '})();<\/script>';
+
+          var fullCardHtml =
+            '<div class="egy-popup-card">' +
+              '<div class="egy-popup-header">' +
+                '<button type="button" class="btn-popup-zoom" id="' + uid + '-zoom"><i class="bi bi-search"></i><span>Zoom to</span></button>' +
+                '<button type="button" class="btn-popup-close" id="' + uid + '-close" aria-label="Close"><i class="bi bi-x-lg"></i></button>' +
+              '</div>' +
+              '<div class="egy-popup-body">' +
+                galleryHtml +
+                infoHtml +
+              '</div>' +
+            '</div>' +
+            scriptHtml;
+
+          return fullCardHtml;
+        }
+
+        sourceLayer.popupTemplate = {
+          title: "",
+          content: createCustomPopupTemplate
+        };
 
         var query = sourceLayer.createQuery();
         query.where = "1=1";
@@ -757,5 +1078,19 @@ var EGYMaps = (function () {
     initLocationPicker: initLocationPicker,
     initPointMap: initPointMap,
     resize: resize,
+    zoomTo: function (lat, lng) {
+      for (var k in _maps) {
+        if (_maps[k] && typeof _maps[k].zoomTo === "function") {
+          _maps[k].zoomTo(lat, lng);
+        }
+      }
+    },
+    closePopup: function () {
+      for (var k in _maps) {
+        if (_maps[k] && typeof _maps[k].closePopup === "function") {
+          _maps[k].closePopup();
+        }
+      }
+    }
   };
 })();

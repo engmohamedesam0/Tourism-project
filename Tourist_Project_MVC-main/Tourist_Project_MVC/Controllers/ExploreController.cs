@@ -1,18 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Repositories;
 
 namespace Tourist_Project_MVC.Controllers
 {
-    // Tourist-facing discovery page. Read-only browsing of destinations.
-    // Guests may browse read-only; Trip planning is gated behind sign-in elsewhere.
     public class ExploreController : Controller
     {
         private readonly IDestinationRepository _repo;
+        private readonly IFavoriteRepository _favoriteRepo;
+        private readonly TouristContext _context;
 
-        public ExploreController(IDestinationRepository repo)
+        public ExploreController(IDestinationRepository repo, IFavoriteRepository favoriteRepo, TouristContext context)
         {
             _repo = repo;
+            _favoriteRepo = favoriteRepo;
+            _context = context;
         }
 
         public IActionResult Index(string? search)
@@ -27,7 +31,22 @@ namespace Tourist_Project_MVC.Controllers
                     (d.Description != null && d.Description.Contains(search, System.StringComparison.OrdinalIgnoreCase)));
             }
 
+            var favoritedIds = new List<int>();
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    var tourist = _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId);
+                    if (tourist != null)
+                    {
+                        favoritedIds = _favoriteRepo.GetFavoritedItemIds(tourist.Id, FavoriteItemType.Destination).ToList();
+                    }
+                }
+            }
+
             ViewBag.Search = search;
+            ViewBag.FavoritedIds = favoritedIds;
             return View(all);
         }
     }

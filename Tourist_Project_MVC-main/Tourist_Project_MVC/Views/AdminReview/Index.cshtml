@@ -1,0 +1,243 @@
+@model Tourist_Project_MVC.View_Model.AdminReviewListVM
+
+@{
+    ViewData["Title"] = "Reviews";
+    ViewData["IsHomePage"] = false;
+}
+
+<div class="container my-4" style="max-width: 1200px;">
+
+    <h1 class="page-title mb-4">
+        <i class="bi bi-chat-square-quote-fill me-2"></i> Reviews
+        <span class="badge bg-secondary align-middle ms-2">@Model.TotalCount</span>
+    </h1>
+
+    @if (!string.IsNullOrEmpty(TempData["AdminReviewMessage"] as string))
+    {
+        <div class="alert @(TempData["AdminReviewMessageType"] as string == "success" ? "alert-success" : "alert-danger") alert-dismissible fade show" role="alert">
+            @TempData["AdminReviewMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Summary stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="review-stat-card">
+                <div class="review-stat-icon gold"><i class="bi bi-chat-square-text-fill"></i></div>
+                <div>
+                    <div class="review-stat-value">@Model.TotalCount.ToString("N0")</div>
+                    <div class="review-stat-label">Total Reviews</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="review-stat-card">
+                <div class="review-stat-icon dark"><i class="bi bi-star-fill"></i></div>
+                <div>
+                    <div class="review-stat-value">@(Model.AverageRating?.ToString("0.0") ?? "—")</div>
+                    <div class="review-stat-label">Average Rating</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar mb-3">
+        <form method="get" asp-controller="AdminReview" asp-action="Index">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small text-muted mb-1">Search</label>
+                    <input type="text" name="search" class="form-control" value="@Model.Search"
+                           placeholder="Tourist, entity, or comment…" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small text-muted mb-1">Entity type</label>
+                    <select name="entityType" class="form-select">
+                        <option value="">All types</option>
+                        @foreach (var t in Model.EntityTypes)
+                        {
+                            if (string.Equals(Model.EntityType, t, StringComparison.OrdinalIgnoreCase))
+                            {
+                                <option value="@t" selected>@t</option>
+                            }
+                            else
+                            {
+                                <option value="@t">@t</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small text-muted mb-1">Rating</label>
+                    <select name="rating" class="form-select">
+                        <option value="">All ratings</option>
+                        @for (int r = 5; r >= 1; r--)
+                        {
+                            if (Model.Rating == r)
+                            {
+                                <option value="@r" selected>@r ★</option>
+                            }
+                            else
+                            {
+                                <option value="@r">@r ★</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel-fill me-1"></i> Filter
+                    </button>
+                </div>
+                <div class="col-md-3 d-grid">
+                    <a asp-controller="AdminReview" asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Clear filters
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Reviews table -->
+    @if (Model.Reviews.Any())
+    {
+        <div class="table-responsive bg-white rounded-4 shadow-sm border">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tourist</th>
+                        <th>Entity</th>
+                        <th>Rating</th>
+                        <th>Review</th>
+                        <th>Date</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.Reviews)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">@r.TouristName</div>
+                                @if (!string.IsNullOrEmpty(r.TouristEmail))
+                                {
+                                    <small class="text-muted">@r.TouristEmail</small>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge review-entity-badge">@r.EntityType</span>
+                                <div class="small mt-1">
+                                    @r.EntityName
+                                    @if (r.EntityId > 0)
+                                    {
+                                        <span class="text-muted">(#@r.EntityId)</span>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <span class="review-stars-display">
+                                    @for (int star = 1; star <= 5; star++)
+                                    {
+                                        <i class="bi @(star <= r.Rating ? "bi-star-fill" : "bi-star")"></i>
+                                    }
+                                </span>
+                            </td>
+                            <td class="small" style="max-width: 320px;">@r.Comment</td>
+                            <td class="small text-muted">@r.CreatedDate.ToString("MMM dd, yyyy")</td>
+                            <td class="text-end">
+                                <form asp-controller="AdminReview" asp-action="Delete" asp-route-id="@r.Id" method="post"
+                                      onsubmit="return confirm('Delete this review by @r.TouristName?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash3 me-1"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5 bg-white rounded-4 border">
+            <i class="bi bi-chat-square-dots" style="font-size: 3rem; color: #d8cfc0;"></i>
+            <p class="text-muted mt-3 mb-0">No reviews match the current filters.</p>
+        </div>
+    }
+</div>
+
+<style>
+    .review-stat-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: #fff;
+        border: 1px solid rgba(200, 131, 42, 0.22);
+        border-radius: 16px;
+        padding: 16px 18px;
+        box-shadow: 0 6px 16px rgba(30, 18, 10, 0.06);
+    }
+
+    .review-stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #fff;
+    }
+
+    .review-stat-icon.gold {
+        background: linear-gradient(135deg, #C8832A, #E8A045);
+    }
+
+    .review-stat-icon.dark {
+        background: #1E120A;
+    }
+
+    .review-stat-value {
+        font-family: 'Cinzel', serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1E120A;
+        line-height: 1.1;
+    }
+
+    .review-stat-label {
+        font-size: 0.72rem;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    .review-entity-badge {
+        background: rgba(200, 131, 42, 0.12);
+        color: #9a6a1f;
+        border: 1px solid rgba(200, 131, 42, 0.3);
+        border-radius: 999px;
+        font-weight: 600;
+    }
+
+    .review-stars-display i {
+        color: #E8A045;
+        font-size: 0.85rem;
+    }
+
+    .review-stars-display i.bi-star {
+        color: #d8cfc0;
+    }
+
+    [data-theme="dark"] .review-stat-card {
+        background: #241a10;
+        border-color: rgba(200, 131, 42, 0.35);
+    }
+
+    [data-theme="dark"] .review-stat-value {
+        color: #f5f0e8;
+    }
+</style>

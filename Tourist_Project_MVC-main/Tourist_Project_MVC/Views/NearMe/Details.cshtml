@@ -204,6 +204,36 @@
         </div>
     </div>
 
+    <!-- Branches of this sponsor (each with its own Rating & Reviews page) -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0"><i class="bi bi-geo-fill me-2 text-primary"></i> Branches <span class="badge bg-secondary ms-1">@(Model.Branches?.Count ?? 0)</span></h5>
+        </div>
+        <div class="card-body p-4">
+            @if (Model.Branches != null && Model.Branches.Any())
+            {
+                <div class="row g-3">
+                    @foreach (var branch in Model.Branches)
+                    {
+                        <div class="col-md-6">
+                            <a asp-controller="NearMe" asp-action="Branch" asp-route-id="@branch.Id" class="text-decoration-none">
+                                <div class="border rounded-3 p-3 h-100 branch-link-card">
+                                    <h6 class="mb-1" style="color: var(--egy-dark);"><i class="bi bi-geo-fill me-1" style="color: var(--egy-primary);"></i>@branch.Name</h6>
+                                    <p class="small text-muted mb-2"><i class="bi bi-pin-map me-1"></i>@branch.Address</p>
+                                    <span class="btn btn-sm btn-outline-gold"><i class="bi bi-chat-square-text me-1"></i> View &amp; Review</span>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mb-0">No branches listed for this partner.</p>
+            }
+        </div>
+    </div>
+
     <a asp-controller="NearMe" asp-action="Index" class="btn-back">
         <i class="bi bi-arrow-left me-1"></i> Back to Near Me
     </a>
@@ -239,6 +269,32 @@
             color: #999;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        .branch-link-card {
+            border: 1px solid rgba(200, 131, 42, 0.25);
+            background: #fffdf7;
+            transition: all 0.2s ease;
+        }
+
+        .branch-link-card:hover {
+            border-color: var(--egy-primary);
+            box-shadow: 0 8px 18px rgba(200, 131, 42, 0.18);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-gold {
+            color: #C8832A;
+            border: 1px solid #C8832A;
+            border-radius: 999px;
+            font-weight: 600;
+            background: transparent;
+        }
+
+        .btn-outline-gold:hover {
+            background: linear-gradient(135deg, #C8832A, #E8A045);
+            color: #fff;
+            border-color: transparent;
         }
     </style>
 

@@ -22,18 +22,21 @@ namespace Tourist_Project_MVC.Controllers
         private readonly TouristContext _context;
         private readonly IGamificationService _gamificationService;
         private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly IReviewService _reviewService;
         public MissionController(
             IMissionRepository missionRepo,
             IDestinationRepository destRepo,
             TouristContext context,
             IGamificationService gamificationService,
-            IHubContext<NotificationHub> hubContext)
+            IHubContext<NotificationHub> hubContext,
+            IReviewService reviewService)
         {
             this.missionRepo = missionRepo;
             this.destRepo = destRepo;
             _context = context;
             _gamificationService = gamificationService;
             _hubContext = hubContext;
+            _reviewService = reviewService;
         }
 
         public IActionResult Index(string? search, string? missionType)
@@ -80,6 +83,9 @@ namespace Tourist_Project_MVC.Controllers
             Mission mission = missionRepo.GetById(id);
             if (mission != null)
             {
+                ViewBag.ReviewSection = _reviewService.GetSection(
+                    "Mission", mission.Id, mission.Title,
+                    canAdd: User.IsInRole("User"));
                 return View(mission);
             }
             return NotFound();
@@ -196,10 +202,79 @@ namespace Tourist_Project_MVC.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult >DeleteConfirmed(int id)
         {
+            // Detach mission reviews before deleting so the FK (NO ACTION) is
+            // respected and reviewer history is preserved — mirrors how
+            // destination reviews are detached on destination delete.
+            _context.SiteReviews
+                .Where(r => r.MissionId == id)
+                .ToList()
+                .ForEach(r => r.MissionId = null);
+
             missionRepo.Delete(id);
             missionRepo.Save();
             await _hubContext.Clients.All.SendAsync("MissionDeleted", id);
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User")]
+        public IActionResult AddReview(int id, [Bind("Rating,Comment")] SiteReview vm)
+        {
+            var mission = missionRepo.GetById(id);
+            if (mission == null) return NotFound();
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var tourist = userId != null
+                ? _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId)
+                : null;
+            if (tourist == null)
+            {
+                TempData["MissionMessage"] = "Please sign in as a tourist to review this mission.";
+                TempData["MissionMessageType"] = "warning";
+                return RedirectToAction("Details", new { id });
+            }
+
+            if (!ModelState.IsValid || vm.Rating < 1 || vm.Rating > 5)
+            {
+                TempData["MissionMessage"] = "Please choose a rating between 1 and 5 stars.";
+                TempData["MissionMessageType"] = "danger";
+                return RedirectToAction("Details", new { id });
+            }
+
+            if (string.IsNullOrWhiteSpace(vm.Comment))
+            {
+                TempData["MissionMessage"] = "Please write a short review before submitting.";
+                TempData["MissionMessageType"] = "danger";
+                return RedirectToAction("Details", new { id });
+            }
+
+            try
+            {
+                var review = new SiteReview
+                {
+                    Rating = vm.Rating,
+                    Comment = vm.Comment.Trim(),
+                    MissionId = id,
+                    TouristId = tourist.Id,
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+
+                _context.SiteReviews.Add(review);
+                _context.SaveChanges();
+                _ = _gamificationService.AwardXPAsync(tourist.Id, 25, "review");
+
+                TempData["MissionMessage"] = "Thanks! Your review has been published.";
+                TempData["MissionMessageType"] = "success";
+            }
+            catch
+            {
+                TempData["MissionMessage"] = "Something went wrong while saving your review. Please try again.";
+                TempData["MissionMessageType"] = "danger";
+            }
+
+            return RedirectToAction("Details", new { id });
         }
 
         [HttpPost]

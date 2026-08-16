@@ -23,19 +23,22 @@ namespace Tourist_Project_MVC.Controllers
         private readonly ITouristRepository _touristRepo;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IGamificationService _gamificationService;
+        private readonly IReviewService _reviewService;
 
         public NearMeController(
             TouristContext context,
             IDestinationRepository destinationRepo,
             ITouristRepository touristRepo,
             UserManager<ApplicationUser> userManager,
-            IGamificationService gamificationService)
+            IGamificationService gamificationService,
+            IReviewService reviewService)
         {
             _context = context;
             _destinationRepo = destinationRepo;
             _touristRepo = touristRepo;
             _userManager = userManager;
             _gamificationService = gamificationService;
+            _reviewService = reviewService;
         }
 
         [AllowAnonymous]
@@ -252,6 +255,84 @@ namespace Tourist_Project_MVC.Controllers
             var (_, _) = await _gamificationService.AwardXPAsync(tourist.Id, 15, "visit");
 
             return Json(new { success = true });
+        }
+
+        // Tourist-facing branch details page with its own Rating & Reviews
+        // section. Branches are the finest-grained place tourists interact
+        // with a sponsor's physical locations, so each branch carries its own
+        // reviews through the generic SiteReview system (BranchId).
+        [AllowAnonymous]
+        public IActionResult Branch(int id)
+        {
+            var branch = _context.Branches
+                .Include(b => b.Sponsor)
+                .FirstOrDefault(b => b.Id == id);
+            if (branch == null) return NotFound();
+
+            ViewBag.ReviewSection = _reviewService.GetSection(
+                "Branch", branch.Id, branch.Name,
+                canAdd: User.IsInRole("User"));
+
+            return View(branch);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User")]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddBranchReview(int id, [Bind("Rating,Comment")] SiteReview vm)
+        {
+            var branch = _context.Branches.FirstOrDefault(b => b.Id == id);
+            if (branch == null) return NotFound();
+
+            var user = _userManager.GetUserAsync(User).Result;
+            var tourist = user != null ? _touristRepo.GetOrCreateByApplicationUser(user) : null;
+            if (tourist == null)
+            {
+                TempData["BranchMessage"] = "Please sign in as a tourist to review this branch.";
+                TempData["BranchMessageType"] = "warning";
+                return RedirectToAction("Branch", new { id });
+            }
+
+            if (!ModelState.IsValid || vm.Rating < 1 || vm.Rating > 5)
+            {
+                TempData["BranchMessage"] = "Please choose a rating between 1 and 5 stars.";
+                TempData["BranchMessageType"] = "danger";
+                return RedirectToAction("Branch", new { id });
+            }
+
+            if (string.IsNullOrWhiteSpace(vm.Comment))
+            {
+                TempData["BranchMessage"] = "Please write a short review before submitting.";
+                TempData["BranchMessageType"] = "danger";
+                return RedirectToAction("Branch", new { id });
+            }
+
+            try
+            {
+                var review = new SiteReview
+                {
+                    Rating = vm.Rating,
+                    Comment = vm.Comment.Trim(),
+                    BranchId = id,
+                    TouristId = tourist.Id,
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+
+                _context.SiteReviews.Add(review);
+                _context.SaveChanges();
+                _ = _gamificationService.AwardXPAsync(tourist.Id, 25, "review");
+
+                TempData["BranchMessage"] = "Thanks! Your review has been published.";
+                TempData["BranchMessageType"] = "success";
+            }
+            catch
+            {
+                TempData["BranchMessage"] = "Something went wrong while saving your review. Please try again.";
+                TempData["BranchMessageType"] = "danger";
+            }
+
+            return RedirectToAction("Branch", new { id });
         }
 
         // Per-sponsor nearest-branch proximity result from the spatial query.

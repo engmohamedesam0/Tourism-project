@@ -91,7 +91,9 @@ namespace Tourist_Project_MVC.Controllers
                     Comment = r.Comment,
                     CreatedDate = r.CreatedDate
                 }).ToList(),
-                CanAddReview = true,
+                // Reviews are submitted per-reward on the reward Details page
+                // (RewardController.AddReview), so the carousel is display-only.
+                CanAddReview = false,
                 TargetId = 0,
                 TargetType = "Reward"
             };
@@ -188,24 +190,54 @@ namespace Tourist_Project_MVC.Controllers
             var reward = _context.Rewards.FirstOrDefault(r => r.Id == id);
             if (reward == null) return NotFound();
 
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var tourist = _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId);
-            if (tourist == null) return RedirectToAction(nameof(Index));
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var tourist = userId != null
+                ? _context.Tourists.FirstOrDefault(t => t.ApplicationUserId == userId)
+                : null;
+            if (tourist == null)
+            {
+                TempData["RewardMessage"] = "Please sign in as a tourist to review this reward.";
+                TempData["RewardMessageType"] = "warning";
+                return RedirectToAction(nameof(Index));
+            }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid || vm.Rating < 1 || vm.Rating > 5)
+            {
+                TempData["RewardMessage"] = "Please choose a rating between 1 and 5 stars.";
+                TempData["RewardMessageType"] = "danger";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (string.IsNullOrWhiteSpace(vm.Comment))
+            {
+                TempData["RewardMessage"] = "Please write a short review before submitting.";
+                TempData["RewardMessageType"] = "danger";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
             {
                 var review = new SiteReview
                 {
                     Rating = vm.Rating,
-                    Comment = vm.Comment,
+                    Comment = vm.Comment.Trim(),
                     RewardId = id,
                     TouristId = tourist.Id,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
                 };
 
                 _context.SiteReviews.Add(review);
                 _context.SaveChanges();
                 _ = _gamificationService.AwardXPAsync(tourist.Id, 25, "review");
+
+                TempData["RewardMessage"] = "Thanks! Your review has been published.";
+                TempData["RewardMessageType"] = "success";
+            }
+            catch
+            {
+                TempData["RewardMessage"] = "Something went wrong while saving your review. Please try again.";
+                TempData["RewardMessageType"] = "danger";
             }
 
             return RedirectToAction(nameof(Index));

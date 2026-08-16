@@ -186,6 +186,15 @@ namespace Tourist_Project_MVC.Data
                 .HasForeignKey(st => st.TouristId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            // SiteReview -> Mission (many-to-one, optional). Mission reviews are
+            // detached (MissionId set to null) when the mission is deleted,
+            // mirroring how destination reviews are detached on destination delete.
+            modelBuilder.Entity<SiteReview>()
+                .HasOne(sr => sr.Mission)
+                .WithMany()
+                .HasForeignKey(sr => sr.MissionId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             // UserProgress -> Tourist (one-to-one).
             modelBuilder.Entity<UserProgress>()
                 .HasKey(up => up.TouristId);

@@ -2812,6 +2812,9 @@
   <data name="Nav_Utilities" xml:space="preserve">
     <value>المرافق</value>
   </data>
+  <data name="Nav_Reviews" xml:space="preserve">
+    <value>التقييمات</value>
+  </data>
   <data name="Utility_IndexTitle" xml:space="preserve">
     <value>المرافق في مصر</value>
   </data>

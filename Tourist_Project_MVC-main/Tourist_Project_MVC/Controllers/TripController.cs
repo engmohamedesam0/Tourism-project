@@ -485,20 +485,43 @@ namespace Tourist_Project_MVC.Controllers
             if (trip.TouristId != tourist.Id)
                 return Forbid();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid || vm.Rating < 1 || vm.Rating > 5)
+            {
+                TempData["TripMessage"] = "Please choose a rating between 1 and 5 stars.";
+                TempData["TripMessageType"] = "danger";
+                return RedirectToAction("Details", new { id });
+            }
+
+            if (string.IsNullOrWhiteSpace(vm.Comment))
+            {
+                TempData["TripMessage"] = "Please write a short review before submitting.";
+                TempData["TripMessageType"] = "danger";
+                return RedirectToAction("Details", new { id });
+            }
+
+            try
             {
                 var review = new SiteReview
                 {
                     Rating = vm.Rating,
-                    Comment = vm.Comment,
+                    Comment = vm.Comment.Trim(),
                     TripPlanId = id,
                     TouristId = tourist.Id,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
                 };
 
                 _context.SiteReviews.Add(review);
                 _context.SaveChanges();
                 _ = _gamificationService.AwardXPAsync(tourist.Id, 25, "review");
+
+                TempData["TripMessage"] = "Thanks! Your review has been published.";
+                TempData["TripMessageType"] = "success";
+            }
+            catch
+            {
+                TempData["TripMessage"] = "Something went wrong while saving your review. Please try again.";
+                TempData["TripMessageType"] = "danger";
             }
 
             return RedirectToAction("Details", new { id });

@@ -75,6 +75,11 @@
                 </a>
             </div>
         </div>
+
+        @if (ViewBag.ReviewSection is Tourist_Project_MVC.View_Model.EntityReviewSectionVM reviewSection)
+        {
+            @await Html.PartialAsync("_ReviewsSection", reviewSection)
+        }
     </div>
 }
 
