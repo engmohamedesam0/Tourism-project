@@ -611,6 +611,14 @@
 
             function fitNearMeBounds() {
                 if (!nearMeMap || !nearMeMap.fitBounds) return;
+                var hasActiveFilter = nearMeState.type || nearMeState.rating || nearMeState.distance ||
+                    (nearMeState.search && nearMeState.search.trim());
+                if (!hasActiveFilter) {
+                    if (nearMeMap.view) {
+                        nearMeMap.view.goTo({ center: [30.8, 27.0], zoom: 6.2 }, { duration: 1000 });
+                    }
+                    return;
+                }
                 var latlngs = [];
                 Array.prototype.slice
                     .call(document.querySelectorAll('#nearMeList .nearme-card[data-id]'))
@@ -653,11 +661,19 @@
                     card.style.display = cardMatchesState(card) ? '' : 'none';
                 });
                 if (nearMeMap && nearMeMap.filterMarkers) {
-                    var ids = visibleSponsorIds();
-                    nearMeMap.filterMarkers(function (f) {
-                        var sid = _firstDefined(f.attributes, nearMePropMap.id, []);
-                        return ids.indexOf(String(sid)) > -1;
-                    });
+                    // When no user filter is active, show ALL ArcGIS features (definitionExpression = "1=1").
+                    // Only restrict to DB-linked sponsor IDs when the user has applied a filter.
+                    var hasActiveFilter = nearMeState.type || nearMeState.rating || nearMeState.distance ||
+                        (nearMeState.search && nearMeState.search.trim());
+                    if (!hasActiveFilter) {
+                        nearMeMap.filterMarkers(null); // reset to show all
+                    } else {
+                        var ids = visibleSponsorIds();
+                        nearMeMap.filterMarkers(function (f) {
+                            var sid = _firstDefined(f.attributes, nearMePropMap.id, []);
+                            return ids.indexOf(String(sid)) > -1;
+                        });
+                    }
                 }
                 toggleNearMeEmpty();
                 fitNearMeBounds();
@@ -681,7 +697,7 @@
                 layer: 'branches',
                 propMap: nearMePropMap,
                 popupHtml: buildPopup,
-                markerStyle: { radius: 9, fillColor: '#2e9e5b', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85 },
+                useLayerStyle: true,
                 onLayerReady: function () {
                     applyNearMeClientFilter();
                 }

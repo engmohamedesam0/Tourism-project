@@ -82,6 +82,7 @@ var EGYMaps = (function () {
       Extent;
 
     var propMap = opts.propMap || {};
+    var useLayerStyle = !!opts.useLayerStyle;
 
     var markerStyle = opts.markerStyle || {
       radius: 8,
@@ -108,6 +109,35 @@ var EGYMaps = (function () {
         return overlayGraphicsLayer;
       },
       filterMarkers: function (predicate) {
+        if (useLayerStyle) {
+          // When using the layer's own ArcGIS renderer, filter by definitionExpression.
+          if (!sourceLayer) return;
+          if (typeof predicate !== "function") {
+            sourceLayer.definitionExpression = "1=1";
+            return;
+          }
+          // Use the layer's OBJECTID field to build the expression.
+          // visibleOids collects OBJECTID values (numeric) from sentinel attributes
+          // for every feature that passes the predicate — NOT the map keys.
+          var oidField = sourceLayer.objectIdField || "OBJECTID";
+          var passingOids = [];
+          graphicsByFeature.forEach(function (sentinel) {
+            var attrs = sentinel.attributes || {};
+            var passes = predicate({ attributes: attrs, properties: attrs }, sentinel);
+            if (passes) {
+              var oid = attrs[oidField];
+              if (oid !== undefined && oid !== null) passingOids.push(oid);
+            }
+          });
+          if (!passingOids.length) {
+            sourceLayer.definitionExpression = "1=0";
+          } else {
+            // OBJECTID is numeric — no quoting needed.
+            sourceLayer.definitionExpression = oidField + " IN (" + passingOids.join(",") + ")";
+          }
+          return;
+        }
+        // Default: toggle graphic visibility on overlay layer.
         if (!graphicsByFeature || !graphicsByFeature.size) return;
         graphicsByFeature.forEach(function (graphic) {
           var show = true;
@@ -270,6 +300,16 @@ var EGYMaps = (function () {
       return null;
     }
 
+    function portalItemIdFor(optsLayer) {
+      if (!optsLayer || !_mapConfig) return null;
+      if (typeof optsLayer === "string") {
+        var lower = optsLayer.toLowerCase();
+        if (lower === "destinations") return _mapConfig.destinationsItemId || _mapConfig.portalId || null;
+        if (lower === "branches") return _mapConfig.branchesItemId || null;
+      }
+      return _mapConfig.portalId || null;
+    }
+
     async function loadLayer() {
       var layerUrl = layerUrlFor(opts.layer || opts.proxyUrl);
       if (!layerUrl) {
@@ -280,13 +320,16 @@ var EGYMaps = (function () {
         url: layerUrl,
         outFields: ["*"]
       };
-      if (_mapConfig && _mapConfig.portalId) {
-        featureLayerOpts.portalItem = { id: _mapConfig.portalId };
+      var itemId = portalItemIdFor(opts.layer || opts.proxyUrl);
+      if (itemId) {
+        featureLayerOpts.portalItem = { id: itemId };
       }
       sourceLayer = new FeatureLayer(featureLayerOpts);
 
       map.add(sourceLayer);
-      sourceLayer.visible = false;
+      // When useLayerStyle is true, keep the FeatureLayer visible so it renders
+      // with its own ArcGIS Online / portal renderer instead of custom graphics.
+      sourceLayer.visible = useLayerStyle;
 
       try {
         await sourceLayer.load();
@@ -306,24 +349,44 @@ var EGYMaps = (function () {
         if (result && result.features) {
           graphicsByFeature.clear();
           result.features.forEach(function (f) {
-            var graphic = new Graphic({
-              geometry: f.geometry,
-              symbol: {
-                type: "simple-marker",
-                style: "circle",
-                color: markerStyle.fillColor || "#C8832A",
-                size: (markerStyle.radius || 8) * 2,
-                outline: {
-                  color: markerStyle.color || "#fff",
-                  width: markerStyle.weight || 2,
-                },
-              },
-              attributes: f.attributes,
-              popupTemplate: sourceLayer.popupTemplate,
-            });
-            overlayGraphicsLayer.add(graphic);
             var idKey = _firstKey(f.attributes, propMap.id || ["id"]);
-            graphicsByFeature.set(f.attributes[idKey], graphic);
+            if (useLayerStyle) {
+              // Store a lightweight sentinel graphic (invisible) so filterMarkers,
+              // onFeatureClick, fitBounds and openPopupAt still have feature data.
+              var sentinel = new Graphic({
+                geometry: f.geometry,
+                symbol: {
+                  type: "simple-marker",
+                  style: "circle",
+                  color: [0, 0, 0, 0],
+                  size: (markerStyle.radius || 8) * 2,
+                  outline: { color: [0, 0, 0, 0], width: 0 },
+                },
+                attributes: f.attributes,
+                popupTemplate: sourceLayer.popupTemplate,
+              });
+              sentinel.visible = false;
+              overlayGraphicsLayer.add(sentinel);
+              graphicsByFeature.set(f.attributes[idKey], sentinel);
+            } else {
+              var graphic = new Graphic({
+                geometry: f.geometry,
+                symbol: {
+                  type: "simple-marker",
+                  style: "circle",
+                  color: markerStyle.fillColor || "#C8832A",
+                  size: (markerStyle.radius || 8) * 2,
+                  outline: {
+                    color: markerStyle.color || "#fff",
+                    width: markerStyle.weight || 2,
+                  },
+                },
+                attributes: f.attributes,
+                popupTemplate: sourceLayer.popupTemplate,
+              });
+              overlayGraphicsLayer.add(graphic);
+              graphicsByFeature.set(f.attributes[idKey], graphic);
+            }
           });
         }
 
@@ -382,10 +445,10 @@ var EGYMaps = (function () {
         container: mapEl,
         map: map,
         center: [
-          opts.center ? opts.center[1] : 31.2357,
-          opts.center ? opts.center[0] : 30.0444,
+          opts.center ? opts.center[1] : 30.8,
+          opts.center ? opts.center[0] : 27.0,
         ],
-        zoom: opts.zoom || 7,
+        zoom: opts.zoom || 6,
       });
 
       var localLoader = document.createElement("div");
@@ -412,7 +475,11 @@ var EGYMaps = (function () {
       // Wire up feature-click → onFeatureClick callback for card highlighting.
       if (typeof onFeatureClick === "function") {
         view.on("click", function (event) {
-          view.hitTest(event, { include: overlayGraphicsLayer }).then(function (response) {
+          // When using the layer's own renderer, hit-test against the sourceLayer;
+          // otherwise test against the overlay graphics layer.
+          // Guard: sourceLayer may still be null if layer hasn't loaded yet.
+          var includeTarget = (useLayerStyle && sourceLayer) ? sourceLayer : overlayGraphicsLayer;
+          view.hitTest(event, { include: includeTarget }).then(function (response) {
             if (!response || !response.results || !response.results.length) return;
             var firstHit = response.results[0];
             var graphic = firstHit.graphic;

@@ -22,6 +22,8 @@ namespace Tourist_Project_MVC.Controllers
                 apiKey = token,
                 destinationsLayerUrl = _config["ArcGIS:DestinationsLayerUrl"] ?? string.Empty,
                 branchesLayerUrl = _config["ArcGIS:BranchesLayerUrl"] ?? string.Empty,
+                destinationsItemId = _config["ArcGIS:DestinationsItemId"] ?? _config["ArcGIS:PortalId"] ?? string.Empty,
+                branchesItemId = _config["ArcGIS:BranchesItemId"] ?? string.Empty,
                 portalId = _config["ArcGIS:PortalId"] ?? string.Empty
             });
         }
