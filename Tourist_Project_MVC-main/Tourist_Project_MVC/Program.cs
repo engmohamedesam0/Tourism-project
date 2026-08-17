@@ -297,6 +297,9 @@ namespace Tourist_Project_MVC
                 throw;
             }
 
+            // Enable legacy timestamp behavior for Npgsql to seamlessly serialize JSON DateTimes into timestamptz columns
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
             // JSON-driven, idempotent sample-data seeding (see Services/DbInitializer.cs
             // and the SeedData/ folder). Safe to run on every startup: each table is
             // only populated when empty.

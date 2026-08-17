@@ -30,7 +30,8 @@ namespace Tourist_Project_MVC.Services
             catch (Exception ex)
             {
                 // Seeding must never crash application startup. Log and continue.
-                Console.Error.WriteLine($"[DbInitializer] Seeding failed: {ex.Message}");
+                var msg = ex.InnerException != null ? $"{ex.Message} --> {ex.InnerException.Message}" : ex.Message;
+                Console.Error.WriteLine($"[DbInitializer] Seeding overall error: {msg}");
             }
         }
 
@@ -61,25 +62,28 @@ namespace Tourist_Project_MVC.Services
 
             // Pull-sync Destinations from ArcGIS BEFORE seeding dependent tables (Missions, TripDestinations).
             // ArcGIS is the primary source of truth for destination data.
-            var arcgisSync = scope.ServiceProvider.GetRequiredService<IArcGISSyncService>();
-            var syncResult = await arcgisSync.SyncDestinationsFromArcGIS(CancellationToken.None);
-
-            if (!syncResult.Success)
+            try
             {
-                Console.Error.WriteLine($"[DbInitializer] Destinations ArcGIS pull-sync failed: {syncResult.Error}");
+                var arcgisSync = scope.ServiceProvider.GetRequiredService<IArcGISSyncService>();
+                var syncResult = await arcgisSync.SyncDestinationsFromArcGIS(CancellationToken.None);
+
+                if (!syncResult.Success)
+                {
+                    Console.Error.WriteLine($"[DbInitializer] Destinations ArcGIS pull-sync failed: {syncResult.Error}");
+                }
+
+                var branchSyncResult = await arcgisSync.SyncBranchesFromArcGIS(CancellationToken.None);
+                if (!branchSyncResult.Success)
+                {
+                    Console.Error.WriteLine($"[DbInitializer] Branches ArcGIS pull-sync failed: {branchSyncResult.Error}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"[DbInitializer] ArcGIS sync warning: {ex.Message}");
             }
 
-            var branchSyncResult = await arcgisSync.SyncBranchesFromArcGIS(CancellationToken.None);
-            if (!branchSyncResult.Success)
-            {
-                Console.Error.WriteLine($"[DbInitializer] Branches ArcGIS pull-sync failed: {branchSyncResult.Error}");
-            }
-
-            // Only seed from local JSON if the table is completely empty. This covers
-            // every case where ArcGIS did not populate it: sync not configured (no-op),
-            // sync failed, or sync succeeded with zero features. Without destinations,
-            // dependent seeds (Missions, TripDestinations) would fail on their FK and
-            // abort the rest of the seeding (Notifications, SupportTickets, Approvals...).
+            // Only seed from local JSON if the table is completely empty.
             if (!await context.Destinations.AnyAsync())
             {
                 Console.WriteLine("[DbInitializer] Seeding destinations from local destinations.json.");
@@ -174,90 +178,127 @@ namespace Tourist_Project_MVC.Services
         private static async Task SeedGeoAsync<TEntity>(TouristContext context, string seedDir, string fileName, Action<TEntity, JsonElement> buildLocation)
             where TEntity : class
         {
-            var set = context.Set<TEntity>();
-            if (await set.AnyAsync())
+            try
             {
-                return;
-            }
+                var set = context.Set<TEntity>();
+                if (await set.AnyAsync())
+                {
+                    return;
+                }
 
-            var path = Path.Combine(seedDir, fileName);
-            if (!File.Exists(path))
+                var path = Path.Combine(seedDir, fileName);
+                if (!File.Exists(path))
+                {
+                    return;
+                }
+
+                var json = await File.ReadAllTextAsync(path);
+                var elements = JsonSerializer.Deserialize<List<JsonElement>>(json);
+                if (elements == null || elements.Count == 0)
+                {
+                    return;
+                }
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var entityType = context.Model.FindEntityType(typeof(TEntity))!;
+                var tableName = entityType.GetTableName()!;
+                var primaryKey = entityType.FindPrimaryKey()!;
+                var identityProperty = primaryKey.Properties.FirstOrDefault(p => p.ValueGenerated.HasFlag(ValueGenerated.OnAdd));
+
+                foreach (var el in elements)
+                {
+                    try
+                    {
+                        var entity = el.Deserialize<TEntity>(options)!;
+                        buildLocation(entity, el);
+                        set.Add(entity);
+                        await context.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        context.ChangeTracker.Clear();
+                        Console.Error.WriteLine($"[DbInitializer] Warning seeding item in {typeof(TEntity).Name} ({fileName}): {ex.InnerException?.Message ?? ex.Message}");
+                    }
+                }
+
+                if (identityProperty != null)
+                {
+                    try
+                    {
+                        #pragma warning disable EF1002
+                        var columnName = identityProperty.GetColumnName();
+                        await context.Database.ExecuteSqlRawAsync(
+                        $"SELECT setval(pg_get_serial_sequence('\"{tableName}\"', '{columnName}'), " +
+                        $"COALESCE((SELECT MAX(\"{columnName}\") FROM \"{tableName}\"), 1))");
+                        #pragma warning restore EF1002
+                    }
+                    catch { }
+                }
+            }
+            catch (Exception ex)
             {
-                return;
+                context.ChangeTracker.Clear();
+                var msg = ex.InnerException != null ? $"{ex.Message} --> {ex.InnerException.Message}" : ex.Message;
+                Console.Error.WriteLine($"[DbInitializer] Failed seeding geo {typeof(TEntity).Name} ({fileName}): {msg}");
             }
-
-            var json = await File.ReadAllTextAsync(path);
-            var elements = JsonSerializer.Deserialize<List<JsonElement>>(json);
-            if (elements == null || elements.Count == 0)
-            {
-                return;
-            }
-
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var entityType = context.Model.FindEntityType(typeof(TEntity))!;
-            var tableName = entityType.GetTableName()!;
-            var primaryKey = entityType.FindPrimaryKey()!;
-            var identityProperty = primaryKey.Properties.FirstOrDefault(p => p.ValueGenerated.HasFlag(ValueGenerated.OnAdd));
-
-            await using var transaction = await context.Database.BeginTransactionAsync();
-
-            foreach (var el in elements)
-            {
-                var entity = el.Deserialize<TEntity>(options)!;
-                buildLocation(entity, el);
-                set.Add(entity);
-            }
-            await context.SaveChangesAsync();
-
-            if (identityProperty != null)
-            {
-                #pragma warning disable EF1002
-                var columnName = identityProperty.GetColumnName();
-                await context.Database.ExecuteSqlRawAsync(
-                $"SELECT setval(pg_get_serial_sequence('\"{tableName}\"', '{columnName}'), " +
-                $"COALESCE((SELECT MAX(\"{columnName}\") FROM \"{tableName}\"), 1))");
-                #pragma warning restore EF1002
-            }
-
-            await transaction.CommitAsync();
         }
 
         private static async Task SeedTableAsync<TEntity>(TouristContext context, string seedDir, string fileName)
             where TEntity : class
         {
-            var set = context.Set<TEntity>();
-            if (await set.AnyAsync())
+            try
             {
-                return;
-            }
-
-            var entities = ReadJson<List<TEntity>>(Path.Combine(seedDir, fileName));
-            if (entities == null || entities.Count == 0)
-            {
-                return;
-            }
-
-            var entityType = context.Model.FindEntityType(typeof(TEntity))!;
-            var tableName = entityType.GetTableName()!;
-            var primaryKey = entityType.FindPrimaryKey()!;
-            var identityProperty = primaryKey.Properties.FirstOrDefault(p => p.ValueGenerated.HasFlag(ValueGenerated.OnAdd));
-
-            await using var transaction = await context.Database.BeginTransactionAsync();
-
-            set.AddRange(entities);
-            await context.SaveChangesAsync();
-
-            if (identityProperty != null)
+                var set = context.Set<TEntity>();
+                if (await set.AnyAsync())
                 {
-                     #pragma warning disable EF1002
-                var columnName = identityProperty.GetColumnName();
-                await context.Database.ExecuteSqlRawAsync(
-                $"SELECT setval(pg_get_serial_sequence('\"{tableName}\"', '{columnName}'), " +
-                $"COALESCE((SELECT MAX(\"{columnName}\") FROM \"{tableName}\"), 1))");
-                #pragma warning restore EF1002
+                    return;
                 }
 
-            await transaction.CommitAsync();
+                var entities = ReadJson<List<TEntity>>(Path.Combine(seedDir, fileName));
+                if (entities == null || entities.Count == 0)
+                {
+                    return;
+                }
+
+                var entityType = context.Model.FindEntityType(typeof(TEntity))!;
+                var tableName = entityType.GetTableName()!;
+                var primaryKey = entityType.FindPrimaryKey()!;
+                var identityProperty = primaryKey.Properties.FirstOrDefault(p => p.ValueGenerated.HasFlag(ValueGenerated.OnAdd));
+
+                foreach (var entity in entities)
+                {
+                    try
+                    {
+                        set.Add(entity);
+                        await context.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        context.ChangeTracker.Clear();
+                        Console.Error.WriteLine($"[DbInitializer] Warning seeding item in {typeof(TEntity).Name} ({fileName}): {ex.InnerException?.Message ?? ex.Message}");
+                    }
+                }
+
+                if (identityProperty != null)
+                {
+                    try
+                    {
+                        #pragma warning disable EF1002
+                        var columnName = identityProperty.GetColumnName();
+                        await context.Database.ExecuteSqlRawAsync(
+                        $"SELECT setval(pg_get_serial_sequence('\"{tableName}\"', '{columnName}'), " +
+                        $"COALESCE((SELECT MAX(\"{columnName}\") FROM \"{tableName}\"), 1))");
+                        #pragma warning restore EF1002
+                    }
+                    catch { }
+                }
+            }
+            catch (Exception ex)
+            {
+                context.ChangeTracker.Clear();
+                var msg = ex.InnerException != null ? $"{ex.Message} --> {ex.InnerException.Message}" : ex.Message;
+                Console.Error.WriteLine($"[DbInitializer] Failed seeding {typeof(TEntity).Name} ({fileName}): {msg}");
+            }
         }
 
         private static T? ReadJson<T>(string path) where T : class
