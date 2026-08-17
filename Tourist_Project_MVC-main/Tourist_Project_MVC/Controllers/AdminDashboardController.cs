@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 using Tourist_Project_MVC.Services;
@@ -15,22 +18,26 @@ namespace Tourist_Project_MVC.Controllers
     {
         private readonly TouristContext _context;
         private readonly IArcGISSyncService _arcgisSync;
+        private readonly ISyncStateManager _syncStateManager;
         private readonly IConfiguration _config;
+        private readonly ILogger<AdminDashboardController> _logger;
 
-        public AdminDashboardController(TouristContext context, IArcGISSyncService arcgisSync, IConfiguration config)
+        public AdminDashboardController(
+            TouristContext context,
+            IArcGISSyncService arcgisSync,
+            ISyncStateManager syncStateManager,
+            IConfiguration config,
+            ILogger<AdminDashboardController> logger)
         {
             _context = context;
             _arcgisSync = arcgisSync;
+            _syncStateManager = syncStateManager;
             _config = config;
+            _logger = logger;
         }
 
         // -----------------------------------------------------------------------
         // Admin Dashboard -> ArcGIS Online Dashboard (Experience Builder)
-        // The admin dashboard now renders ONLY the ArcGIS dashboard pointed to by
-        // ArcGIS:DashboardUrl in appsettings.json. The legacy custom chart/table
-        // sections were removed in favour of the ArcGIS embed.
-        // The {section} route is kept so any stale links (e.g. from the admin
-        // module toggle on data pages) still land on the dashboard without 404s.
         // -----------------------------------------------------------------------
 
         [HttpGet("")]
@@ -44,74 +51,268 @@ namespace Tourist_Project_MVC.Controllers
             return View("Index", vm);
         }
 
+        [HttpGet("SyncStatus")]
+        public IActionResult GetSyncStatus()
+        {
+            return Json(_syncStateManager.GetStatus());
+        }
+
         // -----------------------------------------------------------------------
         // ArcGIS On-Demand Sync Actions
         // -----------------------------------------------------------------------
 
         /// <summary>
         /// POST /AdminDashboard/SyncToArcGIS
-        /// Pushes all local destinations (and branches) to the ArcGIS feature layers.
-        /// Admins can trigger this manually whenever they add/update destinations locally.
+        /// Pushes changes from Website Database -> ArcGIS Feature Layer.
         /// </summary>
         [HttpPost("SyncToArcGIS")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SyncToArcGIS()
         {
-            var destinations = await _context.Destinations
-                .Where(d => d.Location != null)
-                .ToListAsync();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest"
+                         || Request.Headers["Accept"].ToString().Contains("application/json");
 
-            var branches = await _context.Branches
-                .Where(b => b.Location != null)
-                .ToListAsync();
-
-            var destResult = await _arcgisSync.SyncDestinationsAsync(destinations);
-            var branchResult = await _arcgisSync.SyncBranchesAsync(branches);
-            var touristsTableResult = await _arcgisSync.SyncTouristsTableAsync();
-            var touristNatResult = await _arcgisSync.SyncTouristNationalityLayerAsync();
-            var redemptionsResult = await _arcgisSync.SyncRedemptionsAsync();
-
-            if (destResult.Success && branchResult.Success && touristsTableResult.Success && touristNatResult.Success && redemptionsResult.Success)
+            if (!_syncStateManager.TryBeginSync(out var currentStatus))
             {
-                TempData["ArcGISMessage"] = $"✅ Pushed to ArcGIS — {destResult.AddedCount} destinations added, " +
-                    $"{destResult.UpdatedCount} updated; {branchResult.AddedCount} branches added, {branchResult.UpdatedCount} updated; " +
-                    $"tourists table: {touristsTableResult.AddedCount} added, {touristsTableResult.UpdatedCount} updated; " +
-                    $"nationality layer: {touristNatResult.AddedCount} added, {touristNatResult.UpdatedCount} updated; " +
-                    $"redemptions table: {redemptionsResult.AddedCount} added, {redemptionsResult.UpdatedCount} updated.";
-                TempData["ArcGISMessageType"] = "success";
+                var busyMsg = $"A synchronization operation is already in progress ({currentStatus}). Please wait.";
+                if (isAjax)
+                    return StatusCode(StatusCodes.Status409Conflict, new { success = false, message = busyMsg, state = currentStatus.ToString() });
+
+                TempData["ArcGISMessage"] = $"⚠️ {busyMsg}";
+                TempData["ArcGISMessageType"] = "warning";
+                return RedirectToAction("Index");
             }
-            else
+
+            var stopwatch = Stopwatch.StartNew();
+
+            try
             {
-                var errors = string.Join(" | ", new[] { destResult.Error, branchResult.Error, touristsTableResult.Error, touristNatResult.Error, redemptionsResult.Error }.Where(e => e != null));
-                TempData["ArcGISMessage"] = $"❌ ArcGIS push failed: {errors}";
+                _logger.LogInformation("=== [SYNC START] Website Database -> ArcGIS Feature Layer ===");
+
+                var destinations = await _context.Destinations
+                    .Where(d => d.Location != null)
+                    .ToListAsync();
+
+                var branches = await _context.Branches
+                    .Where(b => b.Location != null)
+                    .ToListAsync();
+
+                var destResult = await _arcgisSync.SyncDestinationsAsync(destinations);
+                var branchResult = await _arcgisSync.SyncBranchesAsync(branches);
+                var touristsTableResult = await _arcgisSync.SyncTouristsTableAsync();
+                var touristNatResult = await _arcgisSync.SyncTouristNationalityLayerAsync();
+                var redemptionsResult = await _arcgisSync.SyncRedemptionsAsync();
+
+                stopwatch.Stop();
+                var duration = stopwatch.Elapsed.TotalSeconds;
+
+                var allSuccess = destResult.Success && branchResult.Success && touristsTableResult.Success && touristNatResult.Success && redemptionsResult.Success;
+                var totalAdded = destResult.AddedCount + branchResult.AddedCount + touristsTableResult.AddedCount + touristNatResult.AddedCount + redemptionsResult.AddedCount;
+                var totalUpdated = destResult.UpdatedCount + branchResult.UpdatedCount + touristsTableResult.UpdatedCount + touristNatResult.UpdatedCount + redemptionsResult.UpdatedCount;
+                var totalDeleted = destResult.DeletedCount + branchResult.DeletedCount + touristsTableResult.DeletedCount + touristNatResult.DeletedCount + redemptionsResult.DeletedCount;
+                var totalFailed = destResult.FailedCount + branchResult.FailedCount + touristsTableResult.FailedCount + touristNatResult.FailedCount + redemptionsResult.FailedCount;
+
+                var errors = new[] { destResult.Error, branchResult.Error, touristsTableResult.Error, touristNatResult.Error, redemptionsResult.Error }
+                    .Where(e => !string.IsNullOrWhiteSpace(e))
+                    .ToList();
+                var errorSummary = errors.Any() ? string.Join(" | ", errors) : null;
+
+                var overallResult = allSuccess
+                    ? ArcGISSyncResult.Ok(totalAdded, totalUpdated, totalDeleted, totalFailed, duration)
+                    : ArcGISSyncResult.Failed(errorSummary ?? "One or more layers failed to sync.", totalAdded, totalUpdated, totalDeleted, totalFailed > 0 ? totalFailed : 1, duration);
+
+                _syncStateManager.EndOperation(overallResult, isSync: true);
+
+                _logger.LogInformation("=== [SYNC END] Added: {Added}, Updated: {Updated}, Deleted: {Deleted}, Failed: {Failed}, Duration: {Duration:F2}s ===",
+                    totalAdded, totalUpdated, totalDeleted, totalFailed, duration);
+
+                if (isAjax)
+                {
+                    return Json(new
+                    {
+                        success = allSuccess,
+                        operation = "SYNC",
+                        added = totalAdded,
+                        updated = totalUpdated,
+                        deleted = totalDeleted,
+                        failed = totalFailed,
+                        durationSeconds = Math.Round(duration, 2),
+                        formattedDuration = $"{duration:F1}s",
+                        message = allSuccess ? "✓ Sync completed" : "✕ Sync failed",
+                        error = errorSummary,
+                        details = new
+                        {
+                            destinations = destResult,
+                            branches = branchResult,
+                            tourists = touristsTableResult,
+                            nationalities = touristNatResult,
+                            redemptions = redemptionsResult
+                        }
+                    });
+                }
+
+                if (allSuccess)
+                {
+                    TempData["ArcGISMessage"] = $"✅ Sync completed in {duration:F1}s — Added: {totalAdded}, Updated: {totalUpdated}, Deleted: {totalDeleted}";
+                    TempData["ArcGISMessageType"] = "success";
+                }
+                else
+                {
+                    TempData["ArcGISMessage"] = $"❌ Sync failed: {errorSummary}";
+                    TempData["ArcGISMessageType"] = "danger";
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                stopwatch.Stop();
+                var duration = stopwatch.Elapsed.TotalSeconds;
+                _logger.LogError(ex, "=== [SYNC FAILED] Unhandled exception during SYNC ===");
+
+                var failResult = ArcGISSyncResult.Failed(ex.Message, 0, 0, 0, 1, duration);
+                _syncStateManager.EndOperation(failResult, isSync: true);
+
+                if (isAjax)
+                {
+                    return StatusCode(500, new
+                    {
+                        success = false,
+                        operation = "SYNC",
+                        added = 0,
+                        updated = 0,
+                        deleted = 0,
+                        failed = 1,
+                        durationSeconds = Math.Round(duration, 2),
+                        formattedDuration = $"{duration:F1}s",
+                        message = "✕ Sync failed",
+                        error = ex.Message
+                    });
+                }
+
+                TempData["ArcGISMessage"] = $"❌ Sync failed: {ex.Message}";
                 TempData["ArcGISMessageType"] = "danger";
+                return RedirectToAction("Index");
             }
-
-            return RedirectToAction("Index");
         }
 
         /// <summary>
         /// POST /AdminDashboard/SyncFromArcGIS
-        /// Pulls the latest destination data FROM ArcGIS into the local DB.
+        /// Pulls changes from ArcGIS Feature Layer -> Website Database (Upsert only).
         /// </summary>
         [HttpPost("SyncFromArcGIS")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SyncFromArcGIS()
         {
-            var result = await _arcgisSync.SyncDestinationsFromArcGIS();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest"
+                         || Request.Headers["Accept"].ToString().Contains("application/json");
 
-            if (result.Success)
+            if (!_syncStateManager.TryBeginPull(out var currentStatus))
             {
-                TempData["ArcGISMessage"] = $"✅ Pulled from ArcGIS — {result.AddedCount} destinations synced into local DB.";
-                TempData["ArcGISMessageType"] = "success";
+                var busyMsg = $"A synchronization operation is already in progress ({currentStatus}). Please wait.";
+                if (isAjax)
+                    return StatusCode(StatusCodes.Status409Conflict, new { success = false, message = busyMsg, state = currentStatus.ToString() });
+
+                TempData["ArcGISMessage"] = $"⚠️ {busyMsg}";
+                TempData["ArcGISMessageType"] = "warning";
+                return RedirectToAction("Index");
             }
-            else
+
+            var stopwatch = Stopwatch.StartNew();
+
+            try
             {
-                TempData["ArcGISMessage"] = $"❌ ArcGIS pull failed: {result.Error}";
+                _logger.LogInformation("=== [PULL START] ArcGIS Feature Layer -> Website Database ===");
+
+                var destResult = await _arcgisSync.SyncDestinationsFromArcGIS();
+                var branchResult = await _arcgisSync.SyncBranchesFromArcGIS();
+
+                stopwatch.Stop();
+                var duration = stopwatch.Elapsed.TotalSeconds;
+
+                var allSuccess = destResult.Success && branchResult.Success;
+                var totalAdded = destResult.AddedCount + branchResult.AddedCount;
+                var totalUpdated = destResult.UpdatedCount + branchResult.UpdatedCount;
+                var totalDeleted = destResult.DeletedCount + branchResult.DeletedCount;
+                var totalFailed = destResult.FailedCount + branchResult.FailedCount;
+
+                var errors = new[] { destResult.Error, branchResult.Error }.Where(e => !string.IsNullOrWhiteSpace(e)).ToList();
+                var errorSummary = errors.Any() ? string.Join(" | ", errors) : null;
+
+                var overallResult = allSuccess
+                    ? ArcGISSyncResult.Ok(totalAdded, totalUpdated, totalDeleted, totalFailed, duration)
+                    : ArcGISSyncResult.Failed(errorSummary ?? "Pull operation failed.", totalAdded, totalUpdated, totalDeleted, totalFailed > 0 ? totalFailed : 1, duration);
+
+                _syncStateManager.EndOperation(overallResult, isSync: false);
+
+                _logger.LogInformation("=== [PULL END] Added: {Added}, Updated: {Updated}, Deleted: {Deleted}, Failed: {Failed}, Duration: {Duration:F2}s ===",
+                    totalAdded, totalUpdated, totalDeleted, totalFailed, duration);
+
+                if (isAjax)
+                {
+                    return Json(new
+                    {
+                        success = allSuccess,
+                        operation = "PULL",
+                        added = totalAdded,
+                        updated = totalUpdated,
+                        deleted = totalDeleted,
+                        failed = totalFailed,
+                        durationSeconds = Math.Round(duration, 2),
+                        formattedDuration = $"{duration:F1}s",
+                        message = allSuccess ? "✓ Pull completed" : "✕ Pull failed",
+                        error = errorSummary,
+                        details = new
+                        {
+                            destinations = destResult,
+                            branches = branchResult
+                        }
+                    });
+                }
+
+                if (allSuccess)
+                {
+                    TempData["ArcGISMessage"] = $"✅ Pull completed in {duration:F1}s — Added: {totalAdded}, Updated: {totalUpdated}";
+                    TempData["ArcGISMessageType"] = "success";
+                }
+                else
+                {
+                    TempData["ArcGISMessage"] = $"❌ Pull failed: {errorSummary}";
+                    TempData["ArcGISMessageType"] = "danger";
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                stopwatch.Stop();
+                var duration = stopwatch.Elapsed.TotalSeconds;
+                _logger.LogError(ex, "=== [PULL FAILED] Unhandled exception during PULL ===");
+
+                var failResult = ArcGISSyncResult.Failed(ex.Message, 0, 0, 0, 1, duration);
+                _syncStateManager.EndOperation(failResult, isSync: false);
+
+                if (isAjax)
+                {
+                    return StatusCode(500, new
+                    {
+                        success = false,
+                        operation = "PULL",
+                        added = 0,
+                        updated = 0,
+                        deleted = 0,
+                        failed = 1,
+                        durationSeconds = Math.Round(duration, 2),
+                        formattedDuration = $"{duration:F1}s",
+                        message = "✕ Pull failed",
+                        error = ex.Message
+                    });
+                }
+
+                TempData["ArcGISMessage"] = $"❌ Pull failed: {ex.Message}";
                 TempData["ArcGISMessageType"] = "danger";
+                return RedirectToAction("Index");
             }
-
-            return RedirectToAction("Index");
         }
 
         // -----------------------------------------------------------------------
@@ -142,9 +343,6 @@ namespace Tourist_Project_MVC.Controllers
             var isPublic = string.Equals(vm.Category?.Trim(), "Public", StringComparison.OrdinalIgnoreCase);
             if (isPublic)
             {
-                // Public destinations are always free-form access: no booking or
-                // ticket requirement and an all-day schedule are persisted so the
-                // existing ArcGIS fields remain populated.
                 vm.TicketRequired = "No";
                 vm.EgyptianPrice = null;
                 vm.StudentEgyptianPrice = null;
@@ -177,9 +375,6 @@ namespace Tourist_Project_MVC.Controllers
                 return View(vm);
             }
 
-            // The layer has an Images URL field but no attachment support. Store
-            // uploaded files under wwwroot so the URLs remain accessible to all
-            // existing destination consumers after ArcGIS is created.
             var uploadedImageUrls = new List<string>();
             if (vm.ImageFiles != null && vm.ImageFiles.Count > 0)
             {
@@ -250,16 +445,33 @@ namespace Tourist_Project_MVC.Controllers
                 return View(vm);
             }
 
-            // 2. ArcGIS confirmed success -> Sync local DB to ensure local IDs match remote layer
+            // 2. ArcGIS confirmed success -> Set stable ID
             if (createdId.HasValue)
             {
                 destination.Id = createdId.Value;
             }
 
-            // Pull fresh or save to ensure synchronization across website
-            await _arcgisSync.SyncDestinationsFromArcGIS();
+            // 3. Upsert destination into local database
+            var existing = await _context.Destinations.FirstOrDefaultAsync(d => d.Id == destination.Id);
+            if (existing != null)
+            {
+                existing.Name = destination.Name;
+                existing.ArabicName = destination.ArabicName;
+                existing.City = destination.City;
+                existing.Category = destination.Category;
+                existing.Description = destination.Description;
+                existing.Tags = destination.Tags;
+                existing.PhotoUrls = destination.PhotoUrls;
+                existing.Location = destination.Location;
+                _context.Destinations.Update(existing);
+            }
+            else
+            {
+                _context.Destinations.Add(destination);
+            }
+            await _context.SaveChangesAsync();
 
-            TempData["ArcGISMessage"] = $"Destination '{destination.Name}' was successfully created in ArcGIS and synced locally!";
+            TempData["ArcGISMessage"] = $"Destination '{destination.Name}' was successfully created in ArcGIS and synchronized locally!";
             TempData["ArcGISMessageType"] = "success";
 
             return RedirectToAction("Index");

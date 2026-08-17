@@ -87,6 +87,7 @@ namespace Tourist_Project_MVC
             builder.Services.AddHttpClient(); // registers IHttpClientFactory generally
 
             builder.Services.AddScoped<IArcGISSyncService, ArcGISSyncService>();
+            builder.Services.AddSingleton<ISyncStateManager, SyncStateManager>();
 
             // AI chat widget (Gemini-backed role-aware agent). The typed HttpClient
             // lives on the orchestrator with a generous timeout — the Gemini call

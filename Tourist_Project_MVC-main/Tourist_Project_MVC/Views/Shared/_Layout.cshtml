@@ -259,22 +259,14 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <form method="post" action="/AdminDashboard/SyncToArcGIS" style="margin:0;">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="dropdown-item" style="width:100%; text-align:start;"
-                                                    onclick="this.disabled=true; this.innerHTML='<span class=\'spinner-border spinner-border-sm me-2\' role=\'status\'></span> Syncing…';">
-                                                <i class="bi bi-arrow-repeat me-2"></i> @Localizer["Nav_SyncArcGIS"].Value
-                                            </button>
-                                        </form>
+                                        <button type="button" class="dropdown-item sync-action-btn" id="btnSyncArcGIS" data-action="sync" style="width:100%; text-align:start;">
+                                            <i class="bi bi-arrow-repeat me-2"></i> @Localizer["Nav_SyncArcGIS"].Value
+                                        </button>
                                     </li>
                                     <li>
-                                        <form method="post" action="/AdminDashboard/SyncFromArcGIS" style="margin:0;">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="dropdown-item" style="width:100%; text-align:start;"
-                                                    onclick="this.disabled=true; this.innerHTML='<span class=\'spinner-border spinner-border-sm me-2\' role=\'status\'></span> Pulling…';">
-                                                <i class="bi bi-cloud-arrow-down me-2"></i> @Localizer["Nav_PullArcGIS"].Value
-                                            </button>
-                                        </form>
+                                        <button type="button" class="dropdown-item sync-action-btn" id="btnPullArcGIS" data-action="pull" style="width:100%; text-align:start;">
+                                            <i class="bi bi-cloud-arrow-down me-2"></i> @Localizer["Nav_PullArcGIS"].Value
+                                        </button>
                                     </li>
                                     <li><hr class="dropdown-divider" /></li>
                                 }
@@ -910,6 +902,106 @@
         </div>
     </div>
 
+    <!-- Sync & Pull Result Toast Modal -->
+    <div id="syncResultContainer" class="sync-toast-container" style="display:none;" role="alert" aria-live="assertive">
+        <div class="sync-toast-card" id="syncToastCard">
+            <div class="sync-toast-header d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="sync-status-icon" id="syncStatusIcon"><i class="bi bi-check-circle-fill text-success"></i></span>
+                    <strong class="sync-title" id="syncToastTitle">Sync Completed</strong>
+                </div>
+                <button type="button" class="btn-close btn-close-white sync-toast-close" id="syncToastCloseBtn" aria-label="Close"></button>
+            </div>
+            <div class="sync-toast-body" id="syncToastBody">
+                <div class="sync-stats-grid" id="syncStatsGrid">
+                    <div class="sync-stat-item"><span class="stat-label text-muted">Added:</span> <strong class="stat-val text-success" id="syncStatAdded">0</strong></div>
+                    <div class="sync-stat-item"><span class="stat-label text-muted">Updated:</span> <strong class="stat-val text-info" id="syncStatUpdated">0</strong></div>
+                    <div class="sync-stat-item"><span class="stat-label text-muted">Deleted:</span> <strong class="stat-val text-muted" id="syncStatDeleted">0</strong></div>
+                    <div class="sync-stat-item"><span class="stat-label text-muted">Failed:</span> <strong class="stat-val text-danger" id="syncStatFailed">0</strong></div>
+                    <div class="sync-stat-item" style="grid-column: span 2;"><span class="stat-label text-muted">Duration:</span> <strong class="stat-val text-warning" id="syncStatDuration">0.0s</strong></div>
+                </div>
+                <div class="sync-error-details" id="syncErrorDetails" style="display:none;">
+                    <div class="sync-error-label">Reason:</div>
+                    <div class="sync-error-text" id="syncErrorText"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .sync-toast-container {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            z-index: 999999;
+            min-width: 300px;
+            max-width: 380px;
+            animation: syncToastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        [dir="rtl"] .sync-toast-container {
+            right: auto;
+            left: 20px;
+        }
+        @@keyframes syncToastSlideIn {
+            from { opacity: 0; transform: translateY(-16px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .sync-toast-card {
+            background: rgba(22, 14, 8, 0.95);
+            border: 1.5px solid var(--egy-primary, #C8832A);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #fff;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.55), 0 0 20px rgba(200, 131, 42, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .sync-toast-header {
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.5px;
+        }
+        .sync-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .sync-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+        .sync-stat-item {
+            background: rgba(255,255,255,0.06);
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sync-error-details {
+            margin-top: 10px;
+            padding: 8px 10px;
+            background: rgba(220, 53, 69, 0.18);
+            border-left: 3px solid #dc3545;
+            border-radius: 6px;
+            font-size: 0.83rem;
+        }
+        .sync-error-label {
+            font-weight: bold;
+            color: #ff8585;
+            margin-bottom: 2px;
+        }
+        .sync-error-text {
+            word-break: break-word;
+            color: #f8d7da;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+    </style>
+
     <!-- Global anti-forgery token for AJAX POSTs (read by JS helpers). -->
     <form id="antiforgeryForm" style="display:none">@Html.AntiForgeryToken()</form>
 
@@ -927,6 +1019,137 @@
     <script src="~/js/favorites.js" asp-append-version="true"></script>
     <!-- Filter Icon Animation JS -->
     <script src="~/js/filter-icon.js" asp-append-version="true"></script>
+
+    <script>
+        (function () {
+            var syncBtn = document.getElementById('btnSyncArcGIS');
+            var pullBtn = document.getElementById('btnPullArcGIS');
+            var toastContainer = document.getElementById('syncResultContainer');
+            var toastTitle = document.getElementById('syncToastTitle');
+            var toastIcon = document.getElementById('syncStatusIcon');
+            var statAdded = document.getElementById('syncStatAdded');
+            var statUpdated = document.getElementById('syncStatUpdated');
+            var statDeleted = document.getElementById('syncStatDeleted');
+            var statFailed = document.getElementById('syncStatFailed');
+            var statDuration = document.getElementById('syncStatDuration');
+            var errorDetails = document.getElementById('syncErrorDetails');
+            var errorText = document.getElementById('syncErrorText');
+            var closeBtn = document.getElementById('syncToastCloseBtn');
+            var isRunning = false;
+            var autoHideTimeout = null;
+
+            if (closeBtn && toastContainer) {
+                closeBtn.addEventListener('click', function () {
+                    toastContainer.style.display = 'none';
+                });
+            }
+
+            function getToken() {
+                var f = document.getElementById('antiforgeryForm');
+                return f ? f.querySelector('input[name="__RequestVerificationToken"]').value : '';
+            }
+
+            function showResult(data, isPull) {
+                if (!toastContainer) return;
+                clearTimeout(autoHideTimeout);
+
+                var opName = isPull ? 'Pull' : 'Sync';
+                var isSuccess = data && data.success;
+
+                if (isSuccess) {
+                    toastTitle.textContent = '✓ ' + opName + ' completed';
+                    toastTitle.className = 'sync-title text-success';
+                    toastIcon.innerHTML = '<i class="bi bi-check-circle-fill text-success" style="font-size:1.2rem;"></i>';
+                    if (errorDetails) errorDetails.style.display = 'none';
+                } else {
+                    toastTitle.textContent = '✕ ' + opName + ' failed';
+                    toastTitle.className = 'sync-title text-danger';
+                    toastIcon.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:1.2rem;"></i>';
+                    if (errorDetails && errorText) {
+                        errorDetails.style.display = 'block';
+                        errorText.textContent = (data && (data.error || data.message)) || 'An error occurred during synchronization.';
+                    }
+                }
+
+                if (statAdded) statAdded.textContent = (data && data.added !== undefined) ? data.added : '0';
+                if (statUpdated) statUpdated.textContent = (data && data.updated !== undefined) ? data.updated : '0';
+                if (statDeleted) statDeleted.textContent = (data && data.deleted !== undefined) ? data.deleted : '0';
+                if (statFailed) statFailed.textContent = (data && data.failed !== undefined) ? data.failed : '0';
+                if (statDuration) statDuration.textContent = (data && data.formattedDuration) ? data.formattedDuration : ((data && data.durationSeconds) ? data.durationSeconds + 's' : '0.0s');
+
+                toastContainer.style.display = 'block';
+
+                // Dispatch sync event for map and table listeners
+                window.dispatchEvent(new CustomEvent('egyxplore:data-synced', { detail: data }));
+
+                autoHideTimeout = setTimeout(function () {
+                    toastContainer.style.display = 'none';
+                }, 10000);
+            }
+
+            function handleSyncAction(action) {
+                if (isRunning) return;
+                isRunning = true;
+
+                var isPull = action === 'pull';
+                var originalSyncHtml = syncBtn ? syncBtn.innerHTML : '';
+                var originalPullHtml = pullBtn ? pullBtn.innerHTML : '';
+
+                if (syncBtn) {
+                    syncBtn.disabled = true;
+                    if (!isPull) syncBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> SYNCING...';
+                }
+                if (pullBtn) {
+                    pullBtn.disabled = true;
+                    if (isPull) pullBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> PULLING...';
+                }
+
+                var url = isPull ? '/AdminDashboard/SyncFromArcGIS' : '/AdminDashboard/SyncToArcGIS';
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': getToken(),
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(function (r) {
+                    return r.json().then(function (json) {
+                        return { ok: r.ok, status: r.status, data: json };
+                    }).catch(function () {
+                        return { ok: r.ok, status: r.status, data: { success: false, message: 'Server returned HTTP ' + r.status } };
+                    });
+                })
+                .then(function (res) {
+                    isRunning = false;
+                    if (syncBtn) { syncBtn.disabled = false; syncBtn.innerHTML = originalSyncHtml; }
+                    if (pullBtn) { pullBtn.disabled = false; pullBtn.innerHTML = originalPullHtml; }
+                    showResult(res.data, isPull);
+                })
+                .catch(function (err) {
+                    isRunning = false;
+                    if (syncBtn) { syncBtn.disabled = false; syncBtn.innerHTML = originalSyncHtml; }
+                    if (pullBtn) { pullBtn.disabled = false; pullBtn.innerHTML = originalPullHtml; }
+                    showResult({ success: false, error: err ? (err.message || String(err)) : 'Network error' }, isPull);
+                });
+            }
+
+            if (syncBtn) {
+                syncBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    handleSyncAction('sync');
+                });
+            }
+
+            if (pullBtn) {
+                pullBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    handleSyncAction('pull');
+                });
+            }
+        })();
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

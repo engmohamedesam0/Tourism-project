@@ -821,6 +821,22 @@ var EGYMaps = (function () {
     });
   }
 
+  window.addEventListener("egyxplore:data-synced", function () {
+    Object.keys(_maps).forEach(function (k) {
+      try {
+        var m = _maps[k];
+        if (m && typeof m.layer === "function") {
+          var lyr = m.layer();
+          if (lyr && typeof lyr.refresh === "function") {
+            lyr.refresh();
+          }
+        }
+      } catch (e) {
+        console.warn("Error refreshing map layer on sync", e);
+      }
+    });
+  });
+
   return {
     initWfsMap: initWfsMap,
     initLocationPicker: initLocationPicker,
