@@ -218,20 +218,10 @@ namespace Tourist_Project_MVC.Controllers
             return View("Support", vm);
         }
 
-        // GET: Tourist tickets routed to the signed-in sponsor.
+        // GET: Tourist tickets disabled - redirect to Support helpdesk.
         public IActionResult TouristTickets()
         {
-            var sponsor = ResolveCurrentSponsor();
-            if (sponsor == null) return RedirectToAction("CompleteProfile", "SponsorPortal");
-
-            var tickets = _supportTicketService.GetTouristTicketsForSponsor(sponsor.Id);
-
-            var vm = new SupportTicketVM
-            {
-                Tickets = tickets,
-                Category = null
-            };
-            return View("TouristTickets", vm);
+            return RedirectToAction("Support");
         }
 
         // GET: single tourist ticket detail (for sponsor).

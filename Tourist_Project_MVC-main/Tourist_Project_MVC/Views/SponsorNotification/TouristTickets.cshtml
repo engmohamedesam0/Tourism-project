@@ -2,76 +2,195 @@
 
 @{
     ViewData["Title"] = Localizer["SponsorNotification_TouristTicketsTitle"].Value;
-    ViewData["IsHomePage"] = false;
+    ViewData["FullWidth"] = true;
 }
 
-<div class="container my-4" style="max-width: 1000px;">
+<div class="notifications-page-wrapper py-4 px-3 px-lg-4">
+    <div class="container-fluid max-width-1200">
 
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="page-title mb-0">
-            <i class="bi bi-person me-2"></i> @Localizer["SponsorNotification_TouristTicketsTitle"].Value
-        </h1>
-        <a asp-action="Support" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-ticket-perforated me-1"></i> @Localizer["SponsorNotification_MyTickets"].Value
-        </a>
-    </div>
-
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body">
-            @if (!Model.Tickets.Any())
-            {
-                @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
-                {
-                    { "EmptyStateTitle", "No Tourist Tickets" },
-                    { "EmptyStateDescription", "There are no support tickets from tourists at the moment. When tourists reach out, their tickets will appear here." }
-                })
-            }
-            else
-            {
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle destinations-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>@Localizer["SponsorNotification_Subject"].Value</th>
-                                <th>@Localizer["SponsorNotification_Category"].Value</th>
-                                <th>@Localizer["SponsorNotification_Status"].Value</th>
-                                <th>@Localizer["SponsorNotification_Date"].Value</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{
-                                int i = 1;
-                            }
-                            @foreach (var t in Model.Tickets)
-                            {
-                                <tr>
-                                    <td class="fw-bold text-muted">@i.ToString("D2")</td>
-                                    <td>
-                                        <a asp-action="TouristTicketDetails" asp-route-id="@t.Id" class="fw-bold text-decoration-none">@t.Subject</a>
-                                        @if (!string.IsNullOrEmpty(t.AdminResponse))
-                                        {
-                                            <span class="badge bg-success ms-1" title="@Localizer["SponsorNotification_AdminResponded"].Value"><i class="bi bi-reply-fill"></i></span>
-                                        }
-                                    </td>
-                                    <td><span class="badge-category">@t.Category</span></td>
-                                    <td>
-                                        <span class="badge bg-@(t.Status == "Open" ? "warning" : t.Status == "Resolved" ? "success" : "info")">@t.Status</span>
-                                    </td>
-                                    <td class="small text-muted">@t.CreatedDate.ToString("yyyy-MM-dd")</td>
-                                    <td class="text-end">
-                                        <a asp-action="TouristTicketDetails" asp-route-id="@t.Id" class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-box-arrow-in-right me-1"></i> @Localizer["AdminSupport_Open"].Value
-                                        </a>
-                                    </td>
-                                </tr>
-                                i++;
-                            }
-                        </tbody>
-                    </table>
+        <!-- HEADER BAR -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <span class="badge bg-gold-subtle text-gold fw-bold uppercase-track">
+                            <i class="bi bi-person-heart me-1"></i> Customer Experience
+                        </span>
+                        <span class="badge bg-light text-dark border">Tourist Inquiries</span>
+                    </div>
+                    <h1 class="page-title mb-1">
+                        @Localizer["SponsorNotification_TouristTicketsTitle"].Value
+                    </h1>
+                    <p class="text-muted small mb-0">
+                        View and manage support inquiries and feedback submitted directly by tourists regarding your offers.
+                    </p>
                 </div>
-            }
+                <div class="d-flex align-items-center gap-2">
+                    <a asp-action="Support" class="btn btn-outline-dark px-3 py-2 rounded-3 d-flex align-items-center gap-2 btn-sm">
+                        <i class="bi bi-headset"></i>
+                        <span>Sponsor Helpdesk</span>
+                    </a>
+                </div>
+            </div>
         </div>
+
+        <!-- MODULE NAVIGATION TABS -->
+        <div class="d-flex align-items-center gap-2 mb-4 border-bottom pb-2">
+            <a asp-action="Index" class="btn btn-nav-tab">
+                <i class="bi bi-bell-fill me-1"></i> Notifications
+            </a>
+            <a asp-action="Support" class="btn btn-nav-tab">
+                <i class="bi bi-headset me-1"></i> Sponsor Support
+            </a>
+            <a asp-action="TouristTickets" class="btn btn-nav-tab active">
+                <i class="bi bi-ticket-perforated me-1"></i> Tourist Tickets
+            </a>
+        </div>
+
+        <!-- MAIN CONTENT CARD -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+            <div class="card-body p-0">
+                @if (!Model.Tickets.Any())
+                {
+                    <div class="py-5 text-center px-4">
+                        <div class="empty-icon-box bg-gold-subtle text-gold rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 76px; height: 76px;">
+                            <i class="bi bi-ticket-detailed fs-1"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-2" style="font-family: 'Cinzel', serif;">No Tourist Tickets</h4>
+                        <p class="text-muted small mb-0" style="max-width: 460px; margin: 0 auto; line-height: 1.6;">
+                            There are currently no active support tickets or inquiries from tourists. When tourists reach out with questions about your rewards, their tickets will appear here.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle custom-tickets-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">#</th>
+                                    <th>@Localizer["SponsorNotification_Subject"].Value</th>
+                                    <th>@Localizer["SponsorNotification_Category"].Value</th>
+                                    <th>@Localizer["SponsorNotification_Status"].Value</th>
+                                    <th>@Localizer["SponsorNotification_Date"].Value</th>
+                                    <th class="pe-4 text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int i = 1; }
+                                @foreach (var t in Model.Tickets)
+                                {
+                                    var statusBadge = t.Status switch
+                                    {
+                                        "Open" => "bg-warning-subtle text-warning-emphasis border border-warning-subtle",
+                                        "Resolved" => "bg-success-subtle text-success border border-success-subtle",
+                                        _ => "bg-info-subtle text-info border border-info-subtle"
+                                    };
+                                    <tr>
+                                        <td class="ps-4 fw-bold text-muted">@i.ToString("D2")</td>
+                                        <td>
+                                            <a asp-action="TouristTicketDetails" asp-route-id="@t.Id" class="fw-bold text-dark text-decoration-none hover-gold">
+                                                @t.Subject
+                                            </a>
+                                            @if (!string.IsNullOrEmpty(t.AdminResponse))
+                                            {
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle ms-1" title="@Localizer["SponsorNotification_AdminResponded"].Value">
+                                                    <i class="bi bi-reply-fill me-1"></i> Responded
+                                                </span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border font-monospace">@t.Category</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge @statusBadge">@t.Status</span>
+                                        </td>
+                                        <td class="small text-muted font-monospace">@t.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="pe-4 text-end">
+                                            <a asp-action="TouristTicketDetails" asp-route-id="@t.Id" class="btn btn-sm btn-outline-dark rounded-3 px-3">
+                                                <i class="bi bi-box-arrow-in-right me-1"></i> View Ticket
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+
     </div>
 </div>
+
+@section Scripts {
+    <style>
+        .max-width-1200 {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .bg-gold-subtle {
+            background-color: rgba(200, 131, 42, 0.12) !important;
+        }
+
+        .text-gold {
+            color: #c8832a !important;
+        }
+
+        .uppercase-track {
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 0.72rem;
+        }
+
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: #2c1a0e;
+        }
+
+        .btn-nav-tab {
+            color: #6c757d;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 8px 16px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .btn-nav-tab:hover {
+            color: #c8832a;
+            background-color: rgba(200, 131, 42, 0.06);
+        }
+
+        .btn-nav-tab.active {
+            color: #2c1a0e;
+            background-color: rgba(200, 131, 42, 0.12);
+            border-color: rgba(200, 131, 42, 0.25);
+        }
+
+        .custom-tickets-table th {
+            background-color: #fcfbfa;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #6c757d;
+            border-bottom: 2px solid #f0e9df;
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+
+        .custom-tickets-table td {
+            padding-top: 14px;
+            padding-bottom: 14px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f6f2ec;
+        }
+
+        .hover-gold:hover {
+            color: #c8832a !important;
+        }
+    </style>
+}

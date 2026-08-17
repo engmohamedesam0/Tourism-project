@@ -824,8 +824,8 @@ h6,
 .stat-card {
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
-    border-radius: 14px;
-    padding: 22px 22px 20px;
+    border-radius: 12px;
+    padding: 14px 16px;
     box-shadow: var(--shadow-card);
     transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     height: 100%;
@@ -842,52 +842,52 @@ h6,
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
-    font-size: 1.4rem;
-    color: var(--text-inverse);
-    background: var(--bg-table-header);
-    margin-bottom: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    margin-bottom: 10px;
+    background: rgba(200, 131, 42, 0.12);
+    color: #c8832a;
 }
 
 .stat-number {
-    font-family: 'Cinzel', serif;
-    font-size: 2.1rem;
-    font-weight: 900;
+    font-family: 'Plus Jakarta Sans', 'Nunito', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 800;
     color: var(--text-heading);
     line-height: 1.1;
     display: inline-block;
 }
 
 .stat-suffix {
-    font-family: 'Cinzel', serif;
-    font-size: 1.3rem;
-    font-weight: 900;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
     color: var(--egy-primary);
     margin-left: 2px;
     display: inline;
 }
 
 .stat-label {
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.8rem;
+    font-family: 'Plus Jakarta Sans', 'Nunito', sans-serif;
+    font-size: 0.7rem;
     color: var(--text-muted);
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    margin-top: 6px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
     display: block;
 }
 
-.stat-blue   .stat-icon,
-.stat-green  .stat-icon,
-.stat-gold   .stat-icon,
-.stat-purple .stat-icon,
-.stat-teal   .stat-icon,
-.stat-red    .stat-icon,
-.stat-amber  .stat-icon {
-    background: var(--bg-table-header);
-}
+/* Per-color subtle icon backgrounds */
+.stat-gold   .stat-icon { background: rgba(200, 131, 42, 0.12); color: #c8832a; }
+.stat-blue   .stat-icon { background: rgba(13, 110, 253, 0.10); color: #0d6efd; }
+.stat-green  .stat-icon { background: rgba(25, 135, 84, 0.10);  color: #198754; }
+.stat-purple .stat-icon { background: rgba(111, 66, 193, 0.10); color: #6f42c1; }
+.stat-teal   .stat-icon { background: rgba(13, 202, 240, 0.12); color: #0dcaf0; }
+.stat-red    .stat-icon { background: rgba(220, 53, 69, 0.10);  color: #dc3545; }
+.stat-amber  .stat-icon { background: rgba(255, 193, 7, 0.14);  color: #fd7e14; }
 
 .stats-section .stat-card {
     background: rgba(26, 18, 11, 0.04);

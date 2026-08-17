@@ -355,6 +355,12 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <!-- ============ ADMIN EXPERIENCE ============ -->
+                            <!-- Admin Dashboard -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="AdminDashboard" asp-action="Index">
+                                    <i class="bi bi-speedometer2 me-1"></i> @Localizer["Nav_AdminDashboard"].Value
+                                </a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle position-relative" href="#"
                                    id="adminDropdown" role="button"
@@ -427,12 +433,6 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
-                            <!-- Admin Dashboard -->
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="AdminDashboard" asp-action="Index">
-                                    <i class="bi bi-speedometer2 me-1"></i> @Localizer["Nav_AdminDashboard"].Value
-                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Docs" asp-action="Index">

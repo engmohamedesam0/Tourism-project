@@ -55,6 +55,26 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
         _context = context;
     }
 
+    private HttpClient CreateClient()
+    {
+        if (bool.TryParse(_config["ArcGIS:BypassSSL"], out var bypass) && bypass)
+        {
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+            };
+            var client = new HttpClient(handler);
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            return client;
+        }
+        else
+        {
+            var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            return client;
+        }
+    }
+
     private string? DestinationsLayerUrl => _config["ArcGIS:DestinationsLayerUrl"];
     private string? BranchesLayerUrl => _config["ArcGIS:BranchesLayerUrl"];
     private string? TouristsTableUrl => _config["ArcGIS:TouristsTableUrl"];
@@ -222,8 +242,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
 
         try
         {
-            var client = _clientFactory.CreateClient();
-            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            var client = CreateClient();
             var adds = new List<object>();
             var updates = new List<object>();
             var addsTargetOids = new List<int>();
@@ -402,8 +421,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
 
         try
         {
-            var client = _clientFactory.CreateClient();
-            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            var client = CreateClient();
             var adds = new List<object>();
             var updates = new List<object>();
             var addsTargetOids = new List<int>();
@@ -554,8 +572,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
                 select new { Tourist = t, User = u }
             ).ToListAsync(ct);
 
-            var client = _clientFactory.CreateClient();
-            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            var client = CreateClient();
 
             var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
             var idField = ResolveField(fieldMap, "TouristId") ?? "TouristId";
@@ -769,8 +786,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
                 select new { Nationality = g.Key, Count = g.Count() }
             ).ToListAsync(ct);
 
-            var client = _clientFactory.CreateClient();
-            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            var client = CreateClient();
 
             var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
             var natField = ResolveField(fieldMap, "Nationality") ?? "Nationality";
@@ -997,8 +1013,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
                 .OrderBy(r => r.Id)
                 .ToListAsync(ct);
 
-            var client = _clientFactory.CreateClient();
-            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            var client = CreateClient();
 
             var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
             var idField = ResolveField(fieldMap, "RedemptionId") ?? "RedemptionId";
@@ -1186,8 +1201,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
 
         try
         {
-            var client = _clientFactory.CreateClient();
-            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            var client = CreateClient();
             using var metadataResponse = await client.GetAsync($"{layerUrl}?f=json&token={Uri.EscapeDataString(token)}", ct);
             if (!metadataResponse.IsSuccessStatusCode)
                 return new(Array.Empty<ArcGISFieldDefinition>(), Array.Empty<ArcGISDestinationRecord>(), $"ArcGIS schema returned HTTP {(int)metadataResponse.StatusCode}.");
@@ -1289,8 +1303,7 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
 
         try
         {
-            var client = _clientFactory.CreateClient();
-            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+            var client = CreateClient();
 
             var fieldMap = await GetFieldMapAsync(client, layerUrl, token, ct);
             if (fieldMap == null)

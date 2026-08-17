@@ -1,572 +1,572 @@
 [
-    {
-        "Id": 1,
-        "SponsorId": 1,
-        "Name": "Cairo Marriott Hotel — Main",
-        "Address": "16 Saray El Gezira St, Zamalek, Cairo",
-        "lat": 30.0669,
-        "lng": 31.2243,
-        "ContactNumber": 223456789,
-        "Category": "Hotel"
-    },
-    {
-        "Id": 2,
-        "SponsorId": 1,
-        "Name": "Cairo Marriott — Garden Pavilion",
-        "Address": "16 Saray El Gezira St, Zamalek, Cairo",
-        "lat": 30.0675,
-        "lng": 31.2251,
-        "ContactNumber": 223456790,
-        "Category": "Hotel"
-    },
-    {
-        "Id": 3,
-        "SponsorId": 2,
-        "Name": "EgyptAir — HQ",
-        "Address": "Cairo International Airport, Cairo",
-        "lat": 30.1118,
-        "lng": 31.4056,
-        "ContactNumber": 290777000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 4,
-        "SponsorId": 3,
-        "Name": "Emeco Travel — Downtown",
-        "Address": "26 Tahrir Square, Downtown Cairo",
-        "lat": 30.0444,
-        "lng": 31.2358,
-        "ContactNumber": 222756000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 5,
-        "SponsorId": 4,
-        "Name": "Sofitel Luxor Winter Palace — Main",
-        "Address": "Corniche El Nile, Luxor",
-        "lat": 25.6989,
-        "lng": 32.6394,
-        "ContactNumber": 953580422,
-        "Category": "Hotel"
-    },
-    {
-        "Id": 6,
-        "SponsorId": 5,
-        "Name": "Hilton Aswan — Main",
-        "Address": "Elephantine Island, Aswan",
-        "lat": 24.0822,
-        "lng": 32.8872,
-        "ContactNumber": 972780222,
-        "Category": "Hotel"
-    },
-    {
-        "Id": 7,
-        "SponsorId": 6,
-        "Name": "El Fishawy — Khan El Khalili",
-        "Address": "Al-Hussein Square, Khan El Khalili, Cairo",
-        "lat": 30.0463,
-        "lng": 31.2631,
-        "ContactNumber": 25902836,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 8,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — Zamalek",
-        "Address": "157 26th of July St, Zamalek, Cairo",
-        "lat": 30.0589,
-        "lng": 31.2201,
-        "ContactNumber": 27359595,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 9,
-        "SponsorId": 8,
-        "Name": "Mena House — Giza",
-        "Address": "Pyramids Road, Giza",
-        "lat": 29.9772,
-        "lng": 31.1256,
-        "ContactNumber": 23332222,
-        "Category": "Hotel"
-    },
-    {
-        "Id": 10,
-        "SponsorId": 9,
-        "Name": "Nile Cruise Co — Aswan Dock",
-        "Address": "Aswan River Dock, Aswan",
-        "lat": 24.0908,
-        "lng": 32.8998,
-        "ContactNumber": 97345678,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 11,
-        "SponsorId": 10,
-        "Name": "Cilantro — Maadi",
-        "Address": "9 Road 9, Maadi, Cairo",
-        "lat": 29.9622,
-        "lng": 31.2489,
-        "ContactNumber": 27582525,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 12,
-        "SponsorId": 2,
-        "Name": "EgyptAir — Alexandria Office",
-        "Address": "Silsila, El Raml, Alexandria",
-        "lat": 31.2,
-        "lng": 29.899,
-        "ContactNumber": 20000000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 13,
-        "SponsorId": 2,
-        "Name": "EgyptAir — Luxor Airport Station",
-        "Address": "Luxor International Airport",
-        "lat": 25.674,
-        "lng": 32.706,
-        "ContactNumber": 20000000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 14,
-        "SponsorId": 2,
-        "Name": "EgyptAir — Aswan Airport Station",
-        "Address": "Aswan International Airport",
-        "lat": 23.964,
-        "lng": 32.82,
-        "ContactNumber": 20000000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 15,
-        "SponsorId": 2,
-        "Name": "EgyptAir — Hurghada Airport Station",
-        "Address": "Hurghada International Airport",
-        "lat": 27.177,
-        "lng": 33.799,
-        "ContactNumber": 20000000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 16,
-        "SponsorId": 2,
-        "Name": "EgyptAir — Sharm El-Sheikh Airport Station",
-        "Address": "Sharm El-Sheikh International Airport",
-        "lat": 27.977,
-        "lng": 34.395,
-        "ContactNumber": 20000000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 17,
-        "SponsorId": 2,
-        "Name": "EgyptAir — Marsa Alam Airport Station",
-        "Address": "Marsa Alam International Airport",
-        "lat": 25.557,
-        "lng": 34.584,
-        "ContactNumber": 20000000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 18,
-        "SponsorId": 2,
-        "Name": "EgyptAir — Mansoura City Office",
-        "Address": "El Gomhoria St, Mansoura",
-        "lat": 31.04,
-        "lng": 31.355,
-        "ContactNumber": 20000000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 19,
-        "SponsorId": 2,
-        "Name": "EgyptAir — Tanta City Office",
-        "Address": "El Geish St, Tanta",
-        "lat": 30.79,
-        "lng": 30.999,
-        "ContactNumber": 20000000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 20,
-        "SponsorId": 2,
-        "Name": "EgyptAir — Port Said City Office",
-        "Address": "23rd of July St, Port Said",
-        "lat": 31.265,
-        "lng": 32.302,
-        "ContactNumber": 20000000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 21,
-        "SponsorId": 2,
-        "Name": "EgyptAir — Sohag Airport Station",
-        "Address": "Sohag International Airport",
-        "lat": 26.343,
-        "lng": 31.74,
-        "ContactNumber": 20000000,
-        "Category": "Airline"
-    },
-    {
-        "Id": 22,
-        "SponsorId": 3,
-        "Name": "Emeco Travel — Zamalek Office",
-        "Address": "26th of July St, Zamalek, Cairo",
-        "lat": 30.062,
-        "lng": 31.216,
-        "ContactNumber": 20000000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 23,
-        "SponsorId": 3,
-        "Name": "Emeco Travel — Nasr City Office",
-        "Address": "Abbas El Akkad St, Nasr City, Cairo",
-        "lat": 30.058,
-        "lng": 31.339,
-        "ContactNumber": 20000000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 24,
-        "SponsorId": 3,
-        "Name": "Emeco Travel — Alexandria Office",
-        "Address": "El Horreya Rd, Alexandria",
-        "lat": 31.2,
-        "lng": 29.905,
-        "ContactNumber": 20000000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 25,
-        "SponsorId": 3,
-        "Name": "Emeco Travel — Hurghada Office",
-        "Address": "Sheraton Rd, Hurghada",
-        "lat": 27.257,
-        "lng": 33.811,
-        "ContactNumber": 20000000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 26,
-        "SponsorId": 3,
-        "Name": "Emeco Travel — Luxor Office",
-        "Address": "El Karnak St, Luxor",
-        "lat": 25.687,
-        "lng": 32.6395,
-        "ContactNumber": 20000000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 27,
-        "SponsorId": 3,
-        "Name": "Emeco Travel — Aswan Office",
-        "Address": "Corniche El Nil, Aswan",
-        "lat": 24.088,
-        "lng": 32.899,
-        "ContactNumber": 20000000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 28,
-        "SponsorId": 4,
-        "Name": "Sofitel Winter Palace — Pavilion Wing",
-        "Address": "Corniche El Nile, Luxor",
-        "lat": 25.6992,
-        "lng": 32.6399,
-        "ContactNumber": 20000000,
-        "Category": "Hotel"
-    },
-    {
-        "Id": 29,
-        "SponsorId": 8,
-        "Name": "Mena House — Palace Wing",
-        "Address": "Pyramids Road, Giza",
-        "lat": 29.9775,
-        "lng": 31.126,
-        "ContactNumber": 20000000,
-        "Category": "Hotel"
-    },
-    {
-        "Id": 30,
-        "SponsorId": 9,
-        "Name": "Nile Cruise Co — Luxor Dock",
-        "Address": "Luxor Corniche, Luxor",
-        "lat": 25.7,
-        "lng": 32.652,
-        "ContactNumber": 20000000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 31,
-        "SponsorId": 9,
-        "Name": "Nile Cruise Co — Edfu Dock",
-        "Address": "Edfu Corniche, Edfu",
-        "lat": 24.979,
-        "lng": 32.873,
-        "ContactNumber": 20000000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 32,
-        "SponsorId": 9,
-        "Name": "Nile Cruise Co — Esna Dock",
-        "Address": "Esna Corniche, Esna",
-        "lat": 25.293,
-        "lng": 32.554,
-        "ContactNumber": 20000000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 33,
-        "SponsorId": 9,
-        "Name": "Nile Cruise Co — Kom Ombo Dock",
-        "Address": "Kom Ombo Corniche, Kom Ombo",
-        "lat": 24.477,
-        "lng": 32.947,
-        "ContactNumber": 20000000,
-        "Category": "Tourism Agency"
-    },
-    {
-        "Id": 34,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — Maadi",
-        "Address": "Road 9, Maadi, Cairo",
-        "lat": 29.96,
-        "lng": 31.25,
-        "ContactNumber": 23805050,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 35,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — Nasr City",
-        "Address": "Makram Ebeid St, Nasr City, Cairo",
-        "lat": 30.059,
-        "lng": 31.338,
-        "ContactNumber": 20000000,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 36,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — Heliopolis",
-        "Address": "El Merghany St, Heliopolis, Cairo",
-        "lat": 30.098,
-        "lng": 31.33,
-        "ContactNumber": 20000000,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 37,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — New Cairo",
-        "Address": "90th St, Fifth Settlement, New Cairo",
-        "lat": 30.012,
-        "lng": 31.472,
-        "ContactNumber": 20000000,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 38,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — AUC",
-        "Address": "AUC New Cairo Campus, Fifth Settlement",
-        "lat": 29.986,
-        "lng": 31.439,
-        "ContactNumber": 20000000,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 39,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — City Stars",
-        "Address": "City Stars, Nasr City, Cairo",
-        "lat": 30.068,
-        "lng": 31.346,
-        "ContactNumber": 20000000,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 40,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — Mall of Egypt",
-        "Address": "Mall of Egypt, 6th of October City",
-        "lat": 29.936,
-        "lng": 30.924,
-        "ContactNumber": 20000000,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 41,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — Mall of Arabia",
-        "Address": "Mall of Arabia, 6th of October City",
-        "lat": 29.939,
-        "lng": 30.914,
-        "ContactNumber": 1277830015,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 42,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — Dandy Mall",
-        "Address": "Dandy Mall, El Wahat Rd, Giza",
-        "lat": 30.012,
-        "lng": 31.001,
-        "ContactNumber": 20000000,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 43,
-        "SponsorId": 7,
-        "Name": "Abou El Sid — Alexandria (Smouha)",
-        "Address": "Smouha, Alexandria",
-        "lat": 31.217,
-        "lng": 29.947,
-        "ContactNumber": 20000000,
-        "Category": "Restaurant"
-    },
-    {
-        "Id": 44,
-        "SponsorId": 10,
-        "Name": "Cilantro — Zamalek",
-        "Address": "157 26th of July St, Zamalek, Cairo",
-        "lat": 30.0615,
-        "lng": 31.2167,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 45,
-        "SponsorId": 10,
-        "Name": "Cilantro — Maadi (Degla)",
-        "Address": "17 Road 216, Degla, Maadi, Cairo",
-        "lat": 29.9645,
-        "lng": 31.254,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 46,
-        "SponsorId": 10,
-        "Name": "Cilantro — Heliopolis (Korba)",
-        "Address": "4 Ibrahim St, Korba, Heliopolis, Cairo",
-        "lat": 30.1,
-        "lng": 31.329,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 47,
-        "SponsorId": 10,
-        "Name": "Cilantro — Nasr City",
-        "Address": "Abbas El Akkad St, Nasr City, Cairo",
-        "lat": 30.0625,
-        "lng": 31.334,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 48,
-        "SponsorId": 10,
-        "Name": "Cilantro — Downtown (Towers Mall)",
-        "Address": "Towers Mall, Tahrir, Cairo",
-        "lat": 30.0445,
-        "lng": 31.235,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 49,
-        "SponsorId": 10,
-        "Name": "Cilantro — Mohandessin",
-        "Address": "Gameat El Dowal St, Mohandessin, Giza",
-        "lat": 30.0565,
-        "lng": 31.206,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 50,
-        "SponsorId": 10,
-        "Name": "Cilantro — Dokki",
-        "Address": "24 Mesdaq St, Dokki, Giza",
-        "lat": 30.0385,
-        "lng": 31.2045,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 51,
-        "SponsorId": 10,
-        "Name": "Cilantro — Merghany (Heliopolis)",
-        "Address": "El Merghany St, Heliopolis, Cairo",
-        "lat": 30.092,
-        "lng": 31.333,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 52,
-        "SponsorId": 10,
-        "Name": "Cilantro — Vogue Mall (New Cairo)",
-        "Address": "Vogue Mall, Fifth Settlement, New Cairo",
-        "lat": 30.01,
-        "lng": 31.455,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 53,
-        "SponsorId": 10,
-        "Name": "Cilantro — Sheikh Zayed",
-        "Address": "Sheikh Zayed, Giza",
-        "lat": 29.995,
-        "lng": 30.975,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 54,
-        "SponsorId": 10,
-        "Name": "Cilantro — Alexandria (Shatby)",
-        "Address": "Alexandria Library, Shatby, Alexandria",
-        "lat": 31.2085,
-        "lng": 29.908,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 55,
-        "SponsorId": 10,
-        "Name": "Cilantro — Alexandria (Smouha)",
-        "Address": "Smouha, Alexandria",
-        "lat": 31.215,
-        "lng": 29.945,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 56,
-        "SponsorId": 10,
-        "Name": "Cilantro — Madinaty (The Strip)",
-        "Address": "The Strip, Madinaty, New Cairo",
-        "lat": 30.105,
-        "lng": 31.66,
-        "ContactNumber": 20000000,
-        "Category": "Cafe"
-    },
-    {
-        "Id": 57,
-        "SponsorId": 11,
-        "Name": "Ismailia",
-        "Address": "Ismailia",
-        "lat": 30.609827041625977,
-        "lng": 32.27947235107422,
-        "ContactNumber": 20000000,
-        "Category": "Hotel"
-    }
+  {
+    "Id": 1,
+    "SponsorId": 1,
+    "Name": "Cairo Marriott Hotel — Main",
+    "Address": "16 Saray El Gezira St, Zamalek, Cairo",
+    "Category": "Hotel",
+    "ContactNumber": 223456789,
+    "lat": 30.066900003800885,
+    "lng": 31.224300004346453
+  },
+  {
+    "Id": 2,
+    "SponsorId": 1,
+    "Name": "Cairo Marriott — Garden Pavilion",
+    "Address": "16 Saray El Gezira St, Zamalek, Cairo",
+    "Category": "Hotel",
+    "ContactNumber": 223456790,
+    "lat": 30.067500003800916,
+    "lng": 31.22510000434657
+  },
+  {
+    "Id": 3,
+    "SponsorId": 2,
+    "Name": "EgyptAir — HQ",
+    "Address": "Cairo International Airport, Cairo",
+    "Category": "Airline",
+    "ContactNumber": 290777000,
+    "lat": 30.11180000380537,
+    "lng": 31.405600004371692
+  },
+  {
+    "Id": 4,
+    "SponsorId": 3,
+    "Name": "Emeco Travel — Downtown",
+    "Address": "26 Tahrir Square, Downtown Cairo",
+    "Category": "Tourism Agency",
+    "ContactNumber": 222756000,
+    "lat": 30.044400003798582,
+    "lng": 31.235800004348057
+  },
+  {
+    "Id": 5,
+    "SponsorId": 4,
+    "Name": "Sofitel Luxor Winter Palace — Main",
+    "Address": "Corniche El Nile, Luxor",
+    "Category": "Hotel",
+    "ContactNumber": 953580422,
+    "lat": 25.698900003337325,
+    "lng": 32.63940000454345
+  },
+  {
+    "Id": 6,
+    "SponsorId": 5,
+    "Name": "Hilton Aswan — Main",
+    "Address": "Elephantine Island, Aswan",
+    "Category": "Hotel",
+    "ContactNumber": 972780222,
+    "lat": 24.082200003154806,
+    "lng": 32.887200004577934
+  },
+  {
+    "Id": 7,
+    "SponsorId": 6,
+    "Name": "El Fishawy — Khan El Khalili",
+    "Address": "Al-Hussein Square, Khan El Khalili, Cairo",
+    "Category": "Cafe",
+    "ContactNumber": 25902836,
+    "lat": 30.04630000379879,
+    "lng": 31.26310000435186
+  },
+  {
+    "Id": 8,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — Zamalek",
+    "Address": "157 26th of July St, Zamalek, Cairo",
+    "Category": "Restaurant",
+    "ContactNumber": 27359595,
+    "lat": 30.058900003800066,
+    "lng": 31.22010000434587
+  },
+  {
+    "Id": 9,
+    "SponsorId": 8,
+    "Name": "Mena House — Giza",
+    "Address": "Pyramids Road, Giza",
+    "Category": "Hotel",
+    "ContactNumber": 23332222,
+    "lat": 29.977200003791822,
+    "lng": 31.125600004332718
+  },
+  {
+    "Id": 10,
+    "SponsorId": 9,
+    "Name": "Nile Cruise Co — Aswan Dock",
+    "Address": "Aswan River Dock, Aswan",
+    "Category": "Tourism Agency",
+    "ContactNumber": 97345678,
+    "lat": 24.090800003155795,
+    "lng": 32.89980000457969
+  },
+  {
+    "Id": 11,
+    "SponsorId": 10,
+    "Name": "Cilantro — Maadi",
+    "Address": "9 Road 9, Maadi, Cairo",
+    "Category": "Cafe",
+    "ContactNumber": 27582525,
+    "lat": 29.962200003790297,
+    "lng": 31.248900004349878
+  },
+  {
+    "Id": 13,
+    "SponsorId": 2,
+    "Name": "EgyptAir — Alexandria Office",
+    "Address": "Silsila, El Raml, Alexandria",
+    "Category": "Airline",
+    "ContactNumber": 20000000,
+    "lat": 31.2000000039134,
+    "lng": 29.899000004161973
+  },
+  {
+    "Id": 14,
+    "SponsorId": 2,
+    "Name": "EgyptAir — Luxor Airport Station",
+    "Address": "Luxor International Airport",
+    "Category": "Airline",
+    "ContactNumber": 20000000,
+    "lat": 25.674000003334566,
+    "lng": 32.70600000455271
+  },
+  {
+    "Id": 15,
+    "SponsorId": 2,
+    "Name": "EgyptAir — Aswan Airport Station",
+    "Address": "Aswan International Airport",
+    "Category": "Airline",
+    "ContactNumber": 20000000,
+    "lat": 23.964000003141244,
+    "lng": 32.82000000456858
+  },
+  {
+    "Id": 16,
+    "SponsorId": 2,
+    "Name": "EgyptAir — Hurghada Airport Station",
+    "Address": "Hurghada International Airport",
+    "Category": "Airline",
+    "ContactNumber": 20000000,
+    "lat": 27.177000003499206,
+    "lng": 33.79900000470486
+  },
+  {
+    "Id": 17,
+    "SponsorId": 2,
+    "Name": "EgyptAir — Sharm El-Sheikh Airport Station",
+    "Address": "Sharm El-Sheikh International Airport",
+    "Category": "Airline",
+    "ContactNumber": 20000000,
+    "lat": 27.97700000358475,
+    "lng": 34.395000004787825
+  },
+  {
+    "Id": 18,
+    "SponsorId": 2,
+    "Name": "EgyptAir — Marsa Alam Airport Station",
+    "Address": "Marsa Alam International Airport",
+    "Category": "Airline",
+    "ContactNumber": 20000000,
+    "lat": 25.557000003321527,
+    "lng": 34.58400000481413
+  },
+  {
+    "Id": 19,
+    "SponsorId": 2,
+    "Name": "EgyptAir — Mansoura City Office",
+    "Address": "El Gomhoria St, Mansoura",
+    "Category": "Airline",
+    "ContactNumber": 20000000,
+    "lat": 31.04000000389771,
+    "lng": 31.35500000436465
+  },
+  {
+    "Id": 20,
+    "SponsorId": 2,
+    "Name": "EgyptAir — Tanta City Office",
+    "Address": "El Geish St, Tanta",
+    "Category": "Airline",
+    "ContactNumber": 20000000,
+    "lat": 30.790000003873093,
+    "lng": 30.999000004315096
+  },
+  {
+    "Id": 21,
+    "SponsorId": 2,
+    "Name": "EgyptAir — Port Said City Office",
+    "Address": "23rd of July St, Port Said",
+    "Category": "Airline",
+    "ContactNumber": 20000000,
+    "lat": 31.265000003919756,
+    "lng": 32.30200000449648
+  },
+  {
+    "Id": 22,
+    "SponsorId": 2,
+    "Name": "EgyptAir — Sohag Airport Station",
+    "Address": "Sohag International Airport",
+    "Category": "Airline",
+    "ContactNumber": 20000000,
+    "lat": 26.34300000340848,
+    "lng": 31.740000004418242
+  },
+  {
+    "Id": 23,
+    "SponsorId": 3,
+    "Name": "Emeco Travel — Zamalek Office",
+    "Address": "26th of July St, Zamalek, Cairo",
+    "Category": "Tourism Agency",
+    "ContactNumber": 20000000,
+    "lat": 30.062000003800364,
+    "lng": 31.2160000043453
+  },
+  {
+    "Id": 24,
+    "SponsorId": 3,
+    "Name": "Emeco Travel — Nasr City Office",
+    "Address": "Abbas El Akkad St, Nasr City, Cairo",
+    "Category": "Tourism Agency",
+    "ContactNumber": 20000000,
+    "lat": 30.058000003799968,
+    "lng": 31.33900000436242
+  },
+  {
+    "Id": 25,
+    "SponsorId": 3,
+    "Name": "Emeco Travel — Alexandria Office",
+    "Address": "El Horreya Rd, Alexandria",
+    "Category": "Tourism Agency",
+    "ContactNumber": 20000000,
+    "lat": 31.2000000039134,
+    "lng": 29.90500000416281
+  },
+  {
+    "Id": 26,
+    "SponsorId": 3,
+    "Name": "Emeco Travel — Hurghada Office",
+    "Address": "Sheraton Rd, Hurghada",
+    "Category": "Tourism Agency",
+    "ContactNumber": 20000000,
+    "lat": 27.257000003507827,
+    "lng": 33.81100000470653
+  },
+  {
+    "Id": 27,
+    "SponsorId": 3,
+    "Name": "Emeco Travel — Luxor Office",
+    "Address": "El Karnak St, Luxor",
+    "Category": "Tourism Agency",
+    "ContactNumber": 20000000,
+    "lat": 25.687000003335996,
+    "lng": 32.63950000454346
+  },
+  {
+    "Id": 28,
+    "SponsorId": 3,
+    "Name": "Emeco Travel — Aswan Office",
+    "Address": "Corniche El Nil, Aswan",
+    "Category": "Tourism Agency",
+    "ContactNumber": 20000000,
+    "lat": 24.08800000315546,
+    "lng": 32.89900000457958
+  },
+  {
+    "Id": 29,
+    "SponsorId": 4,
+    "Name": "Sofitel Winter Palace — Pavilion Wing",
+    "Address": "Corniche El Nile, Luxor",
+    "Category": "Hotel",
+    "ContactNumber": 20000000,
+    "lat": 25.699200003337364,
+    "lng": 32.639900004543506
+  },
+  {
+    "Id": 30,
+    "SponsorId": 8,
+    "Name": "Mena House — Palace Wing",
+    "Address": "Pyramids Road, Giza",
+    "Category": "Hotel",
+    "ContactNumber": 20000000,
+    "lat": 29.97750000379184,
+    "lng": 31.12600000433277
+  },
+  {
+    "Id": 31,
+    "SponsorId": 9,
+    "Name": "Nile Cruise Co — Luxor Dock",
+    "Address": "Luxor Corniche, Luxor",
+    "Category": "Tourism Agency",
+    "ContactNumber": 20000000,
+    "lat": 25.70000000333745,
+    "lng": 32.652000004545194
+  },
+  {
+    "Id": 32,
+    "SponsorId": 9,
+    "Name": "Nile Cruise Co — Edfu Dock",
+    "Address": "Edfu Corniche, Edfu",
+    "Category": "Tourism Agency",
+    "ContactNumber": 20000000,
+    "lat": 24.97900000325675,
+    "lng": 32.87300000457596
+  },
+  {
+    "Id": 33,
+    "SponsorId": 9,
+    "Name": "Nile Cruise Co — Esna Dock",
+    "Address": "Esna Corniche, Esna",
+    "Category": "Tourism Agency",
+    "ContactNumber": 20000000,
+    "lat": 25.29300000329201,
+    "lng": 32.55400000453155
+  },
+  {
+    "Id": 34,
+    "SponsorId": 9,
+    "Name": "Nile Cruise Co — Kom Ombo Dock",
+    "Address": "Kom Ombo Corniche, Kom Ombo",
+    "Category": "Tourism Agency",
+    "ContactNumber": 20000000,
+    "lat": 24.47700000319989,
+    "lng": 32.94700000458626
+  },
+  {
+    "Id": 35,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — Maadi",
+    "Address": "Road 9, Maadi, Cairo",
+    "Category": "Restaurant",
+    "ContactNumber": 23805050,
+    "lat": 29.96000000379007,
+    "lng": 31.25000000435004
+  },
+  {
+    "Id": 36,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — Nasr City",
+    "Address": "Makram Ebeid St, Nasr City, Cairo",
+    "Category": "Restaurant",
+    "ContactNumber": 20000000,
+    "lat": 30.05900000380008,
+    "lng": 31.338000004362286
+  },
+  {
+    "Id": 37,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — Heliopolis",
+    "Address": "El Merghany St, Heliopolis, Cairo",
+    "Category": "Restaurant",
+    "ContactNumber": 20000000,
+    "lat": 30.098000003803985,
+    "lng": 31.33000000436117
+  },
+  {
+    "Id": 38,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — New Cairo",
+    "Address": "90th St, Fifth Settlement, New Cairo",
+    "Category": "Restaurant",
+    "ContactNumber": 20000000,
+    "lat": 30.01200000379533,
+    "lng": 31.472000004380934
+  },
+  {
+    "Id": 39,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — AUC",
+    "Address": "AUC New Cairo Campus, Fifth Settlement",
+    "Category": "Restaurant",
+    "ContactNumber": 20000000,
+    "lat": 29.9860000037927,
+    "lng": 31.439000004376343
+  },
+  {
+    "Id": 40,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — City Stars",
+    "Address": "City Stars, Nasr City, Cairo",
+    "Category": "Restaurant",
+    "ContactNumber": 20000000,
+    "lat": 30.068000003800957,
+    "lng": 31.346000004363397
+  },
+  {
+    "Id": 41,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — Mall of Egypt",
+    "Address": "Mall of Egypt, 6th of October City",
+    "Category": "Restaurant",
+    "ContactNumber": 20000000,
+    "lat": 29.936000003787665,
+    "lng": 30.924000004304652
+  },
+  {
+    "Id": 42,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — Mall of Arabia",
+    "Address": "Mall of Arabia, 6th of October City",
+    "Category": "Restaurant",
+    "ContactNumber": 1277830015,
+    "lat": 29.93900000378795,
+    "lng": 30.914000004303265
+  },
+  {
+    "Id": 43,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — Dandy Mall",
+    "Address": "Dandy Mall, El Wahat Rd, Giza",
+    "Category": "Restaurant",
+    "ContactNumber": 20000000,
+    "lat": 30.01200000379533,
+    "lng": 31.001000004315376
+  },
+  {
+    "Id": 44,
+    "SponsorId": 7,
+    "Name": "Abou El Sid — Alexandria (Smouha)",
+    "Address": "Smouha, Alexandria",
+    "Category": "Restaurant",
+    "ContactNumber": 20000000,
+    "lat": 31.21700000391507,
+    "lng": 29.947000004168657
+  },
+  {
+    "Id": 45,
+    "SponsorId": 10,
+    "Name": "Cilantro — Zamalek",
+    "Address": "157 26th of July St, Zamalek, Cairo",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 30.06150000380032,
+    "lng": 31.216700004345398
+  },
+  {
+    "Id": 46,
+    "SponsorId": 10,
+    "Name": "Cilantro — Maadi (Degla)",
+    "Address": "17 Road 216, Degla, Maadi, Cairo",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 29.964500003790537,
+    "lng": 31.254000004350594
+  },
+  {
+    "Id": 47,
+    "SponsorId": 10,
+    "Name": "Cilantro — Heliopolis (Korba)",
+    "Address": "4 Ibrahim St, Korba, Heliopolis, Cairo",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 30.100000003804208,
+    "lng": 31.329000004361028
+  },
+  {
+    "Id": 48,
+    "SponsorId": 10,
+    "Name": "Cilantro — Nasr City",
+    "Address": "Abbas El Akkad St, Nasr City, Cairo",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 30.062500003800434,
+    "lng": 31.334000004361727
+  },
+  {
+    "Id": 49,
+    "SponsorId": 10,
+    "Name": "Cilantro — Downtown (Towers Mall)",
+    "Address": "Towers Mall, Tahrir, Cairo",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 30.044500003798596,
+    "lng": 31.235000004347942
+  },
+  {
+    "Id": 50,
+    "SponsorId": 10,
+    "Name": "Cilantro — Mohandessin",
+    "Address": "Gameat El Dowal St, Mohandessin, Giza",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 30.056500003799812,
+    "lng": 31.20600000434391
+  },
+  {
+    "Id": 51,
+    "SponsorId": 10,
+    "Name": "Cilantro — Dokki",
+    "Address": "24 Mesdaq St, Dokki, Giza",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 30.038500003798003,
+    "lng": 31.2045000043437
+  },
+  {
+    "Id": 52,
+    "SponsorId": 10,
+    "Name": "Cilantro — Merghany (Heliopolis)",
+    "Address": "El Merghany St, Heliopolis, Cairo",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 30.092000003803417,
+    "lng": 31.333000004361583
+  },
+  {
+    "Id": 53,
+    "SponsorId": 10,
+    "Name": "Cilantro — Vogue Mall (New Cairo)",
+    "Address": "Vogue Mall, Fifth Settlement, New Cairo",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 30.01000000379513,
+    "lng": 31.455000004378565
+  },
+  {
+    "Id": 54,
+    "SponsorId": 10,
+    "Name": "Cilantro — Sheikh Zayed",
+    "Address": "Sheikh Zayed, Giza",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 29.995000003793606,
+    "lng": 30.975000004311756
+  },
+  {
+    "Id": 55,
+    "SponsorId": 10,
+    "Name": "Cilantro — Alexandria (Shatby)",
+    "Address": "Alexandria Library, Shatby, Alexandria",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 31.208500003914235,
+    "lng": 29.908000004163224
+  },
+  {
+    "Id": 56,
+    "SponsorId": 10,
+    "Name": "Cilantro — Alexandria (Smouha)",
+    "Address": "Smouha, Alexandria",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 31.215000003914874,
+    "lng": 29.945000004168378
+  },
+  {
+    "Id": 57,
+    "SponsorId": 10,
+    "Name": "Cilantro — Madinaty (The Strip)",
+    "Address": "The Strip, Madinaty, New Cairo",
+    "Category": "Cafe",
+    "ContactNumber": 20000000,
+    "lat": 30.10500000380469,
+    "lng": 31.660000004407113
+  },
+  {
+    "Id": 12,
+    "SponsorId": 11,
+    "Name": "Ismailia",
+    "Address": "Ismailia",
+    "Category": "Hotel",
+    "ContactNumber": 20000000,
+    "lat": 30.609827045481175,
+    "lng": 32.279472355567556
+  }
 ]

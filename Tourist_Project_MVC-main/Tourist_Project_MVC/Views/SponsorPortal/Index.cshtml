@@ -1,167 +1,382 @@
 @model Tourist_Project_MVC.Models.Sponsor
 
 @{
-    ViewData["Title"] = Localizer["SponsorPortal_PageTitle"].Value;
-    ViewData["IsHomePage"] = false;
+    ViewData["Title"] = Localizer["SponsorPortal_PageTitle"].Value + " - " + Model.Name;
+    ViewData["FullWidth"] = true;
+
+    int branchCount = ViewBag.BranchCount ?? (Model.Branches?.Count ?? 0);
+    int rewardCount = ViewBag.RewardCount ?? (Model.Rewards?.Count ?? 0);
+    int reviewCount = ViewBag.ReviewCount ?? (Model.Reviews?.Count ?? 0);
+    int redemptionCount = ViewBag.RedemptionCount ?? 0;
 }
 
-<div class="container my-4" style="max-width: 1000px;">
+@section Styles {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@700;800&display=swap" rel="stylesheet">
+}
 
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h1 class="page-title mb-1">
-                <i class="bi bi-building-fill me-2"></i> @(string.IsNullOrEmpty(Model.Name) ? Localizer["SponsorPortal_PageTitle"].Value : Model.Name)
-            </h1>
-            <p class="text-muted mb-0">@Localizer["SponsorPortal_WelcomeMessage"].Value</p>
-        </div>
-        <span class="badge bg-warning text-dark fs-6">@Localizer["SponsorPortal_SponsorBadge"].Value</span>
-    </div>
+<div class="sponsor-portal-wrapper py-4 px-3 px-lg-4">
+    <div class="container-fluid max-width-1300">
 
-    <div class="row g-3">
-        <div class="col-md-4">
-            <a asp-controller="SponsorBranch" asp-action="Index" class="text-decoration-none portal-stat-link">
-                <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-geo-alt-fill text-primary" style="font-size: 2rem;"></i>
-                        <div class="stat-mini-number mt-2">@(Model.Branches?.Count ?? 0)</div>
-                        <div class="stat-mini-label">@Localizer["SponsorPortal_Branches"].Value</div>
+        <!-- EXECUTIVE HERO BANNER -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-4 bg-white hero-sponsor-card position-relative overflow-hidden">
+            <div class="hero-bg-accent"></div>
+            <div class="row align-items-center position-relative z-1 g-4">
+                <div class="col-lg-8">
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <span class="badge bg-gold-subtle text-gold fw-bold uppercase-track">
+                            <i class="bi bi-award-fill me-1"></i> Official Partner Portal
+                        </span>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle fw-semibold">
+                            <i class="bi bi-shield-check me-1"></i> Verified Enterprise Sponsor
+                        </span>
+                        <span class="badge bg-light text-dark border fw-medium">
+                            Category: @(string.IsNullOrEmpty(Model.Type) ? "General Partner" : Model.Type)
+                        </span>
+                    </div>
+                    <h1 class="portal-sponsor-name mb-2">
+                        @(string.IsNullOrEmpty(Model.Name) ? Localizer["SponsorPortal_PageTitle"].Value : Model.Name)
+                    </h1>
+                    <p class="hero-description text-secondary mb-3 max-width-600">
+                        @Localizer["SponsorPortal_WelcomeMessage"].Value Manage your GIS feature layer branches, design promotional tourist rewards, and track real-time redemption analytics.
+                    </p>
+
+                    @if (!string.IsNullOrEmpty(Model.Address) || !string.IsNullOrEmpty(Model.ContactNumber.ToString()))
+                    {
+                        <div class="d-flex align-items-center gap-3 text-muted small flex-wrap font-jakarta">
+                            @if (!string.IsNullOrEmpty(Model.Address))
+                            {
+                                <span><i class="bi bi-geo-alt-fill text-gold me-1"></i>@Model.Address</span>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.ContactNumber.ToString()))
+                            {
+                                <span><i class="bi bi-telephone-fill text-gold me-1"></i>@Model.ContactNumber</span>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="d-flex flex-column flex-sm-row flex-lg-column gap-2 justify-content-lg-end">
+                        <a asp-action="Dashboard" class="btn btn-gold text-white px-4 py-2.5 rounded-3 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-speedometer2 fs-5"></i>
+                            <span>Open Analytics Dashboard</span>
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a asp-controller="SponsorBranch" asp-action="Index" class="btn btn-outline-dark flex-grow-1 py-2 rounded-3 text-nowrap font-jakarta fw-semibold">
+                                <i class="bi bi-geo-alt me-1"></i> Branches
+                            </a>
+                            <a asp-controller="SponsorReward" asp-action="Index" class="btn btn-outline-dark flex-grow-1 py-2 rounded-3 text-nowrap font-jakarta fw-semibold">
+                                <i class="bi bi-gift me-1"></i> Rewards
+                            </a>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <a asp-controller="SponsorReview" asp-action="Index" class="btn btn-outline-dark py-2 rounded-3 text-nowrap font-jakarta fw-semibold px-4">
+                                <i class="bi bi-star me-1"></i> Reviews
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a asp-controller="SponsorReward" asp-action="Index" class="text-decoration-none portal-stat-link">
-                <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-gift-fill text-primary" style="font-size: 2rem;"></i>
-                        <div class="stat-mini-number mt-2">@(Model.Rewards?.Count ?? 0)</div>
-                        <div class="stat-mini-label">@Localizer["SponsorPortal_Rewards"].Value</div>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a asp-controller="SponsorReview" asp-action="Index" class="text-decoration-none portal-stat-link">
-                <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-star-fill text-primary" style="font-size: 2rem;"></i>
-                        <div class="stat-mini-number mt-2">@(Model.Reviews?.Count ?? 0)</div>
-                        <div class="stat-mini-label">@Localizer["SponsorPortal_Reviews"].Value</div>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    @if (!string.IsNullOrEmpty(Model.Address))
-    {
-        <div class="card border-0 shadow-sm rounded-4 mt-3">
-            <div class="card-body">
-                <h6 class="mb-2"><i class="bi bi-info-circle-fill me-1 text-primary"></i> @Localizer["SponsorPortal_Profile"].Value</h6>
-                <p class="mb-1"><strong>@Localizer["SponsorPortal_TypeLabel"].Value</strong> @Model.Type</p>
-                <p class="mb-1"><strong>@Localizer["SponsorPortal_AddressLabel"].Value</strong> @Model.Address</p>
-                <p class="mb-0"><strong>@Localizer["SponsorPortal_ContactLabel"].Value</strong> @Model.ContactNumber</p>
             </div>
         </div>
-    }
 
-    <div class="row g-3 mt-1">
-        <div class="col-md-4">
-            <a asp-action="Dashboard" class="text-decoration-none">
-                <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <i class="bi bi-speedometer2 text-primary" style="font-size: 1.6rem;"></i>
-                        <div>
-                            <div class="fw-bold">@Localizer["SponsorPortal_Dashboard"].Value</div>
-                            <div class="small text-muted">@Localizer["SponsorPortal_DashboardDesc"].Value</div>
+
+        <!-- MANAGEMENT MODULES HUB GRID -->
+        <h4 class="hub-section-title fw-bold mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-grid-fill text-gold"></i>
+            <span>Sponsor Management Modules</span>
+        </h4>
+
+        <div class="row g-4 mb-4">
+            <!-- MODULE 1: DASHBOARD -->
+            <div class="col-md-6 col-lg-4">
+                <a asp-action="Dashboard" class="text-decoration-none">
+                    <div class="card module-card border-0 shadow-sm rounded-4 h-100 p-4 bg-white">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="module-icon-box bg-gold-subtle text-gold rounded-3">
+                                <i class="bi bi-speedometer2 fs-3"></i>
+                            </div>
+                            <span class="badge bg-gold-subtle text-gold fw-semibold">Real-time GIS</span>
+                        </div>
+                        <h5 class="module-card-title mb-2">Analytics Dashboard</h5>
+                        <p class="module-card-desc mb-3">
+                            Interactive ArcGIS GIS map filtering, monthly redemption trend charts, and tourist engagement ratings.
+                        </p>
+                        <div class="d-flex align-items-center text-gold fw-bold small mt-auto font-jakarta">
+                            <span>Open Dashboard</span>
+                            <i class="bi bi-arrow-right ms-2 transition-arrow"></i>
                         </div>
                     </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a asp-controller="SponsorRedemption" asp-action="Index" class="text-decoration-none">
-                <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <i class="bi bi-receipt text-primary" style="font-size: 1.6rem;"></i>
-                        <div>
-                            <div class="fw-bold">@Localizer["SponsorPortal_RedemptionHistory"].Value</div>
-                            <div class="small text-muted">@Localizer["SponsorPortal_RedemptionHistoryDesc"].Value</div>
+                </a>
+            </div>
+
+            <!-- MODULE 2: BRANCHES -->
+            <div class="col-md-6 col-lg-4">
+                <a asp-controller="SponsorBranch" asp-action="Index" class="text-decoration-none">
+                    <div class="card module-card border-0 shadow-sm rounded-4 h-100 p-4 bg-white">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="module-icon-box bg-primary-subtle text-primary rounded-3">
+                                <i class="bi bi-geo-alt-fill fs-3"></i>
+                            </div>
+                            <span class="badge bg-light text-dark border fw-medium">@branchCount Branches</span>
+                        </div>
+                        <h5 class="module-card-title mb-2">Branch Locations</h5>
+                        <p class="module-card-desc mb-3">
+                            Manage branch coordinates, operating status, contact details, and ArcGIS Online feature layer geometry.
+                        </p>
+                        <div class="d-flex align-items-center text-primary fw-bold small mt-auto font-jakarta">
+                            <span>Manage Branches</span>
+                            <i class="bi bi-arrow-right ms-2 transition-arrow"></i>
                         </div>
                     </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a asp-controller="SponsorNotification" asp-action="Index" class="text-decoration-none">
-                <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <i class="bi bi-bell-fill text-primary" style="font-size: 1.6rem;"></i>
-                        <div>
-                            <div class="fw-bold">@Localizer["SponsorPortal_Notifications"].Value</div>
-                            <div class="small text-muted">@Localizer["SponsorPortal_NotificationsDesc"].Value</div>
+                </a>
+            </div>
+
+            <!-- MODULE 3: REWARDS -->
+            <div class="col-md-6 col-lg-4">
+                <a asp-controller="SponsorReward" asp-action="Index" class="text-decoration-none">
+                    <div class="card module-card border-0 shadow-sm rounded-4 h-100 p-4 bg-white">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="module-icon-box bg-success-subtle text-success rounded-3">
+                                <i class="bi bi-gift-fill fs-3"></i>
+                            </div>
+                            <span class="badge bg-light text-dark border fw-medium">@rewardCount Offers</span>
+                        </div>
+                        <h5 class="module-card-title mb-2">Rewards & Offers</h5>
+                        <p class="module-card-desc mb-3">
+                            Create discount vouchers, free items, and point requirements to drive tourist visits to your branches.
+                        </p>
+                        <div class="d-flex align-items-center text-success fw-bold small mt-auto font-jakarta">
+                            <span>Manage Offers</span>
+                            <i class="bi bi-arrow-right ms-2 transition-arrow"></i>
                         </div>
                     </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a asp-controller="SponsorNotification" asp-action="Support" class="text-decoration-none">
-                <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <i class="bi bi-life-preserver text-primary" style="font-size: 1.6rem;"></i>
-                        <div>
-                            <div class="fw-bold">@Localizer["SponsorPortal_Support"].Value</div>
-                            <div class="small text-muted">@Localizer["SponsorPortal_SupportDesc"].Value</div>
+                </a>
+            </div>
+
+            <!-- MODULE 4: REDEMPTIONS -->
+            <div class="col-md-6 col-lg-4">
+                <a asp-controller="SponsorRedemption" asp-action="Index" class="text-decoration-none">
+                    <div class="card module-card border-0 shadow-sm rounded-4 h-100 p-4 bg-white">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="module-icon-box bg-info-subtle text-info rounded-3">
+                                <i class="bi bi-receipt-fill fs-3"></i>
+                            </div>
+                            <span class="badge bg-light text-dark border fw-medium">@redemptionCount Claims</span>
+                        </div>
+                        <h5 class="module-card-title mb-2">Redemption History</h5>
+                        <p class="module-card-desc mb-3">
+                            Review tourist voucher claims, verify QR redemption codes, and monitor branch-level voucher usage.
+                        </p>
+                        <div class="d-flex align-items-center text-info fw-bold small mt-auto font-jakarta">
+                            <span>View History</span>
+                            <i class="bi bi-arrow-right ms-2 transition-arrow"></i>
                         </div>
                     </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a asp-controller="SponsorPortal" asp-action="Reports" class="text-decoration-none">
-                <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <i class="bi bi-bar-chart-fill text-primary" style="font-size: 1.6rem;"></i>
-                        <div>
-                            <div class="fw-bold">@Localizer["SponsorPortal_Reports"].Value</div>
-                            <div class="small text-muted">@Localizer["SponsorPortal_ReportsDesc"].Value</div>
+                </a>
+            </div>
+
+            <!-- MODULE 5: NOTIFICATIONS -->
+            <div class="col-md-6 col-lg-4">
+                <a asp-controller="SponsorNotification" asp-action="Index" class="text-decoration-none">
+                    <div class="card module-card border-0 shadow-sm rounded-4 h-100 p-4 bg-white">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="module-icon-box bg-warning-subtle text-warning-emphasis rounded-3">
+                                <i class="bi bi-bell-fill fs-3"></i>
+                            </div>
+                            <span class="badge bg-gold-subtle text-gold fw-semibold">Live Alerts</span>
+                        </div>
+                        <h5 class="module-card-title mb-2">Notification Center</h5>
+                        <p class="module-card-desc mb-3">
+                            Real-time alerts on offer redemptions, stock updates, reward expiration dates, and tourist tickets.
+                        </p>
+                        <div class="d-flex align-items-center text-warning-emphasis fw-bold small mt-auto font-jakarta">
+                            <span>Open Alerts</span>
+                            <i class="bi bi-arrow-right ms-2 transition-arrow"></i>
                         </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
+
+            <!-- MODULE 6: REPORTS & PDF -->
+            <div class="col-md-6 col-lg-4">
+                <a asp-controller="SponsorPortal" asp-action="Reports" class="text-decoration-none">
+                    <div class="card module-card border-0 shadow-sm rounded-4 h-100 p-4 bg-white">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="module-icon-box bg-danger-subtle text-danger rounded-3">
+                                <i class="bi bi-file-earmark-pdf-fill fs-3"></i>
+                            </div>
+                            <span class="badge bg-light text-dark border fw-medium">Print PDF</span>
+                        </div>
+                        <h5 class="module-card-title mb-2">Reports & PDF Export</h5>
+                        <p class="module-card-desc mb-3">
+                            Generate annual performance reports, monthly breakdown tables, and print or export executive PDF documents.
+                        </p>
+                        <div class="d-flex align-items-center text-danger fw-bold small mt-auto font-jakarta">
+                            <span>Generate Reports</span>
+                            <i class="bi bi-arrow-right ms-2 transition-arrow"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
+
     </div>
-
-    <p class="text-muted small mt-4 mb-0">
-        @Localizer["SponsorPortal_ManageHelp"].Value
-    </p>
 </div>
 
 @section Scripts {
     <style>
-        .stat-mini-number {
-            font-family: 'Cinzel', sans-serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--egy-dark);
+        .font-jakarta {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
         }
-        .stat-mini-label {
-            font-size: 0.72rem;
-            color: #999;
+
+        .max-width-1300 {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .max-width-600 {
+            max-width: 600px;
+        }
+
+        .bg-gold-subtle {
+            background-color: rgba(200, 131, 42, 0.12) !important;
+        }
+
+        .text-gold {
+            color: #c8832a !important;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #c8832a 0%, #a4671e 100%);
+            border: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.25s ease;
+        }
+
+        .btn-gold:hover {
+            background: linear-gradient(135deg, #b57322 0%, #8e5716 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(200, 131, 42, 0.35) !important;
+        }
+
+        .uppercase-track {
+            font-family: 'Plus Jakarta Sans', sans-serif;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
+            font-size: 0.72rem;
+            font-weight: 700;
         }
 
-        .portal-stat-link .card {
-            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-            border: 1px solid transparent;
+        .portal-sponsor-name {
+            font-family: 'Cinzel', serif;
+            font-weight: 800;
+            color: #1e140c;
+            font-size: 2.2rem;
+            letter-spacing: 0.3px;
+            text-transform: none !important;
         }
 
-        .portal-stat-link:hover .card {
+        .hero-description {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            color: #4b5262 !important;
+            line-height: 1.6;
+        }
+
+        .hero-sponsor-card {
+            border-left: 5px solid #c8832a !important;
+        }
+
+        .hero-bg-accent {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 320px;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(200, 131, 42, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+            pointer-events: none;
+        }
+
+        .metric-tile {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            border-top: 3px solid transparent !important;
+        }
+
+        .metric-tile:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(200, 131, 42, 0.18);
-            border-color: var(--egy-primary);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+            border-top-color: #c8832a !important;
+        }
+
+        .metric-icon-box {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .metric-number {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            color: #1e140c;
+        }
+
+        .metric-label {
+            color: #6e7687 !important;
+        }
+
+        .hub-section-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            color: #1e140c;
+            font-size: 1.25rem;
+            letter-spacing: -0.2px;
+            text-transform: none !important;
+        }
+
+        .module-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            border: 1px solid #f0e9df !important;
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(200, 131, 42, 0.14) !important;
+            border-color: rgba(200, 131, 42, 0.35) !important;
+        }
+
+        .module-card-title {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            font-weight: 700 !important;
+            font-size: 1.15rem !important;
+            color: #1a1512 !important;
+            letter-spacing: -0.2px;
+            text-transform: none !important;
+        }
+
+        .module-card-desc {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.91rem;
+            color: #3d4452 !important;
+            line-height: 1.6;
+        }
+
+        .module-icon-box {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .transition-arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .module-card:hover .transition-arrow {
+            transform: translateX(4px);
         }
     </style>
 }

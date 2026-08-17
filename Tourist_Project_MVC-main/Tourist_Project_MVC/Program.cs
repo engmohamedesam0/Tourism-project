@@ -302,6 +302,24 @@ namespace Tourist_Project_MVC
             // only populated when empty.
             DbInitializer.Initialize(app.Services);
 
+            if (args.Contains("--sync"))
+            {
+                Console.WriteLine("[Program] Manual sync requested...");
+                using (var scope = app.Services.CreateScope())
+                {
+                    var syncService = scope.ServiceProvider.GetRequiredService<IArcGISSyncService>();
+                    Console.WriteLine("[Program] Syncing Destinations...");
+                    var destResult = syncService.SyncDestinationsFromArcGIS(CancellationToken.None).GetAwaiter().GetResult();
+                    Console.WriteLine($"[Program] Destinations Sync: {(destResult.Success ? "Success" : "Failed: " + destResult.Error)} (Added: {destResult.AddedCount}, Updated: {destResult.UpdatedCount})");
+                    
+                    Console.WriteLine("[Program] Syncing Branches...");
+                    var branchResult = syncService.SyncBranchesFromArcGIS(CancellationToken.None).GetAwaiter().GetResult();
+                    Console.WriteLine($"[Program] Branches Sync: {(branchResult.Success ? "Success" : "Failed: " + branchResult.Error)} (Added: {branchResult.AddedCount}, Updated: {branchResult.UpdatedCount})");
+                }
+                Console.WriteLine("[Program] Manual sync complete. Exiting.");
+                return;
+            }
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {

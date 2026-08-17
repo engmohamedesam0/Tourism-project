@@ -205,7 +205,7 @@ namespace Tourist_Project_MVC.Controllers
                         // Sponsors land on their own portal, everyone else (Tourists)
                         // land on the new Explore discovery page.
                         if (await userManager.IsInRoleAsync(user, "Admin"))
-                            return RedirectToAction("Index", "Tourist");
+                            return RedirectToAction("Index", "AdminDashboard");
 
                         if (await userManager.IsInRoleAsync(user, "Sponsor"))
                             return RedirectToAction("Index", "SponsorPortal");

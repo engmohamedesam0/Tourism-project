@@ -1,94 +1,301 @@
-﻿@model Tourist_Project_MVC.View_Model.SponsorNotificationVM
+@model Tourist_Project_MVC.View_Model.SponsorNotificationVM
 
 @{
     ViewData["Title"] = Localizer["SponsorNotification_NotificationsPageTitle"].Value;
-    ViewData["IsHomePage"] = false;
+    ViewData["FullWidth"] = true;
+
+    var unreadCount = Model.Notifications.Count(n => !n.IsRead);
+    var totalCount = Model.Notifications.Count;
 }
 
-<div class="container my-4" style="max-width: 1000px;">
+<div class="notifications-page-wrapper py-4 px-3 px-lg-4">
+    <div class="container-fluid max-width-1200">
 
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="page-title mb-0">
-            <i class="bi bi-bell-fill me-2"></i> @Localizer["SponsorNotification_NotificationsTitle"].Value
-        </h1>
-        <form asp-action="MarkAllRead" method="post" id="markAllReadForm">
-            <button class="btn btn-outline-primary btn-sm">
-                <i class="bi bi-check2-all me-1"></i> @Localizer["SponsorNotification_MarkAllRead"].Value
-            </button>
-        </form>
-    </div>
-
-    <div class="filter-bar mb-3">
-        @await Html.PartialAsync("_FilterIcon")
-        <div class="d-flex gap-2 flex-wrap">
-            <a class="btn btn-sm @(string.IsNullOrEmpty(Model.Filter) ? "btn-primary" : "btn-outline-secondary")"
-               asp-action="Index" asp-route-filter="">@Localizer["SponsorNotification_All"].Value</a>
-            <a class="btn btn-sm @(Model.Filter == "Read" ? "btn-primary" : "btn-outline-secondary")"
-               asp-action="Index" asp-route-filter="Read">@Localizer["SponsorNotification_Read"].Value</a>
-            <a class="btn btn-sm @(Model.Filter == "Unread" ? "btn-primary" : "btn-outline-secondary")"
-               asp-action="Index" asp-route-filter="Unread">@Localizer["SponsorNotification_Unread"].Value</a>
-        </div>
-    </div>
-
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body">
-            @if (!Model.Notifications.Any())
-            {
-                @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
-                {
-                    { "EmptyStateTitle", "No Notifications" },
-                    { "EmptyStateDescription", "You're all caught up. New notifications will appear here." },
-                    { "EmptyStateActionUrl", Url.Action("Index", new { filter = "" }) },
-                    { "EmptyStateActionText", "Clear Filters" }
-                })
-            }
-            else
-            {
-                <div class="list-group list-group-flush notification-list" data-notif-list data-current-filter="@Model.Filter">
-                    @foreach (var n in Model.Notifications)
+        <!-- HEADER BAR -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <span class="badge bg-gold-subtle text-gold fw-bold uppercase-track">
+                            <i class="bi bi-bell-fill me-1"></i> Notification Center
+                        </span>
+                        @if (unreadCount > 0)
+                        {
+                            <span class="badge bg-danger rounded-pill px-2">@unreadCount Unread</span>
+                        }
+                    </div>
+                    <h1 class="page-title mb-1">
+                        @Localizer["SponsorNotification_NotificationsTitle"].Value
+                    </h1>
+                    <p class="text-muted small mb-0">
+                        Stay updated on tourist reward redemptions, stock alerts, and system notifications.
+                    </p>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    @if (unreadCount > 0)
                     {
-                        <div class="list-group-item notification-item @(n.IsRead ? "notification-read" : "notification-unread")"
-                             id="notification-@n.Id"
-                             data-notif-id="@n.Id"
-                             data-related-type="@n.RelatedEntityType"
-                             data-related-id="@n.RelatedEntityId"
-                             style="cursor: pointer;">
-                            <div class="d-flex justify-content-between align-items-start gap-3">
-                                <div class="flex-grow-1">
-                                    <span class="badge bg-@(n.Type == "RewardExpired" ? "danger" : n.Type == "RewardLowStock" ? "warning" : "info") me-1">@n.Type</span>
-                                    <p class="mb-1 mt-1 small @(n.IsRead ? "text-muted" : "fw-semibold")">@n.Message</p>
-                                    <small class="text-muted">@n.CreatedDate.ToString("yyyy-MM-dd HH:mm")</small>
-                                </div>
-                                <button type="button" class="btn btn-sm btn-link text-danger notif-delete p-0" title="@Localizer["SponsorNotification_Delete"].Value" data-notif-id="@n.Id">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
-                            </div>
-                        </div>
+                        <form asp-action="MarkAllRead" method="post" id="markAllReadForm">
+                            <button type="submit" class="btn btn-gold text-white px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-2 fw-semibold btn-sm">
+                                <i class="bi bi-check2-all fs-5"></i>
+                                <span>@Localizer["SponsorNotification_MarkAllRead"].Value</span>
+                            </button>
+                        </form>
                     }
                 </div>
-            }
+            </div>
         </div>
-    </div>
 
-    <p class="text-muted small mt-4 mb-0">
-        @Localizer["SponsorNotification_AlertsInfo"].Value
-    </p>
+        <!-- MODULE NAVIGATION TABS -->
+        <div class="d-flex align-items-center gap-2 mb-4 border-bottom pb-2">
+            <a asp-action="Index" class="btn btn-nav-tab active">
+                <i class="bi bi-bell-fill me-1"></i> Notifications
+                @if (unreadCount > 0)
+                {
+                    <span class="badge bg-gold text-white ms-1 rounded-circle" style="font-size: 0.7rem;">@unreadCount</span>
+                }
+            </a>
+            <a asp-action="Support" class="btn btn-nav-tab">
+                <i class="bi bi-headset me-1"></i> Sponsor Support
+            </a>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-muted small fw-semibold me-1"><i class="bi bi-funnel-fill me-1 text-gold"></i> Filter:</span>
+                <a class="btn btn-sm filter-pill @(string.IsNullOrEmpty(Model.Filter) ? "active" : "")"
+                   asp-action="Index" asp-route-filter="">
+                    @Localizer["SponsorNotification_All"].Value (@totalCount)
+                </a>
+                <a class="btn btn-sm filter-pill @(Model.Filter == "Unread" ? "active" : "")"
+                   asp-action="Index" asp-route-filter="Unread">
+                    @Localizer["SponsorNotification_Unread"].Value (@unreadCount)
+                </a>
+                <a class="btn btn-sm filter-pill @(Model.Filter == "Read" ? "active" : "")"
+                   asp-action="Index" asp-route-filter="Read">
+                    @Localizer["SponsorNotification_Read"].Value (@(totalCount - unreadCount))
+                </a>
+            </div>
+            <div class="text-muted small">
+                Showing <strong>@Model.Notifications.Count</strong> alerts
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS LIST CONTAINER -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+            <div class="card-body p-0">
+                @if (!Model.Notifications.Any())
+                {
+                    <div class="py-5 text-center px-4">
+                        <div class="empty-icon-box bg-gold-subtle text-gold rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                            <i class="bi bi-bell-slash fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">No Notifications Found</h5>
+                        <p class="text-muted small mb-3" style="max-width: 420px; margin: 0 auto;">
+                            @(string.IsNullOrEmpty(Model.Filter) ? "You are all caught up! New notifications and system alerts will appear here." : "No notifications match your selected filter.")
+                        </p>
+                        @if (!string.IsNullOrEmpty(Model.Filter))
+                        {
+                            <a asp-action="Index" asp-route-filter="" class="btn btn-outline-dark btn-sm rounded-3">
+                                Clear Filters
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="notification-list" data-notif-list data-current-filter="@Model.Filter">
+                        @foreach (var n in Model.Notifications)
+                        {
+                            var isUnread = !n.IsRead;
+                            var iconClass = n.Type switch
+                            {
+                                "RewardRedeemed" => "bi-gift-fill text-success",
+                                "RewardExpired" => "bi-hourglass-bottom text-danger",
+                                "RewardLowStock" => "bi-exclamation-triangle-fill text-warning",
+                                _ => "bi-bell-fill text-gold"
+                            };
+                            var iconBg = n.Type switch
+                            {
+                                "RewardRedeemed" => "bg-success-subtle",
+                                "RewardExpired" => "bg-danger-subtle",
+                                "RewardLowStock" => "bg-warning-subtle",
+                                _ => "bg-gold-subtle"
+                            };
+                            var badgeClass = n.Type switch
+                            {
+                                "RewardRedeemed" => "bg-success-subtle text-success border border-success-subtle",
+                                "RewardExpired" => "bg-danger-subtle text-danger border border-danger-subtle",
+                                "RewardLowStock" => "bg-warning-subtle text-warning-emphasis border border-warning-subtle",
+                                _ => "bg-gold-subtle text-gold border border-gold-subtle"
+                            };
+
+                            <div class="notification-item p-3 p-md-4 border-bottom position-relative @(isUnread ? "notification-unread" : "notification-read")"
+                                 id="notification-@n.Id"
+                                 data-notif-id="@n.Id"
+                                 data-related-type="@n.RelatedEntityType"
+                                 data-related-id="@n.RelatedEntityId">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="notif-icon-container @iconBg rounded-3 flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                                        <i class="bi @iconClass fs-5"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge @badgeClass fw-semibold" style="font-size: 0.75rem;">@n.Type</span>
+                                                @if (isUnread)
+                                                {
+                                                    <span class="unread-dot rounded-circle bg-gold" title="Unread notification"></span>
+                                                }
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <small class="text-muted font-monospace"><i class="bi bi-clock me-1"></i>@n.CreatedDate.ToString("yyyy-MM-dd HH:mm")</small>
+                                                <button type="button" class="btn btn-sm text-muted hover-danger notif-delete p-0 border-0 bg-transparent ms-2" title="@Localizer["SponsorNotification_Delete"].Value" data-notif-id="@n.Id">
+                                                    <i class="bi bi-x-circle-fill fs-6"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <p class="mb-0 notif-message @(isUnread ? "fw-bold text-dark" : "text-secondary")" style="font-size: 0.94rem;">
+                                            @n.Message
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <p class="text-muted small mt-4 mb-0 text-center">
+            <i class="bi bi-info-circle me-1"></i> @Localizer["SponsorNotification_AlertsInfo"].Value
+        </p>
+
+    </div>
 </div>
 
 @section Scripts {
     <style>
-        .notification-item {
+        .max-width-1200 {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .bg-gold-subtle {
+            background-color: rgba(200, 131, 42, 0.12) !important;
+        }
+
+        .text-gold {
+            color: #c8832a !important;
+        }
+
+        .bg-gold {
+            background-color: #c8832a !important;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #c8832a 0%, #a4671e 100%);
+            border: none;
+            transition: all 0.25s ease;
+        }
+
+        .btn-gold:hover {
+            background: linear-gradient(135deg, #b57322 0%, #8e5716 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(200, 131, 42, 0.35) !important;
+        }
+
+        .uppercase-track {
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 0.72rem;
+        }
+
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: #2c1a0e;
+        }
+
+        .btn-nav-tab {
+            color: #6c757d;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 8px 16px;
+            border: 1px solid transparent;
             transition: all 0.2s ease;
         }
+
+        .btn-nav-tab:hover {
+            color: #c8832a;
+            background-color: rgba(200, 131, 42, 0.06);
+        }
+
+        .btn-nav-tab.active {
+            color: #2c1a0e;
+            background-color: rgba(200, 131, 42, 0.12);
+            border-color: rgba(200, 131, 42, 0.25);
+        }
+
+        .filter-pill {
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-weight: 500;
+            color: #6c757d;
+            border: 1px solid #e0d8cd;
+            background-color: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .filter-pill:hover {
+            border-color: #c8832a;
+            color: #c8832a;
+        }
+
+        .filter-pill.active {
+            background: linear-gradient(135deg, #c8832a 0%, #a4671e 100%);
+            color: #ffffff;
+            border-color: #c8832a;
+            box-shadow: 0 2px 6px rgba(200, 131, 42, 0.25);
+        }
+
+        .notification-item {
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+        }
+
         .notification-unread {
-            background-color: rgba(200, 131, 42, 0.08);
-            border-left: 3px solid var(--egy-primary);
+            background-color: rgba(200, 131, 42, 0.05);
+            border-left: 4px solid #c8832a !important;
         }
+
+        .notification-unread:hover {
+            background-color: rgba(200, 131, 42, 0.09);
+        }
+
         .notification-read {
-            opacity: 0.7;
+            background-color: #ffffff;
+            opacity: 0.85;
         }
+
+        .notification-read:hover {
+            opacity: 1;
+            background-color: #fdfbf8;
+        }
+
+        .unread-dot {
+            width: 8px;
+            height: 8px;
+            display: inline-block;
+            box-shadow: 0 0 0 2px rgba(200, 131, 42, 0.3);
+        }
+
+        .hover-danger:hover {
+            color: #dc3545 !important;
+        }
+
         .notification-list {
-            max-height: 60vh;
+            max-height: 68vh;
             overflow-y: auto;
         }
     </style>

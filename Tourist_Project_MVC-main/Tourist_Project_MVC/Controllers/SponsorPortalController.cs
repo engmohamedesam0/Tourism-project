@@ -34,6 +34,11 @@ namespace Tourist_Project_MVC.Controllers
             if (sponsor == null)
                 return RedirectToAction("CompleteProfile");
 
+            ViewBag.BranchCount = _context.Branches.Count(b => b.SponsorId == sponsor.Id);
+            ViewBag.RewardCount = _context.Rewards.Count(r => r.SponsorId == sponsor.Id);
+            ViewBag.ReviewCount = _context.Reviews.Count(rv => rv.SponsorId == sponsor.Id);
+            ViewBag.RedemptionCount = _context.Redemptions.Count(r => r.Reward != null && r.Reward.SponsorId == sponsor.Id);
+
             return View("Index", sponsor);
         }
 
