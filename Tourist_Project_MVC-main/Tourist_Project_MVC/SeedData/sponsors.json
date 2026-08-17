@@ -8,5 +8,13 @@
   { "Id": 7,  "Name": "Abou El Sid", "Type": "Restaurant", "Address": "157 26th of July St, Zamalek, Cairo", "ContactNumber": 27359595, "Email": "abouelsid@egyxplore.com", "ApplicationUserId": null },
   { "Id": 8,  "Name": "Mena House Hotel", "Type": "Hotel", "Address": "Pyramids Road, Giza", "ContactNumber": 23332222, "Email": "menahouse@egyxplore.com", "ApplicationUserId": null },
   { "Id": 9,  "Name": "Nile Cruise Co", "Type": "Tourism Agency", "Address": "Aswan River Dock, Aswan", "ContactNumber": 97345678, "Email": "nilecruise@egyxplore.com", "ApplicationUserId": null },
-  { "Id": 10, "Name": "Cilantro Coffee", "Type": "Cafe", "Address": "9 Road 9, Maadi, Cairo", "ContactNumber": 27582525, "Email": "cilantro@egyxplore.com", "ApplicationUserId": null }
+  {
+    "Id": 10,
+    "Name": "Cilantro Coffee",
+    "Type": "Cafe",
+    "Address": "9 Road 9, Maadi, Cairo",
+    "ContactNumber": 27582525,
+    "Email": "cilantro@egyxplore.com",
+    "ApplicationUserId": "seed-sponsor-cilantro"
+  }
 ]

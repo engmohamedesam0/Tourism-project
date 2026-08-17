@@ -20,6 +20,16 @@
     "Role": "Sponsor"
   },
   {
+    "Id": "seed-sponsor-cilantro",
+    "FirstName": "Cilantro",
+    "LastName": "Manager",
+    "Nationality": "Egyptian",
+    "Email": "cilantro@egyxplore.com",
+    "UserName": "cilantro@egyxplore.com",
+    "Password": "SponsorPass123!",
+    "Role": "Sponsor"
+  },
+  {
     "Id": "seed-tourist-1",
     "FirstName": "Ahmed",
     "LastName": "Hassan",
