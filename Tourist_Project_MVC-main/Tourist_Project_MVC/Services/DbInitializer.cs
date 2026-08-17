@@ -69,6 +69,12 @@ namespace Tourist_Project_MVC.Services
                 Console.Error.WriteLine($"[DbInitializer] Destinations ArcGIS pull-sync failed: {syncResult.Error}");
             }
 
+            var branchSyncResult = await arcgisSync.SyncBranchesFromArcGIS(CancellationToken.None);
+            if (!branchSyncResult.Success)
+            {
+                Console.Error.WriteLine($"[DbInitializer] Branches ArcGIS pull-sync failed: {branchSyncResult.Error}");
+            }
+
             // Only seed from local JSON if the table is completely empty. This covers
             // every case where ArcGIS did not populate it: sync not configured (no-op),
             // sync failed, or sync succeeded with zero features. Without destinations,

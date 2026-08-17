@@ -119,13 +119,15 @@ var EGYMaps = (function () {
           // Use the layer's OBJECTID field to build the expression.
           // visibleOids collects OBJECTID values (numeric) from sentinel attributes
           // for every feature that passes the predicate — NOT the map keys.
-          var oidField = sourceLayer.objectIdField || "OBJECTID";
+          var oidField = sourceLayer.objectIdField || "ObjectId";
           var passingOids = [];
           graphicsByFeature.forEach(function (sentinel) {
             var attrs = sentinel.attributes || {};
             var passes = predicate({ attributes: attrs, properties: attrs }, sentinel);
             if (passes) {
-              var oid = attrs[oidField];
+              var oid = attrs[oidField] !== undefined ? attrs[oidField] :
+                        (attrs["ObjectId"] !== undefined ? attrs["ObjectId"] :
+                        (attrs["OBJECTID"] !== undefined ? attrs["OBJECTID"] : attrs["objectId"]));
               if (oid !== undefined && oid !== null) passingOids.push(oid);
             }
           });

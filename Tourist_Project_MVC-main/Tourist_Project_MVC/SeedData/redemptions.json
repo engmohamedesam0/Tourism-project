@@ -1,20 +1,612 @@
 [
-  { "Id": 1,  "Code": "MARRIOTT15-EGY",  "PointsRedeemed": 200, "Status": "Active", "RedemptionDate": "2026-08-05", "RewardId": 1,  "TouristId": 1,  "BranchId": 1 },
-  { "Id": 2,  "Code": "NILE-CRUISE-EMC", "PointsRedeemed": 300, "Status": "Used",   "RedemptionDate": "2026-10-03", "RewardId": 4,  "TouristId": 2,  "BranchId": 4 },
-  { "Id": 3,  "Code": "EGYPTAIR-UP",     "PointsRedeemed": 500, "Status": "Used",   "RedemptionDate": "2026-07-15", "RewardId": 3,  "TouristId": 3,  "BranchId": 3 },
-  { "Id": 4,  "Code": "WINTERPAL-20",    "PointsRedeemed": 250, "Status": "Active", "RedemptionDate": "2026-09-01", "RewardId": 6,  "TouristId": 4,  "BranchId": 5 },
-  { "Id": 5,  "Code": "ASWAN-SUNSET",    "PointsRedeemed": 400, "Status": "Used",   "RedemptionDate": "2026-08-20", "RewardId": 8,  "TouristId": 5,  "BranchId": 6 },
-  { "Id": 6,  "Code": "FISHAWY-20",      "PointsRedeemed": 120, "Status": "Active", "RedemptionDate": "2026-09-10", "RewardId": 10, "TouristId": 6,  "BranchId": 7 },
-  { "Id": 7,  "Code": "ABOUELSID-15",    "PointsRedeemed": 130, "Status": "Used",   "RedemptionDate": "2026-07-22", "RewardId": 13, "TouristId": 7,  "BranchId": 8 },
-  { "Id": 8,  "Code": "MENAHSE-25",      "PointsRedeemed": 300, "Status": "Active", "RedemptionDate": "2026-10-12", "RewardId": 15, "TouristId": 8,  "BranchId": 9 },
-  { "Id": 9,  "Code": "NILECR-CR",       "PointsRedeemed": 400, "Status": "Used",   "RedemptionDate": "2026-08-30", "RewardId": 17, "TouristId": 9,  "BranchId": 10 },
-  { "Id": 10, "Code": "CILANTRO-BOGO",   "PointsRedeemed": 50,  "Status": "Active", "RedemptionDate": "2026-09-18", "RewardId": 19, "TouristId": 10, "BranchId": 11 },
-  { "Id": 11, "Code": "MARRIOTT-SPA",    "PointsRedeemed": 350, "Status": "Used",   "RedemptionDate": "2026-07-05", "RewardId": 2,  "TouristId": 11, "BranchId": 1 },
-  { "Id": 12, "Code": "EMECO-WHITE",     "PointsRedeemed": 450, "Status": "Active", "RedemptionDate": "2026-10-08", "RewardId": 5,  "TouristId": 12, "BranchId": 4 },
-  { "Id": 13, "Code": "WINTERPAL-TEA",   "PointsRedeemed": 150, "Status": "Used",   "RedemptionDate": "2026-08-14", "RewardId": 7,  "TouristId": 1,  "BranchId": 5 },
-  { "Id": 14, "Code": "FISHAWY-SHISHA",  "PointsRedeemed": 80,  "Status": "Active", "RedemptionDate": "2026-09-25", "RewardId": 11, "TouristId": 2,  "BranchId": 7 },
-  { "Id": 15, "Code": "ABOUELSID-UMM",   "PointsRedeemed": 60,  "Status": "Used",   "RedemptionDate": "2026-07-30", "RewardId": 14, "TouristId": 3,  "BranchId": 8 },
-  { "Id": 16, "Code": "ASWAN-SPA",       "PointsRedeemed": 220, "Status": "Active", "RedemptionDate": "2026-10-15", "RewardId": 9,  "TouristId": 4,  "BranchId": 6 },
-  { "Id": 17, "Code": "CILANTRO-BDAY",   "PointsRedeemed": 90,  "Status": "Used",   "RedemptionDate": "2026-08-11", "RewardId": 20, "TouristId": 5,  "BranchId": 11 },
-  { "Id": 18, "Code": "MENAHSE-POOL",    "PointsRedeemed": 160, "Status": "Active", "RedemptionDate": "2026-09-29", "RewardId": 16, "TouristId": 6,  "BranchId": 9 }
+  {
+    "Id": 1,
+    "Code": "MARRIOTT15-EGY",
+    "PointsRedeemed": 200,
+    "Status": "Active",
+    "RedemptionDate": "2026-08-05",
+    "RewardId": 1,
+    "TouristId": 1,
+    "BranchId": 1
+  },
+  {
+    "Id": 2,
+    "Code": "NILE-CRUISE-EMC",
+    "PointsRedeemed": 300,
+    "Status": "Used",
+    "RedemptionDate": "2026-10-03",
+    "RewardId": 4,
+    "TouristId": 2,
+    "BranchId": 4
+  },
+  {
+    "Id": 3,
+    "Code": "EGYPTAIR-UP",
+    "PointsRedeemed": 500,
+    "Status": "Used",
+    "RedemptionDate": "2026-07-15",
+    "RewardId": 3,
+    "TouristId": 3,
+    "BranchId": 3
+  },
+  {
+    "Id": 4,
+    "Code": "WINTERPAL-20",
+    "PointsRedeemed": 250,
+    "Status": "Active",
+    "RedemptionDate": "2026-09-01",
+    "RewardId": 6,
+    "TouristId": 4,
+    "BranchId": 5
+  },
+  {
+    "Id": 5,
+    "Code": "ASWAN-SUNSET",
+    "PointsRedeemed": 400,
+    "Status": "Used",
+    "RedemptionDate": "2026-08-20",
+    "RewardId": 8,
+    "TouristId": 5,
+    "BranchId": 6
+  },
+  {
+    "Id": 6,
+    "Code": "FISHAWY-20",
+    "PointsRedeemed": 120,
+    "Status": "Active",
+    "RedemptionDate": "2026-09-10",
+    "RewardId": 10,
+    "TouristId": 6,
+    "BranchId": 7
+  },
+  {
+    "Id": 7,
+    "Code": "ABOUELSID-15",
+    "PointsRedeemed": 130,
+    "Status": "Used",
+    "RedemptionDate": "2026-07-22",
+    "RewardId": 13,
+    "TouristId": 7,
+    "BranchId": 8
+  },
+  {
+    "Id": 8,
+    "Code": "MENAHSE-25",
+    "PointsRedeemed": 300,
+    "Status": "Active",
+    "RedemptionDate": "2026-10-12",
+    "RewardId": 15,
+    "TouristId": 8,
+    "BranchId": 9
+  },
+  {
+    "Id": 9,
+    "Code": "NILECR-CR",
+    "PointsRedeemed": 400,
+    "Status": "Used",
+    "RedemptionDate": "2026-08-30",
+    "RewardId": 17,
+    "TouristId": 9,
+    "BranchId": 10
+  },
+  {
+    "Id": 10,
+    "Code": "CILANTRO-BOGO",
+    "PointsRedeemed": 50,
+    "Status": "Active",
+    "RedemptionDate": "2026-09-18",
+    "RewardId": 19,
+    "TouristId": 10,
+    "BranchId": 11
+  },
+  {
+    "Id": 11,
+    "Code": "MARRIOTT-SPA",
+    "PointsRedeemed": 350,
+    "Status": "Used",
+    "RedemptionDate": "2026-07-05",
+    "RewardId": 2,
+    "TouristId": 11,
+    "BranchId": 1
+  },
+  {
+    "Id": 12,
+    "Code": "EMECO-WHITE",
+    "PointsRedeemed": 450,
+    "Status": "Active",
+    "RedemptionDate": "2026-10-08",
+    "RewardId": 5,
+    "TouristId": 12,
+    "BranchId": 4
+  },
+  {
+    "Id": 13,
+    "Code": "WINTERPAL-TEA",
+    "PointsRedeemed": 150,
+    "Status": "Used",
+    "RedemptionDate": "2026-08-14",
+    "RewardId": 7,
+    "TouristId": 1,
+    "BranchId": 5
+  },
+  {
+    "Id": 14,
+    "Code": "FISHAWY-SHISHA",
+    "PointsRedeemed": 80,
+    "Status": "Active",
+    "RedemptionDate": "2026-09-25",
+    "RewardId": 11,
+    "TouristId": 2,
+    "BranchId": 7
+  },
+  {
+    "Id": 15,
+    "Code": "ABOUELSID-UMM",
+    "PointsRedeemed": 60,
+    "Status": "Used",
+    "RedemptionDate": "2026-07-30",
+    "RewardId": 14,
+    "TouristId": 3,
+    "BranchId": 8
+  },
+  {
+    "Id": 16,
+    "Code": "ASWAN-SPA",
+    "PointsRedeemed": 220,
+    "Status": "Active",
+    "RedemptionDate": "2026-10-15",
+    "RewardId": 9,
+    "TouristId": 4,
+    "BranchId": 6
+  },
+  {
+    "Id": 17,
+    "Code": "CILANTRO-BDAY",
+    "PointsRedeemed": 90,
+    "Status": "Used",
+    "RedemptionDate": "2026-08-11",
+    "RewardId": 20,
+    "TouristId": 5,
+    "BranchId": 11
+  },
+  {
+    "Id": 18,
+    "Code": "MENAHSE-POOL",
+    "PointsRedeemed": 160,
+    "Status": "Active",
+    "RedemptionDate": "2026-09-29",
+    "RewardId": 16,
+    "TouristId": 6,
+    "BranchId": 9
+  },
+  {
+    "Id": 19,
+    "Code": "CILANTRO-19-019",
+    "PointsRedeemed": 50,
+    "Status": "Used",
+    "RedemptionDate": "2026-01-10",
+    "RewardId": 19,
+    "TouristId": 8,
+    "BranchId": 49
+  },
+  {
+    "Id": 20,
+    "Code": "CILANTRO-28-020",
+    "PointsRedeemed": 60,
+    "Status": "Active",
+    "RedemptionDate": "2026-01-09",
+    "RewardId": 28,
+    "TouristId": 10,
+    "BranchId": 56
+  },
+  {
+    "Id": 21,
+    "Code": "CILANTRO-26-021",
+    "PointsRedeemed": 40,
+    "Status": "Used",
+    "RedemptionDate": "2026-01-14",
+    "RewardId": 26,
+    "TouristId": 6,
+    "BranchId": 52
+  },
+  {
+    "Id": 22,
+    "Code": "CILANTRO-27-022",
+    "PointsRedeemed": 80,
+    "Status": "Used",
+    "RedemptionDate": "2026-02-15",
+    "RewardId": 27,
+    "TouristId": 7,
+    "BranchId": 44
+  },
+  {
+    "Id": 23,
+    "Code": "CILANTRO-26-023",
+    "PointsRedeemed": 40,
+    "Status": "Used",
+    "RedemptionDate": "2026-02-09",
+    "RewardId": 26,
+    "TouristId": 10,
+    "BranchId": 49
+  },
+  {
+    "Id": 24,
+    "Code": "CILANTRO-21-024",
+    "PointsRedeemed": 110,
+    "Status": "Active",
+    "RedemptionDate": "2026-02-22",
+    "RewardId": 21,
+    "TouristId": 9,
+    "BranchId": 48
+  },
+  {
+    "Id": 25,
+    "Code": "CILANTRO-29-025",
+    "PointsRedeemed": 150,
+    "Status": "Used",
+    "RedemptionDate": "2026-02-09",
+    "RewardId": 29,
+    "TouristId": 3,
+    "BranchId": 44
+  },
+  {
+    "Id": 26,
+    "Code": "CILANTRO-20-026",
+    "PointsRedeemed": 90,
+    "Status": "Used",
+    "RedemptionDate": "2026-03-06",
+    "RewardId": 20,
+    "TouristId": 9,
+    "BranchId": 50
+  },
+  {
+    "Id": 27,
+    "Code": "CILANTRO-29-027",
+    "PointsRedeemed": 150,
+    "Status": "Used",
+    "RedemptionDate": "2026-03-15",
+    "RewardId": 29,
+    "TouristId": 2,
+    "BranchId": 48
+  },
+  {
+    "Id": 28,
+    "Code": "CILANTRO-28-028",
+    "PointsRedeemed": 60,
+    "Status": "Active",
+    "RedemptionDate": "2026-03-27",
+    "RewardId": 28,
+    "TouristId": 8,
+    "BranchId": 44
+  },
+  {
+    "Id": 29,
+    "Code": "CILANTRO-20-029",
+    "PointsRedeemed": 90,
+    "Status": "Used",
+    "RedemptionDate": "2026-03-28",
+    "RewardId": 20,
+    "TouristId": 9,
+    "BranchId": 46
+  },
+  {
+    "Id": 30,
+    "Code": "CILANTRO-28-030",
+    "PointsRedeemed": 60,
+    "Status": "Active",
+    "RedemptionDate": "2026-03-24",
+    "RewardId": 28,
+    "TouristId": 2,
+    "BranchId": 11
+  },
+  {
+    "Id": 31,
+    "Code": "CILANTRO-20-031",
+    "PointsRedeemed": 90,
+    "Status": "Used",
+    "RedemptionDate": "2026-04-27",
+    "RewardId": 20,
+    "TouristId": 8,
+    "BranchId": 54
+  },
+  {
+    "Id": 32,
+    "Code": "CILANTRO-29-032",
+    "PointsRedeemed": 150,
+    "Status": "Active",
+    "RedemptionDate": "2026-04-11",
+    "RewardId": 29,
+    "TouristId": 9,
+    "BranchId": 51
+  },
+  {
+    "Id": 33,
+    "Code": "CILANTRO-20-033",
+    "PointsRedeemed": 90,
+    "Status": "Active",
+    "RedemptionDate": "2026-04-01",
+    "RewardId": 20,
+    "TouristId": 5,
+    "BranchId": 50
+  },
+  {
+    "Id": 34,
+    "Code": "CILANTRO-20-034",
+    "PointsRedeemed": 90,
+    "Status": "Used",
+    "RedemptionDate": "2026-04-16",
+    "RewardId": 20,
+    "TouristId": 2,
+    "BranchId": 56
+  },
+  {
+    "Id": 35,
+    "Code": "CILANTRO-29-035",
+    "PointsRedeemed": 150,
+    "Status": "Active",
+    "RedemptionDate": "2026-05-24",
+    "RewardId": 29,
+    "TouristId": 9,
+    "BranchId": 52
+  },
+  {
+    "Id": 36,
+    "Code": "CILANTRO-21-036",
+    "PointsRedeemed": 110,
+    "Status": "Used",
+    "RedemptionDate": "2026-05-01",
+    "RewardId": 21,
+    "TouristId": 5,
+    "BranchId": 49
+  },
+  {
+    "Id": 37,
+    "Code": "CILANTRO-28-037",
+    "PointsRedeemed": 60,
+    "Status": "Active",
+    "RedemptionDate": "2026-05-17",
+    "RewardId": 28,
+    "TouristId": 5,
+    "BranchId": 44
+  },
+  {
+    "Id": 38,
+    "Code": "CILANTRO-27-038",
+    "PointsRedeemed": 80,
+    "Status": "Used",
+    "RedemptionDate": "2026-05-01",
+    "RewardId": 27,
+    "TouristId": 7,
+    "BranchId": 46
+  },
+  {
+    "Id": 39,
+    "Code": "CILANTRO-26-039",
+    "PointsRedeemed": 40,
+    "Status": "Used",
+    "RedemptionDate": "2026-05-28",
+    "RewardId": 26,
+    "TouristId": 6,
+    "BranchId": 47
+  },
+  {
+    "Id": 40,
+    "Code": "CILANTRO-30-040",
+    "PointsRedeemed": 70,
+    "Status": "Used",
+    "RedemptionDate": "2026-05-20",
+    "RewardId": 30,
+    "TouristId": 4,
+    "BranchId": 11
+  },
+  {
+    "Id": 41,
+    "Code": "CILANTRO-20-041",
+    "PointsRedeemed": 90,
+    "Status": "Used",
+    "RedemptionDate": "2026-06-01",
+    "RewardId": 20,
+    "TouristId": 9,
+    "BranchId": 52
+  },
+  {
+    "Id": 42,
+    "Code": "CILANTRO-19-042",
+    "PointsRedeemed": 50,
+    "Status": "Active",
+    "RedemptionDate": "2026-06-07",
+    "RewardId": 19,
+    "TouristId": 4,
+    "BranchId": 44
+  },
+  {
+    "Id": 43,
+    "Code": "CILANTRO-29-043",
+    "PointsRedeemed": 150,
+    "Status": "Active",
+    "RedemptionDate": "2026-06-16",
+    "RewardId": 29,
+    "TouristId": 10,
+    "BranchId": 46
+  },
+  {
+    "Id": 44,
+    "Code": "CILANTRO-28-044",
+    "PointsRedeemed": 60,
+    "Status": "Active",
+    "RedemptionDate": "2026-06-27",
+    "RewardId": 28,
+    "TouristId": 5,
+    "BranchId": 54
+  },
+  {
+    "Id": 45,
+    "Code": "CILANTRO-28-045",
+    "PointsRedeemed": 60,
+    "Status": "Used",
+    "RedemptionDate": "2026-06-22",
+    "RewardId": 28,
+    "TouristId": 4,
+    "BranchId": 44
+  },
+  {
+    "Id": 46,
+    "Code": "CILANTRO-21-046",
+    "PointsRedeemed": 110,
+    "Status": "Used",
+    "RedemptionDate": "2026-06-19",
+    "RewardId": 21,
+    "TouristId": 8,
+    "BranchId": 45
+  },
+  {
+    "Id": 47,
+    "Code": "CILANTRO-29-047",
+    "PointsRedeemed": 150,
+    "Status": "Active",
+    "RedemptionDate": "2026-06-10",
+    "RewardId": 29,
+    "TouristId": 4,
+    "BranchId": 50
+  },
+  {
+    "Id": 48,
+    "Code": "CILANTRO-30-048",
+    "PointsRedeemed": 70,
+    "Status": "Used",
+    "RedemptionDate": "2026-07-03",
+    "RewardId": 30,
+    "TouristId": 2,
+    "BranchId": 49
+  },
+  {
+    "Id": 49,
+    "Code": "CILANTRO-20-049",
+    "PointsRedeemed": 90,
+    "Status": "Used",
+    "RedemptionDate": "2026-07-11",
+    "RewardId": 20,
+    "TouristId": 5,
+    "BranchId": 55
+  },
+  {
+    "Id": 50,
+    "Code": "CILANTRO-30-050",
+    "PointsRedeemed": 70,
+    "Status": "Active",
+    "RedemptionDate": "2026-07-13",
+    "RewardId": 30,
+    "TouristId": 6,
+    "BranchId": 52
+  },
+  {
+    "Id": 51,
+    "Code": "CILANTRO-28-051",
+    "PointsRedeemed": 60,
+    "Status": "Used",
+    "RedemptionDate": "2026-07-17",
+    "RewardId": 28,
+    "TouristId": 2,
+    "BranchId": 54
+  },
+  {
+    "Id": 52,
+    "Code": "CILANTRO-20-052",
+    "PointsRedeemed": 90,
+    "Status": "Active",
+    "RedemptionDate": "2026-07-14",
+    "RewardId": 20,
+    "TouristId": 9,
+    "BranchId": 55
+  },
+  {
+    "Id": 53,
+    "Code": "CILANTRO-28-053",
+    "PointsRedeemed": 60,
+    "Status": "Used",
+    "RedemptionDate": "2026-07-14",
+    "RewardId": 28,
+    "TouristId": 9,
+    "BranchId": 54
+  },
+  {
+    "Id": 54,
+    "Code": "CILANTRO-21-054",
+    "PointsRedeemed": 110,
+    "Status": "Active",
+    "RedemptionDate": "2026-07-20",
+    "RewardId": 21,
+    "TouristId": 9,
+    "BranchId": 53
+  },
+  {
+    "Id": 55,
+    "Code": "CILANTRO-19-055",
+    "PointsRedeemed": 50,
+    "Status": "Used",
+    "RedemptionDate": "2026-07-09",
+    "RewardId": 19,
+    "TouristId": 7,
+    "BranchId": 55
+  },
+  {
+    "Id": 56,
+    "Code": "CILANTRO-26-056",
+    "PointsRedeemed": 40,
+    "Status": "Active",
+    "RedemptionDate": "2026-08-22",
+    "RewardId": 26,
+    "TouristId": 7,
+    "BranchId": 51
+  },
+  {
+    "Id": 57,
+    "Code": "CILANTRO-19-057",
+    "PointsRedeemed": 50,
+    "Status": "Active",
+    "RedemptionDate": "2026-08-15",
+    "RewardId": 19,
+    "TouristId": 2,
+    "BranchId": 11
+  },
+  {
+    "Id": 58,
+    "Code": "CILANTRO-28-058",
+    "PointsRedeemed": 60,
+    "Status": "Active",
+    "RedemptionDate": "2026-08-12",
+    "RewardId": 28,
+    "TouristId": 4,
+    "BranchId": 11
+  },
+  {
+    "Id": 59,
+    "Code": "CILANTRO-28-059",
+    "PointsRedeemed": 60,
+    "Status": "Active",
+    "RedemptionDate": "2026-08-03",
+    "RewardId": 28,
+    "TouristId": 1,
+    "BranchId": 49
+  },
+  {
+    "Id": 60,
+    "Code": "CILANTRO-26-060",
+    "PointsRedeemed": 40,
+    "Status": "Used",
+    "RedemptionDate": "2026-08-11",
+    "RewardId": 26,
+    "TouristId": 9,
+    "BranchId": 48
+  },
+  {
+    "Id": 61,
+    "Code": "CILANTRO-28-061",
+    "PointsRedeemed": 60,
+    "Status": "Used",
+    "RedemptionDate": "2026-08-06",
+    "RewardId": 28,
+    "TouristId": 10,
+    "BranchId": 53
+  }
 ]

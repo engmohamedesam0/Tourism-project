@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Tourist_Project_MVC.Data;
 using Tourist_Project_MVC.Models;
 
@@ -29,6 +29,7 @@ namespace Tourist_Project_MVC.Repositories
         {
             return _context.Rewards
                 .Include(r => r.Sponsor)
+                .Include(r => r.Redemptions)
                 .Include(r => r.RewardBranches)
                 .ThenInclude(rb => rb.Branch)
                 .Where(r => r.SponsorId == sponsorId)

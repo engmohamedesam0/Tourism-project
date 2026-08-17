@@ -23,6 +23,7 @@ public interface IArcGISSyncService
     Task<ArcGISSyncResult> SyncTouristNationalityLayerAsync(CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncRedemptionsAsync(CancellationToken ct = default);
     Task<ArcGISSyncResult> SyncDestinationsFromArcGIS(CancellationToken ct = default);
+    Task<ArcGISSyncResult> SyncBranchesFromArcGIS(CancellationToken ct = default);
     Task<(bool Success, string? Error, int? CreatedObjectId, int? CreatedId)> AddDestinationToArcGISAsync(Destination destination, CancellationToken ct = default);
     Task<ArcGISSyncResult> DeleteDestinationFromArcGISAsync(int destinationId, CancellationToken ct = default);
     Task<ArcGISSyncResult> UpdateDestinationOnArcGISAsync(Destination destination, CancellationToken ct = default);
@@ -1657,6 +1658,130 @@ public class ArcGISSyncService : IArcGISSyncService, IAsyncDisposable, IDisposab
         {
             _logger.LogError(ex, "ArcGIS add destination exception");
             return (false, $"ArcGIS request error: {ex.Message}", null, null);
+        }
+    }
+
+    public async Task<ArcGISSyncResult> SyncBranchesFromArcGIS(CancellationToken ct = default)
+    {
+        var layerUrl = LayerUrl(BranchesLayerUrl);
+        if (string.IsNullOrWhiteSpace(layerUrl)) return ArcGISSyncResult.Ok();
+
+        string token = _config["ArcGIS:ApiKey"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            _logger.LogError("ArcGIS branches pull-sync skipped: API Key is missing");
+            return ArcGISSyncResult.Failed("API Key is missing.");
+        }
+
+        try
+        {
+            var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Referer", "http://localhost:5217/");
+
+            var queryUrl = $"{layerUrl}/query?where=1%3D1&outFields=*&returnGeometry=true&resultRecordCount=500&f=json&token={Uri.EscapeDataString(token)}";
+            using var response = await client.GetAsync(queryUrl, ct);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errBody = await response.Content.ReadAsStringAsync(ct);
+                _logger.LogError("ArcGIS branches query failed with HTTP status {Status}. Body: {Body}", response.StatusCode, errBody);
+                return ArcGISSyncResult.Failed($"ArcGIS query returned HTTP {(int)response.StatusCode}: {errBody}");
+            }
+
+            var body = await response.Content.ReadAsStringAsync(ct);
+            using var doc = JsonDocument.Parse(body);
+
+            if (doc.RootElement.TryGetProperty("error", out var error))
+            {
+                var errMsg = ExtractArcGISErrorMessage(error);
+                _logger.LogError("ArcGIS branches query returned error: {Error}", errMsg);
+                return ArcGISSyncResult.Failed($"ArcGIS query error: {errMsg}");
+            }
+
+            if (!doc.RootElement.TryGetProperty("features", out var features) || features.GetArrayLength() == 0)
+            {
+                _logger.LogWarning("ArcGIS branches query returned no features.");
+                return ArcGISSyncResult.Ok();
+            }
+
+            var existingMap = await _context.Branches.ToDictionaryAsync(b => b.Id, ct);
+            int addedCount = 0;
+            int updatedCount = 0;
+
+            foreach (var feature in features.EnumerateArray())
+            {
+                if (!feature.TryGetProperty("attributes", out var attrs)) continue;
+
+                int id = 0;
+                if (attrs.TryGetProperty("Id", out var idEl) && idEl.ValueKind == JsonValueKind.Number)
+                    id = idEl.GetInt32();
+                else if (attrs.TryGetProperty("ObjectId", out var oidEl) && oidEl.ValueKind == JsonValueKind.Number)
+                    id = oidEl.GetInt32();
+
+                if (id == 0) continue;
+
+                int sponsorId = 1;
+                if (attrs.TryGetProperty("SponsorId", out var spEl) && spEl.ValueKind == JsonValueKind.Number)
+                    sponsorId = spEl.GetInt32();
+
+                string name = attrs.TryGetProperty("Name", out var nameEl) && nameEl.ValueKind == JsonValueKind.String ? nameEl.GetString() ?? "Branch" : "Branch";
+                string address = attrs.TryGetProperty("Address", out var addrEl) && addrEl.ValueKind == JsonValueKind.String ? addrEl.GetString() ?? "Egypt" : "Egypt";
+                string category = attrs.TryGetProperty("Category", out var catEl) && catEl.ValueKind == JsonValueKind.String ? catEl.GetString() ?? "General" : "General";
+
+                int contact = 20000000;
+                if (attrs.TryGetProperty("ContactNumber", out var contactEl) && contactEl.ValueKind == JsonValueKind.Number)
+                    contact = contactEl.GetInt32();
+
+                double lat = 30.0;
+                double lng = 31.0;
+                if (attrs.TryGetProperty("latitude", out var latEl) && latEl.ValueKind == JsonValueKind.Number)
+                    lat = latEl.GetDouble();
+                if (attrs.TryGetProperty("longitude", out var lngEl) && lngEl.ValueKind == JsonValueKind.Number)
+                    lng = lngEl.GetDouble();
+
+                if ((lat == 30.0 && lng == 31.0) && feature.TryGetProperty("geometry", out var geom))
+                {
+                    if (geom.TryGetProperty("x", out var xEl) && geom.TryGetProperty("y", out var yEl))
+                    {
+                        lng = WebMercatorToLongitude(xEl.GetDouble());
+                        lat = WebMercatorToLatitude(yEl.GetDouble());
+                    }
+                }
+
+                if (existingMap.TryGetValue(id, out var branch))
+                {
+                    branch.SponsorId = sponsorId;
+                    branch.Name = name;
+                    branch.Address = address;
+                    branch.Category = category;
+                    branch.ContactNumber = contact;
+                    branch.Location = new Point(lng, lat) { SRID = 4326 };
+                    updatedCount++;
+                }
+                else
+                {
+                    var newBranch = new Branch
+                    {
+                        Id = id,
+                        SponsorId = sponsorId,
+                        Name = name,
+                        Address = address,
+                        Category = category,
+                        ContactNumber = contact,
+                        Location = new Point(lng, lat) { SRID = 4326 }
+                    };
+                    _context.Branches.Add(newBranch);
+                    addedCount++;
+                }
+            }
+
+            await _context.SaveChangesAsync(ct);
+            _logger.LogInformation("ArcGIS branches pull-sync completed: {Added} added, {Updated} updated.", addedCount, updatedCount);
+            return ArcGISSyncResult.Ok(added: addedCount, updated: updatedCount);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ArcGIS branches pull-sync failed.");
+            return ArcGISSyncResult.Failed(ex.Message);
         }
     }
 
