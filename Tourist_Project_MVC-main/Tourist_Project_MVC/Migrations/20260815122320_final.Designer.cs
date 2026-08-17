@@ -13,8 +13,8 @@ using Tourist_Project_MVC.Data;
 namespace Tourist_Project_MVC.Migrations
 {
     [DbContext(typeof(TouristContext))]
-    [Migration("20260814151411_AddUtilitiesAndBranchCategory")]
-    partial class AddUtilitiesAndBranchCategory
+    [Migration("20260815122320_final")]
+    partial class final
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
