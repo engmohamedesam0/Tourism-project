@@ -210,7 +210,7 @@ namespace Tourist_Project_MVC.Controllers.MobileControllers
                 generationConfig = new { responseMimeType = "application/json" }
             };
 
-            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={_apiKey}";
+            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={_apiKey}";
 
             var req = new HttpRequestMessage(HttpMethod.Post, url)
             {
