@@ -560,6 +560,14 @@
                 detailsUrl: '/NearMe/Details/{id}'
             };
 
+            // When a sponsor is signed in, the branch map shows only their own branches.
+            var sponsorOnlyId = @(ViewBag.SponsorBranchFilterId != null ? ViewBag.SponsorBranchFilterId.ToString() : "null");
+
+            function sponsorBranchPredicate(f) {
+                var sid = _firstDefined(f.attributes, nearMePropMap.id, []);
+                return String(sid) === String(sponsorOnlyId);
+            }
+
             function buildPopup(feature) {
                 var p = feature.properties || {};
                 var id = _firstDefined(p, nearMePropMap.id, []);
@@ -666,11 +674,13 @@
                     var hasActiveFilter = nearMeState.type || nearMeState.rating || nearMeState.distance ||
                         (nearMeState.search && nearMeState.search.trim());
                     if (!hasActiveFilter) {
-                        nearMeMap.filterMarkers(null); // reset to show all
+                        // Show all branches — or, for a signed-in sponsor, only their own.
+                        nearMeMap.filterMarkers(sponsorOnlyId ? sponsorBranchPredicate : null);
                     } else {
                         var ids = visibleSponsorIds();
                         nearMeMap.filterMarkers(function (f) {
                             var sid = _firstDefined(f.attributes, nearMePropMap.id, []);
+                            if (sponsorOnlyId && !sponsorBranchPredicate(f)) return false;
                             return ids.indexOf(String(sid)) > -1;
                         });
                     }

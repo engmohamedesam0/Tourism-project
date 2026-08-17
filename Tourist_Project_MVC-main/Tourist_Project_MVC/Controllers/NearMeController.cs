@@ -41,6 +41,22 @@ namespace Tourist_Project_MVC.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index(int? destinationId, string? search, string? type, string? sort, string? distance, string? rating)
         {
+            // If a sponsor is signed in, the branch map is restricted to their own
+            // branches (the ArcGIS branches layer carries the SponsorId field).
+            int? sponsorBranchFilterId = null;
+            if (User.Identity?.IsAuthenticated == true && User.IsInRole("Sponsor"))
+            {
+                var sponsorUser = await _userManager.GetUserAsync(User);
+                if (sponsorUser != null)
+                {
+                    sponsorBranchFilterId = _context.Sponsors
+                        .Where(s => s.ApplicationUserId == sponsorUser.Id)
+                        .Select(s => (int?)s.Id)
+                        .FirstOrDefault();
+                }
+            }
+            ViewBag.SponsorBranchFilterId = sponsorBranchFilterId;
+
             var destinations = _destinationRepo.GetAll().ToList();
             var selectedDest = destinationId.HasValue
                 ? destinations.FirstOrDefault(d => d.Id == destinationId.Value) ?? destinations.FirstOrDefault()
