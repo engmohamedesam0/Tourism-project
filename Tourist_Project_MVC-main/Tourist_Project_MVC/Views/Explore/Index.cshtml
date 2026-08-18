@@ -3,13 +3,38 @@
 @{
     ViewData["Title"] = "Explore";
     ViewData["IsHomePage"] = true;
+
+    var categories = (ViewBag.Categories as List<string>) ??
+        Model.Where(d => !string.IsNullOrWhiteSpace(d.Category))
+             .Select(d => d.Category!)
+             .Distinct(StringComparer.OrdinalIgnoreCase)
+             .OrderBy(c => c, StringComparer.OrdinalIgnoreCase)
+             .ToList();
+}
+
+@functions {
+    string GetCategoryIcon(string category)
+    {
+        if (string.IsNullOrWhiteSpace(category)) return "bi-tag-fill";
+        var lower = category.ToLowerInvariant();
+        if (lower.Contains("pharaoh") || lower.Contains("pyramid") || lower.Contains("temple")) return "bi-bank2";
+        if (lower.Contains("museum") || lower.Contains("gall")) return "bi-building-columns";
+        if (lower.Contains("islamic") || lower.Contains("mosque")) return "bi-moon-stars-fill";
+        if (lower.Contains("coptic") || lower.Contains("church")) return "bi-journal-bookmark-fill";
+        if (lower.Contains("hist")) return "bi-hourglass-split";
+        if (lower.Contains("gem")) return "bi-gem";
+        if (lower.Contains("public") || lower.Contains("park")) return "bi-tree-fill";
+        if (lower.Contains("natur") || lower.Contains("beach") || lower.Contains("sea")) return "bi-water";
+        if (lower.Contains("advent") || lower.Contains("desert") || lower.Contains("safari")) return "bi-compass";
+        return "bi-geo-alt-fill";
+    }
 }
 
 <div class="explore-page">
     <div class="container-fluid">
         <div class="row g-0">
 
-            <!-- LEFT PANEL: Navigation, list + filters -->
+            <!-- LEFT PANEL: Navigation, list + search -->
             <div class="col-lg-5 col-xl-4 explore-list-panel">
 
                 <div class="explore-header">
@@ -19,31 +44,18 @@
 
                 <!-- Search box (reuses Destination admin search pattern) -->
                 <div class="explore-search">
-                    <form method="get" asp-action="Index" id="exploreSearchForm">
+                    <form method="get" asp-action="Index" id="exploreSearchForm" onsubmit="return false;">
                         <div class="input-group search-input-group">
                             <span class="input-group-text bg-white border-end-0">
                                 <i class="bi bi-search text-muted"></i>
                             </span>
-                            <input type="text" name="search" id="exploreSearch" class="form-control border-start-0 ps-1"
-                                   placeholder="@Localizer["Explore_SearchPlaceholder"].Value" value="@ViewBag.Search" />
+                            <input type="text" name="search" id="exploreSearch" class="form-control border-start-0 border-end-0 ps-1"
+                                   placeholder="@Localizer["Explore_SearchPlaceholder"].Value" value="@ViewBag.Search" autocomplete="off" />
+                            <button type="button" class="btn btn-clear-search d-none" id="clearSearchBtn" title="Clear search">
+                                <i class="bi bi-x-circle-fill text-muted"></i>
+                            </button>
                         </div>
                     </form>
-                </div>
-
-                <!-- Category filter chips -->
-                <div class="category-chips" id="categoryChips">
-                    <button type="button" class="chip chip-active"
-                            data-filter="all">@Localizer["Explore_All"].Value</button>
-                    <button type="button" class="chip" data-filter="Hidden Gems"
-                            data-status="Pending">@Localizer["Explore_HiddenGems"].Value</button>
-                    <button type="button" class="chip" data-filter="Temples"
-                            data-category="Temple">@Localizer["Explore_Temples"].Value</button>
-                    <button type="button" class="chip" data-filter="Museums"
-                            data-category="Museum">@Localizer["Explore_Museums"].Value</button>
-                    <button type="button" class="chip" data-filter="Nature"
-                            data-category="Natural">@Localizer["Explore_Nature"].Value</button>
-                    <button type="button" class="chip" data-filter="Adventure"
-                            data-category="Archaeological">@Localizer["Explore_Adventure"].Value</button>
                 </div>
 
                 <!-- Scrollable destination list -->
@@ -57,636 +69,977 @@
                         })
                     </div>
 
-                        @foreach (var item in Model)
-                        {
-                            <div class="explore-card" data-id="@item.Id" data-lat="@item.Location.Y" data-lng="@item.Location.X"
-                                 data-category="@item.Category" data-status="@item.Status" data-name="@item.Name">
+                    @foreach (var item in Model)
+                    {
+                        <div class="explore-card"
+                             data-id="@item.Id"
+                             data-lat="@item.Location.Y"
+                             data-lng="@item.Location.X"
+                             data-category="@item.Category"
+                             data-status="@item.Status"
+                             data-name="@item.Name"
+                             data-arabic-name="@item.ArabicName"
+                             data-city="@item.City"
+                             data-tags="@item.Tags"
+                             data-desc="@item.Description">
 
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h5 class="explore-card-title mb-0">@item.Name</h5>
-                                    @if (item.Rating.HasValue)
-                                    {
-                                        <span class="rating-badge" title="Average rating">
-                                            <i class="bi bi-star-fill me-1"></i>@item.Rating.Value.ToString("0.0")
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="rating-badge rating-new"
-                                              title="@Localizer["Explore_NotRated"].Value">@Localizer["Explore_New"].Value</span>
-                                    }
-                                </div>
-
-                                <div class="explore-card-city text-muted small mb-3">
-                                    <i class="bi bi-geo-alt-fill text-primary-gold me-1"></i>@item.City
-                                </div>
-
-                                <span class="badge-category">@item.Category</span>
-
-                                <p class="explore-card-desc small mt-3 mb-3 text-secondary-dark">
-                                    @(item.Description?.Length > 90 ? item.Description.Substring(0, 90) + "…" :
-                                item.Description)
-                                </p>
-
-                                @if (!string.IsNullOrWhiteSpace(item.Tags))
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="explore-card-title mb-0">@item.Name</h5>
+                                @if (item.Rating.HasValue)
                                 {
-                                    <div class="explore-tags mb-3">
-                                        @foreach (var tag in item.Tags.Split(','))
-                                        {
-                                            <span class="tag-pill">@tag.Trim()</span>
-                                        }
-                                    </div>
+                                    <span class="rating-badge" title="Average rating">
+                                        <i class="bi bi-star-fill me-1"></i>@item.Rating.Value.ToString("0.0")
+                                    </span>
                                 }
-
-                                <div class="explore-card-actions">
-                                    <a asp-controller="Destination" asp-action="Details" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-explore-action">
-                                        <i class="bi bi-eye-fill me-1"></i> @Localizer["Explore_Details"].Value
-                                    </a>
-                                </div>
+                                else
+                                {
+                                    <span class="rating-badge rating-new"
+                                          title="@Localizer["Explore_NotRated"].Value">@Localizer["Explore_New"].Value</span>
+                                }
                             </div>
-                        }
 
-                        @if (!Model.Any())
-                        {
-                            @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                            <div class="explore-card-city text-muted small mb-3">
+                                <i class="bi bi-geo-alt-fill text-primary-gold me-1"></i>@item.City
+                                @if (!string.IsNullOrWhiteSpace(item.ArabicName))
+                                {
+                                    <span class="ms-1 text-muted opacity-75">(@item.ArabicName)</span>
+                                }
+                            </div>
+
+                            <span class="badge-category">@item.Category</span>
+
+                            <p class="explore-card-desc small mt-3 mb-3 text-secondary-dark">
+                                @(item.Description?.Length > 90 ? item.Description.Substring(0, 90) + "…" :
+                            item.Description)
+                            </p>
+
+                            @if (!string.IsNullOrWhiteSpace(item.Tags))
                             {
-                                { "EmptyStateTitle", "No Destinations Found" },
-                                { "EmptyStateDescription", "There are currently no destinations to display. Try adjusting your search or filters." },
-                                { "EmptyStateActionText", "Clear Filters" }
-                            })
+                                <div class="explore-tags mb-3">
+                                    @foreach (var tag in item.Tags.Split(','))
+                                    {
+                                        <span class="tag-pill">@tag.Trim()</span>
+                                    }
+                                </div>
+                            }
+
+                            <div class="explore-card-actions">
+                                <a asp-controller="Destination" asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-explore-action">
+                                    <i class="bi bi-eye-fill me-1"></i> @Localizer["Explore_Details"].Value
+                                </a>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!Model.Any())
+                    {
+                        @await Html.PartialAsync("_EmptyState", null, new ViewDataDictionary(ViewData)
+                        {
+                            { "EmptyStateTitle", "No Destinations Found" },
+                            { "EmptyStateDescription", "There are currently no destinations to display. Try adjusting your search or filters." },
+                            { "EmptyStateActionText", "Clear Filters" }
+                        })
+                    }
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: map + Category Filter Overlay at Top -->
+            <div class="col-lg-7 col-xl-8 explore-map-panel">
+
+                <!-- Categories Filter overlay at the top of the map -->
+                <div class="map-category-overlay" id="mapCategoryOverlay">
+                    <div class="category-chips-scroll" id="categoryChips">
+                        <button type="button" class="chip chip-active" data-filter="all" data-category="all" title="@Localizer["Explore_All"].Value">
+                            <i class="bi bi-grid-fill"></i>
+                            <span>@Localizer["Explore_All"].Value</span>
+                        </button>
+                        @if (categories != null && categories.Any())
+                        {
+                            foreach (var cat in categories)
+                            {
+                                <button type="button" class="chip" data-filter="@cat" data-category="@cat" title="@cat">
+                                    <i class="bi @GetCategoryIcon(cat)"></i>
+                                    <span>@cat</span>
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <button type="button" class="chip" data-filter="Pharaonic" data-category="Pharaonic">
+                                <i class="bi bi-bank2"></i>
+                                <span>Pharaonic</span>
+                            </button>
+                            <button type="button" class="chip" data-filter="Museums & Galleries" data-category="Museums & Galleries">
+                                <i class="bi bi-building-columns"></i>
+                                <span>@Localizer["Explore_Museums"].Value</span>
+                            </button>
+                            <button type="button" class="chip" data-filter="Islamic Heritage" data-category="Islamic Heritage">
+                                <i class="bi bi-moon-stars-fill"></i>
+                                <span>Islamic Heritage</span>
+                            </button>
+                            <button type="button" class="chip" data-filter="Coptic History" data-category="Coptic History">
+                                <i class="bi bi-journal-bookmark-fill"></i>
+                                <span>Coptic History</span>
+                            </button>
+                            <button type="button" class="chip" data-filter="Historical" data-category="Historical">
+                                <i class="bi bi-hourglass-split"></i>
+                                <span>Historical</span>
+                            </button>
+                            <button type="button" class="chip" data-filter="Hidden Gems" data-category="Hidden Gems">
+                                <i class="bi bi-gem"></i>
+                                <span>@Localizer["Explore_HiddenGems"].Value</span>
+                            </button>
+                            <button type="button" class="chip" data-filter="Public" data-category="Public">
+                                <i class="bi bi-tree-fill"></i>
+                                <span>Public</span>
+                            </button>
                         }
                     </div>
                 </div>
 
-                <!-- RIGHT PANEL: map placeholder -->
-                <div class="col-lg-7 col-xl-8 explore-map-panel">
-                    <div id="exploreMap" class="explore-map-container">
-                        <div class="map-watermark">
-                            <i class="bi bi-map" style="font-size: 3rem;"></i>
-                            <p class="mb-0 mt-2">@Localizer["Explore_MapPlaceholder"].Value</p>
-                            <small class="text-muted">@Localizer["Explore_MapNote"].Value</small>
-                        </div>
+                <div id="exploreMap" class="explore-map-container">
+                    <div class="map-watermark">
+                        <i class="bi bi-map" style="font-size: 3rem;"></i>
+                        <p class="mb-0 mt-2">@Localizer["Explore_MapPlaceholder"].Value</p>
+                        <small class="text-muted">@Localizer["Explore_MapNote"].Value</small>
                     </div>
                 </div>
-
             </div>
+
         </div>
     </div>
+</div>
 
-    @section Scripts {
-        <style>
-            /* --- Main Layout --- */
-            .explore-page {
-                padding-top: var(--nav-offset);
-            }
+@section Scripts {
+    <style>
+        /* --- Main Layout --- */
+        .explore-page {
+            padding-top: var(--nav-offset);
+        }
 
-            .explore-list-panel {
-                background: var(--egy-light);
-                border-right: 1px solid rgba(200, 131, 42, 0.15);
-                height: calc(100vh - var(--nav-offset));
-                display: flex;
-                flex-direction: column;
-                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
-                z-index: 10;
-            }
+        .explore-list-panel {
+            background: var(--egy-light);
+            border-right: 1px solid rgba(200, 131, 42, 0.15);
+            height: calc(100vh - var(--nav-offset));
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+            z-index: 10;
+        }
 
-            .explore-header {
-                padding: 24px 24px 12px;
-            }
+        .explore-header {
+            padding: 24px 24px 12px;
+        }
 
-            .explore-header .page-title {
-                color: var(--egy-dark);
-                font-weight: 700;
-                font-size: 1.5rem;
-            }
+        .explore-header .page-title {
+            color: var(--egy-dark);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
 
-            /* --- Search Input --- */
-            .explore-search {
-                padding: 0 24px 16px;
-            }
+        /* --- Search Input --- */
+        .explore-search {
+            padding: 0 24px 16px;
+        }
 
-            .search-input-group {
-                border-radius: 30px;
-                overflow: hidden;
-                border: 1px solid rgba(200, 131, 42, 0.25);
-                background: var(--bg-surface);
-                box-shadow: var(--shadow-soft);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
+        .search-input-group {
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid rgba(200, 131, 42, 0.25);
+            background: var(--bg-surface);
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            align-items: center;
+        }
 
-            .search-input-group:focus-within {
-                border-color: var(--egy-primary);
-                box-shadow: 0 0 0 3px rgba(200, 131, 42, 0.15), var(--shadow-soft);
-                transform: translateY(-1px);
-            }
+        .search-input-group:focus-within {
+            border-color: var(--egy-primary);
+            box-shadow: 0 0 0 3px rgba(200, 131, 42, 0.15), var(--shadow-soft);
+            transform: translateY(-1px);
+        }
 
-            .search-input-group .form-control {
-                border: none;
-                box-shadow: none;
-                padding-top: 10px;
-                padding-bottom: 10px;
-                font-family: 'Nunito', sans-serif;
-                font-size: 0.9rem;
-            }
+        .search-input-group .form-control {
+            border: none;
+            box-shadow: none;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.9rem;
+            background: transparent;
+        }
 
-            .search-input-group .input-group-text {
-                border: none;
-                padding-left: 18px;
-            }
+        .search-input-group .input-group-text {
+            border: none;
+            padding-left: 18px;
+            background: transparent !important;
+        }
 
-            /* --- Filter Chips --- */
-            .category-chips {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                padding: 0 24px 20px;
-                border-bottom: 1px solid rgba(200, 131, 42, 0.1);
-            }
+        .btn-clear-search {
+            border: none;
+            background: transparent;
+            padding: 6px 14px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-            .chip {
-                border: 1px solid rgba(200, 131, 42, 0.25);
-                background: rgba(248, 250, 252, 0.6);
-                color: var(--egy-muted-gold);
-                border-radius: 25px;
-                padding: 6px 14px;
-                font-size: 0.78rem;
-                font-weight: 700;
-                font-family: 'Nunito', sans-serif;
-                cursor: pointer;
-                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            }
+        .btn-clear-search:hover i {
+            color: var(--egy-primary) !important;
+        }
 
-            .chip:hover {
-                background: var(--egy-accent);
-                color: var(--egy-dark);
-                border-color: var(--egy-accent);
-                transform: translateY(-1px);
-                box-shadow: 0 4px 10px rgba(200, 131, 42, 0.15);
-            }
+        /* --- Map Panel & Floating Category Overlay --- */
+        .explore-map-panel {
+            height: calc(100vh - var(--nav-offset));
+            background: #ece6db;
+            position: relative;
+            overflow: hidden;
+        }
 
-            .chip-active {
-                background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%);
-                color: #fff !important;
-                border-color: transparent;
-                box-shadow: var(--shadow-glow-gold);
-            }
+        .explore-map-container {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
+        }
 
-            [data-theme="dark"] .chip {
-                background: var(--bg-surface-elevated);
-                color: var(--text-primary);
-                border-color: var(--border-medium);
-            }
+        [data-theme="dark"] .explore-map-panel {
+            background: var(--bg-body);
+        }
 
-            [data-theme="dark"] .chip:hover {
-                background: var(--egy-accent);
-                color: var(--egy-dark);
-                border-color: var(--egy-accent);
-            }
+        [data-theme="dark"] .explore-map-container {
+            background: var(--bg-surface);
+        }
 
-            /* --- Scrollable List --- */
-            .explore-list {
-                flex: 1;
-                overflow-y: auto;
-                padding: 20px 24px 40px;
-            }
+        .map-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--egy-muted-gold);
+            opacity: 0.65;
+        }
 
-            /* Custom scrollbar for list panel */
-            .explore-list::-webkit-scrollbar {
-                width: 6px;
-            }
+        /* --- Map Category Overlay Layer --- */
+        .map-category-overlay {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            right: 14px;
+            z-index: 25;
+            pointer-events: none; /* Let map drag and pan work through empty areas */
+            display: flex;
+            align-items: center;
+        }
 
-            .explore-list::-webkit-scrollbar-track {
-                background: rgba(200, 131, 42, 0.03);
-            }
+        .category-chips-scroll {
+            pointer-events: auto; /* Enable clicks on the chips and container */
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            gap: 8px;
+            padding: 7px 12px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(200, 131, 42, 0.28);
+            border-radius: 30px;
+            box-shadow: 0 4px 22px rgba(30, 18, 10, 0.12);
+            max-width: calc(100% - 64px);
+            margin-left: 54px; /* Leaves clear space for ArcGIS top-left zoom buttons */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            -webkit-overflow-scrolling: touch;
+            transition: all 0.25s ease;
+        }
 
-            .explore-list::-webkit-scrollbar-thumb {
-                background: rgba(200, 131, 42, 0.2);
-                border-radius: 3px;
-            }
+        .category-chips-scroll::-webkit-scrollbar {
+            display: none;
+        }
 
-            .explore-list::-webkit-scrollbar-thumb:hover {
-                background: var(--egy-primary);
-            }
+        [dir="rtl"] .category-chips-scroll {
+            margin-left: 0;
+            margin-right: 54px;
+        }
 
-            /* --- Destination Cards --- */
-            .explore-card {
-                background: var(--bg-surface);
-                border: 1px solid rgba(200, 131, 42, 0.12) !important;
-                border-radius: 16px;
-                padding: 20px 22px;
-                margin-bottom: 18px;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                cursor: pointer;
-                box-shadow: var(--shadow-soft);
-            }
+        [data-theme="dark"] .category-chips-scroll {
+            background: rgba(30, 18, 10, 0.88);
+            border-color: rgba(200, 131, 42, 0.35);
+            box-shadow: 0 4px 22px rgba(0, 0, 0, 0.45);
+        }
 
-            .explore-card:hover {
-                border-color: var(--egy-primary) !important;
-                transform: translateY(-5px);
-                box-shadow: 0 12px 26px rgba(200, 131, 42, 0.14);
-            }
+        /* --- Category Filter Chips --- */
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            border: 1px solid rgba(200, 131, 42, 0.24);
+            background: rgba(248, 250, 252, 0.75);
+            color: var(--egy-muted-gold);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            flex-shrink: 0;
+        }
 
-            .explore-card.active-card {
-                border: 2px solid var(--egy-primary) !important;
-                background: rgba(200, 131, 42, 0.02) !important;
-                box-shadow: 0 8px 20px rgba(200, 131, 42, 0.08);
-            }
+        .chip i {
+            font-size: 0.85rem;
+            transition: transform 0.2s ease;
+        }
 
-            .explore-card-title {
-                font-family: 'Cinzel', serif;
-                color: var(--egy-dark);
-                font-size: 1.1rem;
-                font-weight: 700;
-                line-height: 1.3;
-            }
+        .chip:hover {
+            background: var(--egy-accent);
+            color: var(--egy-dark);
+            border-color: var(--egy-accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(200, 131, 42, 0.2);
+        }
 
-            .text-primary-gold {
-                color: var(--egy-primary);
-            }
+        .chip:hover i {
+            transform: scale(1.1);
+        }
 
-            .rating-badge {
-                background: rgba(200, 131, 42, 0.08);
-                color: var(--egy-muted-gold);
-                border: 1px solid rgba(200, 131, 42, 0.2);
-                border-radius: 20px;
-                padding: 3px 10px;
-                font-size: 0.78rem;
-                font-weight: 700;
-                white-space: nowrap;
-                display: inline-flex;
-                align-items: center;
-            }
+        .chip-active {
+            background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%) !important;
+            color: #ffffff !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 14px rgba(200, 131, 42, 0.4) !important;
+        }
 
-            .rating-badge i {
-                color: var(--egy-primary);
-            }
+        .chip-active i {
+            color: #ffffff !important;
+        }
 
-            .rating-new {
-                background: rgba(200, 131, 42, 0.06);
-                color: var(--text-muted);
-                border-color: var(--border-subtle);
-            }
+        [data-theme="dark"] .chip {
+            background: rgba(45, 26, 14, 0.65);
+            color: #e2d9ce;
+            border-color: rgba(200, 131, 42, 0.28);
+        }
 
-            .badge-category {
-                display: inline-block;
-                background: rgba(200, 131, 42, 0.06);
-                color: var(--egy-muted-gold);
-                font-size: 0.7rem;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                padding: 3px 10px;
-                border-radius: 12px;
-                border: 1px solid rgba(200, 131, 42, 0.15);
-            }
+        [data-theme="dark"] .chip:hover {
+            background: var(--egy-accent);
+            color: var(--egy-dark);
+            border-color: var(--egy-accent);
+        }
 
-            .text-secondary-dark {
-                color: var(--text-secondary);
-                line-height: 1.5;
-            }
+        [data-theme="dark"] .chip-active {
+            background: linear-gradient(135deg, var(--egy-primary) 0%, var(--egy-accent) 100%) !important;
+            color: #ffffff !important;
+            border-color: transparent !important;
+        }
 
-            .explore-tags {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 6px;
-            }
+        /* --- Scrollable List --- */
+        .explore-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px 40px;
+        }
 
-            .tag-pill {
-                background: rgba(200, 131, 42, 0.04);
-                border: 1px solid rgba(200, 131, 42, 0.15);
-                color: var(--egy-muted-gold);
-                border-radius: 10px;
-                padding: 2px 8px;
-                font-size: 0.72rem;
-                font-weight: 600;
-            }
+        .explore-list::-webkit-scrollbar {
+            width: 6px;
+        }
 
-            /* --- Action Buttons --- */
-            .btn-explore-action {
-                border: 1px solid rgba(200, 131, 42, 0.4);
-                color: var(--egy-muted-gold);
-                border-radius: 20px;
-                padding: 5px 16px;
-                font-size: 0.8rem;
-                font-weight: 700;
-                background: transparent;
-                transition: all 0.25s ease;
-            }
+        .explore-list::-webkit-scrollbar-track {
+            background: rgba(200, 131, 42, 0.03);
+        }
 
-            .btn-explore-action:hover {
-                background: var(--egy-primary);
-                border-color: var(--egy-primary);
-                color: #fff;
-                box-shadow: 0 4px 10px rgba(200, 131, 42, 0.2);
-            }
+        .explore-list::-webkit-scrollbar-thumb {
+            background: rgba(200, 131, 42, 0.2);
+            border-radius: 3px;
+        }
 
-            /* --- Map Panel --- */
+        .explore-list::-webkit-scrollbar-thumb:hover {
+            background: var(--egy-primary);
+        }
+
+        /* --- Destination Cards --- */
+        .explore-card {
+            background: var(--bg-surface);
+            border: 1px solid rgba(200, 131, 42, 0.12) !important;
+            border-radius: 16px;
+            padding: 20px 22px;
+            margin-bottom: 18px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .explore-card:hover {
+            border-color: var(--egy-primary) !important;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 26px rgba(200, 131, 42, 0.14);
+        }
+
+        .explore-card.active-card {
+            border: 2px solid var(--egy-primary) !important;
+            background: rgba(200, 131, 42, 0.02) !important;
+            box-shadow: 0 8px 20px rgba(200, 131, 42, 0.08);
+        }
+
+        .explore-card-title {
+            font-family: 'Cinzel', serif;
+            color: var(--egy-dark);
+            font-size: 1.1rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .text-primary-gold {
+            color: var(--egy-primary);
+        }
+
+        .rating-badge {
+            background: rgba(200, 131, 42, 0.08);
+            color: var(--egy-muted-gold);
+            border: 1px solid rgba(200, 131, 42, 0.2);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .rating-badge i {
+            color: var(--egy-primary);
+        }
+
+        .rating-new {
+            background: rgba(200, 131, 42, 0.06);
+            color: var(--text-muted);
+            border-color: var(--border-subtle);
+        }
+
+        .badge-category {
+            display: inline-block;
+            background: rgba(200, 131, 42, 0.06);
+            color: var(--egy-muted-gold);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(200, 131, 42, 0.15);
+        }
+
+        .text-secondary-dark {
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .explore-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag-pill {
+            background: rgba(200, 131, 42, 0.04);
+            border: 1px solid rgba(200, 131, 42, 0.15);
+            color: var(--egy-muted-gold);
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        /* --- Action Buttons --- */
+        .btn-explore-action {
+            border: 1px solid rgba(200, 131, 42, 0.4);
+            color: var(--egy-muted-gold);
+            border-radius: 20px;
+            padding: 5px 16px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: transparent;
+            transition: all 0.25s ease;
+        }
+
+        .btn-explore-action:hover {
+            background: var(--egy-primary);
+            border-color: var(--egy-primary);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(200, 131, 42, 0.2);
+        }
+
+        /* --- Responsive Styling --- */
+        @@media (max-width: 991.98px) {
+            .explore-list-panel,
             .explore-map-panel {
-                height: calc(100vh - var(--nav-offset));
-                background: #ece6db;
+                height: auto;
+            }
+
+            .explore-map-panel {
+                min-height: 420px;
                 position: relative;
             }
 
             .explore-map-container {
-                position: absolute;
-                inset: 0;
-                background: repeating-linear-gradient(45deg, #e7e0d5 0 18px, #efe9df 18px 36px);
+                position: relative;
+                inset: auto;
+                height: 420px;
             }
 
-            [data-theme="dark"] .explore-map-panel {
-                background: var(--bg-body);
+            .explore-list {
+                max-height: 55vh;
             }
 
-            [data-theme="dark"] .explore-map-container {
-                background: var(--bg-surface);
+            .map-category-overlay {
+                top: 10px;
+                left: 8px;
+                right: 8px;
             }
 
-            .map-watermark {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                text-align: center;
-                color: var(--egy-muted-gold);
-                opacity: 0.65;
+            .category-chips-scroll {
+                margin-left: 48px;
+                max-width: calc(100% - 52px);
+                padding: 5px 8px;
+                gap: 6px;
             }
 
-            /* --- Responsive Styling --- */
-            @@media (max-width: 991.98px) {
+            [dir="rtl"] .category-chips-scroll {
+                margin-left: 0;
+                margin-right: 48px;
+            }
 
-                .explore-list-panel,
-                .explore-map-panel {
-                    height: auto;
+            .chip {
+                padding: 5px 10px;
+                font-size: 0.74rem;
+            }
+        }
+    </style>
+
+    <script>
+        (function () {
+            var cards = Array.from(document.querySelectorAll('#exploreList .explore-card'));
+            var mapInstance = null;
+            var searchFitTimer = null;
+            var explorePropMap = {
+                id: ['ObjectId', 'id', 'Id', 'destination_id'],
+                name: ['English_Name', 'name', 'Name', 'destination_name'],
+                arabicName: ['Arabic_Name', 'arabic_name', 'ArabicName'],
+                city: ['Governorate', 'city', 'City'],
+                category: ['category', 'Category'],
+                status: ['status', 'Status'],
+                tags: ['tags', 'Tags'],
+                desc: ['description', 'Description'],
+                detailsUrl: '/Destination/Details/{id}'
+            };
+
+            function _firstDefined(p, keys, fallback) {
+                for (var i = 0; i < keys.length; i++) {
+                    var val = p[keys[i]];
+                    if (val !== undefined && val !== null && String(val) !== '') return String(val);
                 }
-
-                .explore-map-panel {
-                    min-height: 360px;
-                    position: relative;
-                }
-
-                .explore-map-container {
-                    position: relative;
-                    inset: auto;
-                    height: 360px;
-                }
-
-                .explore-list {
-                    max-height: 55vh;
-                }
+                return fallback[0] || '';
             }
-        </style>
 
-        <script>
-            (function () {
-                var chips = document.querySelectorAll('#categoryChips .chip');
-                var cards = Array.from(document.querySelectorAll('#exploreList .explore-card'));
-                var mapInstance = null;
-                var searchFitTimer = null;
-                var explorePropMap = {
-                    id: ['ObjectId', 'id', 'Id', 'destination_id'],
-                    name: ['English_Name', 'name', 'Name', 'destination_name'],
-                    city: ['Governorate', 'city', 'City'],
-                    category: ['category', 'Category'],
-                    status: ['status', 'Status'],
-                    detailsUrl: '/Destination/Details/{id}'
-                };
+            function normalizeText(s) {
+                if (!s) return '';
+                return String(s)
+                    .toLowerCase()
+                    .replace(/[\u064B-\u065F\u0670]/g, '') // remove Arabic diacritics/tashkeel
+                    .replace(/[أإآ]/g, 'ا')
+                    .replace(/ة/g, 'ه')
+                    .replace(/ى/g, 'ي')
+                    .replace(/[^\w\s\u0600-\u06FF]/g, ' ') // replace punctuation/symbols with spaces
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            }
 
-                function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+            // Related words / synonym dictionary for Egyptian tourism.
+            // When user types any key, the associated words are also matched.
+            var _synonymGroups = [
+                ['pyramid', 'pyramids', 'giza', 'khufu', 'khafre', 'menkaure', 'djoser', 'dahshur', 'saqqara', 'pharaonic', 'هرم', 'اهرام', 'الاهرامات', 'هرم خوفو'],
+                ['temple', 'temples', 'karnak', 'luxor', 'hatshepsut', 'philae', 'edfu', 'abu simbel', 'pharaonic', 'معبد', 'معابد'],
+                ['mosque', 'mosques', 'islamic', 'masjid', 'sultan', 'citadel', 'مسجد', 'جامع', 'مساجد', 'اسلامي'],
+                ['church', 'churches', 'coptic', 'cathedral', 'monastery', 'كنيسه', 'كنائس', 'قبطي', 'دير'],
+                ['museum', 'museums', 'gallery', 'galleries', 'exhibition', 'متحف', 'متاحف', 'معرض'],
+                ['tomb', 'tombs', 'burial', 'mummy', 'mummies', 'sarcophagus', 'necropolis', 'valley', 'مقبره', 'مقابر', 'مومياء'],
+                ['palace', 'palaces', 'castle', 'citadel', 'fort', 'fortress', 'قصر', 'قصور', 'قلعه'],
+                ['park', 'parks', 'garden', 'gardens', 'nature', 'natural', 'reserve', 'oasis', 'حديقه', 'حدائق', 'طبيعه', 'محميه', 'واحه'],
+                ['beach', 'beaches', 'sea', 'coast', 'coastal', 'diving', 'snorkeling', 'reef', 'coral', 'شاطئ', 'شواطئ', 'بحر', 'غوص'],
+                ['desert', 'safari', 'adventure', 'camping', 'dune', 'dunes', 'oasis', 'siwa', 'صحراء', 'سفاري', 'مغامره', 'واحه'],
+                ['bazaar', 'market', 'markets', 'souq', 'souk', 'shopping', 'khan', 'khalili', 'سوق', 'اسواق', 'بازار', 'خان الخليلي'],
+                ['nile', 'river', 'cruise', 'felucca', 'boat', 'نيل', 'نهر', 'فلوكه', 'مركب'],
+                ['ancient', 'old', 'historic', 'historical', 'heritage', 'monument', 'monuments', 'ruins', 'ruin', 'اثري', 'اثار', 'تاريخي', 'تراث', 'قديم'],
+                ['sphinx', 'ابو الهول'],
+                ['cairo', 'القاهره'],
+                ['alexandria', 'الاسكندريه'],
+                ['aswan', 'اسوان'],
+                ['luxor', 'الاقصر'],
+                ['hurghada', 'الغردقه'],
+                ['sharm', 'شرم الشيخ'],
+                ['pharaoh', 'pharaonic', 'pharaohs', 'فرعون', 'فرعوني', 'فراعنه'],
+                ['hidden', 'hidden gem', 'hidden gems', 'secret', 'undiscovered', 'off the beaten path', 'مخفي', 'جوهره', 'سري'],
+                ['street', 'streets', 'road', 'walk', 'walking', 'شارع', 'شوارع'],
+                ['citadel', 'قلعه', 'صلاح الدين'],
+                ['coptic', 'christian', 'قبطي', 'مسيحي'],
+                ['islamic', 'islam', 'اسلامي', 'اسلام'],
+                ['zoo', 'aquarium', 'animal', 'animals', 'حديقه الحيوان', 'حيوانات'],
+                ['statue', 'statues', 'sculpture', 'obelisk', 'تمثال', 'تماثيل', 'مسله'],
+                ['ramses', 'ramesses', 'رمسيس'],
+                ['tutankhamun', 'tut', 'توت عنخ امون'],
+                ['cleopatra', 'كليوباترا'],
+                ['ptolemaic', 'ptolemy', 'بطلمي'],
+                ['roman', 'greco-roman', 'amphitheatre', 'روماني'],
+                ['library', 'bibliotheca', 'مكتبه', 'مكتبه الاسكندريه'],
+                ['tower', 'برج', 'ابراج'],
+                ['dam', 'السد العالي', 'سد'],
+                ['island', 'islands', 'جزيره', 'جزر'],
+                ['waterfall', 'waterfalls', 'شلال', 'شلالات'],
+                ['cave', 'caves', 'كهف', 'كهوف'],
+            ];
 
-                function _firstDefined(p, keys, fallback) {
-                    for (var i = 0; i < keys.length; i++) {
-                        var val = p[keys[i]];
-                        if (val !== undefined && val !== null && String(val) !== '') return String(val);
+            // Build a fast lookup: token → Set of synonyms
+            var _synonymMap = {};
+            _synonymGroups.forEach(function (group) {
+                var normalizedGroup = group.map(function (w) { return normalizeText(w); }).filter(Boolean);
+                normalizedGroup.forEach(function (word) {
+                    if (!_synonymMap[word]) _synonymMap[word] = new Set();
+                    normalizedGroup.forEach(function (syn) {
+                        _synonymMap[word].add(syn);
+                    });
+                });
+            });
+
+            function expandTokenWithSynonyms(token) {
+                // Returns an array of alternative tokens to try (always includes the original)
+                var results = [token];
+                if (_synonymMap[token]) {
+                    _synonymMap[token].forEach(function (syn) {
+                        if (syn !== token) results.push(syn);
+                    });
+                }
+                // Also check if any multi-word synonym key starts with or contains the token
+                Object.keys(_synonymMap).forEach(function (key) {
+                    if (key !== token && key.length > 3 && key.indexOf(token) > -1) {
+                        _synonymMap[key].forEach(function (syn) {
+                            if (results.indexOf(syn) === -1) results.push(syn);
+                        });
                     }
-                    return fallback[0] || '';
-                }
+                });
+                return results;
+            }
 
-                /* 
-                // UNUSED: Replaced by custom JavaScript image renderer in maps.js
-                function buildPopup(feature) {
-                    var p = feature.properties || {};
-                    var id = _firstDefined(p, explorePropMap.id, []);
-                    var name = _firstDefined(p, explorePropMap.name, ['Unnamed']);
-                    var city = _firstDefined(p, explorePropMap.city, ['']);
-                    var cat = _firstDefined(p, explorePropMap.category, ['']);
-                    var html = '';
-                    if (name) html += '<strong>' + _esc(name) + '</strong>';
-                    if (city) html += '<br><span class="text-muted">' + _esc(city) + '</span>';
-                    if (cat) html += '<br><span class="badge bg-secondary">' + _esc(cat) + '</span>';
-                    if (id && explorePropMap.detailsUrl) {
-                        html += '<br><a href="' + explorePropMap.detailsUrl.replace('{id}', encodeURIComponent(id)) + '" class="btn btn-sm btn-outline-primary mt-1">Details</a>';
-                    }
-                    return html;
+            function textMatchesTokenWithSynonyms(combined, token) {
+                // Direct match first (fast path)
+                if (combined.indexOf(token) > -1) return true;
+                // Try all synonyms
+                var alts = expandTokenWithSynonyms(token);
+                for (var i = 0; i < alts.length; i++) {
+                    if (combined.indexOf(alts[i]) > -1) return true;
                 }
-                */
+                return false;
+            }
 
-                function getExploreSearch() {
-                    var el = document.getElementById('exploreSearch');
-                    return el ? el.value.trim().toLowerCase() : '';
-                }
+            function getExploreSearch() {
+                var el = document.getElementById('exploreSearch');
+                return el ? el.value.trim() : '';
+            }
 
-                function cardMatchesSearch(card, q) {
-                    if (!q) return true;
-                    var name = (card.getAttribute('data-name') || '').toLowerCase();
-                    var cat = (card.getAttribute('data-category') || '').toLowerCase();
-                    return name.indexOf(q) > -1 || cat.indexOf(q) > -1;
-                }
+            function getActiveCategory() {
+                var active = document.querySelector('#categoryChips .chip-active');
+                if (!active) return 'all';
+                return (active.getAttribute('data-category') || active.getAttribute('data-filter') || 'all').trim();
+            }
 
-                function explorePredicate(feature) {
-                    var p = feature.properties || {};
-                    var activeFilter = document.querySelector('#categoryChips .chip-active');
-                    var isAll = activeFilter && activeFilter.getAttribute('data-filter') === 'all';
-                    var activeCat = isAll ? null : (activeFilter ? activeFilter.getAttribute('data-category') : null);
-                    var activeStatus = isAll ? null : (activeFilter ? activeFilter.getAttribute('data-status') : null);
-                    var propCat = _firstDefined(p, explorePropMap.category, ['']);
-                    var propStatus = _firstDefined(p, explorePropMap.status, ['']);
-                    var chipMatch = isAll || (activeCat && propCat === activeCat) || (activeStatus && propStatus === activeStatus);
-                    var q = getExploreSearch();
-                    var name = _firstDefined(p, explorePropMap.name, ['']).toLowerCase();
-                    var searchMatch = !q || name.indexOf(q) > -1 || propCat.toLowerCase().indexOf(q) > -1;
-                    return chipMatch && searchMatch;
-                }
+            function cardMatchesSearch(card, q) {
+                if (!q) return true;
+                var normQ = normalizeText(q);
+                if (!normQ) return true;
+                var tokens = normQ.split(' ').filter(Boolean);
+                if (!tokens.length) return true;
 
-                function syncMarkersFromChips() {
-                    if (mapInstance && mapInstance.filterMarkers) {
-                        // When "All" chip is active and no search query, show ALL ArcGIS features.
-                        // Only filter when the user has selected a category or typed a search.
-                        var activeFilter = getActiveChip();
-                        var isAll = activeFilter && activeFilter.getAttribute('data-filter') === 'all';
-                        var hasSearch = !!getExploreSearch();
-                        if (isAll && !hasSearch) {
-                            mapInstance.filterMarkers(null); // reset to "1=1" / show all
-                        } else {
-                            mapInstance.filterMarkers(explorePredicate);
-                        }
-                    }
-                }
+                var name = card.getAttribute('data-name') || '';
+                var arName = card.getAttribute('data-arabic-name') || '';
+                var city = card.getAttribute('data-city') || '';
+                var cat = card.getAttribute('data-category') || '';
+                var tags = card.getAttribute('data-tags') || '';
+                var desc = card.getAttribute('data-desc') || '';
 
-                function cardMatchesChip(card, activeFilter) {
-                    if (!activeFilter) return true;
-                    var isAll = activeFilter.getAttribute('data-filter') === 'all';
-                    if (isAll) return true;
-                    var category = activeFilter.getAttribute('data-category');
-                    var status = activeFilter.getAttribute('data-status');
-                    if (category) return card.getAttribute('data-category') === category;
-                    if (status) return card.getAttribute('data-status') === status;
+                var combined = normalizeText(name + ' ' + arName + ' ' + city + ' ' + cat + ' ' + tags + ' ' + desc);
+
+                return tokens.every(function (t) {
+                    return textMatchesTokenWithSynonyms(combined, t);
+                });
+            }
+
+            function cardMatchesChip(card, activeCategory) {
+                if (!activeCategory || activeCategory.toLowerCase() === 'all') return true;
+                var cardCat = (card.getAttribute('data-category') || '').trim();
+                var cardStatus = (card.getAttribute('data-status') || '').trim();
+                var target = activeCategory.trim();
+
+                if (cardCat.localeCompare(target, undefined, { sensitivity: 'accent', usage: 'search' }) === 0 ||
+                    cardCat.toLowerCase() === target.toLowerCase()) {
                     return true;
                 }
 
-                function getActiveChip() {
-                    return document.querySelector('#categoryChips .chip-active');
+                var tLow = target.toLowerCase();
+                var cLow = cardCat.toLowerCase();
+                if (tLow.length > 3 && cLow.indexOf(tLow) > -1) return true;
+                if (cLow.length > 3 && tLow.indexOf(cLow) > -1) return true;
+
+                // Hidden Gems mapping
+                if (tLow.indexOf('gem') > -1 && (cLow.indexOf('gem') > -1 || cardStatus.toLowerCase().indexOf('pending') > -1)) {
+                    return true;
                 }
 
-                function fitExploreBounds() {
-                    if (!mapInstance || !mapInstance.fitBounds) return;
-                    var q = getExploreSearch();
-                    var activeFilter = getActiveChip();
-                    var isAll = activeFilter && activeFilter.getAttribute('data-filter') === 'all';
-                    if (isAll && !q) {
-                        if (mapInstance.view) {
-                            mapInstance.view.goTo({ center: [30.8, 27.0], zoom: 6.2 }, { duration: 1000 });
-                        }
-                        return;
+                return false;
+            }
+
+            function explorePredicate(feature) {
+                var p = feature.properties || feature.attributes || {};
+                var activeCat = getActiveCategory();
+                var isAll = !activeCat || activeCat.toLowerCase() === 'all';
+                var propCat = _firstDefined(p, explorePropMap.category, ['']).trim();
+                var propStatus = _firstDefined(p, explorePropMap.status, ['']).trim();
+
+                var catMatch = isAll;
+                if (!isAll) {
+                    var aLow = activeCat.toLowerCase();
+                    var pLow = propCat.toLowerCase();
+                    catMatch = (pLow === aLow) ||
+                               (aLow.length > 3 && pLow.indexOf(aLow) > -1) ||
+                               (pLow.length > 3 && aLow.indexOf(pLow) > -1) ||
+                               (aLow.indexOf('gem') > -1 && (pLow.indexOf('gem') > -1 || propStatus.toLowerCase().indexOf('pending') > -1));
+                }
+
+                var q = getExploreSearch();
+                if (!q) return catMatch;
+
+                var normQ = normalizeText(q);
+                if (!normQ) return catMatch;
+                var tokens = normQ.split(' ').filter(Boolean);
+                if (!tokens.length) return catMatch;
+
+                var name = _firstDefined(p, explorePropMap.name, ['']);
+                var arName = _firstDefined(p, explorePropMap.arabicName, ['']);
+                var city = _firstDefined(p, explorePropMap.city, ['']);
+                var tags = _firstDefined(p, explorePropMap.tags, ['']);
+                var desc = _firstDefined(p, explorePropMap.desc, ['']);
+
+                var combined = normalizeText(name + ' ' + arName + ' ' + city + ' ' + propCat + ' ' + tags + ' ' + desc);
+
+                var searchMatch = tokens.every(function (t) {
+                    return textMatchesTokenWithSynonyms(combined, t);
+                });
+
+                return catMatch && searchMatch;
+            }
+
+            function syncMarkersFromChips() {
+                if (mapInstance && mapInstance.filterMarkers) {
+                    var activeCat = getActiveCategory();
+                    var isAll = !activeCat || activeCat.toLowerCase() === 'all';
+                    var hasSearch = !!getExploreSearch();
+                    if (isAll && !hasSearch) {
+                        mapInstance.filterMarkers(null); // reset to "1=1" / show all
+                    } else {
+                        mapInstance.filterMarkers(explorePredicate);
                     }
-                    var latlngs = [];
-                    cards.forEach(function (card) {
-                        if (card.style.display === 'none') return;
-                        if (!cardMatchesChip(card, activeFilter)) return;
-                        if (!cardMatchesSearch(card, q)) return;
-                        var lat = parseFloat(card.getAttribute('data-lat'));
-                        var lng = parseFloat(card.getAttribute('data-lng'));
-                        if (!isNaN(lat) && !isNaN(lng)) latlngs.push([lat, lng]);
-                    });
-                    if (latlngs.length === 0) return;
-                    mapInstance.fitBounds(latlngs);
                 }
+            }
 
-                function applyFilter(chip) {
-                    cards.forEach(function (card) {
-                        card.style.display = cardMatchesChip(card, chip) ? '' : 'none';
-                    });
-
-                    syncMarkersFromChips();
-                    toggleExploreEmpty();
-                    fitExploreBounds();
+            function fitExploreBounds() {
+                if (!mapInstance || !mapInstance.fitBounds) return;
+                var q = getExploreSearch();
+                var activeCat = getActiveCategory();
+                var isAll = !activeCat || activeCat.toLowerCase() === 'all';
+                if (isAll && !q) {
+                    if (mapInstance.view) {
+                        mapInstance.view.goTo({ center: [30.8, 27.0], zoom: 6.2 }, { duration: 800 });
+                    }
+                    return;
                 }
-
-                function toggleExploreEmpty() {
-                    var visible = cards.filter(function (c) { return c.style.display !== 'none'; });
-                    var empty = document.getElementById('exploreEmptyFilter');
-                    if (!empty) return;
-                    // Server already rendered the empty state when there are zero cards at all.
-                    if (cards.length === 0) { empty.style.display = 'none'; return; }
-                    empty.style.display = visible.length === 0 ? '' : 'none';
-                }
-
-                // Clear Filters button inside the client-side empty state
-                var exploreEmptyEl = document.getElementById('exploreEmptyFilter');
-                if (exploreEmptyEl) {
-                    exploreEmptyEl.addEventListener('click', function (e) {
-                        if (!e.target.closest('.empty-state-action')) return;
-                        var searchEl = document.getElementById('exploreSearch');
-                        if (searchEl) searchEl.value = '';
-                        chips.forEach(function (c) { c.classList.remove('chip-active'); });
-                        var allChip = document.querySelector('#categoryChips .chip[data-filter="all"]');
-                        if (allChip) allChip.classList.add('chip-active');
-                        cards.forEach(function (c) { c.style.display = ''; });
-                        syncMarkersFromChips();
-                        toggleExploreEmpty();
-                        fitExploreBounds();
-                    });
-                }
-
-                chips.forEach(function (chip) {
-                    chip.addEventListener('click', function () {
-                        chips.forEach(function (c) { c.classList.remove('chip-active'); });
-                        chip.classList.add('chip-active');
-                        if (chip.getAttribute('data-filter') === 'all') {
-                            cards.forEach(function (c) { c.style.display = ''; });
-                            syncMarkersFromChips();
-                            toggleExploreEmpty();
-                            fitExploreBounds();
-                        } else {
-                            applyFilter(chip);
-                        }
-                    });
-                });
-
-                var searchInput = document.getElementById('exploreSearch');
-                if (searchInput) {
-                    searchInput.addEventListener('keyup', function () {
-                        var q = getExploreSearch();
-                        cards.forEach(function (card) {
-                            card.style.display = cardMatchesSearch(card, q) ? '' : 'none';
-                        });
-                        syncMarkersFromChips();
-                        toggleExploreEmpty();
-                        clearTimeout(searchFitTimer);
-                        searchFitTimer = setTimeout(fitExploreBounds, 200);
-                    });
-                    searchInput.addEventListener('keypress', function (e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            searchInput.blur();
-                        }
-                    });
-                }
-
-                // Bind card click event to pan map and open Leaflet marker popup
+                var latlngs = [];
                 cards.forEach(function (card) {
-                    card.addEventListener('click', function (e) {
-                        // Do not trigger map pan if they clicked detail button links directly
-                        if (e.target.closest('.btn-explore-action')) return;
+                    if (card.style.display === 'none') return;
+                    if (!cardMatchesChip(card, activeCat)) return;
+                    if (!cardMatchesSearch(card, q)) return;
+                    var lat = parseFloat(card.getAttribute('data-lat'));
+                    var lng = parseFloat(card.getAttribute('data-lng'));
+                    if (!isNaN(lat) && !isNaN(lng)) latlngs.push([lat, lng]);
+                });
+                if (latlngs.length === 0) return;
+                mapInstance.fitBounds(latlngs);
+            }
 
-                        cards.forEach(function (c) { c.classList.remove('active-card'); });
-                        card.classList.add('active-card');
-
-                        var lat = parseFloat(card.getAttribute('data-lat'));
-                        var lng = parseFloat(card.getAttribute('data-lng'));
-                        var cardId = card.getAttribute('data-id');
-
-                        var name = card.getAttribute('data-name') || '';
-                        if (mapInstance && mapInstance.view && !isNaN(lat) && !isNaN(lng)) {
-                            mapInstance.view.goTo({ center: [lng, lat], zoom: 15 }, { duration: 1000 });
-                            if (mapInstance.openPopupAt) mapInstance.openPopupAt(lat, lng, name);
-                        }
-                    });
+            function filterCardsAndMap() {
+                var activeCat = getActiveCategory();
+                var q = getExploreSearch();
+                cards.forEach(function (card) {
+                    var matchChip = cardMatchesChip(card, activeCat);
+                    var matchSearch = cardMatchesSearch(card, q);
+                    card.style.display = (matchChip && matchSearch) ? '' : 'none';
                 });
 
-                function initMap() {
-                    if (mapInstance) return;
-                    mapInstance = EGYMaps.initWfsMap({
-                        mapElId: 'exploreMap',
-                        layer: 'destinations',
-                        propMap: explorePropMap,
-                        // popupHtml: buildPopup, // UNUSED: Replaced by custom JavaScript image renderer in maps.js
-                        useLayerStyle: true,
-                        onLayerReady: function () {
-                            syncMarkersFromChips();
-                        },
-                        onFeatureClick: function (attrs) {
-                            // attrs contains ArcGIS feature attributes.
-                            // Use the Id field (matches data-id on cards) to find and highlight
-                            // the corresponding destination card.
-                            var featureId = attrs['Id'] || attrs['id'] || attrs['ObjectId'] || attrs['OBJECTID'];
-                            if (featureId === undefined || featureId === null) return;
-                            var matched = null;
-                            cards.forEach(function (card) {
-                                var cardId = card.getAttribute('data-id');
-                                if (String(cardId) === String(featureId)) matched = card;
-                            });
-                            if (!matched) return;
-                            cards.forEach(function (c) { c.classList.remove('active-card'); });
-                            matched.classList.add('active-card');
-                            // Scroll the highlighted card into view within the list panel.
-                            matched.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        }
-                    });
+                syncMarkersFromChips();
+                toggleExploreEmpty();
+            }
+
+            function toggleExploreEmpty() {
+                var visible = cards.filter(function (c) { return c.style.display !== 'none'; });
+                var empty = document.getElementById('exploreEmptyFilter');
+                if (!empty) return;
+                if (cards.length === 0) { empty.style.display = 'none'; return; }
+                empty.style.display = visible.length === 0 ? '' : 'none';
+            }
+
+            function resetAllFilters() {
+                var searchEl = document.getElementById('exploreSearch');
+                if (searchEl) searchEl.value = '';
+                toggleClearSearchButton();
+
+                var allChips = document.querySelectorAll('#categoryChips .chip');
+                allChips.forEach(function (c) { c.classList.remove('chip-active'); });
+                var allChip = document.querySelector('#categoryChips .chip[data-filter="all"], #categoryChips .chip[data-category="all"]');
+                if (allChip) allChip.classList.add('chip-active');
+                cards.forEach(function (c) { c.style.display = ''; });
+                syncMarkersFromChips();
+                toggleExploreEmpty();
+                fitExploreBounds();
+            }
+
+            function toggleClearSearchButton() {
+                var searchEl = document.getElementById('exploreSearch');
+                var clearBtn = document.getElementById('clearSearchBtn');
+                if (!clearBtn || !searchEl) return;
+                if (searchEl.value.trim().length > 0) {
+                    clearBtn.classList.remove('d-none');
+                } else {
+                    clearBtn.classList.add('d-none');
+                }
+            }
+
+            // Clear Filters button inside empty state
+            var exploreEmptyEl = document.getElementById('exploreEmptyFilter');
+            if (exploreEmptyEl) {
+                exploreEmptyEl.addEventListener('click', function (e) {
+                    if (!e.target.closest('.empty-state-action')) return;
+                    resetAllFilters();
+                });
+            }
+
+            // Clear Search button inside input group
+            var clearSearchBtn = document.getElementById('clearSearchBtn');
+            if (clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', function () {
+                    var searchEl = document.getElementById('exploreSearch');
+                    if (searchEl) {
+                        searchEl.value = '';
+                        searchEl.focus();
+                    }
+                    toggleClearSearchButton();
+                    filterCardsAndMap();
+                    fitExploreBounds();
+                });
+            }
+
+            // Chips click handling
+            var chips = document.querySelectorAll('#categoryChips .chip');
+            chips.forEach(function (chip) {
+                chip.addEventListener('click', function () {
+                    chips.forEach(function (c) { c.classList.remove('chip-active'); });
+                    chip.classList.add('chip-active');
+
+                    chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+                    filterCardsAndMap();
+                    fitExploreBounds();
+                });
+            });
+
+            // Horizontal mouse wheel scrolling for the chip bar
+            var chipsScrollEl = document.getElementById('categoryChips');
+            if (chipsScrollEl) {
+                chipsScrollEl.addEventListener('wheel', function (e) {
+                    if (e.deltaY !== 0) {
+                        e.preventDefault();
+                        chipsScrollEl.scrollLeft += e.deltaY;
+                    }
+                }, { passive: false });
+            }
+
+            var searchInput = document.getElementById('exploreSearch');
+            if (searchInput) {
+                toggleClearSearchButton();
+
+                function handleSearchInput() {
+                    toggleClearSearchButton();
+                    filterCardsAndMap();
+                    clearTimeout(searchFitTimer);
+                    searchFitTimer = setTimeout(fitExploreBounds, 250);
                 }
 
-                initMap();
-            })();
-        </script>
-    }
+                searchInput.addEventListener('input', handleSearchInput);
+                searchInput.addEventListener('keyup', handleSearchInput);
+
+                searchInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        searchInput.blur();
+                    }
+                });
+            }
+
+            // Bind card click event to pan map and open popup
+            cards.forEach(function (card) {
+                card.addEventListener('click', function (e) {
+                    if (e.target.closest('.btn-explore-action')) return;
+
+                    cards.forEach(function (c) { c.classList.remove('active-card'); });
+                    card.classList.add('active-card');
+
+                    var lat = parseFloat(card.getAttribute('data-lat'));
+                    var lng = parseFloat(card.getAttribute('data-lng'));
+                    var name = card.getAttribute('data-name') || '';
+                    if (mapInstance && mapInstance.view && !isNaN(lat) && !isNaN(lng)) {
+                        mapInstance.view.goTo({ center: [lng, lat], zoom: 15 }, { duration: 1000 });
+                        if (mapInstance.openPopupAt) mapInstance.openPopupAt(lat, lng, name);
+                    }
+                });
+            });
+
+            function initMap() {
+                if (mapInstance) return;
+                mapInstance = EGYMaps.initWfsMap({
+                    mapElId: 'exploreMap',
+                    layer: 'destinations',
+                    propMap: explorePropMap,
+                    useLayerStyle: true,
+                    onLayerReady: function () {
+                        syncMarkersFromChips();
+                    },
+                    onFeatureClick: function (attrs) {
+                        var featureId = attrs['Id'] || attrs['id'] || attrs['ObjectId'] || attrs['OBJECTID'];
+                        if (featureId === undefined || featureId === null) return;
+                        var matched = null;
+                        cards.forEach(function (card) {
+                            var cardId = card.getAttribute('data-id');
+                            if (String(cardId) === String(featureId)) matched = card;
+                        });
+                        if (!matched) return;
+                        cards.forEach(function (c) { c.classList.remove('active-card'); });
+                        matched.classList.add('active-card');
+                        matched.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                });
+            }
+
+            initMap();
+        })();
+    </script>
+}
