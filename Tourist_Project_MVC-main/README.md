@@ -164,7 +164,7 @@ Open **http://localhost:5217** — migrations, seed data and the demo accounts a
 | Role | Email | Password |
 |---|---|---|
 | Admin | `admin@egyxplore.com` | `AdminPass123!` |
-| Sponsor | `elfishawy@egyxplore.com` | `SponsorPass123!` |
+| Sponsor | `cilantro@egyxplore.com` | `SponsorPass123!` |
 | Tourist | `ahmed.hassan@egyxplore.com` | `TouristPass123!` |
 
 > 🔒 Demo credentials only — change them (and the seed data) before any real deployment.
