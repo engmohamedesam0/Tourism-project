@@ -41,6 +41,8 @@ A full-stack **graduation project** web platform that connects **tourists**, **s
 - **AI chat assistant** — ask about destinations, trips and Egypt travel tips (Gemini / OpenAI).
 - **Notifications** — real-time SignalR notifications.
 - **Support tickets** — contact support and track replies.
+- **DOCS** — includes step-by-step guides for implementing and configuring the main features and functionalities of the website for Tourist.
+
 
 ### 🏨 Sponsors
 - **Sponsor portal** — register as a sponsor, complete your business profile (choose a category: Café, Restaurant, Hotel, Airline, …).
@@ -48,6 +50,8 @@ A full-stack **graduation project** web platform that connects **tourists**, **s
 - **Rewards & missions** — publish rewards and missions for tourists.
 - **AI tools** — an AI agent can draft new branches from a short description.
 - **Reviews & support** — view tourist reviews and reply to tickets.
+- **DOCS** — includes step-by-step guides for implementing and configuring the main features and functionalities of the website for Sponsors.
+- **Reports** — provides detailed activity and performance reports, including key statistics such as total claims, points redeemed, offer views, and peak activity periods. Reports can be viewed, analyzed, and printed when needed.
 
 ### 🛡️ Admins
 - **Full management** — tourists, sponsors, branches, destinations, missions, rewards, utilities.
@@ -55,6 +59,7 @@ A full-stack **graduation project** web platform that connects **tourists**, **s
 - **One-click sync** — push the local database to ArcGIS feature layers (add new / update changed / delete stale) and pull destinations back; result counts are shown in a toast.
 - **Approvals** — approve sponsor registration requests.
 - **Support inbox** — manage all support tickets.
+- **DOCS** — includes step-by-step guides for implementing and configuring the main features and functionalities of the website for admins.
 
 ---
 
@@ -183,16 +188,6 @@ The platform uses **ArcGIS Online hosted feature layers** for all map data:
 
 - **Push** — compares the DB with the layer and then **adds new, updates changed, deletes stale** records in one pass (batched to respect ArcGIS request limits), then reports `+added / ~updated / -deleted` per layer.
 - **Pull** — imports destination updates from ArcGIS back into the database.
-
-### `arcgis-proxy.py` (machine-specific)
-
-Some Windows machines have a broken TLS stack (Schannel) where .NET cannot complete HTTPS handshakes. For those, the repo includes a tiny local OpenSSL bridge proxy (`arcgis-proxy.py`):
-
-```bash
-python arcgis-proxy.py        # listens on http://127.0.0.1:8765
-```
-
-When `ArcGIS:UseProxy = "true"`, the app rewrites ArcGIS URLs through the proxy and starts it automatically at launch. On healthy machines, set `"UseProxy": "false"`.
 
 ---
 
