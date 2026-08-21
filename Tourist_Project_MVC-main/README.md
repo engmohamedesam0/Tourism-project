@@ -27,8 +27,6 @@ A full-stack **graduation project** web platform that connects **tourists**, **s
 - [📱 Mobile API (JWT)](#-mobile-api-jwt)
 - [🌐 Localization](#-localization)
 - [🧩 Data Seeding](#-data-seeding)
-- [🛠️ Utilities & Scripts](#️-utilities--scripts)
-- [❓ Troubleshooting](#-troubleshooting)
 
 ---
 
@@ -200,9 +198,9 @@ When `ArcGIS:UseProxy = "true"`, the app rewrites ArcGIS URLs through the proxy 
 
 ## 🤖 AI Features
 
-- **AI chat assistant** (`/AiChat`) — tourists can chat about destinations, itineraries and Egypt travel tips (Gemini or OpenAI, configurable).
+- **RAG-powered AI chat assistant** (`/AiChat`) — tourists can chat about destinations, itineraries and Egypt travel tips. The system first retrieves live destination data from the project database through the RAG pipeline, augments the LLM prompt with validated destination information, and then generates responses using Gemini or OpenAI (configurable).
 - **Sponsor AI tools** — an agent-based service (`Services/AiTools`) can draft and create sponsor branches from natural-language descriptions.
-- Chat history is persisted (`ChatHistoryService`).
+- **Chat history** — conversations are persisted through `ChatHistoryService`.
 
 ---
 
@@ -244,18 +242,6 @@ On first startup, `DbInitializer` seeds JSON data from `SeedData/`:
 - **516 tourist accounts** across ~217 nationalities with registration dates spread through the year (for demo analytics)
 
 Seeding only runs when the respective table is empty.
-
----
-
-## ❓ Troubleshooting
-
-| Symptom | Fix |
-|---|---|
-| `Npgsql` / connection errors at startup | Check `ConnectionStrings:CS` and that PostGIS is installed: `CREATE EXTENSION IF NOT EXISTS postgis;` |
-| Map layers empty on the website | Verify `ArcGIS:ApiKey` + layer URLs; press **Sync to ArcGIS** in the admin dashboard |
-| "Sync to ArcGIS" fails / hangs | The app logs every step to `sync-trace.log` next to the app; check `ArcGIS:UseProxy` if the machine has TLS issues |
-| AI chat returns nothing | Provide `Gemini:ApiKey` or `OpenAI:ApiKey` |
-| Arabic shows as English | The browser/UI culture selector — Arabic requires the `ar` culture files (present) |
 
 ---
 
