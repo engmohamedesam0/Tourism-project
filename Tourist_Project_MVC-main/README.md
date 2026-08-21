@@ -241,24 +241,9 @@ On first startup, `DbInitializer` seeds JSON data from `SeedData/`:
 - 10 sponsors & 56 branches (real chain locations: EgyptAir, Cilantro, Abou El Sid, Emeco Travel, Nile cruises, hotels…)
 - Destinations, menu items
 - **126 utilities** in Egypt (police stations, fire stations, hospitals, pharmacies)
-- **4,040 tourist accounts** across ~217 nationalities with registration dates spread through the year (for demo analytics)
+- **516 tourist accounts** across ~217 nationalities with registration dates spread through the year (for demo analytics)
 
 Seeding only runs when the respective table is empty.
-
----
-
-## 🛠️ Utilities & Scripts
-
-Located in the repository root (dev/ops helpers, not part of the web app):
-
-| File | Purpose |
-|---|---|
-| `arcgis-proxy.py` | Local OpenSSL bridge for machines with broken Windows TLS (see above) |
-| `make_feature_layer_csvs.ps1` | Generate ArcGIS import CSVs from the seed JSON (branches / utilities layers) |
-| `seed_more_branches.ps1` | Append more branch seed data + regenerate the CSV |
-| `gen_4000_tourists.py` | Generate large tourist datasets for demo analytics |
-| `remove_3500.py` | Trim the generated tourist dataset |
-| `reset_layers.py` | Full reset of the ArcGIS tourists/nationality layers from the DB |
 
 ---
 
